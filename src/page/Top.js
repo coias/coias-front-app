@@ -1,28 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import SampleImg from '../images/4_disp-coias_nonmask.png';
+import {
+  Magnifier,
+  GlassMagnifier,
+  SideBySideMagnifier,
+  PictureInPictureMagnifier,
+  MOUSE_ACTIVATION,
+  TOUCH_ACTIVATION
+} from "react-image-magnifiers";
 
 function Top() {
 
 	const [context,setContext] = useState(null);
 	const [loaded,setLoaded] = useState(false);
-
-	useEffect(() => {
-		const canvas = document.getElementById("canvas");
-		const canvasContext = canvas.getContext("2d");
-		setContext(canvasContext)
-	},[]);
-
-	useEffect(() => {
-		if(context !== null){
-			const img = new Image();
-			img.src = SampleImg;
-			img.onload = () => {
-				context.drawImage(img,0,0);
-				setLoaded(true);
-			}
-		}
-	},[context])
 
 	function buttonRender(){
 		const menunames = ["COIAS","探索準備モード","探索モード","再測定モード","レポートモード"]
@@ -34,7 +25,14 @@ function Top() {
 	return(
 		<div>
 			<ul className="l-ul"> {buttonRender()} </ul>
-			<canvas width="800" height="800" id="canvas"></canvas>
+			<Magnifier
+				imageSrc={SampleImg}
+				imageAlt="Example"
+				largeImageSrc="" // Optional
+				mouseActivation={MOUSE_ACTIVATION.DOUBLE_CLICK} // Optional
+				touchActivation={TOUCH_ACTIVATION.DOUBLE_TAP} // Optional
+				style={{height: '800px', width: '800px'}}
+			/>
 		</div>
 	)
 }
