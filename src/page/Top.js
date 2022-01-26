@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import SampleImg from '../images/4_disp-coias_nonmask.png';
 
-function Top() {
+function Top(props) {
 
-	const [context,setContext] = useState(null);
+	const [context, setContext] = useState(null);
 	const [loaded,setLoaded] = useState(false);
 
 	useEffect(() => {
@@ -24,13 +26,6 @@ function Top() {
 		}
 	},[context])
 
-	function buttonRender(){
-		const menunames = ["COIAS","探索準備モード","探索モード","再測定モード","レポートモード"]
-		return (
-			menunames.map(item => <li className="l-li"><Button variant="success">{item}</Button></li>)
-		)
-	}
-
 	return(
 		<div>
 			<ul className="l-ul"> {buttonRender()} </ul>
@@ -39,4 +34,11 @@ function Top() {
 	)
 }
 
-export default Top;
+export const buttonRender = () =>{
+	const menunames = ["COIAS","探索準備モード","探索モード","再測定モード","レポートモード"]
+	return (
+		menunames.map(item => <Link to="/COIAS"><li className="l-li"><Button variant="success">{item}</Button></li></Link>)
+	)
+}
+
+export default withRouter(Top);
