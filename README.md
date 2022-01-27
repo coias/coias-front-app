@@ -7,8 +7,8 @@ COIAS_front_sample 開発環境の構築方法。
 githubよりソースをおとす。
 
 ```
-git clone https://github.com/masaaki-y/COIAS_front_sample.git --depth 1
-cd COIAS_front_sample
+git clone https://github.com/aizulab/coias_electron.git --depth 1
+cd coias_electron
 ```
 
 ## nodeのインストール
