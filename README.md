@@ -12,6 +12,7 @@ cd COIAS_front_sample
 ```
 
 ## branchの変更
+branchを変更する
 
 ```
 git checkout menubar
