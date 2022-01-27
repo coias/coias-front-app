@@ -8,7 +8,7 @@ githubよりソースをおとす。
 
 ```
 git clone https://github.com/aizulab/coias_electron.git --depth 1
-cd COIAS_front_sample
+cd coias_electron
 ```
 
 ## nodeのインストール
