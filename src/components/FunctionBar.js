@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
-import DrawImage from "./DrawImage";
 
 const FunctionBar  = (props) =>{
     const menunames = ["Blink","Back","next","Sq On/Off"];
@@ -11,4 +10,4 @@ const FunctionBar  = (props) =>{
     )
 }
 
-export default withRouter(FunctionBar);
+export default FunctionBar;

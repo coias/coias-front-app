@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route} from 'react-router-dom';
+import { BrowserRouter, Route} from 'react-router-dom';
 import Top from './page/Top';
 import COIAS from './page/COIAS';
 import './style/style.scss';

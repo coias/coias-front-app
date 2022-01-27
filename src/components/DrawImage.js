@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import SampleImg from '../images/4_disp-coias_nonmask.png';
 
 const DrawImage = () => {
