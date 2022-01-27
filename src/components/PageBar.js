@@ -27,4 +27,4 @@ const PageBar = (props) =>{
  
 }
 
-export default PageBar;
+export default withRouter(PageBar);
