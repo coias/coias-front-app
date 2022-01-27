@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   return (
     <BrowserRouter>
-        <Route exact path="/" component={Top} />
+        <Route path="/" component={Top} />
         <Route path="/COIAS" component={COIAS} />
     </BrowserRouter>
   );
