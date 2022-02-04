@@ -1,0 +1,3 @@
+[Dockerの -v や --volume オプションはわかりづらいから、 --mount を使おう - Qiita](https://qiita.com/supaiku2452/items/5d6e78d10094f64d269f)
+
+docker run -it --name coias_electron -p 3000:3000 --mount type=bind,src=/Users/usuki/project/22/coias/coias_electron,dst=/opt/coias_electron alpine
