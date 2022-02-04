@@ -1,9 +1,6 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-<<<<<<< HEAD
-=======
 import imageEdit from '../component/imageEdit';
->>>>>>> 9d1e2b1ede01e03bc8708cfdf531b2ad26101500
 
 function Top() {
 
@@ -17,10 +14,7 @@ function Top() {
 	return(
 		<div>
 			<ul className="l-ul"> {buttonRender()} </ul>
-<<<<<<< HEAD
-=======
 			<ul className="l-ul"> {imageEdit()} </ul>
->>>>>>> 9d1e2b1ede01e03bc8708cfdf531b2ad26101500
 		</div>
 	)
 }
