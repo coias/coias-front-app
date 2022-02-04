@@ -13,7 +13,8 @@ RUN apk add --no-cache \
 RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
 # copy app
-COPY ../coias_electron /opt/coias_electron
 WORKDIR /opt/coias_electron
+COPY . .
 
-RUN yarn install && yarn react-start
+RUN yarn install
+ENTRYPOINT [ "yarn", "react-start" ]
