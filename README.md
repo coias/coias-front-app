@@ -2,6 +2,23 @@
 
 COIAS_front_sample 開発環境の構築方法。
 
+## docker
+
+dockerを使用して環境を構築する。
+
+### windows,macの場合
+
+docker desktopをインストール
+
+[Get Docker | Docker Documentation](https://docs.docker.com/get-docker/)
+
+### ubuntuの場合
+
+ubuntuの場合は下記のスクリプトが使用できる。
+dockerを使用する際に`sudo`が必要になる。
+
+[Install Docker Engine on Ubuntu | Docker Documentation](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script)
+
 ## codeのclone
 
 githubよりソースをおとす。ディレクトリは任意。
@@ -10,10 +27,6 @@ githubよりソースをおとす。ディレクトリは任意。
 git clone https://github.com/aizulab/coias_electron.git --depth 1
 cd coias_electron
 ```
-
-## docker
-
-dockerを使用して環境を構築する。
 
 ### build
 
