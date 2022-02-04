@@ -21,3 +21,34 @@
 		padding: 26px 10px 20px 10px;
 	}
 }
+
+.coias-ul{
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+    width: 90%;
+    height: 10%;
+    margin-bottom: 10px;
+
+    .coias-li{
+        padding:0;
+    }
+}
+
+.coias-button{
+    padding: 5px;
+    width:auto;
+}
+
+.cpias-input{
+    width: 90%;
+    height: 50%;
+}
+
+.coias-img{
+    width: 90%;
+    height: 90%;
+}
