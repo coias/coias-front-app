@@ -4,8 +4,9 @@ module.exports = {
         "es2021": true
     },
     "extends": [
-        "plugin:react/recommended",
-        "airbnb"
+        "airbnb",
+        "airbnb/hooks",
+        "plugin:import/errors",
     ],
     "parserOptions": {
         "ecmaFeatures": {
