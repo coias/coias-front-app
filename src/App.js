@@ -10,11 +10,11 @@ import { createBrowserHistory } from "history";
 
 function App() {
   return (
-    <BrowserRouter>
-        <Route path="/" component={PageBar} />
-        <Route exact path="/" component={Top} />
-        <Route path="/COIAS" component={COIAS} />
-    </BrowserRouter>
+      <BrowserRouter>
+        <PageBar />
+          <Route exact path="/" component={Top} />
+          <Route path="/COIAS" component={COIAS} />
+      </BrowserRouter>
   );
 };
 
