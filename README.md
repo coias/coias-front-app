@@ -24,7 +24,6 @@ dockerを使用する際に`sudo`が必要になる。
 githubよりソースをおとす。ディレクトリは任意。
 
 ```
-<<<<<<< HEAD
 git clone https://github.com/aizulab/coias_electron.git --depth 1
 cd coias_electron
 ```
@@ -46,19 +45,6 @@ docker run -it -p 80:3000 --name coias_web_app coias_front
 
 # 手動で環境を整える
 
-=======
-git clone https://github.com/aizulab/coias_electron.git
-cd COIAS_front_sample
-```
-
-## branchの変更
-branchを変更する
-
-```
-git checkout menubar
-```
-
->>>>>>> menubar
 ## nodeのインストール
 
 パッケージ管理ツールのnpmをインストール。nodeに付属している。
