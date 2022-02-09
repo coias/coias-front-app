@@ -1,7 +1,6 @@
 import React from 'react';
 import imageEdit from '../component/imageEdit';
 import {withRouter} from 'react-router-dom';
-import PageBar from '../component/PageBar'
 
 function Top() {
 	return(

@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from 'react-bootstrap';
-import {withRouter} from 'react-router-dom';
 
 const FunctionBar  = (props) =>{
     const menunames = ["Blink","Back","next","Sq On/Off"];

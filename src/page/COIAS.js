@@ -1,8 +1,6 @@
 import React from 'react';
-import ImageEdit from '../component/imageEdit';
 import { Button } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
-import DrawImage from '../component/DrawImage';
 import FunctionBar from '../component/FunctionBar';
 import imageEdit from '../component/imageEdit';
 
