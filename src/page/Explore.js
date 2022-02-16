@@ -3,17 +3,17 @@ import { Button } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import ImageEdit from '../component/imageEdit';
 
-export const COIAS = () => {
-
+export const Explore = () => {
 
     const menunames = [
         {"id" : 1, "name": "Blink"},
         {"id": 2, "name": "Back"},
         {"id" : 3, "name" : "Next"},
-        {"id": 4, "name": "Stop"},
-        {"id": 5, "name": "Image"},
-        {"id": 6, "name": "(X,Y)"},
-        {"id": 7, "name": "Close Window"}
+        {"id": 4, "name": "Mark"},
+        {"id": 5, "name": "リスト"},
+        {"id": 6, "name": "Image"},
+        {"id": 7, "name": "(X,Y)"},
+        {"id": 8, "name": "再描画"}
     ]
 
     return(
@@ -32,6 +32,7 @@ export const COIAS = () => {
             <ImageEdit/>
         </div>
     )
+
 };
 
-export default withRouter(COIAS);
+export default withRouter(Explore);
