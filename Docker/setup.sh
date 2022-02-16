@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash -eu
 
-/opt/coias_electron
+cd /opt/coias_electron
 
 yarn install
 yarn react-start
