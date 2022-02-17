@@ -1,13 +1,18 @@
-# 開発環境構築
+# dockerによる開発環境構築
 
 COIAS_front_sample 開発環境の構築方法。
+docker-composeを使用せず、「coias_electron」を単体で構築する手順。
+特に理由がなければ、[aizulab/coias-docker-compose](https://github.com/aizulab/coias-docker-compose)を使用するとよい。
 
-## docker
+## dockerについて
 
-dockerを使用して環境を構築する。
+dockerを使用することで、アプリ環境を自動でホストPCに増やせる。
+
+[Docker](https://www.docker.com/)
 
 ### windows,macの場合
 
+docker desktopを使用して環境を構築する。
 docker desktopをインストール
 
 [Get Docker | Docker Documentation](https://docs.docker.com/get-docker/)
@@ -94,10 +99,10 @@ webページからアクセスする場合
 yarn react-start
 ```
 
-Electronを使用する場合
-
-`// todo`
-
 ### アクセス
 
 `locahost:3000`からアクセスできる。
+
+## Electronを使用する場合
+
+`// todo`
