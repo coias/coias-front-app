@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import SampleImg from '../images/4_disp-coias_nonmask.png';
+//import SampleImg from '../images/4_disp-coias_nonmask.png';
 import {
   Magnifier,
   MOUSE_ACTIVATION,
@@ -15,7 +15,7 @@ function ImageEdit() {
 	return(
 		<div>
 			<Magnifier
-				imageSrc={SampleImg}
+			
 				imageAlt="Example"
 				mouseActivation={MOUSE_ACTIVATION.DOUBLE_CLICK}
 				touchActivation={TOUCH_ACTIVATION.DOUBLE_TAP}
