@@ -20,7 +20,7 @@ export const COIAS = () => {
         <div>
             <ul className='coias-ul' >
              {menunames.map(item => {
-                 if(item.id === 6 || item.id === 7) {
+                 if(item.id === 6) {
                     return <li key={item.id} >
                                 <input type="text" placeholder={item.name} size="10" disabled="disabled" />
                             </li>;
