@@ -4,9 +4,6 @@ LABEL maintainer="usuki"
 
 SHELL ["/bin/bash", "-c"]
 
-ENV TZ=Asia/Tokyo\
-    DEBIAN_FRONTEND=noninteractive
-
 RUN apt update && apt install -y\
     npm\
     nodejs
