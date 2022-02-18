@@ -10,19 +10,20 @@ dockerを使用することで、アプリ環境を自動でホストPCに増や
 
 [Docker](https://www.docker.com/)
 
-### windows,macの場合
+### mac windownの場合
 
-docker desktopを使用して環境を構築する。
-docker desktopをインストール
+* docker desktop
 
-[Get Docker | Docker Documentation](https://docs.docker.com/get-docker/)
+[Docker Desktop for Mac and Windows | Docker](https://www.docker.com/products/docker-desktop)
 
-### ubuntuの場合
+### Linux(例：ubuntu)の場合
+
+* docker engine
 
 ubuntuの場合は下記のスクリプトが使用できる。
 dockerを使用する際に`sudo`が必要になる。
 
-[Install Docker Engine on Ubuntu | Docker Documentation](https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script)
+[UbuntuにDockerEngineをインストールする| Dockerドキュメント](https://docs.docker.com/engine/install/ubuntu/#upgrade-docker-after-using-the-convenience-script)
 
 ## codeのclone
 
