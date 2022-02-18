@@ -1,20 +1,25 @@
-FROM alpine:latest
+FROM ubuntu:20.04
 
 LABEL maintainer="usuki"
 
-RUN apk add --no-cache \
-    coreutils \
-    bash \
-    tzdata \
-    yarn \
-    nodejs
+SHELL ["/bin/bash", "-c"]
 
-# set timezone JST
-RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+ENV TZ=Asia/Tokyo\
+    DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt install -y\
+    curl\
+    gnupg &&\
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - &&\
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list &&\
+    apt update &&\
+    apt install -y yarn &&\
+    yarn global add n &&\
+    n lts
 
 # copy app
 WORKDIR /opt/coias_electron
 COPY . .
 
-RUN yarn install
+RUN yarn
 ENTRYPOINT [ "yarn", "react-start" ]
