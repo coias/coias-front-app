@@ -3,6 +3,7 @@ import {withRouter} from 'react-router-dom';
 import axios from "axios";
 import { PageContext } from '../App';
 import ImageEdit from '../component/imageEdit';
+import { Touch, Canvas } from 'react-touch-canvas';
 
 function Top() {
 	const [context,setContext] = useState(null);
