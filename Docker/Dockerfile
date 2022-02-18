@@ -1,16 +1,17 @@
-FROM alpine:latest
+FROM ubuntu:20.04
 
 LABEL maintainer="usuki"
 
-RUN apk add --no-cache \
-    coreutils \
-    bash \
-    tzdata \
-    yarn \
+SHELL ["/bin/bash", "-c"]
+
+ENV TZ=Asia/Tokyo\
+    DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt install -y\
+    npm\
     nodejs
 
-# set timezone JST
-RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+RUN npm install -y yarn
 
 # copy app
 WORKDIR /opt/coias_electron

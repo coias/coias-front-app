@@ -5,5 +5,6 @@
 	"workspaceFolder": "/opt/coias_electron",
 	"service": "front-dev-app",
 	"settings": {},
-	"extensions": []
+	"extensions": [],
+	"onCreateCommand": "bash /opt/coias_electron/Docker/setup.sh",
 }
