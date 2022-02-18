@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import ImageEdit from '../component/imageEdit';
+import COIAS from './COIAS';
 
 export const Explore = () => {
 
@@ -16,9 +16,9 @@ export const Explore = () => {
         {"id": 8, "name": "再描画"}
     ]
 
-    return(
-        <div>
-            <ul className='coias-ul' >
+    /*
+    
+    <ul className='coias-ul' >
              {menunames.map(item => {
                  if(item.id === 6 || item.id === 7) {
                     return <li key={item.id} >
@@ -29,6 +29,12 @@ export const Explore = () => {
                  }
              })}
             </ul>
+    
+    */
+
+    return(
+        <div>
+            <COIAS />
             <ImageEdit/>
         </div>
     )

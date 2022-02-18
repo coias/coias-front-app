@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {withRouter} from 'react-router-dom';
-//import SampleImg from '../images/1_disp-coias_nonmask.png';
 import axios from "axios";
 import { PageContext } from '../App';
+import ImageEdit from '../component/imageEdit';
 
 function Top() {
 	const [context,setContext] = useState(null);
@@ -21,8 +21,8 @@ function Top() {
 
 	useEffect(() => {
 		const canvas = document.getElementById("canvas");
-		canvas.width = 2000;
-		canvas.height = 2000;
+		canvas.width = 1350;
+		canvas.height = 1050;
 		canvas.addEventListener("click",getMousePos, false);
 		const canvasContext = canvas.getContext("2d");
 		setContext(canvasContext);
@@ -33,33 +33,28 @@ function Top() {
 		const disp = response.data.result;
 		setPositions(disp);
 	},[context]);
-	//console.log(positions.map(x=>(x.x,x.y)));
-
 
 	useEffect(() => {
 		if(context !== null){
 			const img = new Image();
 			img.onload = () => {
 				context.drawImage(img,0,0,img.naturalWidth, img.naturalHeight);
-				//console.log(canvas.width, canvas.height);
 				positions.map(pos=>{
-					console.log(currentPage);
-
 					if(pos[1] === String(currentPage)){
-						const x = (parseFloat(pos[2]) /2) - 20;
-						const y = (parseFloat(pos[3]) / 2) - 20;
-						//console.log(x,y);
+						const x = (parseInt(pos[2]) /2 )- 20;
+						const y = (img.naturalHeight - (parseInt(pos[3]) / 2) ) + 20;
 						context.rect(x, y, 40, 40);	
 						context.lineWidth = 2;
-						context.strokeStyle = "red";
+						context.strokeStyle = "black";
+						context.font = "15px serif";
+						context.fillStyle = "red";
+  						context.fillText(pos[0], x-20, y -10);
 						context.stroke();
-						//console.log("aaa");
 						setLoaded(true);				
 					}
 				});
 			}
 			const src = './images/' + String(currentPage + 1) +'_disp-coias_nonmask.png';
-			console.log(src);
 			img.src = src;
 		}
 	});
@@ -67,7 +62,7 @@ function Top() {
 
 	return(
 		<div>
-			<canvas id="canvas"></canvas>
+			<canvas id="canvas"><ImageEdit /></canvas>
 		</div>
 	)
 }

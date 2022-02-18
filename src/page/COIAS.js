@@ -30,19 +30,29 @@ export const COIAS = () => {
         else setCurrentPage(currentPage - 1);
     }
 
+    const onClickBlink = () => {
+        setInterval(onClickNext(), 1000);
+    }
+
     return(
         <div>
             <ul className='coias-ul' >
              {menunames.map(item => {
                  {console.log(currentPage)}
-                 if(item.id === 6) {
-                    return <li key={item.id} >
-                                <input type="text" placeholder={item.name} size="10" disabled="disabled" />
-                            </li>;
+                 if(item.id=== 1){
+                    return  <li key={item.id} style={{width : 'auto'}} className="coias-li"><Button onClick={() => {onClickBlink()}} variant="success">{item.name}</Button></li>;
                  }else if(item.id=== 2){
                     return  <li key={item.id} style={{width : 'auto'}} className="coias-li"><Button onClick={() =>{onClickBack()}} variant="success">{item.name}</Button></li>;
                  }else if(item.id=== 3){
                     return  <li key={item.id} style={{width : 'auto'}} className="coias-li"><Button onClick={() => {onClickNext()}} variant="success">{item.name}</Button></li>;
+                 }else if(item.id === 5) {
+                    return <li key={item.id} >
+                                <input type="text" placeholder={"No." + String(currentPage + 1)} size="10" disabled="disabled" />
+                            </li>;
+                 }else if(item.id === 6) {
+                    return <li key={item.id} >
+                                <input type="text" placeholder={item.name} size="10" disabled="disabled" />
+                            </li>;
                  }else{
                     return  <li key={item.id} style={{width : 'auto'}} className="coias-li"><Button variant="success">{item.name}</Button></li>;
                  }
