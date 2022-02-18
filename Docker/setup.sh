@@ -4,4 +4,4 @@
 # 設定は.devcontainer/devcontainer.jsonに記載
 
 cd /opt/coias_electron
-yarn install
+yarn
