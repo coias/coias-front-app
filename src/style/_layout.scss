@@ -15,7 +15,7 @@
 	list-style: none;
 	margin: 0 auto;
 	z-index: 20;
-    position: fixed;
+    //position: fixed;
     top: 0;
     height: 10%;
 	.l-li {
@@ -34,12 +34,11 @@
     width: 1050px;
     height: 10%;
     margin-bottom: 10px;
-
     .coias-li{
         padding:0;
     }
     position: fixed;
-    top: 10%;
+    top: 5;
 }
 
 .coias-button{

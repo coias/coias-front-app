@@ -35,10 +35,8 @@ export const COIAS = () => {
     }
 
     return(
-        <div>
             <ul className='coias-ul' >
              {menunames.map(item => {
-                 {console.log(currentPage)}
                  if(item.id=== 1){
                     return  <li key={item.id} style={{width : 'auto'}} className="coias-li"><Button onClick={() => {onClickBlink()}} variant="success">{item.name}</Button></li>;
                  }else if(item.id=== 2){
@@ -56,11 +54,9 @@ export const COIAS = () => {
                  }else{
                     return  <li key={item.id} style={{width : 'auto'}} className="coias-li"><Button variant="success">{item.name}</Button></li>;
                  }
-
              })}
             </ul>
 
-        </div>
     )
 };
 

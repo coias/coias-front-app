@@ -137,7 +137,6 @@ export default function Canvas(props) {
             setPositions(disp);
 		} 
 		getDisp();
-        console.log("get Disp called");
 	},[currentPage]); 
 
 
@@ -154,7 +153,6 @@ export default function Canvas(props) {
             img.src = src;
             img.onload = () => {
                 context.drawImage(img,0,0,img.naturalWidth,img.naturalHeight);
-                console.log("draw called on 157",positions);
                 positions.map(pos=>{
                     if(pos[1] === String(currentPage)){
                         const x = (parseFloat(pos[2]) )- 20;
@@ -226,7 +224,6 @@ export default function Canvas(props) {
             if (context) {
                 const zoom = 1 - event.deltaY / ZOOM_SENSITIVITY;
                 const scaleValue = scale* zoom;
-                console.log(zoom, scaleValue);
                 if(scale < 1 && scaleValue < 1) {
                     setScale(1);
                     return;
@@ -256,7 +253,7 @@ export default function Canvas(props) {
     }, [context, mousePos.x, mousePos.y, viewportTopLeft, scale]);
 
     return (
-        <div style={{marginTop:"10%"}}>
+        <div style={{marginTop:"80px"}}>
         <button onClick={() => context && reset(context)}>Reset</button>
         <canvas
             onMouseDown={startPan}

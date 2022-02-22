@@ -33,10 +33,7 @@ const MenuBar = (props) =>{
         props.history.push(menuname);
     }
 
-
-
     return(
-        <div>
             <ul className="l-ul">
                 {		
                     menunames.map((item)=> 
@@ -48,7 +45,6 @@ const MenuBar = (props) =>{
                     )
                 }
             </ul>
-        </div>
     )
  
 }
