@@ -52,3 +52,10 @@
     width: 90%;
     height: 90%;
 }
+
+// fileuplode input隠蔽
+.inputFileBtnHide {
+    opacity:0;
+    appearance: none;
+    position: absolute;
+  }

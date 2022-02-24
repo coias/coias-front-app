@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
-import ImageEdit from '../component/imageEdit';
+import FileModal from '../component/FileModal';
 
 export const Explore_prepare = () => {
 
@@ -18,12 +18,17 @@ export const Explore_prepare = () => {
     return(
         <div>
             <ul className='coias-ul' >
-             {menunames.map(item => <li key={item.id} className="coias-li"><Button variant="success">{item.name}</Button></li>)}
+            {menunames.map(item => 
+            {
+                if(item.id === 1){
+                    return <FileModal/>;
+                }else {
+                    return <li key={item.id} className="coias-li"><Button variant="success">{item.name}</Button></li>;
+                }
+            })}
             </ul>
-            <ImageEdit/>
-        </div>
+        </div>        
     )
-
 };
 
 export default withRouter(Explore_prepare);
