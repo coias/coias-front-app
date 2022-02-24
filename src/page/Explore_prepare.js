@@ -20,7 +20,7 @@ export const Explore_prepare = () => {
             {menunames.map(item => 
             {
                 if(item.id === 1){
-                    return <FileModal/>;
+                    return <li key={item.id} className="coias-li"><FileModal/></li>;
                 }else {
                     return <li key={item.id} className="coias-li"><Button variant="success">{item.name}</Button></li>;
                 }
