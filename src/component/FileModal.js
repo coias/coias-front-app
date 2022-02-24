@@ -1,12 +1,15 @@
-import {React, useState} from "react"
+import {React, useEffect, useState} from "react"
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 
 export default function FileModal() {
-    const [show, setShow] = useState(false);
 
+    const [value, setValue] = useState(0)
+    const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const handleSubmit = (e) => setValue(e.target.value)
+    const handleChange = (e) => setValue(e.target.value)
 
     return (
         <>
@@ -20,8 +23,8 @@ export default function FileModal() {
                 </Modal.Header>
                 <Modal.Body>ファイルは複数選択できます。<br/>アップロード後、画像処理をおこないます。<br/>処理は時間がかかります。</Modal.Body>
 
-                <form action={process.env.REACT_APP_API_URI + "/uploadfiles/"} encType="multipart/form-data" method="post">
-                    <input name="files" type="file" multiple/>
+                <form onSubmit={handleSubmit}>
+                    <input type="File" value={value} onChange={handleChange}/>
 
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>

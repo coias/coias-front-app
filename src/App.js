@@ -8,6 +8,7 @@ import './style/style.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Explore from './page/Explore';
 import Report from './page/Report';
+import Canvas from './component/ImageEditNew';
 
 export const PageContext = createContext({
   currentPage : 0,
@@ -20,7 +21,7 @@ function App() {
     () => ({ currentPage, setCurrentPage }),
     [currentPage]
   );
-  
+
   return (
       <BrowserRouter>
         <MenuBar />
@@ -29,8 +30,9 @@ function App() {
           <Route path="/Explore_prepare" component={Explore_prepare} />
           <Route path="/Explore" component={Explore} />
           <Route path="/Report" component={Report} />
-          <Route path="/" component={Top} />
+          <Canvas canvasWidth={1050} canvasHeight={1050}/>
         </PageContext.Provider>
+
       </BrowserRouter>
   );
 };

@@ -4,7 +4,6 @@ import {withRouter} from 'react-router-dom';
 import FileModal from '../component/FileModal';
 
 export const Explore_prepare = () => {
-
     const menunames = [ 
                         {"id" : 1, "name": "ファイル"},
                         {"id": 2, "name": "軌道修正"},
