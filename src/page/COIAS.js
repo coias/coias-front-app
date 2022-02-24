@@ -1,14 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
-//import ImageEdit from '../component/imageEdit';
-import { PageContext } from '../App';
+import { MousePositionContext, PageContext } from '../App';
 
 export const COIAS = () => {
 
-	//const [currentPage, setCurrentPage] = useState(0);
+	const {currentMousePos} = useContext(MousePositionContext);
 	const {currentPage, setCurrentPage} = useContext(PageContext);
-
 
     const menunames = [
         {"id" : 1, "name": "Blink"},
@@ -31,7 +29,7 @@ export const COIAS = () => {
     }
 
     const onClickBlink = () => {
-        setInterval(onClickNext(), 1000);
+        setInterval(()=>{onClickNext()}, 200);
     }
 
     return(
@@ -49,7 +47,7 @@ export const COIAS = () => {
                             </li>;
                  }else if(item.id === 6) {
                     return <li key={item.id} >
-                                <input type="text" placeholder={item.name} size="10" disabled="disabled" />
+                                <input type="text" placeholder={currentMousePos.x+","+currentMousePos.y} size="10" disabled="disabled" />
                             </li>;
                  }else{
                     return  <li key={item.id} style={{width : 'auto'}} className="coias-li"><Button variant="success">{item.name}</Button></li>;

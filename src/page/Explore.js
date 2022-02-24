@@ -35,7 +35,6 @@ export const Explore = () => {
     return(
         <div>
             <COIAS />
-            <ImageEdit/>
         </div>
     )
 

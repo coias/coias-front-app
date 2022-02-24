@@ -7,7 +7,7 @@ import {
     useContext
   } from "react";
 import * as React from "react";
-import { PageContext } from '../App';
+import { PageContext , MousePositionContext} from '../App';
 import axios from "axios";  
 
 const ORIGIN = Object.freeze({ x: 0, y: 0 });
@@ -42,8 +42,19 @@ export default function Canvas(props) {
     const [positions, setPositions] = useState([]);
     const [loaded,setLoaded] = useState(false);
 	const {currentPage, setCurrentPage} = useContext(PageContext);
+    const { currentMousePos, setCurrentMousePos } = useContext(MousePositionContext);
 
     const src = './images/'+ String(currentPage + 1) +'_disp-coias_nonmask.png';
+
+    function getMousePos(evt) {
+        var rect = evt.target.getBoundingClientRect();
+        setCurrentMousePos({
+            x : evt.clientX - rect.left,
+            y : evt.clientY - rect.top 
+            }
+        );
+    }
+
 
     // update last offset
     useEffect(() => {
@@ -99,7 +110,6 @@ export default function Canvas(props) {
         (event) => {
         document.addEventListener("mousemove", mouseMove);
         document.addEventListener("mouseup", mouseUp);
-        console.log(event);
         lastMousePosRef.current = { x: event.pageX, y: event.pageY };
         },
         [mouseMove, mouseUp]
@@ -142,13 +152,12 @@ export default function Canvas(props) {
 
     // draw
     useEffect(() => {
-        if (context) {
-        // clear canvas but maintain transform
-        const storedTransform = context.getTransform();
-        context.canvas.width = context.canvas.width;
-        context.setTransform(storedTransform);
+        if (context && positions.length > 0) {
+            // clear canvas but maintain transform
+            const storedTransform = context.getTransform();
+            context.canvas.width = context.canvas.width;
+            context.setTransform(storedTransform);
 
-        if(positions.length > 0) {
             const img = new Image();
             img.src = src;
             img.onload = () => {
@@ -166,10 +175,9 @@ export default function Canvas(props) {
                         context.stroke();
                         setLoaded(true);
                     }
-                });
-            } 
-        };
-		
+                }); 
+            };
+
         //console.log(src);
         }
     }, [
@@ -193,10 +201,12 @@ export default function Canvas(props) {
         event.preventDefault();
         if (canvasRef.current) {
             const viewportMousePos = { x: event.clientX, y: event.clientY };
+            setCurrentMousePos({x : viewportMousePos.x, y : viewportMousePos.y});
             const topLeftCanvasPos = {
             x: canvasRef.current.offsetLeft,
             y: canvasRef.current.offsetTop
             };
+            //console.log(viewportMousePos.x,viewportMousePos.y);
             setMousePos(diffPoints(viewportMousePos, topLeftCanvasPos));
         }
         }
@@ -204,7 +214,7 @@ export default function Canvas(props) {
         canvasElem.addEventListener("mousemove", handleUpdateMouse);
         canvasElem.addEventListener("wheel", handleUpdateMouse);
         return () => {
-        canvasElem.removeEventListener("mousemove", handleUpdateMouse);
+        canvasElem.removeEventListener("mousemove",handleUpdateMouse);
         canvasElem.removeEventListener("wheel", handleUpdateMouse);
         };
     }, []);
@@ -224,7 +234,8 @@ export default function Canvas(props) {
             if (context) {
                 const zoom = 1 - event.deltaY / ZOOM_SENSITIVITY;
                 const scaleValue = scale* zoom;
-                if(scale < 1 && scaleValue < 1) {
+                //console.log(scale, zoom, scaleValue);
+                if(scaleValue < 1) {
                     setScale(1);
                     return;
                 }
@@ -254,7 +265,6 @@ export default function Canvas(props) {
 
     return (
         <div style={{marginTop:"80px"}}>
-        <button onClick={() => context && reset(context)}>Reset</button>
         <canvas
             onMouseDown={startPan}
             ref={canvasRef}
@@ -267,6 +277,10 @@ export default function Canvas(props) {
                 height: `${props.canvasHeight}px`
             }}
         ></canvas>
+        <pre>scale: {scale}</pre>
+      <pre>offset: {JSON.stringify(offset)}</pre>
+      <pre>viewportTopLeft: {JSON.stringify(viewportTopLeft)}</pre>
+        <button onClick={() => context && reset(context)}>Reset</button>
         </div>
     );
 }

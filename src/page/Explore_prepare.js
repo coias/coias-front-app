@@ -19,7 +19,6 @@ export const Explore_prepare = () => {
             <ul className='coias-ul' >
              {menunames.map(item => <li key={item.id} className="coias-li"><Button variant="success">{item.name}</Button></li>)}
             </ul>
-            <ImageEdit/>
         </div>
     )
 
