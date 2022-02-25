@@ -1,109 +1,30 @@
-# dockerによる開発環境構築
+# coias_electron
 
-COIAS_front_sample 開発環境の構築方法。
-docker-composeを使用せず、「coias_electron」を単体で構築する手順。
-特に理由がなければ、[aizulab/coias-docker-compose](https://github.com/aizulab/coias-docker-compose)を使用するとよい。
+coiasフロントアプリ
 
-## dockerについて
-
-dockerを使用することで、アプリ環境を自動でホストPCに増やせる。
-
-[Docker](https://www.docker.com/)
-
-### mac windownの場合
-
-* docker desktop
-
-[Docker Desktop for Mac and Windows | Docker](https://www.docker.com/products/docker-desktop)
-
-### Linux(例：ubuntu)の場合
-
-* docker engine
-
-ubuntuの場合は下記のスクリプトが使用できる。
-dockerを使用する際に`sudo`が必要になる。
-
-[UbuntuにDockerEngineをインストールする| Dockerドキュメント](https://docs.docker.com/engine/install/ubuntu/#upgrade-docker-after-using-the-convenience-script)
-
-## codeのclone
-
-githubよりソースをおとす。ディレクトリは任意。
+## ディレクトリの解説
 
 ```
-git clone https://github.com/aizulab/coias_electron.git --depth 1
-cd coias_electron
-```
-
-### build
-
-imageの作成とコンテナ作成コマンド
-
-```
-docker build -t coias_front .
-docker run -it -p 80:3000 --name coias_web_app coias_front
-```
-
-### アクセス
-
-ブラウザからアクセスする。
-
-`localhost`
-
-# 手動で環境を整える
-
-## nodeのインストール
-
-パッケージ管理ツールのnpmをインストール。nodeに付属している。
-
-[ダウンロード | Node.js](https://nodejs.org/ja/download/)
-
-その他、homebrewやaptといったパッケージ管理ツールでもインストールできるがバージョンが古いことがあるので注意。
-
-## npmの確認
-
-npmがインストールされ、pathが通っているかを確認する。
+.
+├── Docker
+├── docs
+├── node_modules
+├── public
+├── src
+├── .env
 
 ```
-npm -v
-```
 
-npmがインストールされている場合の表示例
+* Docker
 
-'7.24.0'
+dockerfileが保存。
+実行用と開発用、開発セットアップスクリプトが保存されている。
 
-## yarnのインストール
+* .env
 
-```
-npm install -g yarn
-```
+backendへのURIが保存されている。
+このURIを読み出し、データを送信している。
 
-## codeのclone
+* src
 
-githubよりソースをおとす。ディレクトリは任意。
-
-```
-git clone https://github.com/aizulab/coias_electron.git --depth 1
-cd coias_electron
-```
-
-### 必要ライブラリのインストール
-
-```
-yarn install
-```
-
-### アプリの構築
-
-webページからアクセスする場合
-
-```
-yarn react-start
-```
-
-### アクセス
-
-`locahost:3000`からアクセスできる。
-
-## Electronを使用する場合
-
-`// todo`
+ソースが保存。
