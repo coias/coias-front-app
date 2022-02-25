@@ -1,4 +1,4 @@
-import {React, useEffect, useState} from "react"
+import {React, useState, useRef} from "react"
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
@@ -7,36 +7,46 @@ import axios from 'axios';
 
 export default function FileModal() {
 
-    const [value, setValue] = useState("");
+    const fileInput = useRef();
     const [show, setShow] = useState(false);
     const [valid, setValid] = useState(true);
+    const [disabled, setDisabled] = useState(true);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const handleSubmit = (e) => {
-        const data = new FormData();
-        data.append(value);
-        
-        axios.post(process.env.REACT_APP_API_URI, data)
-        .then(function (response) {
-            // 送信成功時の処理
-            handleClose()
-        })
-        .catch(function (error) {
-            // 送信失敗時の処理
-            console.log(error);
-        });
-
-        e.preventDefault()
-    }
-
+    const uri = process.env.REACT_APP_API_URI + "/uploadfiles/";
     const handleChange = (e) => {
         //ファイル変更時
         if (e.target.value !== ""){
             setValid(false)
-            setValue(e.target.value)
+            setDisabled(false)
         }else{
             setValid(true)
+            setDisabled(true)
         }
+    }
+    const handleSubmit = (e) => {
+
+        const files = fileInput.current.files
+        const data = new FormData();
+        let request = new XMLHttpRequest();
+
+        let file;
+
+        for (var i = 0; i < files.length; i++) {
+            file = files[i];
+            data.append("files", file, file.name)
+        }
+
+        request.open("POST", uri);
+        request.onload = function(oEvent) {
+            if (request.status === 200){
+                console.log("成功！")
+            } else {
+                console.log("失敗")
+            }
+        }
+        request.send(data);
+        e.preventDefault();
     }
 
     return (
@@ -51,9 +61,9 @@ export default function FileModal() {
                 </Modal.Header>
                 <Modal.Body>アップロード後、画像処理をおこないます。<br/>処理は時間がかかります。</Modal.Body>
 
-                <Form onSubmit={handleSubmit} controlId="formFile" className="mb-3">
+                <Form onSubmit={handleSubmit} className="mb-3">
                     <InputGroup hasValidation>
-                        <Form.Control type="file" onChange={handleChange} isInvalid={valid} multiple/>
+                        <Form.Control type="file" ref={fileInput} onChange={handleChange} isInvalid={valid} multiple/>
                         <Form.Control.Feedback type="invalid">
                             ファイルを選択してください。ファイルは複数選択できます。
                         </Form.Control.Feedback>
@@ -62,7 +72,7 @@ export default function FileModal() {
                             <Button variant="secondary" onClick={handleClose}>
                                 Close
                             </Button>
-                            <Button variant="primary" onClick={handleClose} type="submit">
+                            <Button variant="primary" type="submit" disabled={disabled}>
                                 send
                             </Button>
                     </Modal.Footer>
