@@ -5,6 +5,8 @@ import _ from "lodash";
 import panzoom from "panzoom";
 import { PageContext, MousePositionContext } from "../App";
 import axios from "axios";
+import StarsList from "./starsList";
+import { Container, Row, Col, Form } from "react-bootstrap";
 
 const canvasSize = 1050;
 
@@ -30,6 +32,9 @@ const PanZoom = () => {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
+
+    const [contrastVal, setContrastVal] = useState(100);
+	const [brightnessVal, setBrightnessVal] = useState(100);
 
   useEffect(() => {
     const z_p_canvas = panzoom(z_p_canvasRef.current, {
@@ -100,7 +105,6 @@ const PanZoom = () => {
       var x = (event.clientX - bounds.left) * scaleX; // scale mouse coordinates after they have
       var y = (event.clientY - bounds.top) * scaleY; // been adjusted to be relative to element
 
-      console.log(x, y);
       setCurrentMousePos({ x: parseInt(x), y: parseInt(y) });
     }
 
@@ -111,18 +115,38 @@ const PanZoom = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        marginTop: "80px",
-        width: "1050px",
-        height: "1050px",
-        overflow: "hidden",
-      }}
-    >
-      <div ref={z_p_canvasRef}>
-        <canvas ref={canvasRef} width="1100px" height="1100px" />
-      </div>
-    </div>
+    <Container fluid style={{marginTop: "80px"}}>
+      <Row>
+        <Col sm={8}>
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+            }}
+          >
+            <div ref={z_p_canvasRef}>
+              <canvas ref={canvasRef} 
+                width="1100px" height="1100px" 
+                style={{
+                  filter: `contrast(${contrastVal}%) brightness(${brightnessVal}%)`
+                }}
+              />
+            </div>
+          </div>
+          <>
+            <Form.Label>Contrast</Form.Label>
+            <Form.Range onChange={(e) => setContrastVal(Number(e.target.value))} />
+          </>
+          <>
+            <Form.Label>Blightness</Form.Label>
+            <Form.Range onChange={(e) => setBrightnessVal(Number(e.target.value))} />
+          </>
+        </Col>
+
+          <StarsList positions={positions} currentPage={currentPage} />
+      </Row>
+    </Container>
   );
 };
 
