@@ -1,10 +1,24 @@
 {
-    "configurations": [
+    // https://code.visualstudio.com/docs/nodejs/reactjs-tutorial#_debugging-react
+    // 2022/2/24 usuki chromeでデバック機能の起動の際、１回目がこけるみたい
+
+  "version": "0.2.0",
+  "configurations": [
     {
-        "command": "yarn react-start",
-        "name": "Run yarn react-start",
-        "request": "launch",
-        "type": "node-terminal"
+      "type": "pwa-msedge",
+      "request": "launch",
+      "name": "Launch Edge against localhost",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "timeout": 20000
+    },
+    {
+      "type": "pwa-chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "timeout": 20000
     }
-    ]
+  ]
 }
