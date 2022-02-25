@@ -7,4 +7,5 @@
 	"settings": {},
 	"extensions": [],
 	"onCreateCommand": "bash /opt/coias_electron/Docker/setup.sh",
+	"postStartCommand": ["yarn", "react-start"]
 }
