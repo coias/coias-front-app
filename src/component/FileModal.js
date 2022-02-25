@@ -25,7 +25,11 @@ export default function FileModal() {
         }
     }
     const handleSubmit = (e) => {
-
+        /* formを使用してファイルを送信
+        * 参考リンク
+        * https://ja.reactjs.org/docs/forms.html
+        * https://developer.mozilla.org/ja/docs/Web/API/FormData/Using_FormData_Objects
+        */
         const files = fileInput.current.files
         const data = new FormData();
         let request = new XMLHttpRequest();
