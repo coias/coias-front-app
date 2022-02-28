@@ -1,9 +1,7 @@
 import React, {
   useCallback,
   useContext,
-  useEffect,
-  useRef,
-  useState,
+  useRef
 } from "react";
 import { Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
@@ -45,7 +43,7 @@ const COIAS = () => {
         if (c === 4) return 0;
         else return c + 1;
       });
-    }, 300);
+    }, 100);
   }, []);
 
   const onClickBlinkStop = useCallback(() => {

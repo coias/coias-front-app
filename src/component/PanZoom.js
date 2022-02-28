@@ -1,28 +1,15 @@
 import React, { useRef, useEffect, useContext, useState } from "react";
-import Draggable from "react-draggable";
-import * as R from "ramda";
 import _ from "lodash";
 import panzoom from "panzoom";
 import { PageContext, MousePositionContext } from "../App";
 import axios from "axios";
 import StarsList from "./starsList";
 import { Container, Row, Col, Form } from "react-bootstrap";
+import { Scrollbars } from 'react-custom-scrollbars';
 
 const canvasSize = 1050;
 
 const zoomBy = 0.1;
-
-const _bg = {
-  direction: 45,
-  color: {
-    dark: "#ccc",
-    light: "transparent",
-  },
-  size: 20,
-  span: 100 / 4,
-};
-
-const bg = { ..._bg, doubleSize: _bg.size * 2, rest: 100 - _bg.span };
 
 const PanZoom = () => {
   const z_p_canvasRef = useRef(null);
@@ -38,9 +25,21 @@ const PanZoom = () => {
 
   useEffect(() => {
     const z_p_canvas = panzoom(z_p_canvasRef.current, {
-      // maxZoom: 10,
-      // minZoom: 1,
-      // autocenter: true,
+      maxZoom: 10,
+      minZoom: 1,
+      bounds: true,
+      boundsPadding: 1.0,
+      //autocenter: true,
+      beforeWheel: function(e) {
+        // allow wheel-zoom only if altKey is down. Otherwise - ignore
+        var shouldIgnore = !e.altKey;
+        return shouldIgnore;
+      },
+      beforeMouseDown: function(e) {
+        // allow mouse-down panning only if altKey is down. Otherwise - ignore
+        var shouldIgnore = !e.shiftKey;
+        return shouldIgnore;
+      }
     });
 
     return () => {
@@ -61,13 +60,13 @@ const PanZoom = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
+
     if (context && positions.length > 0) {
       const storedTransform = context.getTransform();
       context.canvas.width = context.canvas.width;
       context.setTransform(storedTransform);
       const img = new Image();
-      img.src =
-        "./images/" + String(currentPage + 1) + "_disp-coias_nonmask.png";
+      img.src = "./images/" + String(currentPage + 1) + "_disp-coias_nonmask.png";
 
       img.onload = () => {
         context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
@@ -118,33 +117,28 @@ const PanZoom = () => {
     <Container fluid style={{marginTop: "80px"}}>
       <Row>
         <Col sm={8}>
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              overflow: "hidden",
-            }}
-          >
-            <div ref={z_p_canvasRef}>
-              <canvas ref={canvasRef} 
-                width="1100px" height="1100px" 
-                style={{
-                  filter: `contrast(${contrastVal}%) brightness(${brightnessVal}%)`
-                }}
-              />
-            </div>
-          </div>
+          <Scrollbars style={{ width: 900, height: 900 ,overflow: "hidden",backgroundColor : "black"}}>
+                <div ref={z_p_canvasRef}>
+                  <canvas ref={canvasRef} 
+                    width="1100px" height="1100px" 
+                    style={{
+                      filter: `contrast(${contrastVal}%) brightness(${brightnessVal}%)`         
+                    }}
+                  />
+              </div>
+          </Scrollbars>
           <>
             <Form.Label>Contrast</Form.Label>
-            <Form.Range onChange={(e) => setContrastVal(Number(e.target.value))} />
+            <Form.Range value={contrastVal} onChange={(e) => setContrastVal(Number(e.target.value))} />
           </>
           <>
             <Form.Label>Blightness</Form.Label>
-            <Form.Range onChange={(e) => setBrightnessVal(Number(e.target.value))} />
+            <Form.Range value={brightnessVal} onChange={(e) => setBrightnessVal(Number(e.target.value))} />
           </>
         </Col>
-
+        <Col sm={4}>
           <StarsList positions={positions} currentPage={currentPage} />
+        </Col>
       </Row>
     </Container>
   );

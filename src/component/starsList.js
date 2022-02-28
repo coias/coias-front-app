@@ -1,11 +1,10 @@
 import { useState, useContext } from "react";
-import { Form, Col } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 
 const StarsList = (props) => {
   const [field, setField] = useState([]);
 
   return (
-    <Col sm={4}>
       <Form>
         {props.positions.map((pos) => {
           if (props.currentPage === parseInt(pos[1])) {
@@ -29,7 +28,6 @@ const StarsList = (props) => {
           }
         })}
       </Form>
-    </Col>
   );
 };
 
