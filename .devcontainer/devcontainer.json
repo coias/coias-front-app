@@ -1,11 +1,11 @@
 {
-	"name": "coias_electron",
+	"name": "coias-fornt-app",
 	"context": "..",
 	"dockerComposeFile": "../../docker-compose.dev.yml",
-	"workspaceFolder": "/opt/coias_electron",
+	"workspaceFolder": "/opt/coias-fornt-app",
 	"service": "front-dev-app",
 	"settings": {},
 	"extensions": [],
-	"onCreateCommand": "bash /opt/coias_electron/Docker/setup.sh",
+	"onCreateCommand": "bash /opt/coias-fornt-app/Docker/setup.sh",
 	"postStartCommand": ["yarn", "react-start"]
 }

@@ -18,7 +18,7 @@ RUN apt update && apt install -y\
     n lts
 
 # copy app
-WORKDIR /opt/coias_electron
+WORKDIR /opt/coias-fornt-app
 COPY . .
 
 RUN yarn
