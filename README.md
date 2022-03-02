@@ -1,4 +1,4 @@
-# coias_electron
+# coias-front-app
 
 coiasフロントアプリ
 
