@@ -61,6 +61,7 @@
     ]
   },
   "devDependencies": {
+    "@eslint/create-config": "^0.1.2",
     "cross-env": "^7.0.3",
     "electron": "^17.0.0",
     "electron-builder": "^22.14.5",

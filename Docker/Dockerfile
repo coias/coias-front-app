@@ -21,5 +21,5 @@ RUN apt update && apt install -y\
 WORKDIR /opt/coias-front-app
 COPY . .
 
-RUN yarn
+RUN yarn --production
 ENTRYPOINT [ "yarn", "react-start" ]
