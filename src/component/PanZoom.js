@@ -2,10 +2,15 @@ import React, { useRef, useEffect, useContext, useState } from "react";
 import _ from "lodash";
 import panzoom from "panzoom";
 import { PageContext, MousePositionContext } from "../App";
+import ContrastBar from "./ContrastBar";
+import BrightnessBar from "./BrightnessBar";
 import axios from "axios";
 import StarsList from "./starsList";
 import { Container, Row, Col, Form } from "react-bootstrap";
-import { Scrollbars } from 'react-custom-scrollbars';
+import { Scrollbars } from "react-custom-scrollbars";
+import { BiCurrentLocation } from "react-icons/bi";
+import { ImContrast, ImBrightnessContrast } from "react-icons/im";
+import MousePosition from "./MousePosition";
 
 const canvasSize = 1050;
 
@@ -17,11 +22,11 @@ const PanZoom = () => {
   const [positions, setPositions] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const { currentPage, setCurrentPage } = useContext(PageContext);
+
+  const [contrastVal, setContrastVal] = useState(50);
+  const [brightnessVal, setBrightnessVal] = useState(50);
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
-
-    const [contrastVal, setContrastVal] = useState(100);
-	const [brightnessVal, setBrightnessVal] = useState(100);
 
   useEffect(() => {
     const z_p_canvas = panzoom(z_p_canvasRef.current, {
@@ -30,16 +35,16 @@ const PanZoom = () => {
       bounds: true,
       boundsPadding: 1.0,
       //autocenter: true,
-      beforeWheel: function(e) {
+      beforeWheel: function (e) {
         // allow wheel-zoom only if altKey is down. Otherwise - ignore
         var shouldIgnore = !e.altKey;
         return shouldIgnore;
       },
-      beforeMouseDown: function(e) {
+      beforeMouseDown: function (e) {
         // allow mouse-down panning only if altKey is down. Otherwise - ignore
         var shouldIgnore = !e.shiftKey;
         return shouldIgnore;
-      }
+      },
     });
 
     return () => {
@@ -66,7 +71,8 @@ const PanZoom = () => {
       context.canvas.width = context.canvas.width;
       context.setTransform(storedTransform);
       const img = new Image();
-      img.src = "./images/" + String(currentPage + 1) + "_disp-coias_nonmask.png";
+      img.src =
+        "./images/" + String(currentPage + 1) + "_disp-coias_nonmask.png";
 
       img.onload = () => {
         context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
@@ -114,29 +120,39 @@ const PanZoom = () => {
   }, []);
 
   return (
-    <Container fluid style={{marginTop: "80px"}}>
+    <Container fluid>
       <Row>
-        <Col sm={8}>
-          <Scrollbars style={{ width: 900, height: 900 ,overflow: "hidden",backgroundColor : "black"}}>
-                <div ref={z_p_canvasRef}>
-                  <canvas ref={canvasRef} 
-                    width="1100px" height="1100px" 
-                    style={{
-                      filter: `contrast(${contrastVal}%) brightness(${brightnessVal}%)`         
-                    }}
-                  />
-              </div>
+        <Col sm={10}>
+          <Scrollbars
+            style={{
+              width: "100%",
+              height: "80vh",
+              overflow: "hidden",
+              backgroundColor: "gray",
+              position: "relative",
+            }}
+          >
+            <div ref={z_p_canvasRef}>
+              <canvas
+                ref={canvasRef}
+                width="1050px"
+                height="1050px"
+                style={{
+                  filter:
+                    "contrast(" +
+                    (contrastVal + 50) +
+                    "%) brightness(" +
+                    (brightnessVal + 50) +
+                    "%)",
+                }}
+              />
+            </div>
+            <MousePosition />
+            <ContrastBar val={contrastVal} set={setContrastVal} />
+            <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
           </Scrollbars>
-          <>
-            <Form.Label>Contrast</Form.Label>
-            <Form.Range value={contrastVal} onChange={(e) => setContrastVal(Number(e.target.value))} />
-          </>
-          <>
-            <Form.Label>Blightness</Form.Label>
-            <Form.Range value={brightnessVal} onChange={(e) => setBrightnessVal(Number(e.target.value))} />
-          </>
         </Col>
-        <Col sm={4}>
+        <Col sm={2}>
           <StarsList positions={positions} currentPage={currentPage} />
         </Col>
       </Row>

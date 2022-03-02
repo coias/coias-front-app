@@ -49,61 +49,92 @@ const PlayMenu = () => {
   return (
     <Navbar bg="light" expand="lg">
       <Container fluid>
-          <Col md={3}>
-            <Nav >
-              <Nav.Item>
-                <p>再生速度:0.1sec</p>
-              </Nav.Item>
-              <Nav.Item>
-                <FaPlay
-                  onClick={() => {
-                    onClickBlinkStart()
-                  }}
-                  size={30}
-                />
-              </Nav.Item>
-              <Nav.Item>
-                <FaSlash 
-                  size={30}
-                  />
-              </Nav.Item>
-              <Nav.Item>
-                <FaStop 
-                  onClick={() => {
-                    onClickBlinkStop()
-                  }}
-                  size={30}
-                />
-              </Nav.Item> 
-              <Nav.Item>
-                <FaStepBackward
-                  onClick={() => {
-                    onClickNext()
-                  }}
-                  size={30}
-                />
-              </Nav.Item> 
-              <Nav.Item>
-                <FaStepForward
-                  onClick={() => {
-                    onClickBack()
-                  }}
-                  size={30}
-                />
-              </Nav.Item>
-            </Nav>
-
-          </Col>
-          <Col md={9}>
+        <Col md={3}>
+          <Nav>
+            <Nav.Item>
+              <p>再生速度:0.1sec</p>
+            </Nav.Item>
+            <Nav.Item>
+              <FaPlay
+                onClick={() => {
+                  onClickBlinkStart();
+                }}
+                size={30}
+              />
+            </Nav.Item>
+            <Nav.Item>
+              <FaSlash size={30} />
+            </Nav.Item>
+            <Nav.Item>
+              <FaStop
+                onClick={() => {
+                  onClickBlinkStop();
+                }}
+                size={30}
+              />
+            </Nav.Item>
+            <Nav.Item>
+              <FaStepBackward
+                onClick={() => {
+                  onClickNext();
+                }}
+                size={30}
+              />
+            </Nav.Item>
+            <Nav.Item>
+              <FaStepForward
+                onClick={() => {
+                  onClickBack();
+                }}
+                size={30}
+              />
+            </Nav.Item>
+          </Nav>
+        </Col>
+        <Col md={9}>
           <ButtonGroup aria-label="Basic example">
-            <Button variant="light" onClick={()=>{setCurrentPage(0)}}>1_disp-coias_nonmask</Button>
-            <Button variant="light" onClick={()=>{setCurrentPage(1)}}>2_disp-coias_nonmask</Button>
-            <Button variant="light" onClick={()=>{setCurrentPage(2)}}>3_disp-coias_nonmask</Button>
-            <Button variant="light" onClick={()=>{setCurrentPage(3)}}>4_disp-coias_nonmask</Button>
-            <Button variant="light" onClick={()=>{setCurrentPage(4)}}>5_disp-coias_nonmask</Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(0);
+              }}
+            >
+              1_disp-coias_nonmask
+            </Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(1);
+              }}
+            >
+              2_disp-coias_nonmask
+            </Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(2);
+              }}
+            >
+              3_disp-coias_nonmask
+            </Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(3);
+              }}
+            >
+              4_disp-coias_nonmask
+            </Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(4);
+              }}
+            >
+              5_disp-coias_nonmask
+            </Button>
           </ButtonGroup>
-          </Col>
-        
+        </Col>
       </Container>
     </Navbar>
   );

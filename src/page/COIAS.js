@@ -1,26 +1,24 @@
 import React, { useContext } from "react";
 import { Container, Row, Col , Nav} from "react-bootstrap";
+import { FaHandPaper, FaMousePointer } from "react-icons/fa";
+import { ImZoomIn, ImZoomOut } from "react-icons/im";
 import { withRouter } from "react-router-dom";
-import { MousePositionContext, PageContext } from "../App";
 import PanZoom from "../component/PanZoom";
 import PlayMenu from "../component/Playmenu";
 
 const COIAS = () => {
-
   return (
     <div>
       <PlayMenu />
       <Container fluid>
         <Row>
-          <Col md={1}>
-          <Nav defaultActiveKey="/home" className="flex-column">
-            <Nav.Link href="/home">Active</Nav.Link>
-            <Nav.Link eventKey="link-1">Link</Nav.Link>
-            <Nav.Link eventKey="link-2">Link</Nav.Link>
-            <Nav.Link eventKey="disabled" disabled>
-              Disabled
-            </Nav.Link>
-          </Nav>
+          <Col>
+            <Nav className="flex-column">
+              <FaHandPaper size={30} />
+              <FaMousePointer size={30} />
+              <ImZoomIn size={30} />
+              <ImZoomOut size={30} />
+            </Nav>
           </Col>
           <Col md={11}>
             <PanZoom />
