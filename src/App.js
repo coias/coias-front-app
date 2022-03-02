@@ -2,12 +2,10 @@ import React, { createContext, useState, useMemo } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import COIAS from "./page/COIAS";
 import Explore_prepare from "./page/Explore_prepare";
-import MenuBar from "./component/MenuBar";
 import "./style/style.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Explore from "./page/Explore";
 import Report from "./page/Report";
-import PanZoom from "./component/PanZoom";
+import Header from "./component/Header";
 
 export const PageContext = createContext({
   currentPage: 0,
@@ -34,14 +32,12 @@ function App() {
 
   return (
     <BrowserRouter>
-      <MenuBar />
+      <Header/>
       <PageContext.Provider value={pageValue}>
         <MousePositionContext.Provider value={mouseValue}>
           <Route path="/COIAS" component={COIAS} />
           <Route path="/Explore_prepare" component={Explore_prepare} />
-          <Route path="/Explore" component={Explore} />
           <Route path="/Report" component={Report} />
-          <PanZoom />
         </MousePositionContext.Provider>
       </PageContext.Provider>
     </BrowserRouter>

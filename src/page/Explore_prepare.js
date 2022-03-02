@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button,Row, Col, Container } from 'react-bootstrap';
 import {withRouter} from 'react-router-dom';
 import FileModal from '../component/FileModal';
 
@@ -16,18 +16,38 @@ export const Explore_prepare = () => {
 
     return(
         <div>
-            <ul className='coias-ul' >
-            {menunames.map(item => 
-            {
-                if(item.id === 1){
-                    return <li key={item.id} className="coias-li"><FileModal/></li>;
-                }else {
-                    return <li key={item.id} className="coias-li"><Button variant="success">{item.name}</Button></li>;
-                }
-            })}
-            </ul>
+            <Row xs="auto">
+                <Col><h4>探索準備  : </h4></Col>
+                <Col >
+                    <ul className='coias-ul' >
+                    {menunames.map(item => 
+                    {
+                        if(item.id === 1){
+                            return <li key={item.id} className="coias-li"><FileModal/></li>;
+                        }else {
+                            return <li key={item.id} className="coias-li"><Button variant="success">{item.name}</Button></li>;
+                        }
+                    })}
+                    </ul>
+                </Col>
+            </Row>
+
+            <Row xs="auto">
+                <Col><h4>選択ファイル:</h4></Col>
+                <Col>
+                    <div style={{backgroundColor: "black", width:"1000px", height:"1000px"}}>
+                        <ul style={{listStyleType:"none", color : "white"}}>
+                            <li>1_disp-coias-nonmask.png</li>
+                            <li>2_disp-coias-nonmask.png</li>
+                            <li>3_disp-coias-nonmask.png</li>
+                            <li>4_disp-coias-nonmask.png</li>
+                            <li>5_disp-coias-nonmask.png</li>
+                        </ul>
+                    </div>     
+                </Col>
+            </Row>
+            
         </div>
-    
     )
 };
 
