@@ -18,7 +18,7 @@ RUN apt update && apt install -y\
     n lts
 
 # copy app
-WORKDIR /opt/coias-fornt-app
+WORKDIR /opt/coias-front-app
 COPY . .
 
 RUN yarn

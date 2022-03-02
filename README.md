@@ -1,4 +1,4 @@
-# coias-fornt-app
+# coias-front-app
 
 coiasフロントアプリ
 

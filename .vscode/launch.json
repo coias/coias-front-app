@@ -5,6 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "pwa-chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "timeout": 20000
+    },
+    {
       "type": "pwa-msedge",
       "request": "launch",
       "name": "Launch Edge against localhost",
@@ -12,13 +20,5 @@
       "webRoot": "${workspaceFolder}",
       "timeout": 20000
     },
-    {
-      "type": "pwa-chrome",
-      "request": "launch",
-      "name": "Launch Chrome against localhost",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}",
-      "timeout": 20000
-    }
   ]
 }
