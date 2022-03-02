@@ -8,13 +8,14 @@ const ContrastBar = (props) => {
     <div
       style={{
         opacity: 0.5,
-        width: "200px",
+        width: "400px",
         height: "50px",
         color: "white",
         backgroundColor: "black",
         position: "absolute",
         bottom: "0px",
-        left: "0px",
+        left: "100px",
+        borderRadius: "5px",
       }}
     >
       <Form.Group as={Row} sm="auto">
@@ -23,7 +24,7 @@ const ContrastBar = (props) => {
             <ImContrast />
           </Form.Label>
         </Col>
-        <Col>
+        <Col sm={10}>
           <Form.Range
             value={props.val}
             onChange={(e) => props.set(Number(e.target.value))}

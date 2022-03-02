@@ -17,6 +17,11 @@ export const MousePositionContext = createContext({
   setCurrentMousePos: () => {},
 });
 
+export const StarPositionContext = createContext({
+  starPos: { x: 0, y: 0 },
+  setStarPos: () => {},
+});
+
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
   const pageValue = useMemo(
@@ -30,14 +35,19 @@ function App() {
     [currentMousePos]
   );
 
+  const [starPos, setStarPos] = useState([]);
+  const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
+
   return (
     <BrowserRouter>
-      <Header/>
+      <Header />
       <PageContext.Provider value={pageValue}>
         <MousePositionContext.Provider value={mouseValue}>
-          <Route path="/COIAS" component={COIAS} />
-          <Route path="/Explore_prepare" component={Explore_prepare} />
-          <Route path="/Report" component={Report} />
+          <StarPositionContext.Provider value={starValue}>
+            <Route path="/COIAS" component={COIAS} />
+            <Route path="/Explore_prepare" component={Explore_prepare} />
+            <Route path="/Report" component={Report} />
+          </StarPositionContext.Provider>
         </MousePositionContext.Provider>
       </PageContext.Provider>
     </BrowserRouter>

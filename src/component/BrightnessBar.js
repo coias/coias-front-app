@@ -8,13 +8,14 @@ const BrightnessBar = (props) => {
     <div
       style={{
         opacity: 0.5,
-        width: "200px",
+        width: "400px",
         height: "50px",
         color: "white",
         backgroundColor: "black",
         position: "absolute",
         bottom: "0px",
-        left: "400px",
+        left: "600px",
+        borderRadius: "5px",
       }}
     >
       <Form.Group as={Row} sm="auto">
@@ -23,7 +24,7 @@ const BrightnessBar = (props) => {
             <ImBrightnessContrast />
           </Form.Label>
         </Col>
-        <Col>
+        <Col sm={10}>
           <Form.Range
             value={props.val}
             onChange={(e) => props.set(Number(e.target.value))}

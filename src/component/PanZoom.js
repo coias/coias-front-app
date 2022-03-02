@@ -1,25 +1,18 @@
 import React, { useRef, useEffect, useContext, useState } from "react";
 import _ from "lodash";
 import panzoom from "panzoom";
-import { PageContext, MousePositionContext } from "../App";
+import { PageContext, MousePositionContext, StarPositionContext } from "../App";
 import ContrastBar from "./ContrastBar";
 import BrightnessBar from "./BrightnessBar";
 import axios from "axios";
 import StarsList from "./starsList";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { Scrollbars } from "react-custom-scrollbars";
-import { BiCurrentLocation } from "react-icons/bi";
-import { ImContrast, ImBrightnessContrast } from "react-icons/im";
 import MousePosition from "./MousePosition";
-
-const canvasSize = 1050;
-
-const zoomBy = 0.1;
 
 const PanZoom = () => {
   const z_p_canvasRef = useRef(null);
   const canvasRef = useRef(null);
-  const [positions, setPositions] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const { currentPage, setCurrentPage } = useContext(PageContext);
 
@@ -27,6 +20,7 @@ const PanZoom = () => {
   const [brightnessVal, setBrightnessVal] = useState(50);
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
+  const { starPos, setStarPos } = useContext(StarPositionContext);
 
   useEffect(() => {
     const z_p_canvas = panzoom(z_p_canvasRef.current, {
@@ -56,7 +50,7 @@ const PanZoom = () => {
     const getDisp = async () => {
       const response = await axios.get("http://127.0.0.1:8000/disp");
       const disp = await response.data.result;
-      setPositions(disp);
+      setStarPos(disp);
     };
     getDisp();
   }, [currentPage]);
@@ -66,7 +60,7 @@ const PanZoom = () => {
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (context && positions.length > 0) {
+    if (context && starPos.length > 0) {
       const storedTransform = context.getTransform();
       context.canvas.width = context.canvas.width;
       context.setTransform(storedTransform);
@@ -76,7 +70,7 @@ const PanZoom = () => {
 
       img.onload = () => {
         context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
-        positions.forEach((pos) => {
+        starPos.forEach((pos) => {
           if (pos[1] === String(currentPage)) {
             const x = parseFloat(pos[2]) - 20;
             const y = img.naturalHeight - parseFloat(pos[3]) + 20;
@@ -93,7 +87,7 @@ const PanZoom = () => {
         });
       };
     }
-  }, [positions]);
+  }, [starPos]);
 
   // add event listener on canvas for mouse position
   useEffect(() => {
@@ -153,7 +147,7 @@ const PanZoom = () => {
           </Scrollbars>
         </Col>
         <Col sm={2}>
-          <StarsList positions={positions} currentPage={currentPage} />
+          <StarsList starPos={starPos} currentPage={currentPage} />
         </Col>
       </Row>
     </Container>
