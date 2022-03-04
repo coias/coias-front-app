@@ -2,8 +2,6 @@ import { useState, useContext } from "react";
 import { Form } from "react-bootstrap";
 
 const StarsList = (props) => {
-  const [posi, setField] = useState([]);
-  const [checked, setChecked] = useState(false);
 
   return (
     <Form>
@@ -23,7 +21,18 @@ const StarsList = (props) => {
           }
           return (
             <div className="mb-3">
-              <Form.Check type="checkbox" onChange={() => {setChecked(checked ? false : true)}} id={pos[0]} label={pos[0]} />
+              <Form.Check 
+                type="checkbox" 
+                defaultChecked={pos[4]}
+                onChange={
+                  () => {
+                    const checked = pos[4] ? false : true;
+                    props.starPos.filter(originalPos => (originalPos[0] === pos[0])).map(originalPos => {originalPos[4] = checked});
+                    console.log(props.starPos);
+                  }
+                } 
+                id={pos[0]} 
+                label={pos[0]} />
             </div>
           );
         }
