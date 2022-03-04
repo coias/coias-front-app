@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
 
-export default function FileModal() {
+export default function FileModal(props) {
 
     const fileInput = useRef();
     const [show, setShow] = useState(false);
@@ -32,13 +32,17 @@ export default function FileModal() {
         const files = fileInput.current.files
         const data = new FormData();
         let request = new XMLHttpRequest();
+        const filesForProps = [];
 
         let file;
 
         for (var i = 0; i < files.length; i++) {
             file = files[i];
-            data.append("files", file, file.name)
+            data.append("files", file, file.name);
+            filesForProps.push(file.name);
         }
+
+        props.setFileNames(filesForProps);
 
         request.open("POST", uri);
         request.onload = function(oEvent) {

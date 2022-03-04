@@ -23,7 +23,7 @@ const StarsList = (props) => {
           }
           return (
             <div className="mb-3">
-              <Form.Check type="checkbox" id={pos[0]} label={pos[0]} />
+              <Form.Check type="checkbox" onChange={() => {setChecked(checked ? false : true)}} id={pos[0]} label={pos[0]} />
             </div>
           );
         }

@@ -18,7 +18,7 @@ const Header = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
       <Nav className="me-auto">
-        <Nav.Link ><h3><Link to="/Explore_prepare">探索準備</Link></h3></Nav.Link>
+        <Nav.Link ><h3><Link to="/">探索準備</Link></h3></Nav.Link>
         <Nav.Link ><h3><Link to="/COIAS">探索/再測定</Link></h3></Nav.Link>
         <Nav.Link ><h3><Link to="/Report">レポート</Link></h3></Nav.Link>
     </Nav>

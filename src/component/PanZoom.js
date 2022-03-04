@@ -21,7 +21,7 @@ const PanZoom = () => {
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
-
+  const uri = process.env.REACT_APP_API_URI;
   useEffect(() => {
     const z_p_canvas = panzoom(z_p_canvasRef.current, {
       maxZoom: 10,
@@ -48,9 +48,9 @@ const PanZoom = () => {
 
   useEffect(() => {
     const getDisp = async () => {
-      const response = await axios.get("http://127.0.0.1:8000/disp");
-      const disp = await response.data.result;
-      setStarPos(disp);
+      const response = await axios.get(uri + "disp");
+      const disp = await response.data.split(/\n/);
+      setStarPos(disp.map(d =>{return d.split(" ")}));
     };
     getDisp();
   }, [currentPage]);

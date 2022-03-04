@@ -44,8 +44,8 @@ function App() {
       <PageContext.Provider value={pageValue}>
         <MousePositionContext.Provider value={mouseValue}>
           <StarPositionContext.Provider value={starValue}>
+            <Route exact path="/" component={Explore_prepare} />
             <Route path="/COIAS" component={COIAS} />
-            <Route path="/Explore_prepare" component={Explore_prepare} />
             <Route path="/Report" component={Report} />
           </StarPositionContext.Provider>
         </MousePositionContext.Provider>

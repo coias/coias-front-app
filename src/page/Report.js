@@ -13,28 +13,18 @@ const Report = () => {
         <h4>レポート:</h4>
       </Col>
       <Col>
-        <Scrollbars
-          style={{
-            width: "100%",
-            height: "80vh",
-            overflow: "hidden",
-            backgroundColor: "black",
-            position: "relative",
-          }}
-        >
-          <ul
-            style={{
-              listStyleType: "none",
-              color: "white",
-              backgroundColor: "black",
-            }}
-          >
-            {starPos.map((pos) => {
-              return <li>{"[ " + pos.toString() + " ]"}</li>;
-            })}
-          </ul>
+        <Scrollbars style={{backgroundColor: "black", width:"1000px", height:"1000px"}}>
+        <div style={{backgroundColor: "black", width:"1000px", height:"1000px"}}>
+            <ul style={{listStyleType:"none", color : "white"}}>
+              {starPos.map(pos => {
+                return <li>{pos[0] + " , " + pos[1] + " , " + pos[2] + " , " + pos[3]}</li>;
+              })}
+            </ul>
+        </div> 
         </Scrollbars>
-      </Col>
+           
+  
+       </Col>
     </Row>
   );
 };
