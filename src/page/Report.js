@@ -16,7 +16,7 @@ const Report = () => {
         <Scrollbars style={{backgroundColor: "black", width:"1000px", height:"1000px"}}>
         <div style={{backgroundColor: "black", width:"1000px", height:"1000px"}}>
             <ul style={{listStyleType:"none", color : "white"}}>
-              {starPos.map(pos => {
+              {starPos.filter(pos => pos[4]).map(pos => {
                 return <li>{pos[0] + " , " + pos[1] + " , " + pos[2] + " , " + pos[3]}</li>;
               })}
             </ul>

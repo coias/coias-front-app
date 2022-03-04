@@ -15,13 +15,13 @@ const PanZoom = () => {
   const canvasRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
   const { currentPage, setCurrentPage } = useContext(PageContext);
-
   const [contrastVal, setContrastVal] = useState(50);
   const [brightnessVal, setBrightnessVal] = useState(50);
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const uri = process.env.REACT_APP_API_URI;
+
   useEffect(() => {
     const z_p_canvas = panzoom(z_p_canvasRef.current, {
       maxZoom: 10,
@@ -50,10 +50,17 @@ const PanZoom = () => {
     const getDisp = async () => {
       const response = await axios.get(uri + "disp");
       const disp = await response.data.split(/\n/);
-      setStarPos(disp.map(d =>{return d.split(" ")}));
+      setStarPos(disp.map(d =>{
+        const array = d.split(" ");
+        array.push(false);
+        return array;
+      }));
+      //console.log("getDisp called")
     };
-    getDisp();
+    if(starPos.length === 0) getDisp();
   }, [currentPage]);
+
+  //console.log(starPos);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -87,7 +94,7 @@ const PanZoom = () => {
         });
       };
     }
-  }, [starPos]);
+  }, [starPos, currentPage]);
 
   // add event listener on canvas for mouse position
   useEffect(() => {
@@ -147,7 +154,7 @@ const PanZoom = () => {
           </Scrollbars>
         </Col>
         <Col sm={2}>
-          <StarsList starPos={starPos} currentPage={currentPage} />
+          <StarsList starPos={starPos} setStarPos={setStarPos} currentPage={currentPage} />
         </Col>
       </Row>
     </Container>
