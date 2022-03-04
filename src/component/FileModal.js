@@ -68,7 +68,7 @@ export default function FileModal(props) {
                 </Modal.Header>
                 <Modal.Body>アップロード後、画像処理をおこないます。<br/>処理は時間がかかります。</Modal.Body>
 
-                <Form onSubmit={handleSubmit} className="mb-3">
+                <Form onSubmit={handleSubmit} className="m-3">
                     <InputGroup hasValidation>
                         <Form.Control type="file" ref={fileInput} onChange={handleChange} isInvalid={valid} multiple/>
                         <Form.Control.Feedback type="invalid">
