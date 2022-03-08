@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import StarsList from './StarsList';
-import { PageContext, MousePositionContext } from '../App';
+import { PageContext, MousePositionContext } from './Context';
 
 function PanZoom() {
   const ZoomPanCanvasRef = useRef(null);

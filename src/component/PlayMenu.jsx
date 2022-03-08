@@ -14,7 +14,7 @@ import {
   FaStepBackward,
 } from 'react-icons/fa';
 import React, { useCallback, useContext, useRef } from 'react';
-import { PageContext } from '../App';
+import { PageContext } from './Context';
 
 function PlayMenu() {
   const { currentPage, setCurrentPage } = useContext(PageContext);
