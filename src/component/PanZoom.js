@@ -66,15 +66,14 @@ const PanZoom = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
+    setLoaded(false);
 
     if (context && starPos.length > 0) {
       const storedTransform = context.getTransform();
       context.canvas.width = context.canvas.width;
       context.setTransform(storedTransform);
       const img = new Image();
-      img.src =
-        "./images/" + String(currentPage + 1) + "_disp-coias_nonmask.png";
-
+      
       img.onload = () => {
         context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
         starPos.forEach((pos) => {
@@ -82,7 +81,9 @@ const PanZoom = () => {
             const x = parseFloat(pos[2]) - 20;
             const y = img.naturalHeight - parseFloat(pos[3]) + 20;
             context.lineWidth = 2;
-            context.strokeStyle = "black";
+            //set stroke style depends on pos[4]
+            context.strokeStyle = pos[4] ? "red" : "black";
+
             context.rect(x, y, 40, 40);
 
             context.font = "15px serif";
@@ -93,6 +94,10 @@ const PanZoom = () => {
           }
         });
       };
+
+      img.src =
+        "./images/" + String(currentPage + 1) + "_disp-coias_nonmask.png";  
+
     }
   }, [starPos, currentPage]);
 

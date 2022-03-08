@@ -28,7 +28,8 @@ const StarsList = (props) => {
                   () => {
                     const checked = pos[4] ? false : true;
                     props.starPos.filter(originalPos => (originalPos[0] === pos[0])).map(originalPos => {originalPos[4] = checked});
-                    console.log(props.starPos);
+                    props.setStarPos(props.starPos);
+                    //console.log(props.starPos);
                   }
                 } 
                 id={pos[0]} 
