@@ -18,6 +18,7 @@
     "git": "^0.1.5",
     "node-sass": "^7.0.1",
     "panzoom": "^9.4.2",
+    "prop-types": "^15.8.1",
     "ramda": "^0.28.0",
     "react": "^17.0.2",
     "react-bootstrap": "^2.1.0",

@@ -1,9 +1,9 @@
 import React from 'react';
-import _ from 'lodash';
-import { Container, Row, Col, Form } from 'react-bootstrap';
-import { ImContrast, ImBrightnessContrast } from 'react-icons/im';
+import { Row, Col, Form } from 'react-bootstrap';
+import { ImContrast } from 'react-icons/im';
+import PropTypes from 'prop-types';
 
-const ContrastBar = (props) => {
+function ContrastBar({ val, set }) {
   return (
     <div
       style={{
@@ -18,7 +18,7 @@ const ContrastBar = (props) => {
         borderRadius: '5px',
       }}
     >
-      <Form.Group as={Row} sm='auto'>
+      <Form.Group as={Row} sm="auto">
         <Col>
           <Form.Label>
             <ImContrast />
@@ -26,13 +26,18 @@ const ContrastBar = (props) => {
         </Col>
         <Col sm={10}>
           <Form.Range
-            value={props.val}
-            onChange={(e) => props.set(Number(e.target.value))}
+            value={val}
+            onChange={(e) => set(Number(e.target.value))}
           />
         </Col>
       </Form.Group>
     </div>
   );
+}
+
+ContrastBar.propTypes = {
+  val: PropTypes.number.isRequired,
+  set: PropTypes.func.isRequired,
 };
 
 export default ContrastBar;

@@ -14,7 +14,7 @@ import BrightnessBar from './BrightnessBar';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-const PanZoom = function () {
+function PanZoom() {
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
@@ -157,6 +157,6 @@ const PanZoom = function () {
       </Row>
     </Container>
   );
-};
+}
 
 export default PanZoom;

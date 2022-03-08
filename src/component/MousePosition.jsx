@@ -1,10 +1,9 @@
-import { useContext } from 'react';
-import { MousePositionContext } from './context';
+import React, { useContext } from 'react';
 import { BiCurrentLocation } from 'react-icons/bi';
+import { MousePositionContext } from './context';
 
-const MousePosition = () => {
-  const { currentMousePos, setCurrentMousePos } =
-    useContext(MousePositionContext);
+function MousePosition() {
+  const { currentMousePos } = useContext(MousePositionContext);
   return (
     <div
       style={{
@@ -19,9 +18,9 @@ const MousePosition = () => {
       }}
     >
       <BiCurrentLocation size={30} />
-      {currentMousePos.x + ',' + currentMousePos.y}
+      {`${currentMousePos.x},${currentMousePos.y}`}
     </div>
   );
-};
+}
 
 export default MousePosition;

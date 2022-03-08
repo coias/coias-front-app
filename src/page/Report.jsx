@@ -34,7 +34,6 @@ function Report() {
                   <li>{pos}</li>
                 ))}
             </ul>
-            {console.log(starPos)}
           </div>
         </Scrollbars>
       </Col>

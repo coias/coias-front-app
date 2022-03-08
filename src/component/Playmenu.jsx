@@ -52,7 +52,7 @@ function PlayMenu() {
   }, []);
 
   return (
-    <Navbar bg='light' expand='lg'>
+    <Navbar bg="light" expand="lg">
       <Container fluid>
         <Col md={3}>
           <Nav>
@@ -97,9 +97,9 @@ function PlayMenu() {
           </Nav>
         </Col>
         <Col md={9}>
-          <ButtonGroup aria-label='Basic example'>
+          <ButtonGroup aria-label="Basic example">
             <Button
-              variant='light'
+              variant="light"
               onClick={() => {
                 setCurrentPage(0);
               }}
@@ -107,7 +107,7 @@ function PlayMenu() {
               1_disp-coias_nonmask
             </Button>
             <Button
-              variant='light'
+              variant="light"
               onClick={() => {
                 setCurrentPage(1);
               }}
@@ -115,7 +115,7 @@ function PlayMenu() {
               2_disp-coias_nonmask
             </Button>
             <Button
-              variant='light'
+              variant="light"
               onClick={() => {
                 setCurrentPage(2);
               }}
@@ -123,7 +123,7 @@ function PlayMenu() {
               3_disp-coias_nonmask
             </Button>
             <Button
-              variant='light'
+              variant="light"
               onClick={() => {
                 setCurrentPage(3);
               }}
@@ -131,7 +131,7 @@ function PlayMenu() {
               4_disp-coias_nonmask
             </Button>
             <Button
-              variant='light'
+              variant="light"
               onClick={() => {
                 setCurrentPage(4);
               }}

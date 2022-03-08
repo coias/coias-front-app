@@ -1,4 +1,5 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { Button, Row, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import FileModal from '../component/FileModal';
@@ -6,13 +7,25 @@ import FileModal from '../component/FileModal';
 function ExplorePrepare() {
   const menunames = [
     { id: 1, name: 'ファイル' },
-    { id: 2, name: '軌道修正' },
-    { id: 3, name: 'ビニングマスク' },
-    { id: 4, name: '画像変換' },
-    { id: 5, name: '光源検出' },
-    { id: 6, name: '自動検出' },
-    { id: 7, name: '全自動処理' },
+    { id: 2, name: '軌道修正', query: 'prempsearchC' },
+    { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=4' },
+    { id: 4, name: '画像変換', query: 'fits2png' },
+    { id: 5, name: '光源検出', query: 'findsource' },
+    { id: 6, name: '自動検出', query: 'astsearch_new' },
+    { id: 7, name: '全自動処理', query: 'AstsearchR?binning=4' },
   ];
+
+  const uri = process.env.REACT_APP_API_URI;
+  const [fileNames, setFileNames] = useState(['Please input files']);
+  const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    const put = async () => {
+      const response = await axios.put(uri + query);
+      console.log(response);
+    };
+    put();
+  }, [query]);
 
   return (
     <div>
@@ -26,13 +39,23 @@ function ExplorePrepare() {
               if (item.id === 1) {
                 return (
                   <li key={item.id} className="coias-li">
-                    <FileModal />
+                    <FileModal
+                      fileNames={fileNames}
+                      setFileNames={setFileNames}
+                    />
                   </li>
                 );
               }
               return (
                 <li key={item.id} className="coias-li">
-                  <Button variant="success">{item.name}</Button>
+                  <Button
+                    onClick={() => {
+                      setQuery(item.query);
+                    }}
+                    variant="success"
+                  >
+                    {item.name}
+                  </Button>
                 </li>
               );
             })}
@@ -53,11 +76,9 @@ function ExplorePrepare() {
             }}
           >
             <ul style={{ listStyleType: 'none', color: 'white' }}>
-              <li>1_disp-coias-nonmask.png</li>
-              <li>2_disp-coias-nonmask.png</li>
-              <li>3_disp-coias-nonmask.png</li>
-              <li>4_disp-coias-nonmask.png</li>
-              <li>5_disp-coias-nonmask.png</li>
+              {fileNames.map((file) => (
+                <li>{file}</li>
+              ))}
             </ul>
           </div>
         </Col>
