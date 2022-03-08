@@ -1,11 +1,11 @@
-import { Col, Row } from "react-bootstrap";
-import { withRouter } from "react-router";
-import { useContext } from "react";
-import { StarPositionContext } from "../App";
-import { Scrollbars } from "react-custom-scrollbars";
+import React, { useContext } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import { withRouter } from 'react-router';
+import { Scrollbars } from 'react-custom-scrollbars';
+import { StarPositionContext } from '../component/context';
 
-const Report = () => {
-  const { starPos, setStarPos } = useContext(StarPositionContext);
+function Report() {
+  const { starPos } = useContext(StarPositionContext);
 
   return (
     <Row xs="auto">
@@ -13,20 +13,33 @@ const Report = () => {
         <h4>レポート:</h4>
       </Col>
       <Col>
-        <Scrollbars style={{backgroundColor: "black", width:"1000px", height:"1000px"}}>
-        <div style={{backgroundColor: "black", width:"1000px", height:"1000px"}}>
-            <ul style={{listStyleType:"none", color : "white"}}>
-              {starPos.filter(pos => pos[4]).map(pos => {
-                return <li>{pos[0] + " , " + pos[1] + " , " + pos[2] + " , " + pos[3]}</li>;
-              })}
+        <Scrollbars
+          style={{
+            backgroundColor: 'black',
+            width: '1000px',
+            height: '1000px',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'black',
+              width: '1000px',
+              height: '1000px',
+            }}
+          >
+            <ul style={{ listStyleType: 'none', color: 'white' }}>
+              {starPos
+                .filter((pos) => pos[4])
+                .map((pos) => (
+                  <li>{pos}</li>
+                ))}
             </ul>
-        </div> 
+            {console.log(starPos)}
+          </div>
         </Scrollbars>
-           
-  
-       </Col>
+      </Col>
     </Row>
   );
-};
+}
 
 export default withRouter(Report);

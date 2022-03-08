@@ -1,79 +1,81 @@
-import React, { useRef, useEffect, useContext, useState } from "react";
-import _ from "lodash";
-import panzoom from "panzoom";
-import { PageContext, MousePositionContext, StarPositionContext } from "../App";
-import ContrastBar from "./ContrastBar";
-import BrightnessBar from "./BrightnessBar";
-import axios from "axios";
-import StarsList from "./starsList";
-import { Container, Row, Col, Form } from "react-bootstrap";
-import { Scrollbars } from "react-custom-scrollbars";
-import MousePosition from "./MousePosition";
+// eslint-disable-next-line object-curly-newline
+import React, { useRef, useEffect, useContext, useState } from 'react';
+import panzoom from 'panzoom';
+import axios from 'axios';
+import { Container, Row, Col } from 'react-bootstrap';
+import { Scrollbars } from 'react-custom-scrollbars';
+import {
+  PageContext,
+  MousePositionContext,
+  StarPositionContext,
+} from './context';
+import ContrastBar from './ContrastBar';
+import BrightnessBar from './BrightnessBar';
+import StarsList from './StarsList';
+import MousePosition from './MousePosition';
 
-const PanZoom = () => {
-  const z_p_canvasRef = useRef(null);
+const PanZoom = function () {
+  const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
-  const [loaded, setLoaded] = useState(false);
-  const { currentPage, setCurrentPage } = useContext(PageContext);
+  const { currentPage } = useContext(PageContext);
   const [contrastVal, setContrastVal] = useState(50);
   const [brightnessVal, setBrightnessVal] = useState(50);
-  const { currentMousePos, setCurrentMousePos } =
-    useContext(MousePositionContext);
+  const { setCurrentMousePos } = useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const uri = process.env.REACT_APP_API_URI;
 
   useEffect(() => {
-    const z_p_canvas = panzoom(z_p_canvasRef.current, {
+    const ZPCanvas = panzoom(ZPCanvasRef.current, {
       maxZoom: 10,
       minZoom: 1,
       bounds: true,
       boundsPadding: 1.0,
-      //autocenter: true,
-      beforeWheel: function (e) {
+      // autocenter: true,
+      beforeWheel(e) {
         // allow wheel-zoom only if altKey is down. Otherwise - ignore
-        var shouldIgnore = !e.altKey;
+        const shouldIgnore = !e.altKey;
         return shouldIgnore;
       },
-      beforeMouseDown: function (e) {
+      beforeMouseDown(e) {
         // allow mouse-down panning only if altKey is down. Otherwise - ignore
-        var shouldIgnore = !e.shiftKey;
+        const shouldIgnore = !e.shiftKey;
         return shouldIgnore;
       },
     });
 
     return () => {
-      z_p_canvas.dispose();
+      ZPCanvas.dispose();
     };
   }, []);
 
   useEffect(() => {
     const getDisp = async () => {
-      const response = await axios.get(uri + "disp");
+      const response = await axios.get(`${uri}disp`);
       const disp = await response.data.split(/\n/);
-      setStarPos(disp.map(d =>{
-        const array = d.split(" ");
-        array.push(false);
-        return array;
-      }));
-      //console.log("getDisp called")
+      setStarPos(
+        disp.map((d) => {
+          const array = d.split(' ');
+          array.push(false);
+          return array;
+        }),
+      );
+      // console.log('getDisp called')
     };
-    if(starPos.length === 0) getDisp();
+    if (starPos.length === 0) getDisp();
   }, [currentPage]);
 
-  //console.log(starPos);
+  // console.log(starPos);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
-    setLoaded(false);
 
     if (context && starPos.length > 0) {
       const storedTransform = context.getTransform();
-      context.canvas.width = context.canvas.width;
       context.setTransform(storedTransform);
       const img = new Image();
-      
+
       img.onload = () => {
         context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
         starPos.forEach((pos) => {
@@ -81,23 +83,20 @@ const PanZoom = () => {
             const x = parseFloat(pos[2]) - 20;
             const y = img.naturalHeight - parseFloat(pos[3]) + 20;
             context.lineWidth = 2;
-            //set stroke style depends on pos[4]
-            context.strokeStyle = pos[4] ? "red" : "black";
+            // set stroke style depends on pos[4]
+            context.strokeStyle = pos[4] ? 'red' : 'black';
 
             context.rect(x, y, 40, 40);
 
-            context.font = "15px serif";
-            context.fillStyle = "red";
+            context.font = '15px serif';
+            context.fillStyle = 'red';
             context.fillText(pos[0], x - 20, y - 10);
             context.stroke();
-            setLoaded(true);
           }
         });
       };
 
-      img.src =
-        "./images/" + String(currentPage + 1) + "_disp-coias_nonmask.png";  
-
+      img.src = `./images/${String(currentPage + 1)}_disp-coias_nonmask.png`;
     }
   }, [starPos, currentPage]);
 
@@ -109,20 +108,17 @@ const PanZoom = () => {
     }
 
     function relativeCoords(event) {
-      var bounds = event.target.getBoundingClientRect(),
-        scaleX = event.target.width / bounds.width, // relationship bitmap vs. element for X
-        scaleY = event.target.height / bounds.height; // relationship bitmap vs. element for Y
+      const bounds = event.target.getBoundingClientRect();
+      const scaleX = event.target.width / bounds.width; // relationship bitmap vs. element for X
+      const scaleY = event.target.height / bounds.height; // relationship bitmap vs. element for Y
 
-      var x = (event.clientX - bounds.left) * scaleX; // scale mouse coordinates after they have
-      var y = (event.clientY - bounds.top) * scaleY; // been adjusted to be relative to element
+      const x = (event.clientX - bounds.left) * scaleX; // scale mouse coordinates after they have
+      const y = (event.clientY - bounds.top) * scaleY; // been adjusted to be relative to element
 
-      setCurrentMousePos({ x: parseInt(x), y: parseInt(y) });
+      setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
     }
 
-    canvasElem.addEventListener("mousemove", relativeCoords);
-    return () => {
-      canvasElem.addEventListener("mousemove", relativeCoords);
-    };
+    canvasElem.addEventListener('mousemove', relativeCoords);
   }, []);
 
   return (
@@ -131,25 +127,22 @@ const PanZoom = () => {
         <Col sm={10}>
           <Scrollbars
             style={{
-              width: "100%",
-              height: "80vh",
-              overflow: "hidden",
-              backgroundColor: "gray",
-              position: "relative",
+              width: '100%',
+              height: '80vh',
+              overflow: 'hidden',
+              backgroundColor: 'gray',
+              position: 'relative',
             }}
           >
-            <div ref={z_p_canvasRef}>
+            <div ref={ZPCanvasRef}>
               <canvas
                 ref={canvasRef}
                 width="1050px"
                 height="1050px"
                 style={{
-                  filter:
-                    "contrast(" +
-                    (contrastVal + 50) +
-                    "%) brightness(" +
-                    (brightnessVal + 50) +
-                    "%)",
+                  filter: `contrast(${contrastVal + 50}%) brightness(${
+                    brightnessVal + 50
+                  }%)`,
                 }}
               />
             </div>
@@ -159,7 +152,7 @@ const PanZoom = () => {
           </Scrollbars>
         </Col>
         <Col sm={2}>
-          <StarsList starPos={starPos} setStarPos={setStarPos} currentPage={currentPage} />
+          <StarsList />
         </Col>
       </Row>
     </Container>
