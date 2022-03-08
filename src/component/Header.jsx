@@ -1,10 +1,10 @@
-import { Navbar,Nav} from "react-bootstrap";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Navbar, Nav } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
-const Header = () => {
-    return(
-
-  <Navbar bg="dark" variant="dark">
+const Header = function () {
+  return (
+    <Navbar bg="dark" variant="dark">
       <Navbar.Brand href="#home">
         <img
           alt=""
@@ -16,16 +16,27 @@ const Header = () => {
         Come On!Impacting Asteroid
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-      <Nav className="me-auto">
-        <Nav.Link ><h3><Link to="/">探索準備</Link></h3></Nav.Link>
-        <Nav.Link ><h3><Link to="/COIAS">探索/再測定</Link></h3></Nav.Link>
-        <Nav.Link ><h3><Link to="/Report">レポート</Link></h3></Nav.Link>
-    </Nav>
-    </Navbar.Collapse>
-
-  </Navbar>
-    );
-}
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="me-auto">
+          <Nav.Link>
+            <h3>
+              <Link to="/">探索準備</Link>
+            </h3>
+          </Nav.Link>
+          <Nav.Link>
+            <h3>
+              <Link to="/COIAS">探索/再測定</Link>
+            </h3>
+          </Nav.Link>
+          <Nav.Link>
+            <h3>
+              <Link to="/Report">レポート</Link>
+            </h3>
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
+  );
+};
 
 export default Header;

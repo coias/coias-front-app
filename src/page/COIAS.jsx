@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react";
-import { Container, Row, Col , Nav} from "react-bootstrap";
-import { FaHandPaper, FaMousePointer } from "react-icons/fa";
-import { ImZoomIn, ImZoomOut } from "react-icons/im";
-import { withRouter } from "react-router-dom";
-import PanZoom from "../component/PanZoom";
-import PlayMenu from "../component/Playmenu";
+import React, { useState } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import { withRouter } from 'react-router-dom';
+import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
+import { ImZoomIn, ImZoomOut } from 'react-icons/im';
+import PanZoom from '../component/PanZoom';
+import PlayMenu from '../component/PlayMenu';
 
-const COIAS = () => {
+function COIAS() {
   const [activate, setActivate] = useState(false);
   return (
     <div>
@@ -14,8 +14,17 @@ const COIAS = () => {
       <Container fluid>
         <Row>
           <Col>
-            <div className="flex-column" style={{display: "flex", alignItems: "center"}}>
-              <FaHandPaper size={30} color={activate ? "red" : "black"} onClick={() => {setActivate(activate ? false : true )}}/>
+            <div
+              className="flex-column"
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              <FaHandPaper
+                size={30}
+                color={activate ? 'red' : 'black'}
+                onClick={() => {
+                  setActivate(!activate);
+                }}
+              />
               <FaMousePointer size={30} />
               <ImZoomIn size={30} />
               <ImZoomOut size={30} />
@@ -28,6 +37,6 @@ const COIAS = () => {
       </Container>
     </div>
   );
-};
+}
 
 export default withRouter(COIAS);
