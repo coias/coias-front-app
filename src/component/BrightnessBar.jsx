@@ -1,7 +1,6 @@
-import React from "react";
-import _ from "lodash";
-import { Container, Row, Col, Form } from "react-bootstrap";
-import { ImBrightnessContrast } from "react-icons/im";
+import React from 'react';
+import { Row, Col, Form } from 'react-bootstrap';
+import { ImBrightnessContrast } from 'react-icons/im';
 
 const BrightnessBar = (props) => {
   return (

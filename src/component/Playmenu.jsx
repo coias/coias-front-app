@@ -1,17 +1,22 @@
-import { Navbar, Nav, Container , Tabs, Tab, Row, Col, Button, ButtonGroup} from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Col,
+  Button,
+  ButtonGroup,
+} from 'react-bootstrap';
 import {
   FaPlay,
   FaStop,
   FaSlash,
   FaStepForward,
   FaStepBackward,
-} from "react-icons/fa";
-import React, { useCallback, useContext, useRef } from "react";
-import { MousePositionContext, PageContext } from "../App";
+} from 'react-icons/fa';
+import React, { useCallback, useContext, useRef } from 'react';
+import { PageContext } from './context';
 
-const PlayMenu = () => {
-  const { currentMousePos, setCurrentMousePos } =
-    useContext(MousePositionContext);
+function PlayMenu() {
   const { currentPage, setCurrentPage } = useContext(PageContext);
 
   const onClickNext = () => {
@@ -33,7 +38,7 @@ const PlayMenu = () => {
     intervalRef.current = setInterval(() => {
       setCurrentPage((c) => {
         if (c === 4) return 0;
-        else return c + 1;
+        return c + 1;
       });
     }, 100);
   }, []);
@@ -47,7 +52,7 @@ const PlayMenu = () => {
   }, []);
 
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg='light' expand='lg'>
       <Container fluid>
         <Col md={3}>
           <Nav>
@@ -92,9 +97,9 @@ const PlayMenu = () => {
           </Nav>
         </Col>
         <Col md={9}>
-          <ButtonGroup aria-label="Basic example">
+          <ButtonGroup aria-label='Basic example'>
             <Button
-              variant="light"
+              variant='light'
               onClick={() => {
                 setCurrentPage(0);
               }}
@@ -102,7 +107,7 @@ const PlayMenu = () => {
               1_disp-coias_nonmask
             </Button>
             <Button
-              variant="light"
+              variant='light'
               onClick={() => {
                 setCurrentPage(1);
               }}
@@ -110,7 +115,7 @@ const PlayMenu = () => {
               2_disp-coias_nonmask
             </Button>
             <Button
-              variant="light"
+              variant='light'
               onClick={() => {
                 setCurrentPage(2);
               }}
@@ -118,7 +123,7 @@ const PlayMenu = () => {
               3_disp-coias_nonmask
             </Button>
             <Button
-              variant="light"
+              variant='light'
               onClick={() => {
                 setCurrentPage(3);
               }}
@@ -126,7 +131,7 @@ const PlayMenu = () => {
               4_disp-coias_nonmask
             </Button>
             <Button
-              variant="light"
+              variant='light'
               onClick={() => {
                 setCurrentPage(4);
               }}
@@ -138,6 +143,6 @@ const PlayMenu = () => {
       </Container>
     </Navbar>
   );
-};
+}
 
 export default PlayMenu;

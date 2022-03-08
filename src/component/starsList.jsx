@@ -1,13 +1,15 @@
-import { useState, useContext } from "react";
-import { Form } from "react-bootstrap";
+import React, { useContext } from 'react';
+import { Form } from 'react-bootstrap';
+import { PageContext, StarPositionContext } from './context';
 
-const StarsList = (props) => {
-
+function StarsList() {
+  const { currentPage } = useContext(PageContext);
+  const { starPos, setStarPos } = useContext(StarPositionContext);
   return (
     <Form>
-      {props.starPos.map((pos) => {
-        if (props.currentPage === parseInt(pos[1])) {
-          if (pos[0].startsWith("K")) {
+      {starPos.map((pos) => {
+        if (currentPage === parseInt(pos[1], 10)) {
+          if (pos[0].startsWith('K')) {
             return (
               <div className="mb-3">
                 <Form.Check
@@ -21,25 +23,35 @@ const StarsList = (props) => {
           }
           return (
             <div className="mb-3">
-              <Form.Check 
-                type="checkbox" 
-                defaultChecked={pos[4]}
-                onChange={
-                  () => {
-                    const checked = pos[4] ? false : true;
-                    props.starPos.filter(originalPos => (originalPos[0] === pos[0])).map(originalPos => {originalPos[4] = checked});
-                    props.setStarPos(props.starPos);
-                    //console.log(props.starPos);
-                  }
-                } 
-                id={pos[0]} 
-                label={pos[0]} />
+              <Form.Check
+                type="checkbox"
+                onChange={() => {
+                  const checked = !pos[4];
+                  const newStarPos = starPos.map((originalPos) => {
+                    if (originalPos[0] === pos[0]) {
+                      const newOriginalPos = [];
+                      newOriginalPos.push(originalPos[0]);
+                      newOriginalPos.push(originalPos[1]);
+                      newOriginalPos.push(originalPos[2]);
+                      newOriginalPos.push(originalPos[3]);
+                      newOriginalPos.push(checked);
+                      return newOriginalPos;
+                    }
+                    return originalPos;
+                  });
+                  setStarPos(newStarPos);
+                  // console.log(props.starPos);
+                }}
+                id={pos[0]}
+                label={pos[0]}
+              />
             </div>
           );
         }
+        return null;
       })}
     </Form>
   );
-};
+}
 
 export default StarsList;
