@@ -1,5 +1,10 @@
 import React from 'react';
-import { Container, Row, Col, Nav } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Nav,
+} from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';

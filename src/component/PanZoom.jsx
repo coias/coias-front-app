@@ -1,10 +1,23 @@
-import React, { useRef, useEffect, useContext, useState } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useContext,
+  useState,
+} from 'react';
 import panzoom from 'panzoom';
 import axios from 'axios';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+} from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import StarsList from './StarsList';
-import { PageContext, MousePositionContext } from './Context';
+import {
+  PageContext,
+  MousePositionContext,
+} from './context';
 
 function PanZoom() {
   const ZoomPanCanvasRef = useRef(null);
