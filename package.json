@@ -40,9 +40,7 @@
     "electron-start": "wait-on http://localhost:3000 && electron .",
     "electron-build": "electron-builder",
     "start": "run-p react-start electron-start",
-    "build": "run-s react-build electron-build",
-    "lint": "eslint 'src/**/*.{js,jsx}'",
-    "lint:fix": "eslint --fix 'src/**/*.{js,jsx}'"
+    "build": "run-s react-build electron-build"
   },
   "eslintConfig": {
     "extends": [

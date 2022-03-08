@@ -5,7 +5,7 @@
 	"workspaceFolder": "/opt/coias-front-app",
 	"service": "front-dev-app",
 	"settings": {},
-	"extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "stylelint.vscode-stylelint"],
+	"extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "stylelint.vscode-stylelint", "msjsdiag.debugger-for-edge"],
 	"onCreateCommand": "bash /opt/coias-front-app/Docker/setup.sh",
 	"postStartCommand": ["yarn", "react-start"]
 }
