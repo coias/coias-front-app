@@ -15,7 +15,7 @@ import BrightnessBar from './BrightnessBar';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-function PanZoom({ activateGrab, activateScroll }) {
+function PanZoom({ isGrab, isScroll }) {
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
@@ -27,10 +27,7 @@ function PanZoom({ activateGrab, activateScroll }) {
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
 
-  const getGrab = () => activateGrab;
-
-  const getScroll = () => activateScroll;
-
+  // panzoomのコンストラクター
   useEffect(() => {
     const ZPCanvas = panzoom(ZPCanvasRef.current, {
       maxZoom: 10,
@@ -38,16 +35,14 @@ function PanZoom({ activateGrab, activateScroll }) {
       bounds: true,
       boundsPadding: 1.0,
       // autocenter: true,
-      beforeWheel(e) {
-        // allow wheel-zoom only if altKey is down. Otherwise - ignore
-        const shouldIgnore = !getScroll();
-        console.log(e);
+      beforeWheel() {
+        // スクロールされる前にisScrollの値を確認
+        const shouldIgnore = !isScroll;
         return shouldIgnore;
       },
       beforeMouseDown() {
-        // allow mouse-down panning only if altKey is down. Otherwise - ignore
-        const shouldIgnore = !getGrab();
-        console.log(getGrab());
+        // スクロールされる前にisGrabの値を確認
+        const shouldIgnore = !isGrab;
         return shouldIgnore;
       },
     });
@@ -55,8 +50,9 @@ function PanZoom({ activateGrab, activateScroll }) {
     return () => {
       ZPCanvas.dispose();
     };
-  }, [activateGrab, activateScroll]);
+  }, [isGrab, isScroll]);
 
+  // 初回のみのAPIの読み込み
   useEffect(() => {
     // disp.txtを取得
     const getDisp = async () => {
@@ -81,6 +77,7 @@ function PanZoom({ activateGrab, activateScroll }) {
     }
   }, [currentPage]);
 
+  // imageの描画
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
@@ -156,7 +153,6 @@ function PanZoom({ activateGrab, activateScroll }) {
                     brightnessVal + 50
                   }%)`,
                 }}
-                activate={activateScroll}
               />
             </div>
             <MousePosition />
@@ -173,8 +169,8 @@ function PanZoom({ activateGrab, activateScroll }) {
 }
 
 PanZoom.propTypes = {
-  activateGrab: PropTypes.bool.isRequired,
-  activateScroll: PropTypes.bool.isRequired,
+  isGrab: PropTypes.bool.isRequired,
+  isScroll: PropTypes.bool.isRequired,
 };
 
 export default PanZoom;

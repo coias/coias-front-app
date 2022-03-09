@@ -7,16 +7,16 @@ import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
 
 function COIAS() {
-  const [activateGrab, setActivateGrab] = useState(false);
-  const [activateScroll, setActivateScroll] = useState(false);
-  const [zoomIn, setZoomIn] = useState(false);
-  const [zoomOut, setZoomOut] = useState(false);
+  const [isGrab, setIsGrab] = useState(false);
+  const [isScroll, setIsScroll] = useState(false);
+  const [isZoomIn, setIsZoomIn] = useState(false);
+  const [isZoomOut, setIsZoomOut] = useState(false);
 
   const findActiveTool = () => {
-    if (activateGrab) setActivateGrab(!activateGrab);
-    else if (activateScroll) setActivateScroll(!activateScroll);
-    else if (zoomIn) setZoomIn(!zoomIn);
-    else if (zoomOut) setZoomOut(!zoomOut);
+    if (isGrab) setIsGrab(!isGrab);
+    else if (isScroll) setIsScroll(!isScroll);
+    else if (isZoomIn) setIsZoomIn(!isZoomIn);
+    else if (isZoomOut) setIsZoomOut(!isZoomOut);
   };
 
   return (
@@ -31,43 +31,40 @@ function COIAS() {
             >
               <FaHandPaper
                 size={30}
-                color={activateGrab ? 'red' : 'black'}
+                color={isGrab ? 'red' : 'black'}
                 onClick={() => {
                   findActiveTool();
-                  setActivateGrab(!activateGrab);
+                  setIsGrab(!isGrab);
                 }}
               />
               <FaMousePointer
                 size={30}
-                color={activateScroll ? 'red' : 'black'}
+                color={isScroll ? 'red' : 'black'}
                 onClick={() => {
                   findActiveTool();
-                  setActivateScroll(!activateScroll);
+                  setIsScroll(!isScroll);
                 }}
               />
               <ImZoomIn
                 size={30}
-                color={zoomIn ? 'red' : 'black'}
+                color={isZoomIn ? 'red' : 'black'}
                 onClick={() => {
                   findActiveTool();
-                  setZoomIn(!zoomIn);
+                  setIsZoomIn(!isZoomIn);
                 }}
               />
               <ImZoomOut
                 size={30}
-                color={zoomOut ? 'red' : 'black'}
+                color={isZoomOut ? 'red' : 'black'}
                 onClick={() => {
                   findActiveTool();
-                  setZoomOut(!zoomOut);
+                  setIsZoomOut(!isZoomOut);
                 }}
               />
             </div>
           </Col>
           <Col md={11}>
-            <PanZoom
-              activateGrab={activateGrab}
-              activateScroll={activateScroll}
-            />
+            <PanZoom isGrab={isGrab} isScroll={isScroll} />
           </Col>
         </Row>
       </Container>
