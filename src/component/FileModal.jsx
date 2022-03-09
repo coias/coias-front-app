@@ -12,7 +12,7 @@ export default function FileModal(props) {
   const [disabled, setDisabled] = useState(true);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const uri = `${process.env.REACT_APP_API_URI}/uploadfiles/`;
+  const uri = `${process.env.REACT_APP_API_URI}uploadfiles/`;
   const handleChange = (e) => {
     // ファイル変更時
     if (e.target.value !== '') {

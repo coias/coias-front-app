@@ -24,7 +24,7 @@ function ExplorePrepare() {
       const response = await axios.put(uri + query);
       console.log(response);
     };
-    put();
+    if (query.length > 0) put();
   }, [query]);
 
   return (
@@ -76,8 +76,8 @@ function ExplorePrepare() {
             }}
           >
             <ul style={{ listStyleType: 'none', color: 'white' }}>
-              {fileNames.map((file) => (
-                <li>{file}</li>
+              {fileNames.map((arr) => (
+                <li key={arr}>{arr}</li>
               ))}
             </ul>
           </div>

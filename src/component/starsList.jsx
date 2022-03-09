@@ -11,7 +11,7 @@ function StarsList() {
         if (currentPage === parseInt(pos[1], 10)) {
           if (pos[0].startsWith('K')) {
             return (
-              <div className="mb-3">
+              <div className="mb-3" key={pos[0]}>
                 <Form.Check
                   disabled
                   type="checkbox"
@@ -22,9 +22,10 @@ function StarsList() {
             );
           }
           return (
-            <div className="mb-3">
+            <div className="mb-3" key={pos[0]}>
               <Form.Check
                 type="checkbox"
+                defaultChecked={pos[4]}
                 onChange={() => {
                   const checked = !pos[4];
                   const newStarPos = starPos.map((originalPos) => {
@@ -40,7 +41,6 @@ function StarsList() {
                     return originalPos;
                   });
                   setStarPos(newStarPos);
-                  // console.log(props.starPos);
                 }}
                 id={pos[0]}
                 label={pos[0]}

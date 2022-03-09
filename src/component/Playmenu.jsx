@@ -6,13 +6,8 @@ import {
   Button,
   ButtonGroup,
 } from 'react-bootstrap';
-import {
-  FaPlay,
-  FaStop,
-  FaSlash,
-  FaStepForward,
-  FaStepBackward,
-} from 'react-icons/fa';
+import * as fa from 'react-icons/fa';
+import { CgFormatSlash } from 'react-icons/cg';
 import React, { useCallback, useContext, useRef } from 'react';
 import { PageContext } from './context';
 
@@ -60,7 +55,7 @@ function PlayMenu() {
               <p>再生速度:0.1sec</p>
             </Nav.Item>
             <Nav.Item>
-              <FaPlay
+              <fa.FaPlay
                 onClick={() => {
                   onClickBlinkStart();
                 }}
@@ -68,10 +63,10 @@ function PlayMenu() {
               />
             </Nav.Item>
             <Nav.Item>
-              <FaSlash size={30} />
+              <CgFormatSlash size={30} />
             </Nav.Item>
             <Nav.Item>
-              <FaStop
+              <fa.FaStop
                 onClick={() => {
                   onClickBlinkStop();
                 }}
@@ -79,7 +74,7 @@ function PlayMenu() {
               />
             </Nav.Item>
             <Nav.Item>
-              <FaStepBackward
+              <fa.FaStepBackward
                 onClick={() => {
                   onClickNext();
                 }}
@@ -87,7 +82,7 @@ function PlayMenu() {
               />
             </Nav.Item>
             <Nav.Item>
-              <FaStepForward
+              <fa.FaStepForward
                 onClick={() => {
                   onClickBack();
                 }}

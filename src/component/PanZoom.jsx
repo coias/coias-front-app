@@ -4,6 +4,7 @@ import panzoom from 'panzoom';
 import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
+import PropTypes from 'prop-types';
 import {
   PageContext,
   MousePositionContext,
@@ -14,15 +15,21 @@ import BrightnessBar from './BrightnessBar';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-function PanZoom() {
+function PanZoom({ activateGrab, activateScroll }) {
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
   const [contrastVal, setContrastVal] = useState(50);
   const [brightnessVal, setBrightnessVal] = useState(50);
+  const [imageURLs, setImageURLs] = useState([]);
   const { setCurrentMousePos } = useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
-  const uri = process.env.REACT_APP_API_URI;
+  const reactApiUri = process.env.REACT_APP_API_URI;
+  const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
+
+  const getGrab = () => activateGrab;
+
+  const getScroll = () => activateScroll;
 
   useEffect(() => {
     const ZPCanvas = panzoom(ZPCanvasRef.current, {
@@ -33,12 +40,14 @@ function PanZoom() {
       // autocenter: true,
       beforeWheel(e) {
         // allow wheel-zoom only if altKey is down. Otherwise - ignore
-        const shouldIgnore = !e.altKey;
+        const shouldIgnore = !getScroll();
+        console.log(e);
         return shouldIgnore;
       },
-      beforeMouseDown(e) {
+      beforeMouseDown() {
         // allow mouse-down panning only if altKey is down. Otherwise - ignore
-        const shouldIgnore = !e.shiftKey;
+        const shouldIgnore = !getGrab();
+        console.log(getGrab());
         return shouldIgnore;
       },
     });
@@ -46,25 +55,31 @@ function PanZoom() {
     return () => {
       ZPCanvas.dispose();
     };
-  }, []);
+  }, [activateGrab, activateScroll]);
 
   useEffect(() => {
+    // disp.txtを取得
     const getDisp = async () => {
-      const response = await axios.get(`${uri}disp`);
-      const disp = await response.data.split(/\n/);
-      setStarPos(
-        disp.map((d) => {
-          const array = d.split(' ');
-          array.push(false);
-          return array;
-        }),
-      );
-      // console.log('getDisp called')
+      const response = await axios.get(`${reactApiUri}disp`);
+      const disp = await response.data.result;
+      setStarPos(disp);
     };
-    if (starPos.length === 0) getDisp();
-  }, [currentPage]);
+    // nginxにある画像を全て取得
+    const getImages = async () => {
+      const response = await axios.get(`${reactApiUri}public_images`);
+      const dataList = await response.data.result.sort();
+      const urlList = dataList
+        .filter((e) => e.endsWith('disp-coias_nonmask.png'))
+        .map((e) => nginxApiUri + e);
+      setImageURLs(urlList);
+    };
 
-  // console.log(starPos);
+    // 初回load時のみ実行
+    if (starPos.length === 0) {
+      getDisp();
+      getImages();
+    }
+  }, [currentPage]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -72,8 +87,8 @@ function PanZoom() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     if (context && starPos.length > 0) {
-      const storedTransform = context.getTransform();
-      context.setTransform(storedTransform);
+      const w = canvas.width;
+      canvas.width = w;
       const img = new Image();
 
       img.onload = () => {
@@ -85,9 +100,7 @@ function PanZoom() {
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
             context.strokeStyle = pos[4] ? 'red' : 'black';
-
-            context.rect(x, y, 40, 40);
-
+            context.strokeRect(x, y, 40, 40);
             context.font = '15px serif';
             context.fillStyle = 'red';
             context.fillText(pos[0], x - 20, y - 10);
@@ -95,8 +108,7 @@ function PanZoom() {
           }
         });
       };
-
-      img.src = `./images/${String(currentPage + 1)}_disp-coias_nonmask.png`;
+      img.src = imageURLs[currentPage];
     }
   }, [starPos, currentPage]);
 
@@ -144,6 +156,7 @@ function PanZoom() {
                     brightnessVal + 50
                   }%)`,
                 }}
+                activate={activateScroll}
               />
             </div>
             <MousePosition />
@@ -158,5 +171,10 @@ function PanZoom() {
     </Container>
   );
 }
+
+PanZoom.propTypes = {
+  activateGrab: PropTypes.bool.isRequired,
+  activateScroll: PropTypes.bool.isRequired,
+};
 
 export default PanZoom;
