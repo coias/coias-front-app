@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { Col, Row } from 'react-bootstrap';
-import { withRouter } from 'react-router';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { StarPositionContext } from '../component/context';
 
@@ -31,7 +30,7 @@ function Report() {
               {starPos
                 .filter((pos) => pos[4])
                 .map((pos) => (
-                  <li>{pos}</li>
+                  <li key={pos[2]}>{pos}</li>
                 ))}
             </ul>
           </div>
@@ -41,4 +40,4 @@ function Report() {
   );
 }
 
-export default withRouter(Report);
+export default Report;

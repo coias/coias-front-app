@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ExplorePrepare from './page/ExplorePrepare';
 import './style/style.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -33,9 +33,11 @@ function App() {
       <PageContext.Provider value={pageValue}>
         <MousePositionContext.Provider value={mouseValue}>
           <StarPositionContext.Provider value={starValue}>
-            <Route exact path="/" component={ExplorePrepare} />
-            <Route path="/COIAS" component={COIAS} />
-            <Route path="/Report" component={Report} />
+            <Routes>
+              <Route path="/" element={<ExplorePrepare />} />
+              <Route path="/COIAS" element={<COIAS />} />
+              <Route path="/Report" element={<Report />} />
+            </Routes>
           </StarPositionContext.Provider>
         </MousePositionContext.Provider>
       </PageContext.Provider>

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
 import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
 import { ImZoomIn, ImZoomOut } from 'react-icons/im';
+import axios from 'axios';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
 
@@ -11,6 +11,10 @@ function COIAS() {
   const [isScroll, setIsScroll] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
   const [isZoomOut, setIsZoomOut] = useState(false);
+  const [imageNames, setImageNames] = useState([]);
+  const [imageURLs, setImageURLs] = useState([]);
+  const reactApiUri = process.env.REACT_APP_API_URI;
+  const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
 
   const findActiveTool = () => {
     if (isGrab) setIsGrab(!isGrab);
@@ -19,9 +23,26 @@ function COIAS() {
     else if (isZoomOut) setIsZoomOut(!isZoomOut);
   };
 
+  // 初回のみのAPIの読み込み
+  useMemo(() => {
+    // nginxにある画像を全て取得
+    const getImages = async () => {
+      const response = await axios.get(`${reactApiUri}public_images`);
+      const dataList = await response.data.result.sort();
+      const nameList = dataList.filter((element) => {
+        const b = element.endsWith('disp-coias_nonmask.png');
+        return b;
+      });
+      const urlList = nameList.map((e) => nginxApiUri + e);
+      setImageNames(nameList);
+      setImageURLs(urlList);
+    };
+    getImages();
+  }, []);
+
   return (
     <div>
-      <PlayMenu />
+      <PlayMenu imageNames={imageNames} />
       <Container fluid>
         <Row>
           <Col>
@@ -64,7 +85,11 @@ function COIAS() {
             </div>
           </Col>
           <Col md={11}>
-            <PanZoom isGrab={isGrab} isScroll={isScroll} />
+            <PanZoom
+              isGrab={isGrab}
+              isScroll={isScroll}
+              imageURLs={imageURLs}
+            />
           </Col>
         </Row>
       </Container>
@@ -72,4 +97,4 @@ function COIAS() {
   );
 }
 
-export default withRouter(COIAS);
+export default COIAS;

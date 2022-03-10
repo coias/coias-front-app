@@ -9,9 +9,10 @@ import {
 import * as fa from 'react-icons/fa';
 import { CgFormatSlash } from 'react-icons/cg';
 import React, { useCallback, useContext, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { PageContext } from './context';
 
-function PlayMenu() {
+function PlayMenu({ imageNames }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
 
   const onClickNext = () => {
@@ -93,51 +94,25 @@ function PlayMenu() {
         </Col>
         <Col md={9}>
           <ButtonGroup aria-label="Basic example">
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(0);
-              }}
-            >
-              1_disp-coias_nonmask
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(1);
-              }}
-            >
-              2_disp-coias_nonmask
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(2);
-              }}
-            >
-              3_disp-coias_nonmask
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(3);
-              }}
-            >
-              4_disp-coias_nonmask
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(4);
-              }}
-            >
-              5_disp-coias_nonmask
-            </Button>
+            {imageNames.map((name, index) => (
+              <Button
+                variant="light"
+                onClick={() => {
+                  setCurrentPage(index);
+                }}
+              >
+                {name}
+              </Button>
+            ))}
           </ButtonGroup>
         </Col>
       </Container>
     </Navbar>
   );
 }
+
+PlayMenu.propTypes = {
+  imageNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 export default PlayMenu;

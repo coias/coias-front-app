@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, Row, Col } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
 import FileModal from '../component/FileModal';
 
 function ExplorePrepare() {
@@ -87,4 +86,4 @@ function ExplorePrepare() {
   );
 }
 
-export default withRouter(ExplorePrepare);
+export default ExplorePrepare;

@@ -1,5 +1,5 @@
 // eslint-disable-next-line object-curly-newline
-import React, { useRef, useEffect, useContext, useState } from 'react';
+import React, { useRef, useEffect, useContext, useState, useMemo } from 'react';
 import panzoom from 'panzoom';
 import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
@@ -15,17 +15,15 @@ import BrightnessBar from './BrightnessBar';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-function PanZoom({ isGrab, isScroll }) {
+function PanZoom({ isGrab, isScroll, imageURLs }) {
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
   const [contrastVal, setContrastVal] = useState(50);
   const [brightnessVal, setBrightnessVal] = useState(50);
-  const [imageURLs, setImageURLs] = useState([]);
   const { setCurrentMousePos } = useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const reactApiUri = process.env.REACT_APP_API_URI;
-  const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
 
   // panzoomのコンストラクター
   useEffect(() => {
@@ -34,6 +32,7 @@ function PanZoom({ isGrab, isScroll }) {
       minZoom: 1,
       bounds: true,
       boundsPadding: 1.0,
+      zoomDoubleClickSpeed: 1,
       // autocenter: true,
       beforeWheel() {
         // スクロールされる前にisScrollの値を確認
@@ -53,29 +52,16 @@ function PanZoom({ isGrab, isScroll }) {
   }, [isGrab, isScroll]);
 
   // 初回のみのAPIの読み込み
-  useEffect(() => {
+  useMemo(() => {
     // disp.txtを取得
     const getDisp = async () => {
       const response = await axios.get(`${reactApiUri}disp`);
       const disp = await response.data.result;
       setStarPos(disp);
     };
-    // nginxにある画像を全て取得
-    const getImages = async () => {
-      const response = await axios.get(`${reactApiUri}public_images`);
-      const dataList = await response.data.result.sort();
-      const urlList = dataList
-        .filter((e) => e.endsWith('disp-coias_nonmask.png'))
-        .map((e) => nginxApiUri + e);
-      setImageURLs(urlList);
-    };
 
-    // 初回load時のみ実行
-    if (starPos.length === 0) {
-      getDisp();
-      getImages();
-    }
-  }, [currentPage]);
+    getDisp();
+  }, []);
 
   // imageの描画
   useEffect(() => {
@@ -83,7 +69,7 @@ function PanZoom({ isGrab, isScroll }) {
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (context && starPos.length > 0) {
+    if (context && starPos.length > 0 && imageURLs.length > 0) {
       const w = canvas.width;
       canvas.width = w;
       const img = new Image();
@@ -107,7 +93,7 @@ function PanZoom({ isGrab, isScroll }) {
       };
       img.src = imageURLs[currentPage];
     }
-  }, [starPos, currentPage]);
+  }, [currentPage, starPos, imageURLs]);
 
   // add event listener on canvas for mouse position
   useEffect(() => {
@@ -143,7 +129,16 @@ function PanZoom({ isGrab, isScroll }) {
               position: 'relative',
             }}
           >
-            <div ref={ZPCanvasRef}>
+            <div
+              ref={ZPCanvasRef}
+              style={{
+                width: '100%',
+                height: '80vh',
+                overflow: 'hidden',
+                backgroundColor: 'gray',
+                position: 'relative',
+              }}
+            >
               <canvas
                 ref={canvasRef}
                 width="1050px"
@@ -171,6 +166,7 @@ function PanZoom({ isGrab, isScroll }) {
 PanZoom.propTypes = {
   isGrab: PropTypes.bool.isRequired,
   isScroll: PropTypes.bool.isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default PanZoom;
