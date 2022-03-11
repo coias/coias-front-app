@@ -2,7 +2,8 @@
 import React, { useRef, useEffect, useContext, useState, useMemo } from 'react';
 import panzoom from 'panzoom';
 import axios from 'axios';
-import { Container, Row, Col } from 'react-bootstrap';
+// eslint-disable-next-line object-curly-newline
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import PropTypes from 'prop-types';
 import {
@@ -21,6 +22,7 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
   const { currentPage } = useContext(PageContext);
   const [contrastVal, setContrastVal] = useState(50);
   const [brightnessVal, setBrightnessVal] = useState(50);
+  const [clickedStarPos, setClickedStarPos] = useState([]);
   const { setCurrentMousePos } = useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -57,11 +59,41 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
     const getDisp = async () => {
       const response = await axios.get(`${reactApiUri}disp`);
       const disp = await response.data.result;
+      disp.forEach((e) => {
+        e.push(false);
+      });
       setStarPos(disp);
     };
 
     getDisp();
   }, []);
+
+  // 探索終了ボタンが押された時の処理
+  const onClickFinishButton = async () => {
+    // memo.txtへの出力
+    const selectedStars = starPos.filter((pos) => (parseInt(pos[1], 10) === 0 && pos[4]))
+      .map((e) => e[0].substring(1));
+    await axios.put(`${reactApiUri}memo`, selectedStars);
+
+    // prempedit
+    await axios.put(`${reactApiUri}prempedit`);
+
+    // prempedit3
+    let s = selectedStars[selectedStars.length - 1];
+    while (s.charAt(0) === '0') {
+      s = s.substring(1);
+    }
+    const num = String(parseInt(s, 10) + 1);
+    await axios.put(`${reactApiUri}prempedit3?num=${num}`);
+
+    // /redisp
+    const response = await axios.put(`${reactApiUri}redisp`);
+    const redisp = await response.data.result;
+    redisp.forEach((e) => {
+      e.push(false);
+    });
+    setStarPos(redisp);
+  };
 
   // imageの描画
   useEffect(() => {
@@ -96,12 +128,59 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
   }, [currentPage, starPos, imageURLs]);
 
   // add event listener on canvas for mouse position
-  useEffect(() => {
+  useMemo(() => {
     const canvasElem = canvasRef.current;
     if (canvasElem === null) {
       return;
     }
 
+    function changeColorOnClick(event) {
+      const rect = event.target.getBoundingClientRect();
+      const point = {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      };
+
+      function testHit(thisx, thisy) {
+        const starx = thisx - 20;
+        const stary = 1050 - thisy + 20;
+        return (
+          // eslint-disable-next-line operator-linebreak
+          starx <= point.x &&
+          // eslint-disable-next-line operator-linebreak
+          point.x <= starx + 40 &&
+          // eslint-disable-next-line operator-linebreak
+          stary <= point.y &&
+          point.y <= stary + 40
+        );
+      }
+
+      const newStarPos = starPos.map((item) => {
+        if (testHit(parseInt(item[2], 10), parseInt(item[3], 10))) {
+          const checked = !item[4];
+          const newOriginalPos = [];
+          newOriginalPos.push(item[0]);
+          newOriginalPos.push(item[1]);
+          newOriginalPos.push(item[2]);
+          newOriginalPos.push(item[3]);
+          newOriginalPos.push(checked);
+          return newOriginalPos;
+        }
+        return item;
+      });
+
+      setClickedStarPos(newStarPos);
+      console.log(clickedStarPos);
+    }
+
+    canvasElem.addEventListener('click', changeColorOnClick);
+  }, [starPos]);
+
+  useEffect(() => {
+    const canvasElem = canvasRef.current;
+    if (canvasElem === null) {
+      return;
+    }
     function relativeCoords(event) {
       const bounds = event.target.getBoundingClientRect();
       const scaleX = event.target.width / bounds.width; // relationship bitmap vs. element for X
@@ -156,6 +235,15 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
           </Scrollbars>
         </Col>
         <Col sm={2}>
+          <Button
+            variant="danger"
+            onClick={() => {
+              onClickFinishButton();
+            }}
+            className="mb-3 p-3"
+          >
+            探索終了
+          </Button>
           <StarsList />
         </Col>
       </Row>

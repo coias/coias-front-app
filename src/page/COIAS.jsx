@@ -27,7 +27,7 @@ function COIAS() {
   useMemo(() => {
     // nginxにある画像を全て取得
     const getImages = async () => {
-      const response = await axios.get(`${reactApiUri}public_images`);
+      const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
       const nameList = dataList.filter((element) => {
         const b = element.endsWith('disp-coias_nonmask.png');

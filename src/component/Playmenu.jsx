@@ -96,6 +96,7 @@ function PlayMenu({ imageNames }) {
           <ButtonGroup aria-label="Basic example">
             {imageNames.map((name, index) => (
               <Button
+                key={name}
                 variant="light"
                 onClick={() => {
                   setCurrentPage(index);
