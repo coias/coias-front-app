@@ -3,6 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import axios from 'axios';
 
 export default function FileModal(props) {
   const state = props;
@@ -32,7 +33,6 @@ export default function FileModal(props) {
     e.preventDefault();
     const { files } = fileInput.current;
     const data = new FormData();
-    const request = new XMLHttpRequest();
     const filesForProps = [];
 
     let file;
@@ -46,15 +46,18 @@ export default function FileModal(props) {
 
     state.setFileNames(filesForProps);
 
-    request.open('POST', uri);
-    request.onload = () => {
-      if (request.status === 200) {
-        console.log('成功！');
-      } else {
-        console.log('失敗');
-      }
+    const postFiles = async () => {
+      await axios
+        .post(uri, data)
+        .then((res) => {
+          console.log(res, 'sucess!');
+        })
+        .catch((error) => {
+          console.log(error.response, 'failed');
+        });
     };
-    request.send(data);
+
+    postFiles();
   };
 
   return (
