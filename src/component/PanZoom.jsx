@@ -226,7 +226,7 @@ function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
     <Container fluid>
       <Row>
         <Col sm={10}>
-          <Scrollbars
+          <div
             style={{
               width: '100%',
               height: '80vh',
@@ -235,31 +235,39 @@ function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
               position: 'relative',
             }}
           >
-            <div
-              ref={ZPCanvasRef}
+            <Scrollbars
               style={{
-                width: '100%',
-                height: '80vh',
+                width: '1050px',
+                height: '1050px',
                 overflow: 'hidden',
                 backgroundColor: 'gray',
-                position: 'relative',
               }}
             >
-              <canvas
-                ref={canvasRef}
-                width="1050px"
-                height="1050px"
+              <div
+                ref={ZPCanvasRef}
                 style={{
-                  filter: `contrast(${contrastVal + 50}%) brightness(${
-                    brightnessVal + 50
-                  }%)`,
+                  width: '100%',
+                  height: '80vh',
+                  overflow: 'hidden',
+                  backgroundColor: 'gray',
                 }}
-              />
-            </div>
+              >
+                <canvas
+                  ref={canvasRef}
+                  width="1050px"
+                  height="1050px"
+                  style={{
+                    filter: `contrast(${contrastVal + 50}%) brightness(${
+                      brightnessVal + 50
+                    }%)`,
+                  }}
+                />
+              </div>
+            </Scrollbars>
             <MousePosition />
             <ContrastBar val={contrastVal} set={setContrastVal} />
             <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
-          </Scrollbars>
+          </div>
         </Col>
         <Col sm={2}>
           <Button
