@@ -4,7 +4,6 @@ import panzoom from 'panzoom';
 import axios from 'axios';
 // eslint-disable-next-line object-curly-newline
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import { Scrollbars } from 'react-custom-scrollbars';
 import PropTypes from 'prop-types';
 import {
   PageContext,
@@ -16,7 +15,7 @@ import BrightnessBar from './BrightnessBar';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
+function PanZoom({ imageURLs }) {
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
@@ -39,13 +38,6 @@ function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
       bounds: true,
       boundsPadding: 1.0,
       zoomDoubleClickSpeed: 1,
-      // autocenter: true,
-      beforeWheel() {
-        // スクロールされる前にisScrollの値を確認
-        const isScroll = document.getElementById('scrollButton').dataset.active;
-        const shouldIgnore = !isScroll;
-        return shouldIgnore;
-      },
       beforeMouseDown() {
         // スクロールされる前にisGrabの値を確認
         const val = document.getElementById('grabButton').dataset.active;
@@ -59,20 +51,6 @@ function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
       ZPCanvas.current.dispose();
     };
   }, []);
-
-  useEffect(() => {
-    if (ZPCanvas === null) return null;
-
-    if (isZoomIn) {
-      ZPCanvas.current.smoothZoom(400, 400, 1.5);
-    } else if (isZoomOut) {
-      ZPCanvas.current.smoothZoom(400, 400, 0);
-    }
-
-    console.log(isZoomIn, isZoomOut);
-
-    return null;
-  }, [isZoomIn, isZoomOut]);
 
   // 初回のみのAPIの読み込み
   useMemo(() => {
@@ -203,6 +181,7 @@ function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
     canvasElem.addEventListener('click', changeColorOnClick);
   }, [starPos]);
 
+  // マウス移動時の挙動制御
   useEffect(() => {
     const canvasElem = canvasRef.current;
     if (canvasElem === null) {
@@ -235,35 +214,26 @@ function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
               position: 'relative',
             }}
           >
-            <Scrollbars
+            <div
+              ref={ZPCanvasRef}
               style={{
-                width: '1050px',
-                height: '1050px',
+                width: '100%',
+                height: '80vh',
                 overflow: 'hidden',
                 backgroundColor: 'gray',
               }}
             >
-              <div
-                ref={ZPCanvasRef}
+              <canvas
+                ref={canvasRef}
+                width="1050px"
+                height="1050px"
                 style={{
-                  width: '100%',
-                  height: '80vh',
-                  overflow: 'hidden',
-                  backgroundColor: 'gray',
+                  filter: `contrast(${contrastVal + 50}%) brightness(${
+                    brightnessVal + 50
+                  }%)`,
                 }}
-              >
-                <canvas
-                  ref={canvasRef}
-                  width="1050px"
-                  height="1050px"
-                  style={{
-                    filter: `contrast(${contrastVal + 50}%) brightness(${
-                      brightnessVal + 50
-                    }%)`,
-                  }}
-                />
-              </div>
-            </Scrollbars>
+              />
+            </div>
             <MousePosition />
             <ContrastBar val={contrastVal} set={setContrastVal} />
             <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
@@ -288,8 +258,6 @@ function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
 
 PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
-  isZoomIn: PropTypes.bool.isRequired,
-  isZoomOut: PropTypes.bool.isRequired,
 };
 
 export default PanZoom;

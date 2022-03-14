@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
-import { ImZoomIn, ImZoomOut } from 'react-icons/im';
 import axios from 'axios';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
@@ -9,19 +8,10 @@ import PlayMenu from '../component/PlayMenu';
 function COIAS() {
   const [isGrab, setIsGrab] = useState(false);
   const [isSelect, setIsSelect] = useState(false);
-  const [isZoomIn, setIsZoomIn] = useState(false);
-  const [isZoomOut, setIsZoomOut] = useState(false);
   const [imageNames, setImageNames] = useState([]);
   const [imageURLs, setImageURLs] = useState([]);
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
-
-  const findActiveTool = () => {
-    if (isGrab) setIsGrab(!isGrab);
-    else if (isSelect) setIsSelect(!isSelect);
-    else if (isZoomIn) setIsZoomIn(!isZoomIn);
-    else if (isZoomOut) setIsZoomOut(!isZoomOut);
-  };
 
   // 初回のみのAPIの読み込み
   useMemo(() => {
@@ -55,7 +45,7 @@ function COIAS() {
                 data-active={isGrab}
                 variant={isGrab ? 'danger' : 'light'}
                 onClick={() => {
-                  findActiveTool();
+                  setIsSelect(false);
                   setIsGrab(!isGrab);
                 }}
               >
@@ -66,42 +56,16 @@ function COIAS() {
                 data-active={isSelect}
                 variant={isSelect ? 'danger' : 'light'}
                 onClick={() => {
-                  findActiveTool();
+                  setIsGrab(false);
                   setIsSelect(!isSelect);
                 }}
               >
                 <FaMousePointer size={30} />
               </Button>
-              <Button
-                id="zoomInButton"
-                data-active={isZoomIn}
-                variant="light"
-                onClick={() => {
-                  setIsZoomOut(false);
-                  setIsZoomIn(!isZoomIn);
-                }}
-              >
-                <ImZoomIn size={30} />
-              </Button>
-              <Button
-                id="zoomOutButton"
-                data-active={isZoomOut}
-                variant="light"
-                onClick={() => {
-                  setIsZoomIn(false);
-                  setIsZoomOut(!isZoomOut);
-                }}
-              >
-                <ImZoomOut size={30} />
-              </Button>
             </div>
           </Col>
           <Col md={11}>
-            <PanZoom
-              imageURLs={imageURLs}
-              isZoomIn={isZoomIn}
-              isZoomOut={isZoomOut}
-            />
+            <PanZoom imageURLs={imageURLs} />
           </Col>
         </Row>
       </Container>
