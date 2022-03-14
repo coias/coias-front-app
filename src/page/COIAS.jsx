@@ -75,7 +75,7 @@ function COIAS() {
               <Button
                 id="zoomInButton"
                 data-active={isZoomIn}
-                variant={isZoomIn ? 'danger' : 'light'}
+                variant="light"
                 onClick={() => {
                   setIsZoomOut(false);
                   setIsZoomIn(!isZoomIn);
@@ -86,7 +86,7 @@ function COIAS() {
               <Button
                 id="zoomOutButton"
                 data-active={isZoomOut}
-                variant={isZoomOut ? 'danger' : 'light'}
+                variant="light"
                 onClick={() => {
                   setIsZoomIn(false);
                   setIsZoomOut(!isZoomOut);

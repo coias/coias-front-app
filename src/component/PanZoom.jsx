@@ -69,6 +69,8 @@ function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
       ZPCanvas.current.smoothZoom(400, 400, 0);
     }
 
+    console.log(isZoomIn, isZoomOut);
+
     return null;
   }, [isZoomIn, isZoomOut]);
 
