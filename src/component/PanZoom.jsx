@@ -16,7 +16,7 @@ import BrightnessBar from './BrightnessBar';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-function PanZoom({ isGrab, isScroll, imageURLs }) {
+function PanZoom({ imageURLs, isZoomIn, isZoomOut }) {
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
@@ -27,9 +27,13 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const reactApiUri = process.env.REACT_APP_API_URI;
 
+  const ZPCanvas = useRef(null);
+
+  const [isGrab, setIsGrab] = useState('');
+
   // panzoomのコンストラクター
   useEffect(() => {
-    const ZPCanvas = panzoom(ZPCanvasRef.current, {
+    ZPCanvas.current = panzoom(ZPCanvasRef.current, {
       maxZoom: 10,
       minZoom: 1,
       bounds: true,
@@ -38,20 +42,35 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
       // autocenter: true,
       beforeWheel() {
         // スクロールされる前にisScrollの値を確認
+        const isScroll = document.getElementById('scrollButton').dataset.active;
         const shouldIgnore = !isScroll;
         return shouldIgnore;
       },
       beforeMouseDown() {
         // スクロールされる前にisGrabの値を確認
-        const shouldIgnore = !isGrab;
+        const val = document.getElementById('grabButton').dataset.active;
+        setIsGrab(val);
+        const shouldIgnore = !(val === 'true');
         return shouldIgnore;
       },
     });
 
     return () => {
-      ZPCanvas.dispose();
+      ZPCanvas.current.dispose();
     };
-  }, [isGrab, isScroll]);
+  }, []);
+
+  useEffect(() => {
+    if (ZPCanvas === null) return null;
+
+    if (isZoomIn) {
+      ZPCanvas.current.smoothZoom(400, 400, 1.5);
+    } else if (isZoomOut) {
+      ZPCanvas.current.smoothZoom(400, 400, 0);
+    }
+
+    return null;
+  }, [isZoomIn, isZoomOut]);
 
   // 初回のみのAPIの読み込み
   useMemo(() => {
@@ -71,7 +90,8 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async () => {
     // memo.txtへの出力
-    const selectedStars = starPos.filter((pos) => (parseInt(pos[1], 10) === 0 && pos[4]))
+    const selectedStars = starPos
+      .filter((pos) => parseInt(pos[1], 10) === 0 && pos[4])
       .map((e) => e[0].substring(1));
     await axios.put(`${reactApiUri}memo`, selectedStars);
 
@@ -170,7 +190,12 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
       });
 
       setClickedStarPos(newStarPos);
-      console.log(clickedStarPos);
+      clickedStarPos.fill();
+    }
+
+    if (isGrab === 'true') {
+      canvasElem.removeEventListener('click', changeColorOnClick);
+      return;
     }
 
     canvasElem.addEventListener('click', changeColorOnClick);
@@ -252,9 +277,9 @@ function PanZoom({ isGrab, isScroll, imageURLs }) {
 }
 
 PanZoom.propTypes = {
-  isGrab: PropTypes.bool.isRequired,
-  isScroll: PropTypes.bool.isRequired,
   imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  isZoomIn: PropTypes.bool.isRequired,
+  isZoomOut: PropTypes.bool.isRequired,
 };
 
 export default PanZoom;

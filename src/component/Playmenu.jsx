@@ -6,13 +6,17 @@ import {
   Button,
   ButtonGroup,
 } from 'react-bootstrap';
-import * as fa from 'react-icons/fa';
-import { CgFormatSlash } from 'react-icons/cg';
+import {
+  FaPlay,
+  FaStop,
+  FaSlash,
+  FaStepForward,
+  FaStepBackward,
+} from 'react-icons/fa';
 import React, { useCallback, useContext, useRef } from 'react';
-import PropTypes from 'prop-types';
 import { PageContext } from './context';
 
-function PlayMenu({ imageNames }) {
+function PlayMenu() {
   const { currentPage, setCurrentPage } = useContext(PageContext);
 
   const onClickNext = () => {
@@ -56,7 +60,7 @@ function PlayMenu({ imageNames }) {
               <p>再生速度:0.1sec</p>
             </Nav.Item>
             <Nav.Item>
-              <fa.FaPlay
+              <FaPlay
                 onClick={() => {
                   onClickBlinkStart();
                 }}
@@ -64,10 +68,10 @@ function PlayMenu({ imageNames }) {
               />
             </Nav.Item>
             <Nav.Item>
-              <CgFormatSlash size={30} />
+              <FaSlash size={30} />
             </Nav.Item>
             <Nav.Item>
-              <fa.FaStop
+              <FaStop
                 onClick={() => {
                   onClickBlinkStop();
                 }}
@@ -75,7 +79,7 @@ function PlayMenu({ imageNames }) {
               />
             </Nav.Item>
             <Nav.Item>
-              <fa.FaStepBackward
+              <FaStepBackward
                 onClick={() => {
                   onClickNext();
                 }}
@@ -83,7 +87,7 @@ function PlayMenu({ imageNames }) {
               />
             </Nav.Item>
             <Nav.Item>
-              <fa.FaStepForward
+              <FaStepForward
                 onClick={() => {
                   onClickBack();
                 }}
@@ -94,26 +98,51 @@ function PlayMenu({ imageNames }) {
         </Col>
         <Col md={9}>
           <ButtonGroup aria-label="Basic example">
-            {imageNames.map((name, index) => (
-              <Button
-                key={name}
-                variant="light"
-                onClick={() => {
-                  setCurrentPage(index);
-                }}
-              >
-                {name}
-              </Button>
-            ))}
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(0);
+              }}
+            >
+              1_disp-coias_nonmask
+            </Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(1);
+              }}
+            >
+              2_disp-coias_nonmask
+            </Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(2);
+              }}
+            >
+              3_disp-coias_nonmask
+            </Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(3);
+              }}
+            >
+              4_disp-coias_nonmask
+            </Button>
+            <Button
+              variant="light"
+              onClick={() => {
+                setCurrentPage(4);
+              }}
+            >
+              5_disp-coias_nonmask
+            </Button>
           </ButtonGroup>
         </Col>
       </Container>
     </Navbar>
   );
 }
-
-PlayMenu.propTypes = {
-  imageNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
 
 export default PlayMenu;

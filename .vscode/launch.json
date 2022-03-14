@@ -1,23 +1,23 @@
 {
-    // https://code.visualstudio.com/docs/nodejs/reactjs-tutorial#_debugging-react
-
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "pwa-chrome",
-      "request": "launch",
-      "name": "Launch Chrome against localhost",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}",
-      "timeout": 20000
-    },
-    {
-      "type": "pwa-msedge",
-      "request": "launch",
-      "name": "Launch Edge against localhost",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}",
-      "timeout": 20000
-    },
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            //"preLaunchTask": "yarn: start",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:3000",
+            "webRoot": "/opt/coias-front-app",
+            "sourceMaps": true,
+            //"name": "`yarn start`",
+            "cwd": "/opt/coias-front-app",
+            "runtimeExecutable": "yarn",
+            "runtimeArgs": [
+                "react-start"
+            ],
+            "sourceMapPathOverrides": {
+                "webpack:///./*": "/opt/coias-front-app/src/*"
+            }
+        },
+    ]
 }

@@ -29,6 +29,7 @@ export default function FileModal(props) {
      * https://ja.reactjs.org/docs/forms.html
      * https://developer.mozilla.org/ja/docs/Web/API/FormData/Using_FormData_Objects
      */
+    e.preventDefault();
     const { files } = fileInput.current;
     const data = new FormData();
     const request = new XMLHttpRequest();
@@ -54,7 +55,6 @@ export default function FileModal(props) {
       }
     };
     request.send(data);
-    e.preventDefault();
   };
 
   return (

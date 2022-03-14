@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
 import { ImZoomIn, ImZoomOut } from 'react-icons/im';
 import axios from 'axios';
@@ -8,7 +8,7 @@ import PlayMenu from '../component/PlayMenu';
 
 function COIAS() {
   const [isGrab, setIsGrab] = useState(false);
-  const [isScroll, setIsScroll] = useState(false);
+  const [isSelect, setIsSelect] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
   const [isZoomOut, setIsZoomOut] = useState(false);
   const [imageNames, setImageNames] = useState([]);
@@ -18,7 +18,7 @@ function COIAS() {
 
   const findActiveTool = () => {
     if (isGrab) setIsGrab(!isGrab);
-    else if (isScroll) setIsScroll(!isScroll);
+    else if (isSelect) setIsSelect(!isSelect);
     else if (isZoomIn) setIsZoomIn(!isZoomIn);
     else if (isZoomOut) setIsZoomOut(!isZoomOut);
   };
@@ -50,45 +50,57 @@ function COIAS() {
               className="flex-column"
               style={{ display: 'flex', alignItems: 'center' }}
             >
-              <FaHandPaper
-                size={30}
-                color={isGrab ? 'red' : 'black'}
+              <Button
+                id="grabButton"
+                data-active={isGrab}
+                variant={isGrab ? 'danger' : 'light'}
                 onClick={() => {
                   findActiveTool();
                   setIsGrab(!isGrab);
                 }}
-              />
-              <FaMousePointer
-                size={30}
-                color={isScroll ? 'red' : 'black'}
+              >
+                <FaHandPaper size={30} />
+              </Button>
+              <Button
+                id="selectButton"
+                data-active={isSelect}
+                variant={isSelect ? 'danger' : 'light'}
                 onClick={() => {
                   findActiveTool();
-                  setIsScroll(!isScroll);
+                  setIsSelect(!isSelect);
                 }}
-              />
-              <ImZoomIn
-                size={30}
-                color={isZoomIn ? 'red' : 'black'}
+              >
+                <FaMousePointer size={30} />
+              </Button>
+              <Button
+                id="zoomInButton"
+                data-active={isZoomIn}
+                variant={isZoomIn ? 'danger' : 'light'}
                 onClick={() => {
-                  findActiveTool();
+                  setIsZoomOut(false);
                   setIsZoomIn(!isZoomIn);
                 }}
-              />
-              <ImZoomOut
-                size={30}
-                color={isZoomOut ? 'red' : 'black'}
+              >
+                <ImZoomIn size={30} />
+              </Button>
+              <Button
+                id="zoomOutButton"
+                data-active={isZoomOut}
+                variant={isZoomOut ? 'danger' : 'light'}
                 onClick={() => {
-                  findActiveTool();
+                  setIsZoomIn(false);
                   setIsZoomOut(!isZoomOut);
                 }}
-              />
+              >
+                <ImZoomOut size={30} />
+              </Button>
             </div>
           </Col>
           <Col md={11}>
             <PanZoom
-              isGrab={isGrab}
-              isScroll={isScroll}
               imageURLs={imageURLs}
+              isZoomIn={isZoomIn}
+              isZoomOut={isZoomOut}
             />
           </Col>
         </Row>

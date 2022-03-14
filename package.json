@@ -42,7 +42,8 @@
     "electron-start": "wait-on http://localhost:3000 && electron .",
     "electron-build": "electron-builder",
     "start": "run-p react-start electron-start",
-    "build": "run-s react-build electron-build"
+    "build": "run-s react-build electron-build",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,md,html}"
   },
   "eslintConfig": {
     "extends": [
