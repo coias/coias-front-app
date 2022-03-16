@@ -6,11 +6,13 @@ import FileModal from '../component/FileModal';
 function ExplorePrepare() {
   const menunames = [
     { id: 1, name: 'ファイル' },
-    { id: 2, name: '軌道修正', query: 'prempsearchC' },
+    { id: 2, name: '事前処理', query: 'preprocess' },
     { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=4' },
-    { id: 4, name: '光源検出', query: 'findsource' },
-    { id: 5, name: '自動検出', query: 'astsearch_new' },
-    { id: 6, name: '全自動処理', query: 'AstsearchR?binning=4' },
+    { id: 4, name: '軌道取得（確定番号）', query: 'prempsearchC1' },
+    { id: 5, name: '軌道取得（仮符号）', query: 'prempsearchC2' },
+    { id: 6, name: '光源検出', query: 'findsource' },
+    { id: 7, name: '自動検出', query: 'astsearch_new' },
+    { id: 8, name: '全自動処理', query: 'AstsearchR?binning=4' },
   ];
 
   const uri = process.env.REACT_APP_API_URI;
