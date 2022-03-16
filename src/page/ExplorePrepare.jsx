@@ -8,10 +8,9 @@ function ExplorePrepare() {
     { id: 1, name: 'ファイル' },
     { id: 2, name: '軌道修正', query: 'prempsearchC' },
     { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=4' },
-    { id: 4, name: '画像変換', query: 'fits2png' },
-    { id: 5, name: '光源検出', query: 'findsource' },
-    { id: 6, name: '自動検出', query: 'astsearch_new' },
-    { id: 7, name: '全自動処理', query: 'AstsearchR?binning=4' },
+    { id: 4, name: '光源検出', query: 'findsource' },
+    { id: 5, name: '自動検出', query: 'astsearch_new' },
+    { id: 6, name: '全自動処理', query: 'AstsearchR?binning=4' },
   ];
 
   const uri = process.env.REACT_APP_API_URI;
