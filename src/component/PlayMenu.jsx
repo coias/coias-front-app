@@ -5,6 +5,7 @@ import {
   Col,
   Button,
   ButtonGroup,
+  Form,
 } from 'react-bootstrap';
 import {
   FaPlay,
@@ -13,11 +14,12 @@ import {
   FaStepForward,
   FaStepBackward,
 } from 'react-icons/fa';
-import React, { useCallback, useContext, useRef } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import { PageContext } from './context';
 
 function PlayMenu() {
   const { currentPage, setCurrentPage } = useContext(PageContext);
+  const [sec, setSec] = useState(0.01);
 
   const onClickNext = () => {
     if (currentPage === 4) setCurrentPage(0);
@@ -40,8 +42,8 @@ function PlayMenu() {
         if (c === 4) return 0;
         return c + 1;
       });
-    }, 100);
-  }, []);
+    }, sec);
+  }, [sec]);
 
   const onClickBlinkStop = useCallback(() => {
     if (intervalRef.current === null) {
@@ -57,42 +59,64 @@ function PlayMenu() {
         <Col md={3}>
           <Nav>
             <Nav.Item>
-              <p>再生速度:0.1sec</p>
+              <Form.Group className="mb-3">
+                <Form.Label>再生速度:</Form.Label>
+                <Form.Control
+                  as="select"
+                  custom
+                  onChange={(v) => {
+                    setSec(parseFloat(v.target.value));
+                  }}
+                >
+                  <option value="10">0.01</option>
+                  <option value="20">0.02</option>
+                  <option value="50">0.05</option>
+                  <option value="100">0.10</option>
+                </Form.Control>
+              </Form.Group>
             </Nav.Item>
             <Nav.Item>
-              <FaPlay
+              <Button
+                variant="light"
                 onClick={() => {
                   onClickBlinkStart();
                 }}
-                size={30}
-              />
+              >
+                <FaPlay size={30} />
+              </Button>
             </Nav.Item>
             <Nav.Item>
               <FaSlash size={30} />
             </Nav.Item>
             <Nav.Item>
-              <FaStop
+              <Button
+                variant="light"
                 onClick={() => {
                   onClickBlinkStop();
                 }}
-                size={30}
-              />
+              >
+                <FaStop size={30} />
+              </Button>
             </Nav.Item>
             <Nav.Item>
-              <FaStepBackward
+              <Button
+                variant="light"
                 onClick={() => {
                   onClickNext();
                 }}
-                size={30}
-              />
+              >
+                <FaStepBackward size={30} />
+              </Button>
             </Nav.Item>
             <Nav.Item>
-              <FaStepForward
+              <Button
+                variant="light"
                 onClick={() => {
                   onClickBack();
                 }}
-                size={30}
-              />
+              >
+                <FaStepForward size={30} />
+              </Button>
             </Nav.Item>
           </Nav>
         </Col>
