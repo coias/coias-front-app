@@ -59,5 +59,11 @@
   height: 90%;
 }
 
-// .starslist {
-// }
+.active {
+  color: #fff !important;
+}
+
+.not-active:hover {
+  color: white !important;
+  cursor: pointer;
+}
