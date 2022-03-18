@@ -1,16 +1,23 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Button, Row, Col } from 'react-bootstrap';
+import {
+  Button,
+  Row,
+  Col,
+  DropdownButton,
+  ButtonGroup,
+  Dropdown,
+} from 'react-bootstrap';
 import FileModal from '../component/FileModal';
 
 function ExplorePrepare() {
   const menunames = [
     { id: 1, name: 'ファイル' },
     { id: 2, name: '軌道修正', query: 'prempsearchC' },
-    { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=4' },
+    { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=' },
     { id: 4, name: '光源検出', query: 'findsource' },
     { id: 5, name: '自動検出', query: 'astsearch_new' },
-    { id: 6, name: '全自動処理', query: 'AstsearchR?binning=4' },
+    { id: 6, name: '全自動処理', query: 'AstsearchR?binning=' },
   ];
 
   const uri = process.env.REACT_APP_API_URI;
@@ -41,6 +48,36 @@ function ExplorePrepare() {
                       fileNames={fileNames}
                       setFileNames={setFileNames}
                     />
+                  </li>
+                );
+              }
+              if (item.id === 3 || item.id === 6) {
+                return (
+                  <li key={item.id} className="coias-li">
+                    <DropdownButton
+                      as={ButtonGroup}
+                      key="Success"
+                      id="dropdown-variants-Success"
+                      variant="success"
+                      title={item.id === 3 ? 'ビニング' : '全自動処理'}
+                    >
+                      <Dropdown.Item
+                        eventKey="1"
+                        onClick={() => {
+                          setQuery(`${item.query}2`);
+                        }}
+                      >
+                        2×2
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        eventKey="2"
+                        onClick={() => {
+                          setQuery(`${item.query}4`);
+                        }}
+                      >
+                        4×4
+                      </Dropdown.Item>
+                    </DropdownButton>
                   </li>
                 );
               }
