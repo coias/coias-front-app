@@ -20,7 +20,7 @@ function COIAS() {
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
       const nameList = dataList.filter((element) => {
-        const b = element.endsWith('disp-coias_nonmask.png');
+        const b = element.endsWith('disp-coias.png');
         return b;
       });
       const urlList = nameList.map((e) => nginxApiUri + e);
