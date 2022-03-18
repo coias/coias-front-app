@@ -93,6 +93,9 @@ function PanZoom({ imageURLs }) {
       e.push(false);
     });
     setStarPos(redisp);
+
+    // rename
+    await axios.put(`${reactApiUri}rename`);
   };
 
   // imageの描画
