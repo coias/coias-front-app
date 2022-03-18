@@ -26,6 +26,7 @@ function BrightnessBar({ val, set }) {
         </Col>
         <Col sm={10}>
           <Form.Range
+            max={300}
             value={val}
             onChange={(e) => set(Number(e.target.value))}
           />
