@@ -13,11 +13,7 @@ import FileModal from '../component/FileModal';
 function ExplorePrepare() {
   const menunames = [
     { id: 1, name: 'ファイル' },
-    {
-      id: 2,
-      name: 'ビニングマスク',
-      query: 'startsearch2R?binning=',
-    },
+    { id: 2, name: 'ビニングマスク', query: 'startsearch2R?binning=' },
     { id: 3, name: '軌道修正', query: 'prempsearchC' },
     { id: 4, name: '光源検出', query: 'findsource' },
     { id: 5, name: '自動検出', query: 'astsearch_new' },
@@ -32,8 +28,7 @@ function ExplorePrepare() {
     const put = async () => {
       if (query.startsWith('startsearch2R?binning='))
         await axios.put(`${uri}preprocess`);
-      const response = await axios.put(uri + query);
-      console.log(response);
+      await axios.put(uri + query);
     };
     if (query.length > 0) put();
   }, [query]);
