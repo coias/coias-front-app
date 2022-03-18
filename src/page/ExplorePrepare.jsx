@@ -13,8 +13,12 @@ import FileModal from '../component/FileModal';
 function ExplorePrepare() {
   const menunames = [
     { id: 1, name: 'ファイル' },
-    { id: 2, name: '軌道修正', query: 'prempsearchC' },
-    { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=' },
+    {
+      id: 2,
+      name: 'ビニングマスク',
+      query: 'startsearch2R?binning=',
+    },
+    { id: 3, name: '軌道修正', query: 'prempsearchC' },
     { id: 4, name: '光源検出', query: 'findsource' },
     { id: 5, name: '自動検出', query: 'astsearch_new' },
     { id: 6, name: '全自動処理', query: 'AstsearchR?binning=' },
@@ -26,6 +30,8 @@ function ExplorePrepare() {
 
   useEffect(() => {
     const put = async () => {
+      if (query.startsWith('startsearch2R?binning='))
+        await axios.put(`${uri}preprocess`);
       const response = await axios.put(uri + query);
       console.log(response);
     };
@@ -51,7 +57,7 @@ function ExplorePrepare() {
                   </li>
                 );
               }
-              if (item.id === 3 || item.id === 6) {
+              if (item.id === 2 || item.id === 6) {
                 return (
                   <li key={item.id} className="coias-li">
                     <DropdownButton
@@ -59,7 +65,7 @@ function ExplorePrepare() {
                       key="Success"
                       id="dropdown-variants-Success"
                       variant="success"
-                      title={item.id === 3 ? 'ビニング' : '全自動処理'}
+                      title={item.name}
                     >
                       <Dropdown.Item
                         eventKey="1"
