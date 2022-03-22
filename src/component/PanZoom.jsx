@@ -19,8 +19,8 @@ function PanZoom({ imageURLs }) {
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
-  const [contrastVal, setContrastVal] = useState(50);
-  const [brightnessVal, setBrightnessVal] = useState(50);
+  const [contrastVal, setContrastVal] = useState(150);
+  const [brightnessVal, setBrightnessVal] = useState(150);
   const [clickedStarPos, setClickedStarPos] = useState([]);
   const { setCurrentMousePos } = useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
@@ -93,6 +93,9 @@ function PanZoom({ imageURLs }) {
       e.push(false);
     });
     setStarPos(redisp);
+
+    // rename
+    await axios.put(`${reactApiUri}rename`);
   };
 
   // imageの描画
@@ -228,8 +231,8 @@ function PanZoom({ imageURLs }) {
                 width="1050px"
                 height="1050px"
                 style={{
-                  filter: `contrast(${contrastVal + 50}%) brightness(${
-                    brightnessVal + 50
+                  filter: `contrast(${contrastVal - 50}%) brightness(${
+                    brightnessVal - 50
                   }%)`,
                 }}
               />

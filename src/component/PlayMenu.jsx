@@ -5,6 +5,7 @@ import {
   Col,
   Button,
   ButtonGroup,
+  Form,
 } from 'react-bootstrap';
 import {
   FaPlay,
@@ -13,11 +14,13 @@ import {
   FaStepForward,
   FaStepBackward,
 } from 'react-icons/fa';
-import React, { useCallback, useContext, useRef } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import { PageContext } from './context';
 
-function PlayMenu() {
+function PlayMenu({ imageNames }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
+  const [sec, setSec] = useState(0.01);
 
   const onClickNext = () => {
     if (currentPage === 4) setCurrentPage(0);
@@ -40,8 +43,8 @@ function PlayMenu() {
         if (c === 4) return 0;
         return c + 1;
       });
-    }, 100);
-  }, []);
+    }, sec);
+  }, [sec]);
 
   const onClickBlinkStop = useCallback(() => {
     if (intervalRef.current === null) {
@@ -57,92 +60,89 @@ function PlayMenu() {
         <Col md={3}>
           <Nav>
             <Nav.Item>
-              <p>再生速度:0.1sec</p>
+              <Form.Group className="mb-3">
+                <Form.Label>再生速度:</Form.Label>
+                <Form.Control
+                  as="select"
+                  custom
+                  onChange={(v) => {
+                    setSec(parseFloat(v.target.value));
+                  }}
+                >
+                  <option value="10">0.01</option>
+                  <option value="20">0.02</option>
+                  <option value="50">0.05</option>
+                  <option value="100">0.10</option>
+                </Form.Control>
+              </Form.Group>
             </Nav.Item>
             <Nav.Item>
-              <FaPlay
+              <Button
+                variant="light"
                 onClick={() => {
                   onClickBlinkStart();
                 }}
-                size={30}
-              />
+              >
+                <FaPlay size={30} />
+              </Button>
             </Nav.Item>
             <Nav.Item>
               <FaSlash size={30} />
             </Nav.Item>
             <Nav.Item>
-              <FaStop
+              <Button
+                variant="light"
                 onClick={() => {
                   onClickBlinkStop();
                 }}
-                size={30}
-              />
+              >
+                <FaStop size={30} />
+              </Button>
             </Nav.Item>
             <Nav.Item>
-              <FaStepBackward
+              <Button
+                variant="light"
                 onClick={() => {
                   onClickNext();
                 }}
-                size={30}
-              />
+              >
+                <FaStepBackward size={30} />
+              </Button>
             </Nav.Item>
             <Nav.Item>
-              <FaStepForward
+              <Button
+                variant="light"
                 onClick={() => {
                   onClickBack();
                 }}
-                size={30}
-              />
+              >
+                <FaStepForward size={30} />
+              </Button>
             </Nav.Item>
           </Nav>
         </Col>
         <Col md={9}>
           <ButtonGroup aria-label="Basic example">
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(0);
-              }}
-            >
-              1_disp-coias_nonmask
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(1);
-              }}
-            >
-              2_disp-coias_nonmask
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(2);
-              }}
-            >
-              3_disp-coias_nonmask
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(3);
-              }}
-            >
-              4_disp-coias_nonmask
-            </Button>
-            <Button
-              variant="light"
-              onClick={() => {
-                setCurrentPage(4);
-              }}
-            >
-              5_disp-coias_nonmask
-            </Button>
+            {imageNames.map((name, index) => (
+              <Button
+                key={name}
+                variant="light"
+                onClick={() => {
+                  setCurrentPage(index);
+                }}
+              >
+                {name}
+              </Button>
+            ))}
           </ButtonGroup>
         </Col>
       </Container>
     </Navbar>
   );
 }
+
+PlayMenu.propTypes = {
+  imageNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 export default PlayMenu;

@@ -1,16 +1,26 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Button, Row, Col } from 'react-bootstrap';
+import {
+  Button,
+  Row,
+  Col,
+  DropdownButton,
+  ButtonGroup,
+  Dropdown,
+} from 'react-bootstrap';
 import FileModal from '../component/FileModal';
 
 function ExplorePrepare() {
   const menunames = [
     { id: 1, name: 'ファイル' },
-    { id: 2, name: '軌道修正', query: 'prempsearchC' },
-    { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=4' },
-    { id: 4, name: '光源検出', query: 'findsource' },
-    { id: 5, name: '自動検出', query: 'astsearch_new' },
-    { id: 6, name: '全自動処理', query: 'AstsearchR?binning=4' },
+    { id: 2, name: '事前処理', query: 'preprocess' },
+    { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=' },
+    // { id: 4, name: '軌道取得（確定番号）', query: 'prempsearchC1' },
+    // { id: 5, name: '軌道取得（仮符号）', query: 'prempsearchC2' },
+    { id: 4, name: '軌道取得', query: 'prempsearchC' },
+    { id: 5, name: '光源検出', query: 'findsource' },
+    { id: 6, name: '自動検出', query: 'astsearch_new' },
+    { id: 7, name: '全自動処理', query: 'AstsearchR?binning=' },
   ];
 
   const uri = process.env.REACT_APP_API_URI;
@@ -19,8 +29,9 @@ function ExplorePrepare() {
 
   useEffect(() => {
     const put = async () => {
-      const response = await axios.put(uri + query);
-      console.log(response);
+      if (query.startsWith('startsearch2R?binning='))
+        await axios.put(`${uri}preprocess`);
+      await axios.put(uri + query);
     };
     if (query.length > 0) put();
   }, [query]);
@@ -41,6 +52,39 @@ function ExplorePrepare() {
                       fileNames={fileNames}
                       setFileNames={setFileNames}
                     />
+                  </li>
+                );
+              }
+              if (
+                item.name === 'ビニングマスク' ||
+                item.name === '全自動処理'
+              ) {
+                return (
+                  <li key={item.id} className="coias-li">
+                    <DropdownButton
+                      as={ButtonGroup}
+                      key="Success"
+                      id="dropdown-variants-Success"
+                      variant="success"
+                      title={item.name}
+                    >
+                      <Dropdown.Item
+                        eventKey="1"
+                        onClick={() => {
+                          setQuery(`${item.query}2`);
+                        }}
+                      >
+                        2×2
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        eventKey="2"
+                        onClick={() => {
+                          setQuery(`${item.query}4`);
+                        }}
+                      >
+                        4×4
+                      </Dropdown.Item>
+                    </DropdownButton>
                   </li>
                 );
               }

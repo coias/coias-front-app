@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function Header() {
   return (
@@ -13,24 +13,45 @@ function Header() {
           height="60"
           className="d-inline-block align-top"
         />
-        Come On!Impacting Asteroid
       </Navbar.Brand>
+      <div style={{ color: 'white' }}>
+        Come On!
+        <br />
+        Impacting Asteroid
+      </div>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
           <NavLink
             to="/"
-            className={(navData) => (navData.isActive ? 'active' : '')}
-            style={{ textDecoration: 'none', color: 'gray' }}
+            className={(navData) =>
+              navData.isActive ? 'active' : 'not-active'
+            }
+            style={{
+              textDecoration: 'none',
+              color: 'gray',
+            }}
           >
             <h3 style={{ paddingLeft: 13 }}>探索準備</h3>
           </NavLink>
-          <Link to="/COIAS" style={{ textDecoration: 'none', color: 'gray' }}>
+          <NavLink
+            to="/COIAS"
+            className={(navData) =>
+              navData.isActive ? 'active' : 'not-active'
+            }
+            style={{ textDecoration: 'none', color: 'gray' }}
+          >
             <h3 style={{ paddingLeft: 13 }}>探索/再測定</h3>
-          </Link>
-          <Link to="/Report" style={{ textDecoration: 'none', color: 'gray' }}>
+          </NavLink>
+          <NavLink
+            to="/Report"
+            className={(navData) =>
+              navData.isActive ? 'active' : 'not-active'
+            }
+            style={{ textDecoration: 'none', color: 'gray' }}
+          >
             <h3 style={{ paddingLeft: 13 }}>レポート</h3>
-          </Link>
+          </NavLink>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
