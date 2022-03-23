@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "yarn: react-start",
+			"command": "yarn",
+			"args": ["react-start"],
+			"runOptions": {"runOn": "folderOpen"}
+		}
+	]
+}
