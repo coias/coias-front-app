@@ -27,8 +27,10 @@ function PanZoom({ imageURLs }) {
   const reactApiUri = process.env.REACT_APP_API_URI;
 
   const ZPCanvas = useRef(null);
-
-  const [isGrab, setIsGrab] = useState('');
+  const RECT_WIDTH = 40;
+  const RECT_HEIGHT = 40;
+  const [IMAGE_WIDTH, setImageWidth] = useState(0);
+  const [IMAGE_HEIGHT, setImageHeight] = useState(0);
 
   // panzoomのコンストラクター
   useEffect(() => {
@@ -41,7 +43,6 @@ function PanZoom({ imageURLs }) {
       beforeMouseDown() {
         // スクロールされる前にisGrabの値を確認
         const val = document.getElementById('grabButton').dataset.active;
-        setIsGrab(val);
         const shouldIgnore = !(val === 'true');
         return shouldIgnore;
       },
@@ -109,18 +110,20 @@ function PanZoom({ imageURLs }) {
       const img = new Image();
 
       img.onload = () => {
+        setImageHeight(img.naturalHeight);
+        setImageWidth(img.naturalWidth);
         context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
         starPos.forEach((pos) => {
           if (pos[1] === String(currentPage)) {
-            const x = parseFloat(pos[2]) - 20;
-            const y = img.naturalHeight - parseFloat(pos[3]) + 20;
+            const x = parseFloat(pos[2]) - RECT_WIDTH / 2;
+            const y = img.naturalHeight - parseFloat(pos[3]) + RECT_WIDTH / 2;
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
             context.strokeStyle = pos[4] ? 'red' : 'black';
-            context.strokeRect(x, y, 40, 40);
+            context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
             context.font = '15px serif';
             context.fillStyle = 'red';
-            context.fillText(pos[0], x - 20, y - 10);
+            context.fillText(pos[0], x - RECT_WIDTH / 2, y - RECT_HEIGHT / 3);
             context.stroke();
           }
         });
@@ -129,34 +132,40 @@ function PanZoom({ imageURLs }) {
     }
   }, [currentPage, starPos, imageURLs]);
 
-  // add event listener on canvas for mouse position
-  useMemo(() => {
+  // マウスクリックに関する処理
+  useEffect(() => {
     const canvasElem = canvasRef.current;
     if (canvasElem === null) {
       return;
     }
 
+    // クリック時に色を変化させるイベントリスナー
     function changeColorOnClick(event) {
+      console.log('Hello');
+      // canvas自体の大きさを取得
       const rect = event.target.getBoundingClientRect();
+      // canvas上でのクリック位置をObjectで保持
       const point = {
         x: event.clientX - rect.left,
         y: event.clientY - rect.top,
       };
 
+      // 当たり判定を検出
       function testHit(thisx, thisy) {
-        const starx = thisx - 20;
-        const stary = 1050 - thisy + 20;
+        const starx = thisx - RECT_WIDTH / 2;
+        const stary = IMAGE_HEIGHT - thisy + RECT_HEIGHT / 2;
         return (
           // eslint-disable-next-line operator-linebreak
           starx <= point.x &&
           // eslint-disable-next-line operator-linebreak
-          point.x <= starx + 40 &&
+          point.x <= starx + RECT_WIDTH &&
           // eslint-disable-next-line operator-linebreak
           stary <= point.y &&
-          point.y <= stary + 40
+          point.y <= stary + RECT_HEIGHT
         );
       }
 
+      // 当たり判定のあった天体を新しくstarPosに上書きする
       const newStarPos = starPos.map((item) => {
         if (testHit(parseInt(item[2], 10), parseInt(item[3], 10))) {
           const checked = !item[4];
@@ -170,18 +179,19 @@ function PanZoom({ imageURLs }) {
         }
         return item;
       });
-
       setClickedStarPos(newStarPos);
       clickedStarPos.fill();
     }
 
-    if (isGrab === 'true') {
-      canvasElem.removeEventListener('click', changeColorOnClick);
-      return;
-    }
+    const isGrab = document.getElementById('grabButton').dataset.active;
+    const isSelect = document.getElementById('selectButton').dataset.active;
 
     canvasElem.addEventListener('click', changeColorOnClick);
-  }, [starPos]);
+
+    if (isGrab === 'true' || isSelect === 'false') {
+      canvasElem.removeEventListener('click', changeColorOnClick);
+    }
+  }, []);
 
   // マウス移動時の挙動制御
   useEffect(() => {
@@ -227,8 +237,8 @@ function PanZoom({ imageURLs }) {
             >
               <canvas
                 ref={canvasRef}
-                width="1050px"
-                height="1050px"
+                width={`${IMAGE_WIDTH}px`}
+                height={`${IMAGE_HEIGHT}px`}
                 style={{
                   filter: `contrast(${contrastVal - 50}%) brightness(${
                     brightnessVal - 50
