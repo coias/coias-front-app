@@ -22,7 +22,8 @@ function PanZoom({ imageURLs }) {
   const [contrastVal, setContrastVal] = useState(150);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [clickedStarPos, setClickedStarPos] = useState([]);
-  const { setCurrentMousePos } = useContext(MousePositionContext);
+  const { currentMousePos, setCurrentMousePos } =
+    useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const reactApiUri = process.env.REACT_APP_API_URI;
 
@@ -38,6 +39,7 @@ function PanZoom({ imageURLs }) {
       maxZoom: 10,
       minZoom: 1,
       bounds: true,
+
       boundsPadding: 1.0,
       zoomDoubleClickSpeed: 1,
       beforeMouseDown() {
@@ -116,7 +118,7 @@ function PanZoom({ imageURLs }) {
         starPos.forEach((pos) => {
           if (pos[1] === String(currentPage)) {
             const x = parseFloat(pos[2]) - RECT_WIDTH / 2;
-            const y = img.naturalHeight - parseFloat(pos[3]) + RECT_WIDTH / 2;
+            const y = img.naturalHeight - parseFloat(pos[3]) + RECT_HEIGHT / 2;
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
             context.strokeStyle = pos[4] ? 'red' : 'black';
@@ -131,67 +133,6 @@ function PanZoom({ imageURLs }) {
       img.src = imageURLs[currentPage];
     }
   }, [currentPage, starPos, imageURLs]);
-
-  // マウスクリックに関する処理
-  useEffect(() => {
-    const canvasElem = canvasRef.current;
-    if (canvasElem === null) {
-      return;
-    }
-
-    // クリック時に色を変化させるイベントリスナー
-    function changeColorOnClick(event) {
-      console.log('Hello');
-      // canvas自体の大きさを取得
-      const rect = event.target.getBoundingClientRect();
-      // canvas上でのクリック位置をObjectで保持
-      const point = {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
-      };
-
-      // 当たり判定を検出
-      function testHit(thisx, thisy) {
-        const starx = thisx - RECT_WIDTH / 2;
-        const stary = IMAGE_HEIGHT - thisy + RECT_HEIGHT / 2;
-        return (
-          // eslint-disable-next-line operator-linebreak
-          starx <= point.x &&
-          // eslint-disable-next-line operator-linebreak
-          point.x <= starx + RECT_WIDTH &&
-          // eslint-disable-next-line operator-linebreak
-          stary <= point.y &&
-          point.y <= stary + RECT_HEIGHT
-        );
-      }
-
-      // 当たり判定のあった天体を新しくstarPosに上書きする
-      const newStarPos = starPos.map((item) => {
-        if (testHit(parseInt(item[2], 10), parseInt(item[3], 10))) {
-          const checked = !item[4];
-          const newOriginalPos = [];
-          newOriginalPos.push(item[0]);
-          newOriginalPos.push(item[1]);
-          newOriginalPos.push(item[2]);
-          newOriginalPos.push(item[3]);
-          newOriginalPos.push(checked);
-          return newOriginalPos;
-        }
-        return item;
-      });
-      setClickedStarPos(newStarPos);
-      clickedStarPos.fill();
-    }
-
-    const isGrab = document.getElementById('grabButton').dataset.active;
-    const isSelect = document.getElementById('selectButton').dataset.active;
-
-    canvasElem.addEventListener('click', changeColorOnClick);
-
-    if (isGrab === 'true' || isSelect === 'false') {
-      canvasElem.removeEventListener('click', changeColorOnClick);
-    }
-  }, []);
 
   // マウス移動時の挙動制御
   useEffect(() => {
@@ -212,6 +153,83 @@ function PanZoom({ imageURLs }) {
 
     canvasElem.addEventListener('mousemove', relativeCoords);
   }, []);
+
+  // マウスクリックに関する処理
+  useEffect(() => {
+    const canvasElem = canvasRef.current;
+    const isSelect = document.getElementById('selectButton').dataset.active;
+    if (canvasElem === null || isSelect === 'false') {
+      return;
+    }
+
+    // クリック時に色を変化させるイベントリスナー
+    function changeColorOnClick(event) {
+      // canvas自体の大きさを取得
+      const rect = event.target.getBoundingClientRect();
+      // canvas上でのクリック位置をObjectで保持
+      const point = {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      };
+
+      // 当たり判定を検出
+      function testHit(thisx, thisy) {
+        const starx = thisx - RECT_WIDTH / 2;
+        const stary = IMAGE_HEIGHT - (thisy + RECT_HEIGHT / 2);
+        // console.log(starx, currentMousePos.x, stary, currentMousePos.y);
+        console.log(
+          starx <= point.x,
+          point.x <= starx + RECT_WIDTH,
+          stary <= point.y,
+          point.y <= stary + RECT_HEIGHT + IMAGE_HEIGHT,
+        );
+        return (
+          // eslint-disable-next-line operator-linebreak
+          starx <= point.x &&
+          // eslint-disable-next-line operator-linebreak
+          point.x <= starx + RECT_WIDTH &&
+          // eslint-disable-next-line operator-linebreak
+          stary <= point.y &&
+          point.y <= stary + RECT_HEIGHT + IMAGE_HEIGHT
+        );
+      }
+
+      // 当たり判定のあった天体を新しくstarPosに上書きする
+      const newStarPos = starPos
+        // .filter((item) => parseInt(item[1], 10) === currentPage)
+        .map((item) => {
+          console.log(item);
+          if (testHit(parseFloat(item[2], 10), parseFloat(item[3], 10))) {
+            const checked = !item[4];
+            const newOriginalPos = [];
+            newOriginalPos.push(item[0]);
+            newOriginalPos.push(item[1]);
+            newOriginalPos.push(item[2]);
+            newOriginalPos.push(item[3]);
+            newOriginalPos.push(checked);
+            console.log(newOriginalPos);
+            return newOriginalPos;
+          }
+          return item;
+        });
+      setClickedStarPos(newStarPos);
+      setStarPos(newStarPos);
+      clickedStarPos.fill();
+    }
+
+    const isGrab = document.getElementById('grabButton').dataset.active;
+
+    canvasElem.addEventListener('click', changeColorOnClick);
+
+    if (isGrab === 'true') {
+      canvasElem.removeEventListener('click', changeColorOnClick);
+    }
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      canvasElem.addEventListener('click', changeColorOnClick);
+    };
+  }, [currentMousePos]);
 
   return (
     <Container fluid>
