@@ -54,16 +54,15 @@ function PanZoom({ imageURLs }) {
 
   // 初回のみのAPIの読み込み
   useMemo(() => {
-    // disp.txtを取得
+    // unknown_disp.txtを取得
     const getDisp = async () => {
-      const response = await axios.get(`${reactApiUri}disp`);
+      const response = await axios.get(`${reactApiUri}unknown_disp`);
       const disp = await response.data.result;
       disp.forEach((e) => {
         e.push(false);
       });
       setStarPos(disp);
     };
-
     getDisp();
   }, []);
 
