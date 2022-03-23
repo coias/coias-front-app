@@ -7,13 +7,9 @@ import {
   ButtonGroup,
   Form,
 } from 'react-bootstrap';
-import {
-  FaPlay,
-  FaStop,
-  FaSlash,
-  FaStepForward,
-  FaStepBackward,
-} from 'react-icons/fa';
+
+import { CgFormatSlash } from 'react-icons/cg';
+import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { PageContext } from './context';
@@ -59,12 +55,11 @@ function PlayMenu({ imageNames }) {
       <Container fluid>
         <Col md={3}>
           <Nav>
-            <Nav.Item>
+            <Nav.Item className="text-center d-flex">
               <Form.Group className="mb-3">
                 <Form.Label>再生速度:</Form.Label>
                 <Form.Control
                   as="select"
-                  custom
                   onChange={(v) => {
                     setSec(parseFloat(v.target.value));
                   }}
@@ -76,7 +71,7 @@ function PlayMenu({ imageNames }) {
                 </Form.Control>
               </Form.Group>
             </Nav.Item>
-            <Nav.Item>
+            <Nav.Item className="text-center d-flex">
               <Button
                 variant="light"
                 onClick={() => {
@@ -86,10 +81,12 @@ function PlayMenu({ imageNames }) {
                 <FaPlay size={30} />
               </Button>
             </Nav.Item>
-            <Nav.Item>
-              <FaSlash size={30} />
+            <Nav.Item className="text-center d-flex p-0 m-0">
+              <Button disabled variant="light">
+                <CgFormatSlash size={40} />
+              </Button>
             </Nav.Item>
-            <Nav.Item>
+            <Nav.Item className="text-center d-flex">
               <Button
                 variant="light"
                 onClick={() => {
@@ -99,21 +96,21 @@ function PlayMenu({ imageNames }) {
                 <FaStop size={30} />
               </Button>
             </Nav.Item>
-            <Nav.Item>
+            <Nav.Item className="text-center d-flex">
               <Button
                 variant="light"
                 onClick={() => {
-                  onClickNext();
+                  onClickBack();
                 }}
               >
                 <FaStepBackward size={30} />
               </Button>
             </Nav.Item>
-            <Nav.Item>
+            <Nav.Item className="text-center d-flex">
               <Button
                 variant="light"
                 onClick={() => {
-                  onClickBack();
+                  onClickNext();
                 }}
               >
                 <FaStepForward size={30} />
