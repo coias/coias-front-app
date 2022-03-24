@@ -16,6 +16,9 @@ import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
 function PanZoom({ imageURLs }) {
+  if (window.hitIndex === undefined) {
+    window.hitIndex = '';
+  }
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
@@ -56,14 +59,40 @@ function PanZoom({ imageURLs }) {
   }, []);
 
   // 初回のみのAPIの読み込み
+  /**
+   * star = {
+   *  starName : string,
+   *  page : number,
+   *  x : float,
+   *  y : float,
+   *  isSelected : boolean,
+   * }
+   */
   useMemo(() => {
     // unknown_disp.txtを取得
     const getDisp = async () => {
       const response = await axios.get(`${reactApiUri}unknown_disp`);
       const disp = await response.data.result;
-      disp.forEach((e) => {
-        e.push(false);
+      /* const stars = new Map();
+      disp.map((item) => {
+        if (stars.has(item[0])) {
+          console.log(stars);
+        } else {
+          stars.set(item[0], {
+            page: parseInt(item[1], 10),
+            positions: {
+              x: parseFloat(item[2], 10),
+              y: parseFloat(item[3], 10),
+            },
+            isSelected: false,
+          });
+        }
       });
+      */
+      disp.forEach((item) => {
+        item.push(false);
+      });
+
       setStarPos(disp);
     };
     getDisp();
@@ -88,7 +117,7 @@ function PanZoom({ imageURLs }) {
     const num = String(parseInt(s, 10) + 1);
     await axios.put(`${reactApiUri}prempedit3?num=${num}`);
 
-    // /redisp
+    // redisp
     const response = await axios.put(`${reactApiUri}redisp`);
     const redisp = await response.data.result;
     redisp.forEach((e) => {
@@ -121,7 +150,8 @@ function PanZoom({ imageURLs }) {
             const y = img.naturalHeight - parseFloat(pos[3]) + RECT_HEIGHT / 2;
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
-            context.strokeStyle = pos[4] ? 'red' : 'black';
+            // console.log(index, window.hitIndex);
+            context.strokeStyle = window.hitIndex === pos[0] ? 'red' : 'black';
             context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
             context.font = '15px serif';
             context.fillStyle = 'red';
@@ -177,12 +207,12 @@ function PanZoom({ imageURLs }) {
         const starx = thisx - RECT_WIDTH / 2;
         const stary = IMAGE_HEIGHT - (thisy + RECT_HEIGHT / 2);
         // console.log(starx, currentMousePos.x, stary, currentMousePos.y);
-        console.log(
+        /* console.log(
           starx <= point.x,
           point.x <= starx + RECT_WIDTH,
           stary <= point.y,
           point.y <= stary + RECT_HEIGHT + IMAGE_HEIGHT,
-        );
+        ); */
         return (
           // eslint-disable-next-line operator-linebreak
           starx <= point.x &&
@@ -194,12 +224,18 @@ function PanZoom({ imageURLs }) {
         );
       }
 
+      window.hitIndex = '';
       // 当たり判定のあった天体を新しくstarPosに上書きする
       const newStarPos = starPos
         // .filter((item) => parseInt(item[1], 10) === currentPage)
         .map((item) => {
           console.log(item);
-          if (testHit(parseFloat(item[2], 10), parseFloat(item[3], 10))) {
+          if (
+            item[1] === String(currentPage) &&
+            testHit(parseFloat(item[2], 10), parseFloat(item[3], 10))
+          ) {
+            // eslint-disable-next-line prefer-destructuring
+            window.hitIndex = item[0];
             const checked = !item[4];
             const newOriginalPos = [];
             newOriginalPos.push(item[0]);
@@ -207,7 +243,7 @@ function PanZoom({ imageURLs }) {
             newOriginalPos.push(item[2]);
             newOriginalPos.push(item[3]);
             newOriginalPos.push(checked);
-            console.log(newOriginalPos);
+            // console.log(newOriginalPos);
             return newOriginalPos;
           }
           return item;
