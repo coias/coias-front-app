@@ -12,6 +12,10 @@ import {
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import FileModal from '../component/FileModal';
 
+/**
+ * 2022.03.24 y changed.
+ * 全自動だけ段分け。
+ */
 function ExplorePrepare() {
   const menunames = [
     { id: 1, name: 'ファイル' },
