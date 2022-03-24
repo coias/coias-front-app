@@ -144,7 +144,9 @@ function PanZoom({ imageURLs }) {
         setImageHeight(img.naturalHeight);
         setImageWidth(img.naturalWidth);
         context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+        console.table(starPos);
         starPos.forEach((pos) => {
+          // console.log(pos[1], currentPage);
           if (pos[1] === String(currentPage)) {
             const x = parseFloat(pos[2]) - RECT_WIDTH / 2;
             const y = img.naturalHeight - parseFloat(pos[3]) + RECT_HEIGHT / 2;
@@ -185,73 +187,72 @@ function PanZoom({ imageURLs }) {
   }, []);
 
   // マウスクリックに関する処理
-  useEffect(() => {
+  useEffect(() => {}, [currentMousePos]);
+
+  // クリック時に色を変化させるイベントリスナー
+  function changeColorOnClick(event) {
     const canvasElem = canvasRef.current;
     const isSelect = document.getElementById('selectButton').dataset.active;
     if (canvasElem === null || isSelect === 'false') {
       return;
     }
+    // canvas自体の大きさを取得
+    const rect = event.target.getBoundingClientRect();
+    // canvas上でのクリック位置をObjectで保持
+    const point = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
 
-    // クリック時に色を変化させるイベントリスナー
-    function changeColorOnClick(event) {
-      // canvas自体の大きさを取得
-      const rect = event.target.getBoundingClientRect();
-      // canvas上でのクリック位置をObjectで保持
-      const point = {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
-      };
-
-      // 当たり判定を検出
-      function testHit(thisx, thisy) {
-        const starx = thisx - RECT_WIDTH / 2;
-        const stary = IMAGE_HEIGHT - (thisy + RECT_HEIGHT / 2);
-        // console.log(starx, currentMousePos.x, stary, currentMousePos.y);
-        /* console.log(
+    // 当たり判定を検出
+    function testHit(thisx, thisy) {
+      const starx = thisx - RECT_WIDTH / 2;
+      const stary = IMAGE_HEIGHT - (thisy + RECT_HEIGHT / 2);
+      // console.log(starx, currentMousePos.x, stary, currentMousePos.y);
+      /* console.log(
           starx <= point.x,
           point.x <= starx + RECT_WIDTH,
           stary <= point.y,
           point.y <= stary + RECT_HEIGHT + IMAGE_HEIGHT,
         ); */
-        return (
-          // eslint-disable-next-line operator-linebreak
-          starx <= point.x &&
-          // eslint-disable-next-line operator-linebreak
-          point.x <= starx + RECT_WIDTH &&
-          // eslint-disable-next-line operator-linebreak
-          stary <= point.y &&
-          point.y <= stary + RECT_HEIGHT + IMAGE_HEIGHT
-        );
-      }
-
-      window.hitIndex = '';
-      // 当たり判定のあった天体を新しくstarPosに上書きする
-      const newStarPos = starPos
-        // .filter((item) => parseInt(item[1], 10) === currentPage)
-        .map((item) => {
-          console.log(item);
-          if (
-            item[1] === String(currentPage) &&
-            testHit(parseFloat(item[2], 10), parseFloat(item[3], 10))
-          ) {
-            // eslint-disable-next-line prefer-destructuring
-            window.hitIndex = item[0];
-            const checked = !item[4];
-            const newOriginalPos = [];
-            newOriginalPos.push(item[0]);
-            newOriginalPos.push(item[1]);
-            newOriginalPos.push(item[2]);
-            newOriginalPos.push(item[3]);
-            newOriginalPos.push(checked);
-            // console.log(newOriginalPos);
-            return newOriginalPos;
-          }
-          return item;
-        });
-      setClickedStarPos(newStarPos);
-      setStarPos(newStarPos);
-      clickedStarPos.fill();
+      return (
+        // eslint-disable-next-line operator-linebreak
+        starx <= point.x &&
+        // eslint-disable-next-line operator-linebreak
+        point.x <= starx + RECT_WIDTH &&
+        // eslint-disable-next-line operator-linebreak
+        stary <= point.y &&
+        point.y <= stary + RECT_HEIGHT + IMAGE_HEIGHT
+      );
     }
+
+    window.hitIndex = '';
+    // 当たり判定のあった天体を新しくstarPosに上書きする
+    const newStarPos = starPos
+      // .filter((item) => parseInt(item[1], 10) === currentPage)
+      .map((item) => {
+        console.log(item);
+        if (
+          item[1] === String(currentPage) &&
+          testHit(parseFloat(item[2], 10), parseFloat(item[3], 10))
+        ) {
+          // eslint-disable-next-line prefer-destructuring
+          window.hitIndex = item[0];
+          const checked = !item[4];
+          const newOriginalPos = [];
+          newOriginalPos.push(item[0]);
+          newOriginalPos.push(item[1]);
+          newOriginalPos.push(item[2]);
+          newOriginalPos.push(item[3]);
+          newOriginalPos.push(checked);
+          // console.log(newOriginalPos);
+          return newOriginalPos;
+        }
+        return item;
+      });
+    setClickedStarPos(newStarPos);
+    setStarPos(newStarPos);
+    clickedStarPos.fill();
 
     const isGrab = document.getElementById('grabButton').dataset.active;
 
@@ -265,7 +266,7 @@ function PanZoom({ imageURLs }) {
     return () => {
       canvasElem.addEventListener('click', changeColorOnClick);
     };
-  }, [currentMousePos]);
+  }
 
   return (
     <Container fluid>
@@ -293,6 +294,9 @@ function PanZoom({ imageURLs }) {
                 ref={canvasRef}
                 width={`${IMAGE_WIDTH}px`}
                 height={`${IMAGE_HEIGHT}px`}
+                onClick={(e) => {
+                  changeColorOnClick(e);
+                }}
                 style={{
                   filter: `contrast(${contrastVal - 50}%) brightness(${
                     brightnessVal - 50
@@ -308,8 +312,8 @@ function PanZoom({ imageURLs }) {
         <Col sm={2}>
           <Button
             variant="danger"
-            onClick={() => {
-              onClickFinishButton();
+            onClick={(e) => {
+              onClickFinishButton(e);
             }}
             className="mb-3 p-3"
           >
