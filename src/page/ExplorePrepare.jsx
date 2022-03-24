@@ -7,7 +7,9 @@ import {
   DropdownButton,
   ButtonGroup,
   Dropdown,
+  Spinner,
 } from 'react-bootstrap';
+import { AiOutlineArrowRight } from 'react-icons/ai';
 import FileModal from '../component/FileModal';
 
 function ExplorePrepare() {
@@ -25,18 +27,23 @@ function ExplorePrepare() {
   const uri = process.env.REACT_APP_API_URI;
   const [fileNames, setFileNames] = useState(['Please input files']);
   const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const put = async () => {
+      setLoading(true);
       if (query.startsWith('startsearch2R?binning='))
         await axios.put(`${uri}preprocess`);
-      await axios.put(uri + query);
+      await axios
+        .put(uri + query)
+        .then(() => setLoading(false))
+        .catch(() => setLoading(false));
     };
     if (query.length > 0) put();
   }, [query]);
 
   return (
-    <div>
+    <div style={{}}>
       <Row xs="auto">
         <Col>
           <h4>探索準備 : </h4>
@@ -46,61 +53,119 @@ function ExplorePrepare() {
             {menunames.map((item) => {
               if (item.id === 1) {
                 return (
-                  <li key={item.id} className="coias-li">
-                    <FileModal
-                      fileNames={fileNames}
-                      setFileNames={setFileNames}
-                    />
+                  <li
+                    key={item.id}
+                    style={{ display: 'flex' }}
+                    className="coias-li"
+                  >
+                    <div>
+                      <FileModal
+                        fileNames={fileNames}
+                        setFileNames={setFileNames}
+                        onUploadStart={() => setLoading(true)}
+                        onUploadEnd={() => setLoading(false)}
+                      />
+                    </div>
+                    <div>
+                      <AiOutlineArrowRight size={24} />
+                    </div>
                   </li>
                 );
               }
-              if (
-                item.name === 'ビニングマスク' ||
-                item.name === '全自動処理'
-              ) {
+              if (item.name === 'ビニングマスク') {
+                return (
+                  <li
+                    key={item.id}
+                    style={{ display: 'flex' }}
+                    className="coias-li"
+                  >
+                    <div>
+                      <DropdownButton
+                        as={ButtonGroup}
+                        key="Success"
+                        id="dropdown-variants-Success"
+                        variant="success"
+                        title={item.name}
+                      >
+                        <Dropdown.Item
+                          eventKey="1"
+                          onClick={() => {
+                            setQuery(`${item.query}2`);
+                          }}
+                        >
+                          2×2
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          eventKey="2"
+                          onClick={() => {
+                            setQuery(`${item.query}4`);
+                          }}
+                        >
+                          4×4
+                        </Dropdown.Item>
+                      </DropdownButton>
+                    </div>
+                    <div>
+                      <AiOutlineArrowRight size={24} />
+                    </div>
+                  </li>
+                );
+              }
+              if (item.name === '自動検出') {
                 return (
                   <li key={item.id} className="coias-li">
-                    <DropdownButton
-                      as={ButtonGroup}
-                      key="Success"
-                      id="dropdown-variants-Success"
+                    <Button
+                      style={{ whiteSpace: 'nowrap' }}
+                      onClick={() => {
+                        setQuery(item.query);
+                      }}
                       variant="success"
-                      title={item.name}
                     >
-                      <Dropdown.Item
-                        eventKey="1"
-                        onClick={() => {
-                          setQuery(`${item.query}2`);
-                        }}
-                      >
-                        2×2
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        eventKey="2"
-                        onClick={() => {
-                          setQuery(`${item.query}4`);
-                        }}
-                      >
-                        4×4
-                      </Dropdown.Item>
-                    </DropdownButton>
+                      {item.name}
+                    </Button>
                   </li>
                 );
               }
+              if (item.name === '全自動処理') {
+                return null;
+              }
               return (
-                <li key={item.id} className="coias-li">
-                  <Button
-                    onClick={() => {
-                      setQuery(item.query);
-                    }}
-                    variant="success"
-                  >
-                    {item.name}
-                  </Button>
+                <li
+                  key={item.id}
+                  style={{ display: 'flex' }}
+                  className="coias-li"
+                >
+                  <div>
+                    <Button
+                      style={{ whiteSpace: 'nowrap' }}
+                      onClick={() => {
+                        setQuery(item.query);
+                      }}
+                      variant="success"
+                    >
+                      {item.name}
+                    </Button>
+                  </div>
+                  <div>
+                    <AiOutlineArrowRight size={24} />
+                  </div>
                 </li>
               );
             })}
           </ul>
+          <br />
+          <br />
+          <div key={menunames[7].id}>
+            <Button
+              style={{ whiteSpace: 'nowrap' }}
+              onClick={() => {
+                setQuery(menunames[7].query);
+              }}
+              variant="success"
+            >
+              {menunames[7].name}
+            </Button>
+          </div>
         </Col>
       </Row>
 
@@ -124,6 +189,30 @@ function ExplorePrepare() {
           </div>
         </Col>
       </Row>
+
+      {loading && (
+        <Button
+          type="button"
+          style={{
+            width: '100%',
+            height: '100vh',
+            position: 'fixed',
+            zIndex: 100,
+            backgroundColor: '#0000004f',
+            top: 0,
+            left: 0,
+          }}
+        >
+          <Spinner
+            animation="border"
+            style={{
+              width: '50px',
+              height: '50px',
+            }}
+          />
+          <div>処理中...</div>
+        </Button>
+      )}
     </div>
   );
 }

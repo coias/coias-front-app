@@ -47,12 +47,16 @@ export default function FileModal(props) {
     state.setFileNames(filesForProps);
 
     const postFiles = async () => {
+      handleClose();
+      state.onUploadStart();
       await axios
         .post(uri, data)
         .then((res) => {
+          state.onUploadEnd();
           console.log(res, 'sucess!');
         })
         .catch((error) => {
+          state.onUploadEnd();
           console.log(error.response, 'failed');
         });
     };
@@ -62,7 +66,11 @@ export default function FileModal(props) {
 
   return (
     <>
-      <Button variant="success" onClick={handleShow}>
+      <Button
+        variant="success"
+        style={{ whiteSpace: 'nowrap' }}
+        onClick={handleShow}
+      >
         ファイル
       </Button>
 
