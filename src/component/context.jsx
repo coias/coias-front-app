@@ -11,6 +11,6 @@ export const MousePositionContext = createContext({
 });
 
 export const StarPositionContext = createContext({
-  starPos: [],
+  starPos: {},
   setStarPos: () => {},
 });

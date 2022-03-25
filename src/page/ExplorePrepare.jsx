@@ -160,15 +160,30 @@ function ExplorePrepare() {
           <br />
           <br />
           <div key={menunames[7].id}>
-            <Button
-              style={{ whiteSpace: 'nowrap' }}
-              onClick={() => {
-                setQuery(menunames[7].query);
-              }}
+            <DropdownButton
+              as={ButtonGroup}
+              key="Success"
+              id="dropdown-variants-Success"
               variant="success"
+              title={menunames[7].name}
             >
-              {menunames[7].name}
-            </Button>
+              <Dropdown.Item
+                eventKey="1"
+                onClick={() => {
+                  setQuery(`${menunames[7].query}2`);
+                }}
+              >
+                2×2
+              </Dropdown.Item>
+              <Dropdown.Item
+                eventKey="2"
+                onClick={() => {
+                  setQuery(`${menunames[7].query}4`);
+                }}
+              >
+                4×4
+              </Dropdown.Item>
+            </DropdownButton>
           </div>
         </Col>
       </Row>

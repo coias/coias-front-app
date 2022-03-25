@@ -19,12 +19,15 @@ function PanZoom({ imageURLs }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
   }
+  if (!window.images) {
+    window.images = [];
+    window.imageLoadComplete = false;
+  }
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
   const [contrastVal, setContrastVal] = useState(150);
   const [brightnessVal, setBrightnessVal] = useState(150);
-  const [clickedStarPos, setClickedStarPos] = useState([]);
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
@@ -45,6 +48,10 @@ function PanZoom({ imageURLs }) {
 
       boundsPadding: 1.0,
       zoomDoubleClickSpeed: 1,
+      beforeWheel(e) {
+        const shouldIgnore = !e.altKey;
+        return shouldIgnore;
+      },
       beforeMouseDown() {
         // スクロールされる前にisGrabの値を確認
         const val = document.getElementById('grabButton').dataset.active;
@@ -68,42 +75,18 @@ function PanZoom({ imageURLs }) {
    *  isSelected : boolean,
    * }
    */
-  useMemo(() => {
-    // unknown_disp.txtを取得
-    const getDisp = async () => {
-      const response = await axios.get(`${reactApiUri}unknown_disp`);
-      const disp = await response.data.result;
-      /* const stars = new Map();
-      disp.map((item) => {
-        if (stars.has(item[0])) {
-          console.log(stars);
-        } else {
-          stars.set(item[0], {
-            page: parseInt(item[1], 10),
-            positions: {
-              x: parseFloat(item[2], 10),
-              y: parseFloat(item[3], 10),
-            },
-            isSelected: false,
-          });
-        }
-      });
-      */
-      disp.forEach((item) => {
-        item.push(false);
-      });
-
-      setStarPos(disp);
-    };
-    getDisp();
-  }, []);
+  useMemo(() => {}, []);
 
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async () => {
     // memo.txtへの出力
-    const selectedStars = starPos
-      .filter((pos) => parseInt(pos[1], 10) === 0 && pos[4])
-      .map((e) => e[0].substring(1));
+    // const selectedStars = starPos
+    //   .filter((pos) => parseInt(pos[1], 10) === 0 && pos[4])
+    //   .map((e) => e[0].substring(1));
+    const selectedStars = Object.keys(starPos)
+      .map((key) => starPos[key])
+      .filter((item) => item.isSelected)
+      .map((item) => item.name.substring(1));
     await axios.put(`${reactApiUri}memo`, selectedStars);
 
     // prempedit
@@ -114,20 +97,80 @@ function PanZoom({ imageURLs }) {
     while (s.charAt(0) === '0') {
       s = s.substring(1);
     }
-    const num = String(parseInt(s, 10) + 1);
+    const num = '1';
     await axios.put(`${reactApiUri}prempedit3?num=${num}`);
 
     // redisp
     const response = await axios.put(`${reactApiUri}redisp`);
     const redisp = await response.data.result;
-    redisp.forEach((e) => {
-      e.push(false);
+
+    // 選択を同期させるため、オブジェクトに変更
+    const toObject = {};
+    redisp.forEach((item) => {
+      let star = toObject[item[0]];
+      if (!star) {
+        toObject[item[0]] = {
+          name: item[0],
+          page: [null, null, null, null, null],
+          isSelected: false,
+        };
+        star = toObject[item[0]];
+      }
+      star.page[item[1]] = {
+        name: item[0],
+        x: parseFloat(item[2], 10),
+        y: parseFloat(item[3], 10),
+      };
     });
-    setStarPos(redisp);
+
+    setStarPos(toObject);
 
     // rename
     await axios.put(`${reactApiUri}rename`);
   };
+
+  // 画面表示時、１回だけ処理
+  useEffect(() => {
+    // unknown_disp.txtを取得
+    const getDisp = async () => {
+      const response = await axios.get(`${reactApiUri}unknown_disp`);
+      const disp = await response.data.result;
+
+      // 選択を同期させるため、オブジェクトに変更
+      const toObject = {};
+      disp.forEach((item) => {
+        let star = toObject[item[0]];
+        if (!star) {
+          toObject[item[0]] = {
+            name: item[0],
+            page: [null, null, null, null, null],
+            isSelected: false,
+          };
+          star = toObject[item[0]];
+        }
+        star.page[item[1]] = {
+          name: item[0],
+          x: parseFloat(item[2], 10),
+          y: parseFloat(item[3], 10),
+        };
+      });
+
+      setStarPos(toObject);
+    };
+    window.images = imageURLs.map((url) => {
+      const img = new Image();
+      img.onload = () => {
+        window.imageLoadComplete =
+          window.images.filter((i) => i.complete && i.naturalWidth !== 0)
+            .length === window.images.length;
+        if (window.imageLoadComplete) {
+          getDisp();
+        }
+      };
+      img.src = url;
+      return img;
+    });
+  }, [imageURLs]);
 
   // imageの描画
   useEffect(() => {
@@ -135,36 +178,38 @@ function PanZoom({ imageURLs }) {
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (context && starPos.length > 0 && imageURLs.length > 0) {
+    if (
+      context &&
+      Object.keys(starPos).length > 0 &&
+      window.imageLoadComplete
+    ) {
       const w = canvas.width;
       canvas.width = w;
-      const img = new Image();
+      const img = window.images[currentPage];
 
-      img.onload = () => {
-        setImageHeight(img.naturalHeight);
-        setImageWidth(img.naturalWidth);
-        context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
-        console.table(starPos);
-        starPos.forEach((pos) => {
-          // console.log(pos[1], currentPage);
-          if (pos[1] === String(currentPage)) {
-            const x = parseFloat(pos[2]) - RECT_WIDTH / 2;
-            const y = img.naturalHeight - parseFloat(pos[3]) + RECT_HEIGHT / 2;
+      setImageHeight(img.naturalHeight);
+      setImageWidth(img.naturalWidth);
+      context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+      Object.keys(starPos)
+        .map((key) => starPos[key])
+        .forEach((pos) => {
+          if (pos.page[currentPage]) {
+            const position = pos.page[currentPage];
+            const x = position.x - RECT_WIDTH / 2;
+            const y = img.naturalHeight - position.y - RECT_HEIGHT / 2;
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
             // console.log(index, window.hitIndex);
-            context.strokeStyle = window.hitIndex === pos[0] ? 'red' : 'black';
+            context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
             context.font = '15px serif';
             context.fillStyle = 'red';
-            context.fillText(pos[0], x - RECT_WIDTH / 2, y - RECT_HEIGHT / 3);
+            context.fillText(pos.name, x - RECT_WIDTH / 2, y - RECT_HEIGHT / 3);
             context.stroke();
           }
         });
-      };
-      img.src = imageURLs[currentPage];
     }
-  }, [currentPage, starPos, imageURLs]);
+  }, [currentPage, starPos]);
 
   // マウス移動時の挙動制御
   useEffect(() => {
@@ -186,86 +231,48 @@ function PanZoom({ imageURLs }) {
     canvasElem.addEventListener('mousemove', relativeCoords);
   }, []);
 
-  // マウスクリックに関する処理
-  useEffect(() => {}, [currentMousePos]);
-
   // クリック時に色を変化させるイベントリスナー
-  function changeColorOnClick(event) {
+  function changeColorOnClick() {
+    if (document.getElementById('selectButton').dataset.active !== 'true') {
+      return;
+    }
     const canvasElem = canvasRef.current;
     const isSelect = document.getElementById('selectButton').dataset.active;
     if (canvasElem === null || isSelect === 'false') {
       return;
     }
-    // canvas自体の大きさを取得
-    const rect = event.target.getBoundingClientRect();
-    // canvas上でのクリック位置をObjectで保持
-    const point = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    };
+
+    const point = currentMousePos;
 
     // 当たり判定を検出
     function testHit(thisx, thisy) {
-      const starx = thisx - RECT_WIDTH / 2;
-      const stary = IMAGE_HEIGHT - (thisy + RECT_HEIGHT / 2);
-      // console.log(starx, currentMousePos.x, stary, currentMousePos.y);
-      /* console.log(
-          starx <= point.x,
-          point.x <= starx + RECT_WIDTH,
-          stary <= point.y,
-          point.y <= stary + RECT_HEIGHT + IMAGE_HEIGHT,
-        ); */
+      const wHalf = RECT_WIDTH / 2;
+      const hHalf = RECT_HEIGHT / 2;
+      const starX = thisx;
+      const starY = IMAGE_HEIGHT - thisy;
+
       return (
-        // eslint-disable-next-line operator-linebreak
-        starx <= point.x &&
-        // eslint-disable-next-line operator-linebreak
-        point.x <= starx + RECT_WIDTH &&
-        // eslint-disable-next-line operator-linebreak
-        stary <= point.y &&
-        point.y <= stary + RECT_HEIGHT + IMAGE_HEIGHT
+        starX - wHalf <= point.x &&
+        point.x <= starX + wHalf &&
+        starY - hHalf <= point.y &&
+        point.y <= starY + hHalf
       );
     }
 
     window.hitIndex = '';
     // 当たり判定のあった天体を新しくstarPosに上書きする
-    const newStarPos = starPos
-      // .filter((item) => parseInt(item[1], 10) === currentPage)
-      .map((item) => {
-        console.log(item);
-        if (
-          item[1] === String(currentPage) &&
-          testHit(parseFloat(item[2], 10), parseFloat(item[3], 10))
-        ) {
-          // eslint-disable-next-line prefer-destructuring
-          window.hitIndex = item[0];
-          const checked = !item[4];
-          const newOriginalPos = [];
-          newOriginalPos.push(item[0]);
-          newOriginalPos.push(item[1]);
-          newOriginalPos.push(item[2]);
-          newOriginalPos.push(item[3]);
-          newOriginalPos.push(checked);
-          // console.log(newOriginalPos);
-          return newOriginalPos;
+    const newStarPos = JSON.parse(JSON.stringify(starPos));
+    Object.keys(newStarPos)
+      .map((key) => newStarPos[key])
+      .forEach((item) => {
+        const position = item.page[currentPage];
+        if (position && testHit(position.x, position.y)) {
+          newStarPos[item.name].isSelected = !item.isSelected;
+          document.getElementById(item.name).checked =
+            newStarPos[item.name].isSelected;
         }
-        return item;
       });
-    setClickedStarPos(newStarPos);
     setStarPos(newStarPos);
-    clickedStarPos.fill();
-
-    const isGrab = document.getElementById('grabButton').dataset.active;
-
-    canvasElem.addEventListener('click', changeColorOnClick);
-
-    if (isGrab === 'true') {
-      canvasElem.removeEventListener('click', changeColorOnClick);
-    }
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      canvasElem.addEventListener('click', changeColorOnClick);
-    };
   }
 
   return (
@@ -286,7 +293,7 @@ function PanZoom({ imageURLs }) {
               style={{
                 width: '100%',
                 height: '80vh',
-                overflow: 'hidden',
+                overflow: 'auto',
                 backgroundColor: 'gray',
               }}
             >

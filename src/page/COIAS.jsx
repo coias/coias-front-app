@@ -15,6 +15,7 @@ function COIAS() {
 
   // 初回のみのAPIの読み込み
   useMemo(() => {
+    setIsGrab(true);
     // nginxにある画像を全て取得
     const getImages = async () => {
       const response = await axios.put(`${reactApiUri}copy`);
@@ -65,6 +66,10 @@ function COIAS() {
             </div>
           </Col>
           <Col md={11}>
+            <div>
+              Alt
+              キーを押しながらスクロール操作で、ズームイン・ズームアウトできます。
+            </div>
             <PanZoom imageURLs={imageURLs} />
           </Col>
         </Row>

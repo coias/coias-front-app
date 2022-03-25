@@ -7,49 +7,41 @@ function StarsList() {
   const { starPos, setStarPos } = useContext(StarPositionContext);
   return (
     <Form>
-      {starPos.map((pos) => {
-        if (currentPage === parseInt(pos[1], 10)) {
-          if (pos[0].startsWith('K')) {
+      {Object.keys(starPos)
+        .sort()
+        .map((key) => starPos[key])
+        .map((pos) => {
+          if (pos.page[currentPage]) {
+            if (pos.name.startsWith('K')) {
+              return (
+                <div className="mb-3" key={pos.name}>
+                  <Form.Check
+                    disabled
+                    type="checkbox"
+                    id={pos.name}
+                    label={pos.name}
+                  />
+                </div>
+              );
+            }
             return (
-              <div className="mb-3" key={pos[0]}>
+              <div className="mb-3" key={pos.name}>
                 <Form.Check
-                  disabled
                   type="checkbox"
-                  id={pos[0]}
-                  label={pos[0]}
+                  defaultChecked={pos.isSelected}
+                  onChange={() => {
+                    const newStarPos = JSON.parse(JSON.stringify(starPos));
+                    newStarPos[pos.name].isSelected = !pos.isSelected;
+                    setStarPos(newStarPos);
+                  }}
+                  id={pos.name}
+                  label={pos.name}
                 />
               </div>
             );
           }
-          return (
-            <div className="mb-3" key={pos[0]}>
-              <Form.Check
-                type="checkbox"
-                defaultChecked={pos[4]}
-                onChange={() => {
-                  const checked = !pos[4];
-                  const newStarPos = starPos.map((originalPos) => {
-                    if (originalPos[0] === pos[0]) {
-                      const newOriginalPos = [];
-                      newOriginalPos.push(originalPos[0]);
-                      newOriginalPos.push(originalPos[1]);
-                      newOriginalPos.push(originalPos[2]);
-                      newOriginalPos.push(originalPos[3]);
-                      newOriginalPos.push(checked);
-                      return newOriginalPos;
-                    }
-                    return originalPos;
-                  });
-                  setStarPos(newStarPos);
-                }}
-                id={pos[0]}
-                label={pos[0]}
-              />
-            </div>
-          );
-        }
-        return null;
-      })}
+          return null;
+        })}
     </Form>
   );
 }
