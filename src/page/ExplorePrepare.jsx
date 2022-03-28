@@ -77,7 +77,7 @@ function ExplorePrepare() {
   /**
    * 全自動処理。
    *
-   * @param {ビニングますのサイズ} size
+   * @param {ビニングマスクのサイズ} size
    * @returns
    */
   const onProcessAuto = async (size) => {
