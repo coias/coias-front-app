@@ -47,7 +47,11 @@ function ExplorePrepare() {
   }, [query]);
 
   return (
-    <div style={{}}>
+    <div
+      style={{
+        padding: '20px',
+      }}
+    >
       <Row xs="auto">
         <Col>
           <h4>探索準備 : </h4>
@@ -157,9 +161,11 @@ function ExplorePrepare() {
               );
             })}
           </ul>
-          <br />
-          <br />
-          <div key={menunames[7].id}>
+          <div
+            style={{
+              marginBottom: '10px',
+            }}
+          >
             <DropdownButton
               as={ButtonGroup}
               key="Success"

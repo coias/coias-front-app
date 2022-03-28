@@ -181,6 +181,7 @@ function PanZoom({ imageURLs }) {
     if (
       context &&
       Object.keys(starPos).length > 0 &&
+      window.images.length !== 0 &&
       window.imageLoadComplete
     ) {
       const w = canvas.width;

@@ -41,7 +41,17 @@ function Header() {
             }
             style={{ textDecoration: 'none', color: 'gray' }}
           >
-            <h3 style={{ paddingLeft: 13 }}>探索/再測定</h3>
+            <h3 style={{ paddingLeft: 13 }}>探索/再描画</h3>
+          </NavLink>
+          <NavLink
+            to="/"
+            className={(navData) =>
+              navData.isActive ? 'not-active-no-hover' : 'not-active-no-hover'
+            }
+            style={{ textDecoration: 'none', color: 'gray' }}
+            onClick={(e) => e.preventDefault() /* do nothing. */}
+          >
+            <h3 style={{ paddingLeft: 13 }}>再測定</h3>
           </NavLink>
           <NavLink
             to="/Report"

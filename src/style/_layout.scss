@@ -27,13 +27,10 @@
 }
 
 .coias-ul {
-  position: fixed;
-  top: 5;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: 1050px;
-  height: 10%;
   padding: 0;
   margin: 0;
   margin-bottom: 10px;
@@ -66,4 +63,9 @@
 .not-active:hover {
   color: white !important;
   cursor: pointer;
+}
+
+.not-active-no-hover:hover {
+  color: gray !important;
+  cursor: default;
 }
