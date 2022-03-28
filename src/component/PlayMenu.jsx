@@ -8,7 +8,6 @@ import {
   Form,
 } from 'react-bootstrap';
 
-import { CgFormatSlash } from 'react-icons/cg';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -17,6 +16,7 @@ import { PageContext } from './context';
 function PlayMenu({ imageNames }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
+  const [play, setPlay] = useState(false);
 
   const onClickNext = () => {
     if (currentPage === 4) setCurrentPage(0);
@@ -31,6 +31,7 @@ function PlayMenu({ imageNames }) {
   const intervalRef = useRef(null);
 
   const onClickBlinkStart = useCallback(() => {
+    setPlay(true);
     if (intervalRef.current !== null) {
       return;
     }
@@ -43,6 +44,7 @@ function PlayMenu({ imageNames }) {
   }, [sec]);
 
   const onClickBlinkStop = useCallback(() => {
+    setPlay(false);
     if (intervalRef.current === null) {
       return;
     }
@@ -55,48 +57,21 @@ function PlayMenu({ imageNames }) {
       <Container fluid>
         <Col md={3}>
           <Nav>
-            <Nav.Item className="text-center d-flex">
-              <Form.Group className="mb-3">
-                <Form.Label>再生速度:</Form.Label>
-                <Form.Control
-                  as="select"
-                  onChange={(v) => {
-                    setSec(parseFloat(v.target.value));
-                  }}
-                >
-                  <option value="10">0.01</option>
-                  <option value="20">0.02</option>
-                  <option value="50">0.05</option>
-                  <option value="100">0.10</option>
-                </Form.Control>
-              </Form.Group>
-            </Nav.Item>
-            <Nav.Item className="text-center d-flex">
+            <Nav.Item className="text-center d-flex m-1">
               <Button
                 variant="light"
                 onClick={() => {
-                  onClickBlinkStart();
+                  if (!play) {
+                    onClickBlinkStart();
+                  } else {
+                    onClickBlinkStop();
+                  }
                 }}
               >
-                <FaPlay size={30} />
+                {play ? <FaStop size={30} /> : <FaPlay size={30} />}
               </Button>
             </Nav.Item>
-            <Nav.Item className="text-center d-flex p-0 m-0">
-              <Button disabled variant="light">
-                <CgFormatSlash size={40} />
-              </Button>
-            </Nav.Item>
-            <Nav.Item className="text-center d-flex">
-              <Button
-                variant="light"
-                onClick={() => {
-                  onClickBlinkStop();
-                }}
-              >
-                <FaStop size={30} />
-              </Button>
-            </Nav.Item>
-            <Nav.Item className="text-center d-flex">
+            <Nav.Item className="text-center d-flex m-1">
               <Button
                 variant="light"
                 onClick={() => {
@@ -106,7 +81,7 @@ function PlayMenu({ imageNames }) {
                 <FaStepBackward size={30} />
               </Button>
             </Nav.Item>
-            <Nav.Item className="text-center d-flex">
+            <Nav.Item className="text-center d-flex m-1">
               <Button
                 variant="light"
                 onClick={() => {
@@ -115,6 +90,20 @@ function PlayMenu({ imageNames }) {
               >
                 <FaStepForward size={30} />
               </Button>
+            </Nav.Item>
+            <Nav.Item className="d-flex m-1">
+              <Form.Control
+                as="select"
+                onChange={(v) => {
+                  setSec(parseFloat(v.target.value));
+                }}
+              >
+                <option value="10">0.01</option>
+                <option value="20">0.02</option>
+                <option value="50">0.05</option>
+                <option value="100">0.10</option>
+              </Form.Control>
+              <Form.Text>sec</Form.Text>
             </Nav.Item>
           </Nav>
         </Col>
