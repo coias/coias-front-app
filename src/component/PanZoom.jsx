@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useContext, useState, useMemo } from 'react';
 import panzoom from 'panzoom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line object-curly-newline
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
@@ -28,6 +29,12 @@ function PanZoom({ imageURLs }) {
   const { currentPage } = useContext(PageContext);
   const [contrastVal, setContrastVal] = useState(150);
   const [brightnessVal, setBrightnessVal] = useState(150);
+  const [disable, setDisable] = useState(true);
+  const [originalStarPos, setOriginalStarPos] = useState({});
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate('/Report');
+  };
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
@@ -156,6 +163,7 @@ function PanZoom({ imageURLs }) {
       });
 
       setStarPos(toObject);
+      setOriginalStarPos(toObject);
     };
     window.images = imageURLs.map((url) => {
       const img = new Image();
@@ -308,9 +316,28 @@ function PanZoom({ imageURLs }) {
         </Col>
         <Col sm={2}>
           <Button
+            variant="success"
+            onClick={(e) => {
+              setDisable(!disable);
+              Array.from(
+                document.getElementsByClassName('form-check-input'),
+              ).forEach((item) => {
+                // eslint-disable-next-line no-param-reassign
+                item.checked = false;
+              });
+              // eslint-disable-next-line no-unused-expressions
+              disable ? onClickFinishButton(e) : setStarPos(originalStarPos);
+            }}
+            className="mb-3 p-3"
+          >
+            {disable ? '再描画' : 'やり直す'}
+          </Button>
+          <Button
+            disabled={disable}
             variant="danger"
             onClick={(e) => {
               onClickFinishButton(e);
+              handleClick();
             }}
             className="mb-3 p-3"
           >

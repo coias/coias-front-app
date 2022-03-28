@@ -7,10 +7,10 @@ import {
   DropdownButton,
   ButtonGroup,
   Dropdown,
-  Spinner,
 } from 'react-bootstrap';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import FileModal from '../component/FileModal';
+import LoadingButton from '../component/LoadingButton';
 
 /**
  * 2022.03.24 y changed.
@@ -233,29 +233,7 @@ function ExplorePrepare() {
         </Col>
       </Row>
 
-      {loading && (
-        <Button
-          type="button"
-          style={{
-            width: '100%',
-            height: '100vh',
-            position: 'fixed',
-            zIndex: 100,
-            backgroundColor: '#0000004f',
-            top: 0,
-            left: 0,
-          }}
-        >
-          <Spinner
-            animation="border"
-            style={{
-              width: '50px',
-              height: '50px',
-            }}
-          />
-          <div>処理中...</div>
-        </Button>
-      )}
+      <LoadingButton loading={loading} />
     </div>
   );
 }
