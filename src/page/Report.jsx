@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import axios from 'axios';
 import { Col, Row, Form, Button } from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
+import LoadingButton from '../component/LoadingButton';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -10,8 +11,9 @@ function Report() {
   const [sendMpcMEA, setSendMpcMEA] = useState('');
   const [sendMpcBody, setSendMpcBody] = useState([]);
   const [sendMpc, setSendMpc] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const makeSendMpc = () => {
+  const makeSendMpc = async () => {
     const header = [
       'COD 568',
       'CON S. Urakawa, Bisei Spaceguard Center, 1716-3, Okura, Bisei',
@@ -23,20 +25,39 @@ function Report() {
       'ACK Subaru/HSC',
     ];
 
-    setSendMpc(header.concat(sendMpcBody));
+    await setSendMpc(header.concat(sendMpcBody));
+  };
+
+  const downloadFIle = () => {
+    const element = document.createElement('a');
+    const file = new Blob(
+      sendMpc.map((item) => `${item}\n`),
+      {
+        type: 'text/plain',
+      },
+    );
+    element.href = URL.createObjectURL(file);
+    element.download = 'send_mpc.txt';
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
   };
 
   const getMpc = async () => {
+    setLoading(true);
     const response = await axios.put(`${reactApiUri}AstsearchR_afterReCOIAS`);
     const mpctext = await response.data.send_mpc;
-    const re = /((?!(H|K))(.*))/g;
-    const result = mpctext.split(re);
-    setSendMpcBody(result);
+    const result = await mpctext.split('\n');
+    await setSendMpcBody(result.map((item) => item.trim()));
+    setLoading(false);
   };
   // 初回のみのAPIの読み込み
   useMemo(() => {
     getMpc();
   }, []);
+
+  useMemo(() => {
+    makeSendMpc();
+  }, [sendMpcMEA, sendMpcOBS, sendMpcBody]);
 
   return (
     <div>
@@ -73,10 +94,10 @@ function Report() {
               <Button
                 variant="primary"
                 onClick={() => {
-                  makeSendMpc();
+                  downloadFIle();
                 }}
               >
-                Submit
+                Downlaod
               </Button>
             </Col>
           </Row>
@@ -101,15 +122,17 @@ function Report() {
                 height: '1000px',
               }}
             >
-              <ul style={{ listStyleType: 'none', color: 'white' }}>
-                {sendMpc.map((arr) => (
-                  <li key={arr}>{arr}</li>
-                ))}
+              <ul
+                id="send-mpc"
+                style={{ listStyleType: 'none', color: 'white' }}
+              >
+                {sendMpc.length > 0 && sendMpc.map((item) => <li>{item}</li>)}
               </ul>
             </div>
           </Scrollbars>
         </Col>
       </Row>
+      <LoadingButton loading={loading} />
     </div>
   );
 }
