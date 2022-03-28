@@ -28,19 +28,33 @@ function App() {
   const [starPos, setStarPos] = useState([]);
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
   return (
-    <BrowserRouter>
+    <BrowserRouter style={{ position: 'relative' }}>
       <Header />
-      <PageContext.Provider value={pageValue}>
-        <MousePositionContext.Provider value={mouseValue}>
-          <StarPositionContext.Provider value={starValue}>
-            <Routes>
-              <Route path="/" element={<ExplorePrepare />} />
-              <Route path="/COIAS" element={<COIAS />} />
-              <Route path="/Report" element={<Report />} />
-            </Routes>
-          </StarPositionContext.Provider>
-        </MousePositionContext.Provider>
-      </PageContext.Provider>
+      <main
+        style={{
+          position: 'absolute',
+          top: 86,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          overflow: 'scroll',
+        }}
+      >
+        <PageContext.Provider value={pageValue}>
+          <MousePositionContext.Provider value={mouseValue}>
+            <StarPositionContext.Provider value={starValue}>
+              <Routes>
+                <Route path="/" element={<ExplorePrepare />} />
+                <Route path="/COIAS" element={<COIAS />} />
+                <Route path="/Report" element={<Report />} />
+              </Routes>
+            </StarPositionContext.Provider>
+          </MousePositionContext.Provider>
+        </PageContext.Provider>
+      </main>
+      <footer>
+        <div style={{ display: 'none' }}>footer</div>
+      </footer>
     </BrowserRouter>
   );
 }

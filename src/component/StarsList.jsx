@@ -6,7 +6,7 @@ function StarsList() {
   const { currentPage } = useContext(PageContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   return (
-    <Form>
+    <Form className="star-list">
       {Object.keys(starPos)
         .sort()
         .map((key) => starPos[key])

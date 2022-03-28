@@ -32,7 +32,7 @@ function COIAS() {
   }, []);
 
   return (
-    <div>
+    <div className="coias-view-main">
       <PlayMenu imageNames={imageNames} />
       <Container fluid>
         <Row>

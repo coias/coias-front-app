@@ -278,13 +278,12 @@ function PanZoom({ imageURLs }) {
 
   return (
     <Container fluid>
-      <Row>
+      <Row className="star-canvas-container">
         <Col sm={10}>
           <div
             style={{
               width: '100%',
-              height: '80vh',
-              overflow: 'hidden',
+              height: '100%',
               backgroundColor: 'gray',
               position: 'relative',
             }}
@@ -293,7 +292,7 @@ function PanZoom({ imageURLs }) {
               ref={ZPCanvasRef}
               style={{
                 width: '100%',
-                height: '80vh',
+                height: '100%',
                 overflow: 'auto',
                 backgroundColor: 'gray',
               }}
@@ -313,8 +312,6 @@ function PanZoom({ imageURLs }) {
               />
             </div>
             <MousePosition />
-            <ContrastBar val={contrastVal} set={setContrastVal} />
-            <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
           </div>
         </Col>
         <Col sm={2}>
@@ -328,6 +325,14 @@ function PanZoom({ imageURLs }) {
             探索終了
           </Button>
           <StarsList />
+        </Col>
+      </Row>
+      <Row className="star-canvas-control">
+        <Col sm={10}>
+          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+            <ContrastBar val={contrastVal} set={setContrastVal} />
+            <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
+          </div>
         </Col>
       </Row>
     </Container>

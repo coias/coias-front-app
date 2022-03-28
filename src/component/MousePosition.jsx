@@ -9,15 +9,16 @@ function MousePosition() {
       style={{
         opacity: 0.5,
         width: '200px',
-        height: '50px',
+        height: '24px',
         color: 'white',
         backgroundColor: 'black',
         position: 'absolute',
-        top: '0px',
+        top: '-24px',
         right: '0px',
+        zIndex: 999,
       }}
     >
-      <BiCurrentLocation size={30} />
+      <BiCurrentLocation size={24} />
       {`${currentMousePos.x},${currentMousePos.y}`}
     </div>
   );

@@ -9,12 +9,8 @@ function ContrastBar({ val, set }) {
       style={{
         opacity: 0.5,
         width: '400px',
-        height: '50px',
         color: 'white',
         backgroundColor: 'black',
-        position: 'absolute',
-        bottom: '0px',
-        left: '100px',
         borderRadius: '5px',
       }}
     >

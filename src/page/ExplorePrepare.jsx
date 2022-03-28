@@ -50,6 +50,7 @@ function ExplorePrepare() {
     <div
       style={{
         padding: '20px',
+        height: '100%',
       }}
     >
       <Row xs="auto">
@@ -194,7 +195,12 @@ function ExplorePrepare() {
         </Col>
       </Row>
 
-      <Row xs="auto">
+      <Row
+        xs="auto"
+        style={{
+          height: 'calc(100% - 96px)',
+        }}
+      >
         <Col>
           <h4>選択ファイル:</h4>
         </Col>
@@ -203,7 +209,7 @@ function ExplorePrepare() {
             style={{
               backgroundColor: 'black',
               width: '1000px',
-              height: '1000px',
+              height: '100%',
             }}
           >
             <ul style={{ listStyleType: 'none', color: 'white' }}>
