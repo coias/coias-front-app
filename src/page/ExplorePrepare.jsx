@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Row,
@@ -30,10 +30,22 @@ function ExplorePrepare() {
 
   const uri = process.env.REACT_APP_API_URI;
   const [fileNames, setFileNames] = useState(['Please input files']);
-  const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   const put = async () => {
+  //     setLoading(true);
+  //     if (query.startsWith('startsearch2R?binning='))
+  //       await axios.put(`${uri}preprocess`);
+  //     await axios
+  //       .put(uri + query)
+  //       .then(() => setLoading(false))
+  //       .catch(() => setLoading(false));
+  //   };
+  //   if (query.length > 0) put();
+  // }, [query]);
+
+  const onProcess = function (query) {
     const put = async () => {
       setLoading(true);
       if (query.startsWith('startsearch2R?binning='))
@@ -44,7 +56,7 @@ function ExplorePrepare() {
         .catch(() => setLoading(false));
     };
     if (query.length > 0) put();
-  }, [query]);
+  };
 
   return (
     <div
@@ -99,7 +111,7 @@ function ExplorePrepare() {
                         <Dropdown.Item
                           eventKey="1"
                           onClick={() => {
-                            setQuery(`${item.query}2`);
+                            onProcess(`${item.query}2`);
                           }}
                         >
                           2×2
@@ -107,7 +119,7 @@ function ExplorePrepare() {
                         <Dropdown.Item
                           eventKey="2"
                           onClick={() => {
-                            setQuery(`${item.query}4`);
+                            onProcess(`${item.query}4`);
                           }}
                         >
                           4×4
@@ -126,7 +138,7 @@ function ExplorePrepare() {
                     <Button
                       style={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
-                        setQuery(item.query);
+                        onProcess(item.query);
                       }}
                       variant="success"
                     >
@@ -148,7 +160,7 @@ function ExplorePrepare() {
                     <Button
                       style={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
-                        setQuery(item.query);
+                        onProcess(item.query);
                       }}
                       variant="success"
                     >
@@ -177,7 +189,7 @@ function ExplorePrepare() {
               <Dropdown.Item
                 eventKey="1"
                 onClick={() => {
-                  setQuery(`${menunames[7].query}2`);
+                  onProcess(`${menunames[7].query}2`);
                 }}
               >
                 2×2
@@ -185,7 +197,7 @@ function ExplorePrepare() {
               <Dropdown.Item
                 eventKey="2"
                 onClick={() => {
-                  setQuery(`${menunames[7].query}4`);
+                  onProcess(`${menunames[7].query}4`);
                 }}
               >
                 4×4

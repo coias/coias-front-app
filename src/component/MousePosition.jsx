@@ -14,7 +14,7 @@ function MousePosition() {
         backgroundColor: 'black',
         position: 'absolute',
         top: '-24px',
-        right: '0px',
+        right: '10px',
         zIndex: 999,
       }}
     >

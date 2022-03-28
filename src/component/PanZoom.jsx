@@ -288,15 +288,7 @@ function PanZoom({ imageURLs }) {
               position: 'relative',
             }}
           >
-            <div
-              ref={ZPCanvasRef}
-              style={{
-                width: '100%',
-                height: '100%',
-                overflow: 'auto',
-                backgroundColor: 'gray',
-              }}
-            >
+            <div className="canvas-wapper" ref={ZPCanvasRef}>
               <canvas
                 ref={canvasRef}
                 width={`${IMAGE_WIDTH}px`}
