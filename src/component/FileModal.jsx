@@ -51,13 +51,11 @@ export default function FileModal(props) {
       state.onUploadStart();
       await axios
         .post(uri, data)
-        .then((res) => {
-          state.onUploadEnd();
-          console.log(res, 'sucess!');
+        .then(() => {
+          state.onUploadEnd(true);
         })
-        .catch((error) => {
-          state.onUploadEnd();
-          console.log(error.response, 'failed');
+        .catch(() => {
+          state.onUploadEnd(false);
         });
     };
 
