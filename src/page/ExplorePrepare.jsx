@@ -7,10 +7,10 @@ import {
   DropdownButton,
   ButtonGroup,
   Dropdown,
-  Spinner,
 } from 'react-bootstrap';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import FileModal from '../component/FileModal';
+import LoadingButton from '../component/LoadingButton';
 
 /**
  * 2022.03.24 y changed.
@@ -32,20 +32,8 @@ function ExplorePrepare() {
   const [fileNames, setFileNames] = useState(['Please input files']);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const put = async () => {
-  //     setLoading(true);
-  //     if (query.startsWith('startsearch2R?binning='))
-  //       await axios.put(`${uri}preprocess`);
-  //     await axios
-  //       .put(uri + query)
-  //       .then(() => setLoading(false))
-  //       .catch(() => setLoading(false));
-  //   };
-  //   if (query.length > 0) put();
-  // }, [query]);
-
-  const onProcess = function (query) {
+  const onProcess = (query) => {
+    document.getElementById('current-process').innerHTML = '処理中...';
     const put = async () => {
       setLoading(true);
       if (query.startsWith('startsearch2R?binning='))
@@ -56,6 +44,72 @@ function ExplorePrepare() {
         .catch(() => setLoading(false));
     };
     if (query.length > 0) put();
+  };
+
+  const onProcessAuto = async (size) => {
+    // 事前処理
+    setLoading(true);
+    let result = true;
+    document.getElementById('current-process').innerHTML = '事前処理...';
+    await axios.put(`${uri}preprocess`).catch(() => {
+      result = false;
+    });
+    if (!result) {
+      setLoading(false);
+      return;
+    }
+    // ビギニングマスク（size: 2 or 4）
+    let beginingMask;
+    if (size === 2) {
+      beginingMask = '2x2';
+    } else {
+      beginingMask = '4x4';
+    }
+    document.getElementById(
+      'current-process',
+    ).innerHTML = `ビギニングマスク（${beginingMask}）...`;
+    await axios.put(`${uri}startsearch2R?binning=${size}`).catch(() => {
+      result = false;
+    });
+    if (!result) {
+      setLoading(false);
+      return;
+    }
+    // 軌道取得（確定番号）
+    document.getElementById('current-process').innerHTML =
+      '軌道取得（確定番号）...';
+    await axios.put(`${uri}prempsearchC-before`).catch(() => {
+      result = false;
+    });
+    if (!result) {
+      setLoading(false);
+      return;
+    }
+    // 軌道取得（仮符号）
+    document.getElementById('current-process').innerHTML =
+      '軌道取得（仮符号）...';
+    await axios.put(`${uri}prempsearchC-after`).catch(() => {
+      result = false;
+    });
+    if (!result) {
+      setLoading(false);
+      return;
+    }
+    // 光源検出
+    document.getElementById('current-process').innerHTML = '光源検出...';
+    await axios.put(`${uri}findsource`).catch(() => {
+      result = false;
+    });
+    if (!result) {
+      setLoading(false);
+      return;
+    }
+    // 自動検出
+    document.getElementById('current-process').innerHTML = '自動検出...';
+    await axios.put(`${uri}astsearch_new`).catch(() => {
+      result = false;
+    });
+    setLoading(false);
   };
 
   return (
@@ -83,7 +137,11 @@ function ExplorePrepare() {
                       <FileModal
                         fileNames={fileNames}
                         setFileNames={setFileNames}
-                        onUploadStart={() => setLoading(true)}
+                        onUploadStart={() => {
+                          document.getElementById('current-process').innerHTML =
+                            'アップロード中...';
+                          setLoading(true);
+                        }}
                         onUploadEnd={() => setLoading(false)}
                       />
                     </div>
@@ -189,7 +247,8 @@ function ExplorePrepare() {
               <Dropdown.Item
                 eventKey="1"
                 onClick={() => {
-                  onProcess(`${menunames[7].query}2`);
+                  // onProcess(`${menunames[7].query}2`);
+                  onProcessAuto(2);
                 }}
               >
                 2×2
@@ -197,7 +256,8 @@ function ExplorePrepare() {
               <Dropdown.Item
                 eventKey="2"
                 onClick={() => {
-                  onProcess(`${menunames[7].query}4`);
+                  // onProcess(`${menunames[7].query}4`);
+                  onProcessAuto(4);
                 }}
               >
                 4×4
@@ -233,29 +293,7 @@ function ExplorePrepare() {
         </Col>
       </Row>
 
-      {loading && (
-        <Button
-          type="button"
-          style={{
-            width: '100%',
-            height: '100vh',
-            position: 'fixed',
-            zIndex: 100,
-            backgroundColor: '#0000004f',
-            top: 0,
-            left: 0,
-          }}
-        >
-          <Spinner
-            animation="border"
-            style={{
-              width: '50px',
-              height: '50px',
-            }}
-          />
-          <div>処理中...</div>
-        </Button>
-      )}
+      <LoadingButton loading={loading} />
     </div>
   );
 }
