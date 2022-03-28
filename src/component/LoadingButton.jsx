@@ -1,32 +1,36 @@
-import {React, useState, useEffect} from "react";
-import Button from 'react-bootstrap/Button'
+import { React } from 'react';
+import { Button, Spinner } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
-function simulateNetworkRequest() {
-    return new Promise((resolve) => setTimeout(resolve, 2000));
+function LoadingButton({ loading }) {
+  return (
+    <Button
+      type="button"
+      style={{
+        width: '100%',
+        height: '100vh',
+        position: 'fixed',
+        zIndex: 100,
+        backgroundColor: '#0000004f',
+        top: 0,
+        left: 0,
+        display: loading ? 'block' : 'none',
+      }}
+    >
+      <Spinner
+        animation="border"
+        style={{
+          width: '50px',
+          height: '50px',
+        }}
+      />
+      <div>処理中...</div>
+    </Button>
+  );
 }
 
-function LoadingButton() {
-    const [isLoading, setLoading] = useState(false);
-
-    useEffect(() => {
-        if (isLoading) {
-            simulateNetworkRequest().then(() => {
-                setLoading(false);
-            });
-        }
-    }, [isLoading]);
-
-    const handleClick = () => setLoading(true);
-
-    return (
-        <Button
-            variant="primary"
-            disabled={isLoading}
-            onClick={!isLoading ? handleClick : null}
-        >
-            {isLoading ? 'Loading…' : 'Click to load'}
-        </Button>
-    );
-}
+LoadingButton.propTypes = {
+  loading: PropTypes.bool.isRequired,
+};
 
 export default LoadingButton;
