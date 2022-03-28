@@ -134,39 +134,45 @@ function ExplorePrepare() {
           <h4>探索準備 : </h4>
         </Col>
         <Col>
-          <ul className="coias-ul">
+          <div className="d-flex" style={{ marginBottom: '10px' }}>
+            <div style={{ marginRight: '20px' }}>
+              <FileModal
+                fileNames={fileNames}
+                setFileNames={setFileNames}
+                onUploadStart={() => {
+                  document.getElementById('current-process').innerHTML =
+                    'アップロード中...';
+                  setLoading(true);
+                }}
+                onUploadEnd={(result) => {
+                  setLoading(false);
+                  if (!result) {
+                    document.getElementById('toast-message').innerHTML =
+                      'ファイルアップロードが失敗しました';
+                    setShowError(true);
+                  }
+                }}
+              />
+            </div>
+            <DropdownButton
+              as={ButtonGroup}
+              key="Success"
+              id="dropdown-variants-Success"
+              variant="success"
+              title={menunames[7].name}
+            >
+              <Dropdown.Item eventKey="1" onClick={() => onProcessAuto(2)}>
+                2×2
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="2" onClick={() => onProcessAuto(4)}>
+                4×4
+              </Dropdown.Item>
+            </DropdownButton>
+          </div>
+          <ul className="coias-ul" style={{ marginLeft: '110px' }}>
             {menunames.map((item) => {
-              if (item.id === 1) {
-                return (
-                  <li
-                    key={item.id}
-                    style={{ display: 'flex' }}
-                    className="coias-li"
-                  >
-                    <div>
-                      <FileModal
-                        fileNames={fileNames}
-                        setFileNames={setFileNames}
-                        onUploadStart={() => {
-                          document.getElementById('current-process').innerHTML =
-                            'アップロード中...';
-                          setLoading(true);
-                        }}
-                        onUploadEnd={(result) => {
-                          setLoading(false);
-                          if (!result) {
-                            document.getElementById('toast-message').innerHTML =
-                              'ファイルアップロードが失敗しました';
-                            setShowError(true);
-                          }
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <AiOutlineArrowRight size={24} />
-                    </div>
-                  </li>
-                );
+              if (item.id === 1 || item.name === '全自動処理') {
+                return null;
               }
               if (item.name === 'ビニングマスク') {
                 return (
@@ -185,17 +191,13 @@ function ExplorePrepare() {
                       >
                         <Dropdown.Item
                           eventKey="1"
-                          onClick={() => {
-                            onProcess(`${item.query}2`);
-                          }}
+                          onClick={() => onProcess(`${item.query}2`)}
                         >
                           2×2
                         </Dropdown.Item>
                         <Dropdown.Item
                           eventKey="2"
-                          onClick={() => {
-                            onProcess(`${item.query}4`);
-                          }}
+                          onClick={() => onProcess(`${item.query}4`)}
                         >
                           4×4
                         </Dropdown.Item>
@@ -222,9 +224,6 @@ function ExplorePrepare() {
                   </li>
                 );
               }
-              if (item.name === '全自動処理') {
-                return null;
-              }
               return (
                 <li
                   key={item.id}
@@ -249,38 +248,6 @@ function ExplorePrepare() {
               );
             })}
           </ul>
-          <div
-            style={{
-              marginBottom: '10px',
-            }}
-          >
-            <DropdownButton
-              as={ButtonGroup}
-              key="Success"
-              id="dropdown-variants-Success"
-              variant="success"
-              title={menunames[7].name}
-            >
-              <Dropdown.Item
-                eventKey="1"
-                onClick={() => {
-                  // onProcess(`${menunames[7].query}2`);
-                  onProcessAuto(2);
-                }}
-              >
-                2×2
-              </Dropdown.Item>
-              <Dropdown.Item
-                eventKey="2"
-                onClick={() => {
-                  // onProcess(`${menunames[7].query}4`);
-                  onProcessAuto(4);
-                }}
-              >
-                4×4
-              </Dropdown.Item>
-            </DropdownButton>
-          </div>
         </Col>
       </Row>
 
