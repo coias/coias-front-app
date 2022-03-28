@@ -11,6 +11,7 @@ import {
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import FileModal from '../component/FileModal';
 import LoadingButton from '../component/LoadingButton';
+import AppToast from '../component/AppToast';
 
 /**
  * 2022.03.24 y changed.
@@ -31,31 +32,94 @@ function ExplorePrepare() {
   const uri = process.env.REACT_APP_API_URI;
   const [fileNames, setFileNames] = useState(['Please input files']);
   const [loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
 
-  // useEffect(() => {
-  //   const put = async () => {
-  //     setLoading(true);
-  //     if (query.startsWith('startsearch2R?binning='))
-  //       await axios.put(`${uri}preprocess`);
-  //     await axios
-  //       .put(uri + query)
-  //       .then(() => setLoading(false))
-  //       .catch(() => setLoading(false));
-  //   };
-  //   if (query.length > 0) put();
-  // }, [query]);
-
-  const onProcess = function (query) {
+  const onProcess = (query) => {
+    document.getElementById('current-process').innerHTML = '処理中...';
     const put = async () => {
       setLoading(true);
-      if (query.startsWith('startsearch2R?binning='))
-        await axios.put(`${uri}preprocess`);
       await axios
         .put(uri + query)
         .then(() => setLoading(false))
-        .catch(() => setLoading(false));
+        .catch(() => {
+          setLoading(false);
+          setShowError(true);
+          document.getElementById('toast-message').innerHTML =
+            '処理が失敗しました';
+        });
     };
     if (query.length > 0) put();
+  };
+
+  /**
+   * 処理の処理をまとめたモノ？
+   *
+   * @param {通信先} url
+   * @param {処理名} processName
+   * @returns
+   */
+  const onProcessExecute = async (url, processName) => {
+    let result = true;
+    document.getElementById('current-process').innerHTML = `${processName}...`;
+    await axios.put(url).catch(() => {
+      result = false;
+      document.getElementById(
+        'toast-message',
+      ).innerHTML = `${processName}が失敗しました`;
+    });
+    if (!result) {
+      setLoading(false);
+      setShowError(true);
+    }
+    return result;
+  };
+
+  /**
+   * 全自動処理。
+   *
+   * @param {ビニングますのサイズ} size
+   * @returns
+   */
+  const onProcessAuto = async (size) => {
+    // 事前処理
+    setLoading(true);
+    let result = true;
+    result = await onProcessExecute(`${uri}preprocess`, '事前処理');
+    if (!result) {
+      return;
+    }
+    // ビニングマスク（size: 2 or 4）
+    result = await onProcessExecute(
+      `${uri}startsearch2R?binning=${size}`,
+      `ビニングマスク（${size === 2 ? '2x2' : '4x4'}）`,
+    );
+    if (!result) {
+      return;
+    }
+    // 軌道取得（確定番号）
+    result = await onProcessExecute(
+      `${uri}prempsearchC-before`,
+      '軌道取得（確定番号）',
+    );
+    if (!result) {
+      return;
+    }
+    // 軌道取得（仮符号）
+    result = await onProcessExecute(
+      `${uri}prempsearchC-after`,
+      '軌道取得（仮符号）',
+    );
+    if (!result) {
+      return;
+    }
+    // 光源検出
+    result = await onProcessExecute(`${uri}findsource`, '光源検出');
+    if (!result) {
+      return;
+    }
+    // 自動検出
+    await onProcessExecute(`${uri}astsearch_new`, '自動検出');
+    setLoading(false);
   };
 
   return (
@@ -83,8 +147,19 @@ function ExplorePrepare() {
                       <FileModal
                         fileNames={fileNames}
                         setFileNames={setFileNames}
-                        onUploadStart={() => setLoading(true)}
-                        onUploadEnd={() => setLoading(false)}
+                        onUploadStart={() => {
+                          document.getElementById('current-process').innerHTML =
+                            'アップロード中...';
+                          setLoading(true);
+                        }}
+                        onUploadEnd={(result) => {
+                          setLoading(false);
+                          if (!result) {
+                            document.getElementById('toast-message').innerHTML =
+                              'ファイルアップロードが失敗しました';
+                            setShowError(true);
+                          }
+                        }}
                       />
                     </div>
                     <div>
@@ -189,7 +264,8 @@ function ExplorePrepare() {
               <Dropdown.Item
                 eventKey="1"
                 onClick={() => {
-                  onProcess(`${menunames[7].query}2`);
+                  // onProcess(`${menunames[7].query}2`);
+                  onProcessAuto(2);
                 }}
               >
                 2×2
@@ -197,7 +273,8 @@ function ExplorePrepare() {
               <Dropdown.Item
                 eventKey="2"
                 onClick={() => {
-                  onProcess(`${menunames[7].query}4`);
+                  // onProcess(`${menunames[7].query}4`);
+                  onProcessAuto(4);
                 }}
               >
                 4×4
@@ -234,6 +311,12 @@ function ExplorePrepare() {
       </Row>
 
       <LoadingButton loading={loading} />
+
+      <AppToast
+        show={showError}
+        title="エラー"
+        closeCallback={() => setShowError(false)}
+      />
     </div>
   );
 }

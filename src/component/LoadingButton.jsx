@@ -15,6 +15,7 @@ function LoadingButton({ loading }) {
         top: 0,
         left: 0,
         display: loading ? 'block' : 'none',
+        cursor: 'default',
       }}
     >
       <Spinner
@@ -24,7 +25,7 @@ function LoadingButton({ loading }) {
           height: '50px',
         }}
       />
-      <div>処理中...</div>
+      <div id="current-process">処理中...</div>
     </Button>
   );
 }
