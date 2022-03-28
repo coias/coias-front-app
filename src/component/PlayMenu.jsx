@@ -7,16 +7,18 @@ import {
   ButtonGroup,
   Form,
 } from 'react-bootstrap';
-
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
+import { AiFillSetting } from 'react-icons/ai';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { PageContext } from './context';
+import SettingModal from './SettingModal';
 
 function PlayMenu({ imageNames }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
   const [play, setPlay] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
 
   const onClickNext = () => {
     if (currentPage === 4) setCurrentPage(0);
@@ -120,6 +122,18 @@ function PlayMenu({ imageNames }) {
                 {name}
               </Button>
             ))}
+            <Button
+              variant="light"
+              onClick={() => {
+                setModalShow(true);
+              }}
+            >
+              <AiFillSetting size={30} />
+              <SettingModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+              />
+            </Button>
           </ButtonGroup>
         </Col>
       </Container>
@@ -130,5 +144,6 @@ function PlayMenu({ imageNames }) {
 PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
+
 
 export default PlayMenu;
