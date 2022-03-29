@@ -8,7 +8,6 @@ import PlayMenu from '../component/PlayMenu';
 function COIAS() {
   const [isGrab, setIsGrab] = useState(false);
   const [isSelect, setIsSelect] = useState(false);
-  const [imageNames, setImageNames] = useState([]);
   const [imageURLs, setImageURLs] = useState([]);
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -20,20 +19,39 @@ function COIAS() {
     const getImages = async () => {
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
-      const nameList = dataList.filter((element) => {
-        const b = element.endsWith('disp-coias.png');
-        return b;
+      // const nameList = dataList.filter((element) => {
+      //   const b = element.endsWith('disp-coias.png');
+      //   return b;
+      // });
+      // const urlList = dataList.map((e) => nginxApiUri + e);
+      // setImageNames(nameList);
+      // setImageURLs(urlList);
+
+      const toObjectArray = [];
+      dataList.forEach((data) => {
+        const idx = data.slice(0, 2);
+        const o =
+          toObjectArray.filter((obj) => obj.name.startsWith(idx))[0] ?? {};
+        if (toObjectArray.indexOf(o) === -1) {
+          toObjectArray.push(o);
+        }
+        if (data.endsWith('disp-coias.png')) {
+          o.name = data;
+          o.mask = nginxApiUri + data;
+        } else {
+          o.nomask = nginxApiUri + data;
+        }
+        o.visible = true;
+        o.nomasked = false;
       });
-      const urlList = nameList.map((e) => nginxApiUri + e);
-      setImageNames(nameList);
-      setImageURLs(urlList);
+      setImageURLs(toObjectArray);
     };
     getImages();
   }, []);
 
   return (
     <div className="coias-view-main">
-      <PlayMenu imageNames={imageNames} />
+      <PlayMenu imageNames={imageURLs} setImageURLs={setImageURLs} />
       <Container fluid>
         <Row>
           <Col>
