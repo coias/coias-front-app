@@ -12,9 +12,9 @@ import { AiFillSetting } from 'react-icons/ai';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { PageContext } from './context';
-import SettingModal from './SettingModal';
+import SettingModal from './SettingModal/SettingModal';
 
-function PlayMenu({ imageNames }) {
+function PlayMenu({ imageNames, setImageURLs }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
   const [play, setPlay] = useState(false);
@@ -111,29 +111,31 @@ function PlayMenu({ imageNames }) {
         </Col>
         <Col md={9}>
           <ButtonGroup aria-label="Basic example">
-            {imageNames.map((name, index) => (
-              <Button
-                key={name}
-                variant="light"
-                onClick={() => {
-                  setCurrentPage(index);
-                }}
-              >
-                {name}
-              </Button>
-            ))}
-            <Button
-              variant="light"
-              onClick={() => {
-                setModalShow(true);
-              }}
-            >
+            {imageNames
+              .filter((img) => img.visible)
+              .map((name, index) => (
+                <Button
+                  key={name.name}
+                  variant="light"
+                  onClick={() => {
+                    setCurrentPage(index);
+                  }}
+                >
+                  {name.name}
+                </Button>
+              ))}
+            <Button variant="light" onClick={() => setModalShow(true)}>
               <AiFillSetting size={30} />
-              <SettingModal
-                show={modalShow}
-                onHide={() => setModalShow(false)}
-              />
             </Button>
+            <SettingModal
+              show={modalShow}
+              onHide={() => {
+                setModalShow(false);
+                setImageURLs(JSON.parse(JSON.stringify(imageNames)));
+              }}
+              title="表示設定"
+              imageURLs={imageNames}
+            />
           </ButtonGroup>
         </Col>
       </Container>
@@ -142,8 +144,8 @@ function PlayMenu({ imageNames }) {
 }
 
 PlayMenu.propTypes = {
-  imageNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setImageURLs: PropTypes.func.isRequired,
 };
-
 
 export default PlayMenu;

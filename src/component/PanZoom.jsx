@@ -165,18 +165,27 @@ function PanZoom({ imageURLs }) {
       setStarPos(toObject);
       setOriginalStarPos(toObject);
     };
-    window.images = imageURLs.map((url) => {
-      const img = new Image();
-      img.onload = () => {
+    window.images = imageURLs.map((image) => {
+      const masked = new Image();
+      const nomasked = new Image();
+      const onLoad = () => {
         window.imageLoadComplete =
-          window.images.filter((i) => i.complete && i.naturalWidth !== 0)
-            .length === window.images.length;
+          window.images.filter(
+            (i) =>
+              i[0].complete &&
+              i[0].naturalWidth !== 0 &&
+              i[1].complete &&
+              i[1].naturalWidth !== 0,
+          ).length === window.images.length;
         if (window.imageLoadComplete) {
           getDisp();
         }
       };
-      img.src = url;
-      return img;
+      masked.onload = onLoad;
+      nomasked.onload = onLoad;
+      masked.src = image.mask;
+      nomasked.src = image.nomask;
+      return [masked, nomasked];
     });
   }, [imageURLs]);
 
@@ -194,7 +203,9 @@ function PanZoom({ imageURLs }) {
     ) {
       const w = canvas.width;
       canvas.width = w;
-      const img = window.images[currentPage];
+      const img = imageURLs[currentPage].nomasked
+        ? window.images[currentPage][1]
+        : window.images[currentPage][0];
 
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
@@ -359,7 +370,7 @@ function PanZoom({ imageURLs }) {
 }
 
 PanZoom.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default PanZoom;
