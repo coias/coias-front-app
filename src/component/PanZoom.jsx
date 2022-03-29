@@ -303,26 +303,37 @@ function PanZoom({ imageURLs }) {
             style={{
               width: '100%',
               height: '100%',
-              backgroundColor: 'gray',
+              paddingTop: '24px',
               position: 'relative',
+              overflow: 'hidden',
             }}
           >
-            <div className="canvas-wapper" ref={ZPCanvasRef}>
-              <canvas
-                ref={canvasRef}
-                width={`${IMAGE_WIDTH}px`}
-                height={`${IMAGE_HEIGHT}px`}
-                onClick={(e) => {
-                  changeColorOnClick(e);
-                }}
-                style={{
-                  filter: `contrast(${contrastVal - 50}%) brightness(${
-                    brightnessVal - 50
-                  }%)`,
-                }}
-              />
-            </div>
             <MousePosition />
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                overflow: 'hidden',
+                backgroundColor: 'gray',
+                position: 'relative',
+              }}
+            >
+              <div className="canvas-wapper" ref={ZPCanvasRef}>
+                <canvas
+                  ref={canvasRef}
+                  width={`${IMAGE_WIDTH}px`}
+                  height={`${IMAGE_HEIGHT}px`}
+                  onClick={(e) => {
+                    changeColorOnClick(e);
+                  }}
+                  style={{
+                    filter: `contrast(${contrastVal - 50}%) brightness(${
+                      brightnessVal - 50
+                    }%)`,
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </Col>
         <Col sm={2}>

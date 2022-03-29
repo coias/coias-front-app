@@ -1,17 +1,15 @@
 import { React } from 'react';
 import { Toast } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import styles from './AppToast.module.scss';
 
 function AppToast({ show, title, closeCallback }) {
   return (
     <Toast
+      className={styles.app_toast}
       onClose={closeCallback}
       style={{
         display: show ? 'block' : 'none',
-        position: 'fixed',
-        left: 20,
-        bottom: 20,
-        backgroundColor: 'white',
       }}
     >
       <Toast.Header>

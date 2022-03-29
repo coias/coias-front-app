@@ -11,7 +11,7 @@ import {
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import FileModal from '../component/FileModal';
 import LoadingButton from '../component/LoadingButton';
-import AppToast from '../component/AppToast';
+import AppToast from '../component/AppToast/AppToast';
 
 /**
  * 2022.03.24 y changed.
