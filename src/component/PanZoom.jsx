@@ -212,7 +212,7 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
           }
         });
     }
-  }, [currentPage, starPos, isReload]);
+  }, [currentPage, starPos, isReload, IMAGE_HEIGHT]);
 
   // マウス移動時の挙動制御
   useEffect(() => {

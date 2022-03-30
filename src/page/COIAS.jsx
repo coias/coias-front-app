@@ -86,6 +86,12 @@ function COIAS() {
                 onClick={() => {
                   setIsGrab(false);
                   setIsSelect(false);
+                  Array.from(
+                    document.getElementsByClassName('form-check-input'),
+                  ).forEach((item) => {
+                    // eslint-disable-next-line no-param-reassign
+                    item.checked = false;
+                  });
                   setIsReload(!isReload);
                 }}
               >
