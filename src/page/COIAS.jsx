@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
+import { AiOutlineReload } from 'react-icons/ai';
 import axios from 'axios';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
@@ -8,6 +9,7 @@ import PlayMenu from '../component/PlayMenu';
 function COIAS() {
   const [isGrab, setIsGrab] = useState(false);
   const [isSelect, setIsSelect] = useState(false);
+  const [isReload, setIsReload] = useState(false);
   const [imageURLs, setImageURLs] = useState([]);
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -81,6 +83,17 @@ function COIAS() {
               >
                 <FaMousePointer size={30} />
               </Button>
+              <Button
+                id="reloadButton"
+                variant="light"
+                onClick={() => {
+                  setIsGrab(false);
+                  setIsSelect(false);
+                  setIsReload(!isReload);
+                }}
+              >
+                <AiOutlineReload size={30} />
+              </Button>
             </div>
           </Col>
           <Col md={11}>
@@ -88,7 +101,7 @@ function COIAS() {
               Alt
               キーを押しながらスクロール操作で、ズームイン・ズームアウトできます。
             </div>
-            <PanZoom imageURLs={imageURLs} />
+            <PanZoom imageURLs={imageURLs} isReload={isReload} />
           </Col>
         </Row>
       </Container>

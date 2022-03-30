@@ -16,7 +16,7 @@ import BrightnessBar from './BrightnessBar';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-function PanZoom({ imageURLs }) {
+function PanZoom({ imageURLs, isReload }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
   }
@@ -50,10 +50,9 @@ function PanZoom({ imageURLs }) {
   useEffect(() => {
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
       maxZoom: 10,
-      minZoom: 1,
+      minZoom: 0.1,
       bounds: true,
-
-      boundsPadding: 1.0,
+      boundsPadding: 0.9,
       zoomDoubleClickSpeed: 1,
       beforeWheel(e) {
         const shouldIgnore = !e.altKey;
@@ -70,7 +69,7 @@ function PanZoom({ imageURLs }) {
     return () => {
       ZPCanvas.current.dispose();
     };
-  }, []);
+  }, [isReload]);
 
   // 初回のみのAPIの読み込み
   /**
@@ -187,7 +186,7 @@ function PanZoom({ imageURLs }) {
       nomasked.src = image.nomask;
       return [masked, nomasked];
     });
-  }, [imageURLs]);
+  }, [imageURLs, isReload]);
 
   // imageの描画
   useEffect(() => {
@@ -382,6 +381,7 @@ function PanZoom({ imageURLs }) {
 
 PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isReload: PropTypes.bool.isRequired,
 };
 
 export default PanZoom;
