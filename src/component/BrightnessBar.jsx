@@ -1,5 +1,4 @@
 import React from 'react';
-import { Row, Col, Form } from 'react-bootstrap';
 import { ImBrightnessContrast } from 'react-icons/im';
 import PropTypes from 'prop-types';
 
@@ -8,26 +7,29 @@ function BrightnessBar({ val, set }) {
     <div
       style={{
         opacity: 0.5,
-        width: '400px',
+        width: '35px',
+        height: '230px',
         color: 'white',
         backgroundColor: 'black',
         borderRadius: '5px',
+        textAlign: 'center',
+        marginBottom: '30px',
+        marginTop: '30px',
       }}
     >
-      <Form.Group as={Row} sm="auto">
-        <Col>
-          <Form.Label>
-            <ImBrightnessContrast />
-          </Form.Label>
-        </Col>
-        <Col sm={10}>
-          <Form.Range
-            max={300}
-            value={val}
-            onChange={(e) => set(Number(e.target.value))}
-          />
-        </Col>
-      </Form.Group>
+      <ImBrightnessContrast size={30} />
+      <input
+        id="ex4"
+        type="range"
+        min="0"
+        max="300"
+        data-slider-step="1"
+        value={val.toString()}
+        onChange={(e) => {
+          set(Number(e.target.value));
+        }}
+        data-slider-orientation="vertical"
+      />
     </div>
   );
 }

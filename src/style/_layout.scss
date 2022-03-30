@@ -78,7 +78,7 @@ footer {
 }
 
 .coias-view-main {
-  height: 100%;
+  height: 100vh;
 
   .container-fluid {
     height: calc(100% - 102px);
@@ -153,4 +153,11 @@ footer {
 
     --bg-opacity: 1;
   }
+}
+
+#ex4{
+    -webkit-appearance: slider-vertical; /* Chromium */
+    width: 8px;
+    height: 175px;
+    padding: 0 5px;
 }

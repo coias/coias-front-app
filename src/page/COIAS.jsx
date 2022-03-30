@@ -5,11 +5,15 @@ import { AiOutlineReload } from 'react-icons/ai';
 import axios from 'axios';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
+import ContrastBar from '../component/ContrastBar';
+import BrightnessBar from '../component/BrightnessBar';
 
 function COIAS() {
   const [isGrab, setIsGrab] = useState(false);
   const [isSelect, setIsSelect] = useState(false);
   const [isReload, setIsReload] = useState(false);
+  const [brightnessVal, setBrightnessVal] = useState(150);
+  const [contrastVal, setContrastVal] = useState(150);
   const [imageURLs, setImageURLs] = useState([]);
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -21,13 +25,6 @@ function COIAS() {
     const getImages = async () => {
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
-      // const nameList = dataList.filter((element) => {
-      //   const b = element.endsWith('disp-coias.png');
-      //   return b;
-      // });
-      // const urlList = dataList.map((e) => nginxApiUri + e);
-      // setImageNames(nameList);
-      // setImageURLs(urlList);
 
       const toObjectArray = [];
       dataList.forEach((data) => {
@@ -94,14 +91,17 @@ function COIAS() {
               >
                 <AiOutlineReload size={30} />
               </Button>
+              <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
+              <ContrastBar val={contrastVal} set={setContrastVal} />
             </div>
           </Col>
-          <Col md={11}>
-            <div>
-              Alt
-              キーを押しながらスクロール操作で、ズームイン・ズームアウトできます。
-            </div>
-            <PanZoom imageURLs={imageURLs} isReload={isReload} />
+          <Col md={11} className="h-100">
+            <PanZoom
+              imageURLs={imageURLs}
+              isReload={isReload}
+              brightnessVal={brightnessVal}
+              contrastVal={contrastVal}
+            />
           </Col>
         </Row>
       </Container>

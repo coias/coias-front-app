@@ -9,16 +9,19 @@ import {
 } from 'react-bootstrap';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
+import { BiHelpCircle } from 'react-icons/bi';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { PageContext } from './context';
-import SettingModal from './SettingModal/SettingModal';
+import SettingModal from './SettingModal';
+import HelpModal from './HelpModal';
 
 function PlayMenu({ imageNames, setImageURLs }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
   const [play, setPlay] = useState(false);
-  const [modalShow, setModalShow] = useState(false);
+  const [settingModalShow, setSettingModalShow] = useState(false);
+  const [helpModalShow, setHelpModalShow] = useState(false);
 
   const onClickNext = () => {
     if (currentPage === 4) setCurrentPage(0);
@@ -124,13 +127,25 @@ function PlayMenu({ imageNames, setImageURLs }) {
                   {name.name}
                 </Button>
               ))}
-            <Button variant="light" onClick={() => setModalShow(true)}>
+            <Button variant="light" onClick={() => setSettingModalShow(true)}>
               <AiFillSetting size={30} />
             </Button>
             <SettingModal
-              show={modalShow}
+              show={settingModalShow}
               onHide={() => {
-                setModalShow(false);
+                setSettingModalShow(false);
+                setImageURLs(JSON.parse(JSON.stringify(imageNames)));
+              }}
+              title="表示設定"
+              imageURLs={imageNames}
+            />
+            <Button variant="light" onClick={() => setHelpModalShow(true)}>
+              <BiHelpCircle size={30} />
+            </Button>
+            <HelpModal
+              show={helpModalShow}
+              onHide={() => {
+                setHelpModalShow(false);
                 setImageURLs(JSON.parse(JSON.stringify(imageNames)));
               }}
               title="表示設定"

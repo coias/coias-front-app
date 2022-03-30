@@ -1,7 +1,6 @@
 import React from 'react';
 import { Modal, Button, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import styles from './SettingModal.module.scss';
 
 function SettingModal({ show, onHide, imageURLs }) {
   return (
@@ -24,9 +23,9 @@ function SettingModal({ show, onHide, imageURLs }) {
         </Row>
         <hr />
         {imageURLs.map((img) => (
-          <Row key={img.name} className={styles.row}>
+          <Row key={img.name} className="mb-5">
             <Col sm={8}>{img.name}</Col>
-            <Col className={styles.list_col}>
+            <Col className="text-center">
               <input
                 type="checkbox"
                 defaultChecked={img.visible}

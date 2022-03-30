@@ -11,12 +11,10 @@ import {
   MousePositionContext,
   StarPositionContext,
 } from './context';
-import ContrastBar from './ContrastBar';
-import BrightnessBar from './BrightnessBar';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-function PanZoom({ imageURLs, isReload }) {
+function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
   }
@@ -27,8 +25,6 @@ function PanZoom({ imageURLs, isReload }) {
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
-  const [contrastVal, setContrastVal] = useState(150);
-  const [brightnessVal, setBrightnessVal] = useState(150);
   const [disable, setDisable] = useState(true);
   const [originalStarPos, setOriginalStarPos] = useState({});
   const navigate = useNavigate();
@@ -72,23 +68,11 @@ function PanZoom({ imageURLs, isReload }) {
   }, [isReload]);
 
   // 初回のみのAPIの読み込み
-  /**
-   * star = {
-   *  starName : string,
-   *  page : number,
-   *  x : float,
-   *  y : float,
-   *  isSelected : boolean,
-   * }
-   */
   useMemo(() => {}, []);
 
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async () => {
     // memo.txtへの出力
-    // const selectedStars = starPos
-    //   .filter((pos) => parseInt(pos[1], 10) === 0 && pos[4])
-    //   .map((e) => e[0].substring(1));
     const selectedStars = Object.keys(starPos)
       .map((key) => starPos[key])
       .filter((item) => item.isSelected)
@@ -228,7 +212,7 @@ function PanZoom({ imageURLs, isReload }) {
           }
         });
     }
-  }, [currentPage, starPos]);
+  }, [currentPage, starPos, isReload]);
 
   // マウス移動時の挙動制御
   useEffect(() => {
@@ -367,14 +351,6 @@ function PanZoom({ imageURLs, isReload }) {
           <StarsList />
         </Col>
       </Row>
-      <Row className="star-canvas-control">
-        <Col sm={10}>
-          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <ContrastBar val={contrastVal} set={setContrastVal} />
-            <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
-          </div>
-        </Col>
-      </Row>
     </Container>
   );
 }
@@ -382,6 +358,8 @@ function PanZoom({ imageURLs, isReload }) {
 PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   isReload: PropTypes.bool.isRequired,
+  brightnessVal: PropTypes.number.isRequired,
+  contrastVal: PropTypes.number.isRequired,
 };
 
 export default PanZoom;
