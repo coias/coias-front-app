@@ -27,4 +27,4 @@ WORKDIR /opt/coias-front-app
 
 # RUN yarn --production
 RUN yarn
-ENTRYPOINT [ "bash", "/opt/coias-front-app/startup.sh" ]
+ENTRYPOINT [ "bash", "/opt/coias-front-app/Docker/startup.sh" ]
