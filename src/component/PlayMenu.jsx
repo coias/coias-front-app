@@ -86,7 +86,7 @@ function PlayMenu({ imageNames, setImageURLs }) {
                 <FaStepBackward size={30} />
               </Button>
             </Nav.Item>
-            <Nav.Item className="text-center d-flex m-1">
+            <Nav.Item className="text-center d-flex m-0">
               <Button
                 variant="light"
                 onClick={() => {
@@ -96,7 +96,7 @@ function PlayMenu({ imageNames, setImageURLs }) {
                 <FaStepForward size={30} />
               </Button>
             </Nav.Item>
-            <Nav.Item className="d-flex m-1">
+            <Nav.Item className="d-flex">
               <Form.Control
                 as="select"
                 onChange={(v) => {
@@ -108,7 +108,7 @@ function PlayMenu({ imageNames, setImageURLs }) {
                 <option value="50">0.05</option>
                 <option value="100">0.10</option>
               </Form.Control>
-              <Form.Text>sec</Form.Text>
+              <Form.Text style={{ margin: 'auto 0' }}>sec</Form.Text>
             </Nav.Item>
           </Nav>
         </Col>
