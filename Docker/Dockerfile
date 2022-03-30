@@ -19,7 +19,7 @@ RUN apt update && apt install -y\
     apt update &&\
     apt install -y yarn &&\
     yarn global add n &&\
-    n latest &&\
+    n lts &&\
     rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/aizulab/coias-front-app.git --depth 1
