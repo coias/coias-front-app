@@ -46,9 +46,9 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
   useEffect(() => {
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
       maxZoom: 10,
-      minZoom: 0.1,
+      minZoom: 0.6,
       bounds: true,
-      boundsPadding: 0.9,
+      boundsPadding: 0.05,
       zoomDoubleClickSpeed: 1,
       beforeWheel(e) {
         const shouldIgnore = !e.altKey;

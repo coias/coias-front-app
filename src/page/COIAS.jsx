@@ -92,6 +92,7 @@ function COIAS() {
                     // eslint-disable-next-line no-param-reassign
                     item.checked = false;
                   });
+                  setIsGrab(true);
                   setIsReload(!isReload);
                 }}
               >
