@@ -4,6 +4,7 @@ import {
   Container,
   Col,
   Button,
+  ToggleButton,
   ButtonGroup,
   Form,
 } from 'react-bootstrap';
@@ -22,6 +23,7 @@ function PlayMenu({ imageNames, setImageURLs }) {
   const [play, setPlay] = useState(false);
   const [settingModalShow, setSettingModalShow] = useState(false);
   const [helpModalShow, setHelpModalShow] = useState(false);
+  const [radioValue, setRadioValue] = useState('1');
 
   const onClickNext = () => {
     if (currentPage === 4) setCurrentPage(0);
@@ -117,17 +119,30 @@ function PlayMenu({ imageNames, setImageURLs }) {
             {imageNames
               .filter((img) => img.visible)
               .map((name, index) => (
-                <Button
+                <ToggleButton
+                  id={`radio-${index}`}
+                  type="radio"
+                  variant="outline-secondary"
+                  name="radio"
+                  value={name.name}
                   key={name.name}
-                  variant="light"
-                  onClick={() => {
+                  checked={
+                    (radioValue === name.name && currentPage === index) ||
+                    currentPage === index
+                  }
+                  onChange={(e) => {
                     setCurrentPage(index);
+                    setRadioValue(e.currentTarget.value);
                   }}
                 >
                   {name.name}
-                </Button>
+                </ToggleButton>
               ))}
-            <Button variant="light" onClick={() => setSettingModalShow(true)}>
+            <Button
+              variant="light"
+              onClick={() => setSettingModalShow(true)}
+              className="mx-3"
+            >
               <AiFillSetting size={30} />
             </Button>
             <SettingModal

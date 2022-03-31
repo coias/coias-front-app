@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Col, Row, Form, Button } from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import LoadingButton from '../component/LoadingButton';
+import AppToast from '../component/AppToast/AppToast';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -12,6 +13,7 @@ function Report() {
   const [sendMpcBody, setSendMpcBody] = useState([]);
   const [sendMpc, setSendMpc] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const makeSendMpc = async () => {
     const header = [
@@ -44,11 +46,22 @@ function Report() {
 
   const getMpc = async () => {
     setLoading(true);
-    const response = await axios.put(`${reactApiUri}AstsearchR_afterReCOIAS`);
-    const mpctext = await response.data.send_mpc;
-    const result = await mpctext.split('\n');
-    await setSendMpcBody(result.map((item) => item.trim()));
-    setLoading(false);
+    await axios
+      .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
+      .then((response) => {
+        const mpctext = response.data.send_mpc;
+        const result = mpctext.split('\n');
+        setSendMpcBody(result.map((item) => item.trim()));
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        setShowError(true);
+        document.getElementById('toast-message').innerHTML =
+          '処理が失敗しました。やり直してください。';
+        setSendMpc('処理が失敗しました。やり直してください。');
+      });
   };
   // 初回のみのAPIの読み込み
   useMemo(() => {
@@ -133,6 +146,11 @@ function Report() {
         </Col>
       </Row>
       <LoadingButton loading={loading} />
+      <AppToast
+        show={showError}
+        title="エラー"
+        closeCallback={() => setShowError(false)}
+      />
     </div>
   );
 }

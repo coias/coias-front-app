@@ -1,5 +1,5 @@
 // eslint-disable-next-line object-curly-newline
-import React, { useRef, useEffect, useContext, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useContext, useState } from 'react';
 import panzoom from 'panzoom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -66,9 +66,6 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
       ZPCanvas.current.dispose();
     };
   }, [isReload]);
-
-  // 初回のみのAPIの読み込み
-  useMemo(() => {}, []);
 
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async () => {

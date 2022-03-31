@@ -63,9 +63,10 @@ function Header() {
           <NavLink
             to="/Report"
             className={(navData) =>
-              navData.isActive ? 'active' : 'not-active'
+              navData.isActive ? 'not-active-no-hover' : 'not-active-no-hover'
             }
             style={{ textDecoration: 'none', color: 'gray' }}
+            onClick={(e) => e.preventDefault() /* do nothing. */}
           >
             <h3 style={{ paddingLeft: 35 }}>レポート</h3>
           </NavLink>
