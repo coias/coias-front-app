@@ -195,17 +195,31 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
         .forEach((pos) => {
           if (pos.page[currentPage]) {
             const position = pos.page[currentPage];
+
+            // rectangle setting
+            context.globalAlpha = 1.0;
             const x = position.x - RECT_WIDTH / 2;
             const y = img.naturalHeight - position.y - RECT_HEIGHT / 2;
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
-            // console.log(index, window.hitIndex);
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
-            context.font = '15px serif';
+
+            // font setting
+            context.strokeStyle = 'black';
+            context.lineWidth = 3;
+            context.font = '18px serif';
+            context.strokeText(
+              pos.name,
+              x - RECT_WIDTH / 10,
+              y - RECT_HEIGHT / 10,
+            );
             context.fillStyle = 'red';
-            context.fillText(pos.name, x - RECT_WIDTH / 2, y - RECT_HEIGHT / 3);
-            context.stroke();
+            context.fillText(
+              pos.name,
+              x - RECT_WIDTH / 10,
+              y - RECT_HEIGHT / 10,
+            );
           }
         });
     }
