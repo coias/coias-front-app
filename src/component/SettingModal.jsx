@@ -49,7 +49,7 @@ function SettingModal({ show, onHide, imageURLs }) {
         ))}
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide}>Close</Button>
+        <Button onClick={onHide}>閉じる</Button>
       </Modal.Footer>
     </Modal>
   );
