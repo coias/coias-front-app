@@ -1,11 +1,17 @@
 {
-	"name": "coias-front-app",
-	"dockerComposeFile": "../../docker-compose.dev.yml",
-	"workspaceFolder": "/opt/coias-front-app",
-	"service": "front-dev-app",
-	"settings": {},
-	"extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "stylelint.vscode-stylelint", "msjsdiag.debugger-for-edge"],
-	"onCreateCommand": "bash /opt/coias-front-app/Docker/setup.sh",
-	"updateContentCommand": "echo コンテナの起動完了",
-	"postStartCommand": "",
+  "name": "coias-front-app",
+  "dockerComposeFile": "../../docker-compose.dev.yml",
+  "workspaceFolder": "/opt/coias-front-app",
+  "service": "front-dev-app",
+  "settings": {},
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "msjsdiag.debugger-for-edge",
+    "ms-ceintl.vscode-language-pack-ja"
+  ],
+  "onCreateCommand": "bash /opt/coias-front-app/Docker/setup.sh",
+  "updateContentCommand": "echo コンテナの起動完了",
+  "postStartCommand": ""
 }

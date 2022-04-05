@@ -22,7 +22,7 @@ RUN apt update && apt install -y\
     n lts &&\
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/aizulab/coias-front-app.git --depth 1
+RUN git clone https://github.com/coias/coias-front-app.git --depth 1
 WORKDIR /opt/coias-front-app
 
 # RUN yarn --production
