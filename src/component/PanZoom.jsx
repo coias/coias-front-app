@@ -51,7 +51,7 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
       maxZoom: 10,
       minZoom: 0.6,
       bounds: true,
-      boundsPadding: 0.9,
+      boundsPadding: 0.05,
       zoomDoubleClickSpeed: 1,
       beforeWheel(e) {
         const shouldIgnore = !e.altKey;
@@ -125,10 +125,36 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
     const getDisp = async () => {
       const response = await axios.get(`${reactApiUri}unknown_disp`);
       const disp = await response.data.result;
+      const starPosLength = Object.keys(starPos).length;
+
+      // H00000の座標で、同じdispかどうかを判定
+      const isSameObj = () => {
+        let flag = false;
+        if (starPosLength === 0) return null;
+        starPos[Object.keys(starPos)[0]].page.forEach((pos, index) => {
+          const dispEl = {
+            x: parseFloat(disp[index][2], 10),
+            y: parseFloat(disp[index][3], 10),
+          };
+          console.log(dispEl.x, dispEl.y, pos.x, pos.y);
+          if (dispEl.x === pos.x && dispEl.y === pos.y) flag = true;
+        });
+        return flag;
+      };
+
+      // console.log(isSameObj());
+      // console.log(imageURLs, imageURLs.length);
+      // console.log(disp, disp.length);
 
       // 選択を同期させるため、オブジェクトに変更
+      // 二回目以降 (isSameObj())
+      // 初回 && 同画面遷移 (else)
       const toObject = {};
-      if (starPos.length === 0) {
+
+      if (isSameObj()) {
+        setStarPos(starPos);
+        setOriginalStarPos(starPos);
+      } else {
         disp.forEach((item) => {
           let star = toObject[item[0]];
           if (!star) {
@@ -145,14 +171,11 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
             y: parseFloat(item[3], 10),
           };
         });
-
         setStarPos(toObject);
         setOriginalStarPos(toObject);
-      } else {
-        setStarPos(starPos);
-        setOriginalStarPos(starPos);
       }
     };
+
     window.images = imageURLs.map((image) => {
       const masked = new Image();
       const nomasked = new Image();
@@ -204,9 +227,8 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
         .map((key) => starPos[key])
         .forEach((pos) => {
           if (pos.page[currentPage]) {
-            const position = pos.page[currentPage];
-
             // rectangle setting
+            const position = pos.page[currentPage];
             const x = position.x - RECT_WIDTH / 2;
             const y = img.naturalHeight - position.y - RECT_HEIGHT / 2;
             context.lineWidth = 2;
