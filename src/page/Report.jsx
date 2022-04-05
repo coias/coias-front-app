@@ -51,7 +51,16 @@ function Report() {
       .then((response) => {
         const mpctext = response.data.send_mpc;
         const result = mpctext.split('\n');
-        setSendMpcBody(result.map((item) => item.trim()));
+        setSendMpcBody(
+          result.map((item) => {
+            const trimedStr = item.trim();
+            const blankAddedStr = trimedStr.replace(
+              ' ',
+              '\u00A0\u00A0\u00A0\u00A0',
+            );
+            return blankAddedStr;
+          }),
+        );
         setLoading(false);
       })
       .catch((err) => {

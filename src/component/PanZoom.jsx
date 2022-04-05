@@ -11,6 +11,8 @@ import {
   MousePositionContext,
   StarPositionContext,
 } from './context';
+import LoadingButton from './LoadingButton';
+
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
@@ -41,6 +43,7 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
   const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   // panzoomのコンストラクター
   useEffect(() => {
@@ -48,7 +51,7 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
       maxZoom: 10,
       minZoom: 0.6,
       bounds: true,
-      boundsPadding: 0.05,
+      boundsPadding: 0.9,
       zoomDoubleClickSpeed: 1,
       beforeWheel(e) {
         const shouldIgnore = !e.altKey;
@@ -125,25 +128,30 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
 
       // 選択を同期させるため、オブジェクトに変更
       const toObject = {};
-      disp.forEach((item) => {
-        let star = toObject[item[0]];
-        if (!star) {
-          toObject[item[0]] = {
+      if (starPos.length === 0) {
+        disp.forEach((item) => {
+          let star = toObject[item[0]];
+          if (!star) {
+            toObject[item[0]] = {
+              name: item[0],
+              page: [null, null, null, null, null],
+              isSelected: false,
+            };
+            star = toObject[item[0]];
+          }
+          star.page[item[1]] = {
             name: item[0],
-            page: [null, null, null, null, null],
-            isSelected: false,
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
           };
-          star = toObject[item[0]];
-        }
-        star.page[item[1]] = {
-          name: item[0],
-          x: parseFloat(item[2], 10),
-          y: parseFloat(item[3], 10),
-        };
-      });
+        });
 
-      setStarPos(toObject);
-      setOriginalStarPos(toObject);
+        setStarPos(toObject);
+        setOriginalStarPos(toObject);
+      } else {
+        setStarPos(starPos);
+        setOriginalStarPos(starPos);
+      }
     };
     window.images = imageURLs.map((image) => {
       const masked = new Image();
@@ -181,6 +189,8 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
       window.images.length !== 0 &&
       window.imageLoadComplete
     ) {
+      setLoading(true);
+
       const w = canvas.width;
       canvas.width = w;
       const img = imageURLs[currentPage].nomasked
@@ -195,19 +205,33 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
         .forEach((pos) => {
           if (pos.page[currentPage]) {
             const position = pos.page[currentPage];
+
+            // rectangle setting
             const x = position.x - RECT_WIDTH / 2;
             const y = img.naturalHeight - position.y - RECT_HEIGHT / 2;
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
-            // console.log(index, window.hitIndex);
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
-            context.font = '15px serif';
+
+            // font setting
+            context.strokeStyle = 'black';
+            context.lineWidth = 3;
+            context.font = '18px serif';
+            context.strokeText(
+              pos.name,
+              x - RECT_WIDTH / 10,
+              y - RECT_HEIGHT / 10,
+            );
             context.fillStyle = 'red';
-            context.fillText(pos.name, x - RECT_WIDTH / 2, y - RECT_HEIGHT / 3);
-            context.stroke();
+            context.fillText(
+              pos.name,
+              x - RECT_WIDTH / 10,
+              y - RECT_HEIGHT / 10,
+            );
           }
         });
+      setLoading(false);
     }
   }, [currentPage, starPos, isReload, IMAGE_HEIGHT]);
 
@@ -348,6 +372,7 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
           <StarsList />
         </Col>
       </Row>
+      <LoadingButton loading={loading} />
     </Container>
   );
 }
