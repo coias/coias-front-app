@@ -3,10 +3,10 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "yarn: react-start",
+			"label": "yarn: start",
 			"command": "yarn",
-			"args": ["react-start"],
-			"runOptions": {"runOn": "folderOpen"}
+			"args": ["start"],
+			// "runOptions": {"runOn": "folderOpen"}
 		}
 	]
 }
