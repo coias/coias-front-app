@@ -18,16 +18,31 @@ import AppToast from '../component/AppToast/AppToast';
  * 全自動だけ段分け。
  */
 function ExplorePrepare() {
-  const menunames = [
-    { id: 1, name: 'ファイル' },
-    { id: 2, name: '事前処理', query: 'preprocess' },
-    { id: 3, name: 'ビニングマスク', query: 'startsearch2R?binning=' },
-    { id: 4, name: '軌道取得（確定番号）', query: 'prempsearchC-before' },
-    { id: 5, name: '軌道取得（仮符号）', query: 'prempsearchC-after' },
-    { id: 6, name: '光源検出', query: 'findsource' },
-    { id: 7, name: '自動検出', query: 'astsearch_new' },
-    { id: 8, name: '全自動処理', query: 'AstsearchR?binning=' },
-  ];
+  const [menunames, setMenunames] = useState([
+    { id: 1, name: 'ファイル', done: false },
+    { id: 2, name: '事前処理', query: 'preprocess', done: false },
+    {
+      id: 3,
+      name: 'ビニングマスク',
+      query: 'startsearch2R?binning=',
+      done: false,
+    },
+    {
+      id: 4,
+      name: '軌道取得（確定番号）',
+      query: 'prempsearchC-before',
+      done: false,
+    },
+    {
+      id: 5,
+      name: '軌道取得（仮符号）',
+      query: 'prempsearchC-after',
+      done: false,
+    },
+    { id: 6, name: '光源検出', query: 'findsource', done: false },
+    { id: 7, name: '自動検出', query: 'astsearch_new', done: false },
+    { id: 8, name: '全自動処理', query: 'AstsearchR?binning=', done: false },
+  ]);
 
   const uri = process.env.REACT_APP_API_URI;
   const [fileNames, setFileNames] = useState(['Please input files']);
@@ -40,7 +55,24 @@ function ExplorePrepare() {
       setLoading(true);
       await axios
         .put(uri + query)
-        .then(() => setLoading(false))
+        .then(() => {
+          const updatedMenunames = menunames.map((item) => {
+            if (item.query === query) {
+              // eslint-disable-next-line no-param-reassign
+              item.done = true;
+            } else if (
+              query.startsWith('startsearch2R?binning=') &&
+              item.query.startsWith('startsearch2R?binning=')
+            ) {
+              // eslint-disable-next-line no-param-reassign
+              item.done = true;
+            }
+            return item;
+          });
+          setMenunames(updatedMenunames);
+          console.log(updatedMenunames);
+          setLoading(false);
+        })
         .catch(() => {
           setLoading(false);
           setShowError(true);
@@ -55,18 +87,36 @@ function ExplorePrepare() {
    * 処理の処理をまとめたモノ？
    *
    * @param {通信先} url
-   * @param {処理名} processName
+   * @param {処理名} query
    * @returns
    */
-  const onProcessExecute = async (url, processName) => {
+  const onProcessExecute = async (url, query) => {
     let result = true;
-    document.getElementById('current-process').innerHTML = `${processName}...`;
-    await axios.put(url).catch(() => {
-      result = false;
-      document.getElementById(
-        'toast-message',
-      ).innerHTML = `${processName}が失敗しました`;
-    });
+    document.getElementById('current-process').innerHTML = `${query}...`;
+    await axios
+      .put(url)
+      .then(() => {
+        const updatedMenunames = menunames.map((item) => {
+          if (item.query === query) {
+            // eslint-disable-next-line no-param-reassign
+            item.done = true;
+          } else if (
+            query.startsWith('startsearch2R?binning=') &&
+            item.query.startsWith('startsearch2R?binning=')
+          ) {
+            // eslint-disable-next-line no-param-reassign
+            item.done = true;
+          }
+          return item;
+        });
+        setMenunames(updatedMenunames);
+      })
+      .catch(() => {
+        result = false;
+        document.getElementById(
+          'toast-message',
+        ).innerHTML = `${query}が失敗しました`;
+      });
     if (!result) {
       setLoading(false);
       setShowError(true);
@@ -150,15 +200,19 @@ function ExplorePrepare() {
                     document.getElementById('toast-message').innerHTML =
                       'ファイルアップロードが失敗しました';
                     setShowError(true);
+                  } else {
+                    menunames[0].done = true;
+                    setMenunames(menunames);
                   }
                 }}
+                done={menunames[0].done}
               />
             </div>
             <DropdownButton
               as={ButtonGroup}
               key="Success"
               id="dropdown-variants-Success"
-              variant="success"
+              variant={menunames[7].done ? 'success' : 'primary'}
               title={menunames[7].name}
             >
               <Dropdown.Item eventKey="1" onClick={() => onProcessAuto(2)}>
@@ -184,9 +238,7 @@ function ExplorePrepare() {
                     <div>
                       <DropdownButton
                         as={ButtonGroup}
-                        key="Success"
-                        id="dropdown-variants-Success"
-                        variant="success"
+                        variant={item.done ? 'success' : 'primary'}
                         title={item.name}
                       >
                         <Dropdown.Item
@@ -217,7 +269,7 @@ function ExplorePrepare() {
                       onClick={() => {
                         onProcess(item.query);
                       }}
-                      variant="success"
+                      variant={item.done ? 'success' : 'primary'}
                     >
                       {item.name}
                     </Button>
@@ -232,11 +284,12 @@ function ExplorePrepare() {
                 >
                   <div>
                     <Button
+                      id={item.query}
                       style={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
                         onProcess(item.query);
                       }}
-                      variant="success"
+                      variant={item.done ? 'success' : 'primary'}
                     >
                       {item.name}
                     </Button>

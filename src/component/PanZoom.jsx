@@ -136,7 +136,7 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
             x: parseFloat(disp[index][2], 10),
             y: parseFloat(disp[index][3], 10),
           };
-          console.log(dispEl.x, dispEl.y, pos.x, pos.y);
+          // console.log(dispEl.x, dispEl.y, pos.x, pos.y);
           if (dispEl.x === pos.x && dispEl.y === pos.y) flag = true;
         });
         return flag;

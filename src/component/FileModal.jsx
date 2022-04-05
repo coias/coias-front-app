@@ -65,7 +65,7 @@ export default function FileModal(props) {
   return (
     <>
       <Button
-        variant="success"
+        variant={state.done ? 'success' : 'primary'}
         style={{ whiteSpace: 'nowrap' }}
         onClick={handleShow}
       >
