@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Button,
   Row,
@@ -7,9 +7,11 @@ import {
   DropdownButton,
   ButtonGroup,
   Dropdown,
+  Modal,
+  Form,
+  InputGroup,
 } from 'react-bootstrap';
 import { AiOutlineArrowRight } from 'react-icons/ai';
-import FileModal from '../component/FileModal';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast/AppToast';
 
@@ -19,7 +21,7 @@ import AppToast from '../component/AppToast/AppToast';
  */
 function ExplorePrepare() {
   const [menunames, setMenunames] = useState([
-    { id: 1, name: 'ファイル', done: false },
+    { id: 1, name: 'ファイル', query: '', done: false },
     { id: 2, name: '事前処理', query: 'preprocess', done: false },
     {
       id: 3,
@@ -49,6 +51,71 @@ function ExplorePrepare() {
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
 
+  const fileInput = useRef();
+  const [show, setShow] = useState(false);
+  const [valid, setValid] = useState(true);
+  const [disabled, setDisabled] = useState(true);
+  const handleClose = () => {
+    setMenunames(menunames);
+    setShow(false);
+  };
+  const handleShow = () => setShow(true);
+  const uploadUri = `${process.env.REACT_APP_API_URI}uploadfiles/`;
+  const handleChange = (e) => {
+    // ファイル変更時
+    if (e.target.value !== '') {
+      setValid(false);
+      setDisabled(false);
+    } else {
+      setValid(true);
+      setDisabled(true);
+    }
+  };
+  const handleSubmit = (e) => {
+    /* formを使用してファイルを送信
+     * 参考リンク
+     * https://ja.reactjs.org/docs/forms.html
+     * https://developer.mozilla.org/ja/docs/Web/API/FormData/Using_FormData_Objects
+     */
+    e.preventDefault();
+    const { files } = fileInput.current;
+    const data = new FormData();
+    const filesForProps = [];
+
+    let file;
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < files.length; i++) {
+      file = files[i];
+      data.append('files', file, file.name);
+      filesForProps.push(file.name);
+    }
+
+    setFileNames(filesForProps);
+
+    const postFiles = async () => {
+      handleClose();
+      document.getElementById('current-process').innerHTML =
+        'アップロード中...';
+      setLoading(true);
+      await axios
+        .post(uploadUri, data)
+        .then(() => {
+          menunames[0].done = true;
+          setMenunames(menunames);
+          setLoading(false);
+        })
+        .catch(() => {
+          document.getElementById('toast-message').innerHTML =
+            'ファイルアップロードが失敗しました';
+          setShowError(true);
+          setLoading(false);
+        });
+    };
+
+    postFiles();
+  };
+
   const onProcess = (query) => {
     document.getElementById('current-process').innerHTML = '処理中...';
     const put = async () => {
@@ -57,12 +124,10 @@ function ExplorePrepare() {
         .put(uri + query)
         .then(() => {
           const updatedMenunames = menunames.map((item) => {
-            if (item.query === query) {
-              // eslint-disable-next-line no-param-reassign
-              item.done = true;
-            } else if (
-              query.startsWith('startsearch2R?binning=') &&
-              item.query.startsWith('startsearch2R?binning=')
+            if (
+              item.query === query ||
+              (query.startsWith('startsearch2R?binning=') &&
+                item.query.startsWith('startsearch2R?binning='))
             ) {
               // eslint-disable-next-line no-param-reassign
               item.done = true;
@@ -70,14 +135,15 @@ function ExplorePrepare() {
             return item;
           });
           setMenunames(updatedMenunames);
-          console.log(updatedMenunames);
           setLoading(false);
         })
-        .catch(() => {
+        .catch((error) => {
           setLoading(false);
           setShowError(true);
-          document.getElementById('toast-message').innerHTML =
-            '処理が失敗しました';
+          console.log(error);
+          document.getElementById(
+            'toast-message',
+          ).innerHTML = `${error} : 処理が失敗しました`;
         });
     };
     if (query.length > 0) put();
@@ -186,7 +252,7 @@ function ExplorePrepare() {
         <Col>
           <div className="d-flex" style={{ marginBottom: '10px' }}>
             <div style={{ marginRight: '20px' }}>
-              <FileModal
+              {/* <FileModal
                 fileNames={fileNames}
                 setFileNames={setFileNames}
                 onUploadStart={() => {
@@ -205,8 +271,19 @@ function ExplorePrepare() {
                     setMenunames(menunames);
                   }
                 }}
-                done={menunames[0].done}
-              />
+                menunames={menunames}
+                setMenuNames={setMenunames}
+              /> */}
+              <Button
+                variant={menunames[0].done ? 'success' : 'primary'}
+                style={{ whiteSpace: 'nowrap' }}
+                onClick={() => {
+                  handleShow();
+                  console.log(menunames);
+                }}
+              >
+                ファイル
+              </Button>
             </div>
             <DropdownButton
               as={ButtonGroup}
@@ -337,6 +414,40 @@ function ExplorePrepare() {
         title="エラー"
         closeCallback={() => setShowError(false)}
       />
+
+      <Modal show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>ファイルを選択してください</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          アップロード後、画像処理をおこないます。
+          <br />
+          処理は時間がかかります。
+        </Modal.Body>
+
+        <Form onSubmit={handleSubmit} className="m-3">
+          <InputGroup hasValidation>
+            <Form.Control
+              type="file"
+              ref={fileInput}
+              onChange={handleChange}
+              isInvalid={valid}
+              multiple
+            />
+            <Form.Control.Feedback type="invalid">
+              ファイルを選択してください。ファイルは複数選択できます。
+            </Form.Control.Feedback>
+          </InputGroup>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" type="submit" disabled={disabled}>
+              send
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </div>
   );
 }
