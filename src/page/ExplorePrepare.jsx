@@ -158,17 +158,17 @@ function ExplorePrepare() {
    */
   const onProcessExecute = async (url, query) => {
     let result = true;
+    const uriQuery = url.split('/')[3];
+    console.log(uriQuery);
     document.getElementById('current-process').innerHTML = `${query}...`;
     await axios
       .put(url)
       .then(() => {
         const updatedMenunames = menunames.map((item) => {
-          if (item.query === query) {
-            // eslint-disable-next-line no-param-reassign
-            item.done = true;
-          } else if (
-            query.startsWith('startsearch2R?binning=') &&
-            item.query.startsWith('startsearch2R?binning=')
+          if (
+            item.query === uriQuery ||
+            (uriQuery.startsWith('startsearch2R?binning=') &&
+              item.query.startsWith('startsearch2R?binning='))
           ) {
             // eslint-disable-next-line no-param-reassign
             item.done = true;
@@ -235,6 +235,8 @@ function ExplorePrepare() {
     }
     // 自動検出
     await onProcessExecute(`${uri}astsearch_new`, '自動検出');
+    menunames[7].done = true;
+    setMenunames(menunames);
     setLoading(false);
   };
 
@@ -252,34 +254,11 @@ function ExplorePrepare() {
         <Col>
           <div className="d-flex" style={{ marginBottom: '10px' }}>
             <div style={{ marginRight: '20px' }}>
-              {/* <FileModal
-                fileNames={fileNames}
-                setFileNames={setFileNames}
-                onUploadStart={() => {
-                  document.getElementById('current-process').innerHTML =
-                    'アップロード中...';
-                  setLoading(true);
-                }}
-                onUploadEnd={(result) => {
-                  setLoading(false);
-                  if (!result) {
-                    document.getElementById('toast-message').innerHTML =
-                      'ファイルアップロードが失敗しました';
-                    setShowError(true);
-                  } else {
-                    menunames[0].done = true;
-                    setMenunames(menunames);
-                  }
-                }}
-                menunames={menunames}
-                setMenuNames={setMenunames}
-              /> */}
               <Button
                 variant={menunames[0].done ? 'success' : 'primary'}
                 style={{ whiteSpace: 'nowrap' }}
                 onClick={() => {
                   handleShow();
-                  console.log(menunames);
                 }}
               >
                 ファイル
