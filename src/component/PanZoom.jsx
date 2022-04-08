@@ -1,22 +1,26 @@
 // eslint-disable-next-line object-curly-newline
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import panzoom from 'panzoom';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line object-curly-newline
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import {
-  PageContext,
-  MousePositionContext,
-  StarPositionContext,
-} from './context';
+import { PageContext, MousePositionContext } from './context';
 import LoadingButton from './LoadingButton';
 
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
-function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
+function PanZoom({
+  imageURLs,
+  isReload,
+  brightnessVal,
+  contrastVal,
+  onClickFinishButton,
+  originalStarPos,
+  starPos,
+  setStarPos,
+}) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
   }
@@ -28,16 +32,12 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
   const canvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
   const [disable, setDisable] = useState(true);
-  const [originalStarPos, setOriginalStarPos] = useState({});
   const navigate = useNavigate();
   const handleClick = () => {
     navigate('/Report');
   };
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
-  const { starPos, setStarPos } = useContext(StarPositionContext);
-  const reactApiUri = process.env.REACT_APP_API_URI;
-
   const ZPCanvas = useRef(null);
   const RECT_WIDTH = 40;
   const RECT_HEIGHT = 40;
@@ -70,136 +70,6 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
     };
   }, [isReload]);
 
-  // 探索終了ボタンが押された時の処理
-  const onClickFinishButton = async () => {
-    // memo.txtへの出力
-    const selectedStars = Object.keys(starPos)
-      .map((key) => starPos[key])
-      .filter((item) => item.isSelected)
-      .map((item) => item.name.substring(1));
-    await axios.put(`${reactApiUri}memo`, selectedStars);
-
-    // prempedit
-    await axios.put(`${reactApiUri}prempedit`);
-
-    // prempedit3
-    let s = selectedStars[selectedStars.length - 1];
-    while (s.charAt(0) === '0') {
-      s = s.substring(1);
-    }
-    const num = '1';
-    await axios.put(`${reactApiUri}prempedit3?num=${num}`);
-
-    // redisp
-    const response = await axios.put(`${reactApiUri}redisp`);
-    const redisp = await response.data.result;
-
-    // 選択を同期させるため、オブジェクトに変更
-    const toObject = {};
-    redisp.forEach((item) => {
-      let star = toObject[item[0]];
-      if (!star) {
-        toObject[item[0]] = {
-          name: item[0],
-          page: [null, null, null, null, null],
-          isSelected: false,
-        };
-        star = toObject[item[0]];
-      }
-      star.page[item[1]] = {
-        name: item[0],
-        x: parseFloat(item[2], 10),
-        y: parseFloat(item[3], 10),
-      };
-    });
-
-    setStarPos(toObject);
-
-    // rename
-    await axios.put(`${reactApiUri}rename`);
-  };
-
-  // 画面表示時、１回だけ処理
-  useEffect(() => {
-    // unknown_disp.txtを取得
-    const getDisp = async () => {
-      const response = await axios.get(`${reactApiUri}unknown_disp`);
-      const disp = await response.data.result;
-      const starPosLength = Object.keys(starPos).length;
-
-      // H00000の座標で、同じdispかどうかを判定
-      const isSameObj = () => {
-        let flag = false;
-        if (starPosLength === 0) return null;
-        starPos[Object.keys(starPos)[0]].page.forEach((pos, index) => {
-          const dispEl = {
-            x: parseFloat(disp[index][2], 10),
-            y: parseFloat(disp[index][3], 10),
-          };
-          // console.log(dispEl.x, dispEl.y, pos.x, pos.y);
-          if (dispEl.x === pos.x && dispEl.y === pos.y) flag = true;
-        });
-        return flag;
-      };
-
-      // console.log(isSameObj());
-      // console.log(imageURLs, imageURLs.length);
-      // console.log(disp, disp.length);
-
-      // 選択を同期させるため、オブジェクトに変更
-      // 二回目以降 (isSameObj())
-      // 初回 && 同画面遷移 (else)
-      const toObject = {};
-
-      if (isSameObj()) {
-        setStarPos(starPos);
-        setOriginalStarPos(starPos);
-      } else {
-        disp.forEach((item) => {
-          let star = toObject[item[0]];
-          if (!star) {
-            toObject[item[0]] = {
-              name: item[0],
-              page: [null, null, null, null, null],
-              isSelected: false,
-            };
-            star = toObject[item[0]];
-          }
-          star.page[item[1]] = {
-            name: item[0],
-            x: parseFloat(item[2], 10),
-            y: parseFloat(item[3], 10),
-          };
-        });
-        setStarPos(toObject);
-        setOriginalStarPos(toObject);
-      }
-    };
-
-    window.images = imageURLs.map((image) => {
-      const masked = new Image();
-      const nomasked = new Image();
-      const onLoad = () => {
-        window.imageLoadComplete =
-          window.images.filter(
-            (i) =>
-              i[0].complete &&
-              i[0].naturalWidth !== 0 &&
-              i[1].complete &&
-              i[1].naturalWidth !== 0,
-          ).length === window.images.length;
-        if (window.imageLoadComplete) {
-          getDisp();
-        }
-      };
-      masked.onload = onLoad;
-      nomasked.onload = onLoad;
-      masked.src = image.mask;
-      nomasked.src = image.nomask;
-      return [masked, nomasked];
-    });
-  }, [imageURLs, isReload]);
-
   // imageの描画
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -210,12 +80,14 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
       context &&
       Object.keys(starPos).length > 0 &&
       window.images.length !== 0 &&
-      window.imageLoadComplete
+      window.imageLoadComplete &&
+      imageURLs.length > 0
     ) {
       setLoading(true);
 
       const w = canvas.width;
       canvas.width = w;
+      console.log(imageURLs);
       const img = imageURLs[currentPage].nomasked
         ? window.images[currentPage][1]
         : window.images[currentPage][0];
@@ -255,7 +127,7 @@ function PanZoom({ imageURLs, isReload, brightnessVal, contrastVal }) {
         });
       setLoading(false);
     }
-  }, [currentPage, starPos, isReload, IMAGE_HEIGHT]);
+  }, [currentPage, starPos, isReload, IMAGE_HEIGHT, IMAGE_HEIGHT]);
 
   // マウス移動時の挙動制御
   useEffect(() => {
@@ -404,6 +276,10 @@ PanZoom.propTypes = {
   isReload: PropTypes.bool.isRequired,
   brightnessVal: PropTypes.number.isRequired,
   contrastVal: PropTypes.number.isRequired,
+  onClickFinishButton: PropTypes.func.isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  starPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  setStarPos: PropTypes.func.isRequired,
 };
 
 export default PanZoom;

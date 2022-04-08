@@ -60,7 +60,6 @@ function ExplorePrepare() {
     setShow(false);
   };
   const handleShow = () => setShow(true);
-  const uploadUri = `${process.env.REACT_APP_API_URI}uploadfiles/`;
   const handleChange = (e) => {
     // ファイル変更時
     if (e.target.value !== '') {
@@ -98,8 +97,9 @@ function ExplorePrepare() {
       document.getElementById('current-process').innerHTML =
         'アップロード中...';
       setLoading(true);
+      // await axios.delete(`${uri}deletefiles`);
       await axios
-        .post(uploadUri, data)
+        .post(`${uri}uploadfiles/`, data)
         .then(() => {
           menunames[0].done = true;
           setMenunames(menunames);
@@ -140,7 +140,7 @@ function ExplorePrepare() {
         .catch((error) => {
           setLoading(false);
           setShowError(true);
-          console.log(error);
+          console.error(error);
           document.getElementById(
             'toast-message',
           ).innerHTML = `${error} : 処理が失敗しました`;
@@ -159,7 +159,6 @@ function ExplorePrepare() {
   const onProcessExecute = async (url, query) => {
     let result = true;
     const uriQuery = url.split('/')[3];
-    console.log(uriQuery);
     document.getElementById('current-process').innerHTML = `${query}...`;
     await axios
       .put(url)

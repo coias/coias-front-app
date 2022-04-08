@@ -25,7 +25,7 @@ function App() {
     [currentMousePos],
   );
 
-  const [starPos, setStarPos] = useState([]);
+  const [starPos, setStarPos] = useState({});
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
   return (
     <BrowserRouter style={{ position: 'relative' }}>
