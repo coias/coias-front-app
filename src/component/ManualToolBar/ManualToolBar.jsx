@@ -3,22 +3,24 @@ import { Button, Container, Row, Col } from 'react-bootstrap';
 import AsteroidList from '../AsteroidList/AsteroidList';
 import styles from './ManualToolBar.module.scss';
 
+const AddListButton = () => {};
+
 function ManualToolBar() {
   return (
     <div>
-      <Container fluid>
+      <Container fluid style={{ paddingLeft: 0, paddingRight: 0 }}>
         <Row>
-          <Col style={{ background: 'white' }}>
-            <p className={styles.title}>惑星一覧</p>
+          <Col>
+            <div className={styles.title}>惑星一覧</div>
           </Col>
-          <Col xs lg="2">
-            <Button variant="success" className={styles.button}>
+          <Col sm="2">
+            <Button onClick={AddListButton} variant="success">
               +
             </Button>
           </Col>
         </Row>
         <Row>
-          <AsteroidList />
+          <AsteroidList styles={{ width: '100%' }} />
         </Row>
       </Container>
     </div>
