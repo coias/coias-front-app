@@ -54,11 +54,12 @@ function Report() {
         setSendMpcBody(
           result.map((item) => {
             const trimedStr = item.trim();
-            const blankAddedStr = trimedStr.replace(
-              ' ',
-              '\u00A0\u00A0\u00A0\u00A0',
-            );
-            return blankAddedStr;
+            if (trimedStr.startsWith('H') || trimedStr.startsWith('K')) {
+              return `\u00A0\u00A0\u00A0\u00A0\u00A0${trimedStr}`;
+            }
+            return trimedStr;
+
+
           }),
         );
         setLoading(false);
