@@ -41,9 +41,8 @@ function ExplorePrepare() {
       query: 'prempsearchC-after',
       done: false,
     },
-    { id: 6, name: '光源検出', query: 'findsource', done: false },
-    { id: 7, name: '自動検出', query: 'astsearch_new', done: false },
-    { id: 8, name: '全自動処理', query: 'AstsearchR?binning=', done: false },
+    { id: 6, name: '自動検出', query: 'astsearch_new', done: false },
+    { id: 7, name: '全自動処理', query: 'AstsearchR?binning=', done: false },
   ]);
 
   const uri = process.env.REACT_APP_API_URI;
@@ -227,11 +226,7 @@ function ExplorePrepare() {
     if (!result) {
       return;
     }
-    // 光源検出
-    result = await onProcessExecute(`${uri}findsource`, '光源検出');
-    if (!result) {
-      return;
-    }
+
     // 自動検出
     await onProcessExecute(`${uri}astsearch_new`, '自動検出');
     menunames[7].done = true;
@@ -267,8 +262,8 @@ function ExplorePrepare() {
               as={ButtonGroup}
               key="Success"
               id="dropdown-variants-Success"
-              variant={menunames[7].done ? 'success' : 'primary'}
-              title={menunames[7].name}
+              variant={menunames[6].done ? 'success' : 'primary'}
+              title={menunames[6].name}
             >
               <Dropdown.Item eventKey="1" onClick={() => onProcessAuto(2)}>
                 2×2
