@@ -51,12 +51,11 @@ function Header() {
             <h3 style={{ paddingLeft: 35 }}>探索/再描画</h3>
           </NavLink>
           <NavLink
-            to="/"
+            to="/ManualMeasurement"
             className={(navData) =>
-              navData.isActive ? 'not-active-no-hover' : 'not-active-no-hover'
+              navData.isActive ? 'active' : 'not-active'
             }
             style={{ textDecoration: 'none', color: 'gray' }}
-            onClick={(e) => e.preventDefault() /* do nothing. */}
           >
             <h3 style={{ paddingLeft: 35 }}>再測定</h3>
           </NavLink>

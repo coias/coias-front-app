@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ExplorePrepare from './page/ExplorePrepare';
 import './style/style.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ManualMeasurement from './page/ManualMeasurement';
 import Report from './page/Report';
 import Header from './component/Header';
 import COIAS from './page/COIAS';
@@ -46,6 +47,10 @@ function App() {
               <Routes>
                 <Route path="/" element={<ExplorePrepare />} />
                 <Route path="/COIAS" element={<COIAS />} />
+                <Route
+                  path="/ManualMeasurement"
+                  element={<ManualMeasurement />}
+                />
                 <Route path="/Report" element={<Report />} />
               </Routes>
             </StarPositionContext.Provider>
