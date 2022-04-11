@@ -13,7 +13,7 @@ import {
 } from 'react-bootstrap';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import LoadingButton from '../component/LoadingButton';
-import AppToast from '../component/AppToast/AppToast';
+import AppToast from '../component/AppToast';
 
 /**
  * 2022.03.24 y changed.

@@ -1,5 +1,5 @@
 import React from 'react';
-import AsteroidListElement from '../AsteroidListElement/AsteroidListElement';
+import AsteroidListElement from './AsteroidListElement';
 
 function AsteroidList() {
   return <AsteroidListElement />;

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Col, Row, Form, Button } from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
 import LoadingButton from '../component/LoadingButton';
-import AppToast from '../component/AppToast/AppToast';
+import AppToast from '../component/AppToast';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;

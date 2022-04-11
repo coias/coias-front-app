@@ -20,6 +20,11 @@ function PanZoom({
   originalStarPos,
   starPos,
   setStarPos,
+  isManual,
+  positionList,
+  setPositionList,
+  setShow,
+  show,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -54,10 +59,12 @@ function PanZoom({
       boundsPadding: 0.7,
       zoomDoubleClickSpeed: 1,
       beforeWheel(e) {
+        if (isManual) return true;
         const shouldIgnore = !e.altKey;
         return shouldIgnore;
       },
       beforeMouseDown() {
+        if (isManual) return true;
         // スクロールされる前にisGrabの値を確認
         const val = document.getElementById('grabButton').dataset.active;
         const shouldIgnore = !(val === 'true');
@@ -87,7 +94,7 @@ function PanZoom({
 
       const w = canvas.width;
       canvas.width = w;
-      console.log(imageURLs);
+      // console.log(imageURLs);
       const img = imageURLs[currentPage].nomasked
         ? window.images[currentPage][1]
         : window.images[currentPage][0];
@@ -151,7 +158,10 @@ function PanZoom({
 
   // クリック時に色を変化させるイベントリスナー
   function changeColorOnClick() {
-    if (document.getElementById('selectButton').dataset.active !== 'true') {
+    if (
+      isManual ||
+      document.getElementById('selectButton').dataset.active !== 'true'
+    ) {
       return;
     }
     const canvasElem = canvasRef.current;
@@ -195,10 +205,18 @@ function PanZoom({
     setStarPos(newStarPos);
   }
 
+  function saveEventPosition() {
+    if (!isManual) return null;
+    setShow(!show);
+    setPositionList([...positionList, { mousepos: currentMousePos }]);
+    console.log(positionList);
+    return null;
+  }
+
   return (
     <Container fluid>
       <Row className="star-canvas-container">
-        <Col sm={10}>
+        <Col sm={isManual ? 12 : 10}>
           <div
             style={{
               width: '100%',
@@ -223,8 +241,9 @@ function PanZoom({
                   ref={canvasRef}
                   width={`${IMAGE_WIDTH}px`}
                   height={`${IMAGE_HEIGHT}px`}
-                  onClick={(e) => {
-                    changeColorOnClick(e);
+                  onClick={() => {
+                    changeColorOnClick();
+                    saveEventPosition();
                   }}
                   style={{
                     filter: `contrast(${contrastVal - 50}%) brightness(${
@@ -236,37 +255,39 @@ function PanZoom({
             </div>
           </div>
         </Col>
-        <Col sm={2}>
-          <Button
-            variant="success"
-            onClick={(e) => {
-              setDisable(!disable);
-              Array.from(
-                document.getElementsByClassName('form-check-input'),
-              ).forEach((item) => {
-                // eslint-disable-next-line no-param-reassign
-                item.checked = false;
-              });
-              // eslint-disable-next-line no-unused-expressions
-              disable ? onClickFinishButton(e) : setStarPos(originalStarPos);
-            }}
-            className="mb-3 p-3"
-          >
-            {disable ? '再描画' : 'やり直す'}
-          </Button>
-          <Button
-            disabled={disable}
-            variant="danger"
-            onClick={(e) => {
-              onClickFinishButton(e);
-              handleClick();
-            }}
-            className="mb-3 p-3"
-          >
-            探索終了
-          </Button>
-          <StarsList />
-        </Col>
+        {!isManual && (
+          <Col sm={2}>
+            <Button
+              variant="success"
+              onClick={(e) => {
+                setDisable(!disable);
+                Array.from(
+                  document.getElementsByClassName('form-check-input'),
+                ).forEach((item) => {
+                  // eslint-disable-next-line no-param-reassign
+                  item.checked = false;
+                });
+                // eslint-disable-next-line no-unused-expressions
+                disable ? onClickFinishButton(e) : setStarPos(originalStarPos);
+              }}
+              className="mb-3 p-3"
+            >
+              {disable ? '再描画' : 'やり直す'}
+            </Button>
+            <Button
+              disabled={disable}
+              variant="danger"
+              onClick={() => {
+                onClickFinishButton();
+                handleClick();
+              }}
+              className="mb-3 p-3"
+            >
+              探索終了
+            </Button>
+            <StarsList />
+          </Col>
+        )}
       </Row>
       <LoadingButton loading={loading} />
     </Container>
@@ -282,6 +303,11 @@ PanZoom.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   starPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setStarPos: PropTypes.func.isRequired,
+  isManual: PropTypes.bool.isRequired,
+  positionList: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setPositionList: PropTypes.func.isRequired,
+  setShow: PropTypes.func.isRequired,
+  show: PropTypes.bool.isRequired,
 };
 
 export default PanZoom;

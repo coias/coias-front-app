@@ -1,7 +1,7 @@
 import { React } from 'react';
 import { Toast } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import styles from './AppToast.module.scss';
+import styles from './AppToast/AppToast.module.scss';
 
 function AppToast({ show, title, closeCallback }) {
   return (

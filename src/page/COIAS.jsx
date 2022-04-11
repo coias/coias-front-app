@@ -3,20 +3,24 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
 import { AiOutlineReload } from 'react-icons/ai';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
 import ContrastBar from '../component/ContrastBar';
 import BrightnessBar from '../component/BrightnessBar';
 import { StarPositionContext, PageContext } from '../component/context';
 
-function COIAS() {
+function COIAS({
+  imageURLs,
+  setImageURLs,
+  originalStarPos,
+  setOriginalStarPos,
+}) {
   const [isGrab, setIsGrab] = useState(false);
   const [isSelect, setIsSelect] = useState(false);
   const [isReload, setIsReload] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
-  const [imageURLs, setImageURLs] = useState([]);
-  const [originalStarPos, setOriginalStarPos] = useState({});
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
 
@@ -253,6 +257,11 @@ function COIAS() {
               originalStarPos={originalStarPos}
               starPos={starPos}
               setStarPos={setStarPos}
+              isManual={false}
+              positionList={[]}
+              setPositionList={() => {}}
+              show={false}
+              setShow={() => {}}
             />
           </Col>
         </Row>
@@ -262,3 +271,11 @@ function COIAS() {
 }
 
 export default COIAS;
+
+COIAS.propTypes = {
+  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setImageURLs: PropTypes.func.isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  setOriginalStarPos: PropTypes.func.isRequired,
+};
+
