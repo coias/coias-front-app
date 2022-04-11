@@ -183,12 +183,14 @@ function PanZoom({
     Object.keys(newStarPos)
       .map((key) => newStarPos[key])
       .forEach((item) => {
+        if (item.name.startsWith('K')) return null;
         const position = item.page[currentPage];
         if (position && testHit(position.x, position.y)) {
           newStarPos[item.name].isSelected = !item.isSelected;
           document.getElementById(item.name).checked =
             newStarPos[item.name].isSelected;
         }
+        return null;
       });
     setStarPos(newStarPos);
   }
