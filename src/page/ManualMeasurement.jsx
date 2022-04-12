@@ -1,7 +1,5 @@
 import React, { useContext, useState } from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import { Container, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import ManualToolBar from '../component/ManualToolBar';
 import PanZoom from '../component/PanZoom';
@@ -22,7 +20,7 @@ function ManualMeasurement({ imageURLs, originalStarPos }) {
             setPositionList={setPositionList}
           />
         </Col>
-        <Col>
+        <Col sm={10}>
           <PanZoom
             imageURLs={imageURLs}
             originalStarPos={originalStarPos}
