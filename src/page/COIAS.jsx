@@ -257,11 +257,6 @@ function COIAS({
               originalStarPos={originalStarPos}
               starPos={starPos}
               setStarPos={setStarPos}
-              isManual={false}
-              positionList={[]}
-              setPositionList={() => {}}
-              show={false}
-              setShow={() => {}}
             />
           </Col>
         </Row>

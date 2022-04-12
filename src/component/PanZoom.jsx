@@ -35,7 +35,7 @@ function PanZoom({
   }
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
-  const { currentPage } = useContext(PageContext);
+  const { currentPage, setCurrentPage } = useContext(PageContext);
   const [disable, setDisable] = useState(true);
   const navigate = useNavigate();
   const handleClick = () => {
@@ -52,6 +52,12 @@ function PanZoom({
 
   // panzoomのコンストラクター
   useEffect(() => {
+    let isLastEl = false;
+    let lastEl = [];
+    if (positionList.length > 0) {
+      lastEl = positionList[positionList.length - 1];
+      isLastEl = lastEl.length >= 1;
+    }
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
       maxZoom: 10,
       minZoom: 1,
@@ -59,7 +65,7 @@ function PanZoom({
       boundsPadding: 0.7,
       zoomDoubleClickSpeed: 1,
       beforeWheel(e) {
-        if (isManual) return true;
+        // if (isManual) return false;
         const shouldIgnore = !e.altKey;
         return shouldIgnore;
       },
@@ -72,10 +78,17 @@ function PanZoom({
       },
     });
 
+    if (isLastEl)
+      ZPCanvas.current.smoothZoom(
+        lastEl[0].currentMousePos.x,
+        lastEl[0].currentMousePos.y,
+        5,
+      );
+
     return () => {
       ZPCanvas.current.dispose();
     };
-  }, [isReload]);
+  }, [positionList, isReload]);
 
   // imageの描画
   useEffect(() => {
@@ -206,10 +219,18 @@ function PanZoom({
   }
 
   function saveEventPosition() {
-    if (!isManual) return null;
-    setShow(!show);
-    setPositionList([...positionList, { mousepos: currentMousePos }]);
-    console.log(positionList);
+    if (!isManual || positionList.length < 1) return null;
+    setShow(show);
+    const posListLen = positionList.length;
+    const lastEl = positionList[posListLen - 1];
+
+    if (lastEl.length === 5) return null;
+    const newArr = [...positionList]; // copying the old datas array
+    newArr[posListLen - 1].push({ currentMousePos }); // replace e.target.value with whatever you want to change it to
+
+    setPositionList([...newArr]);
+    if (currentPage < 4) setCurrentPage(currentPage + 1);
+
     return null;
   }
 
@@ -294,20 +315,32 @@ function PanZoom({
   );
 }
 
+PanZoom.defaultProps = {
+  isManual: false,
+  isReload: false,
+  show: false,
+  brightnessVal: 150,
+  contrastVal: 150,
+  onClickFinishButton: () => {},
+  setShow: () => {},
+  setPositionList: () => {},
+  positionList: [],
+};
+
 PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isReload: PropTypes.bool.isRequired,
-  brightnessVal: PropTypes.number.isRequired,
-  contrastVal: PropTypes.number.isRequired,
-  onClickFinishButton: PropTypes.func.isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   starPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setStarPos: PropTypes.func.isRequired,
-  isManual: PropTypes.bool.isRequired,
-  positionList: PropTypes.arrayOf(PropTypes.object).isRequired,
-  setPositionList: PropTypes.func.isRequired,
-  setShow: PropTypes.func.isRequired,
-  show: PropTypes.bool.isRequired,
+  isReload: PropTypes.bool,
+  brightnessVal: PropTypes.number,
+  contrastVal: PropTypes.number,
+  onClickFinishButton: PropTypes.func,
+  isManual: PropTypes.bool,
+  positionList: PropTypes.objectOf(PropTypes.object),
+  setPositionList: PropTypes.func,
+  setShow: PropTypes.func,
+  show: PropTypes.bool,
 };
 
 export default PanZoom;

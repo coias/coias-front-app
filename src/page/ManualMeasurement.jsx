@@ -17,14 +17,14 @@ function ManualMeasurement({ imageURLs, originalStarPos }) {
     <Container fluid>
       <Row>
         <Col sm={3}>
-          <ManualToolBar />
+          <ManualToolBar
+            positionList={positionList}
+            setPositionList={setPositionList}
+          />
         </Col>
         <Col>
           <PanZoom
             imageURLs={imageURLs}
-            brightnessVal={150}
-            contrastVal={150}
-            onClickFinishButton={() => {}}
             originalStarPos={originalStarPos}
             starPos={starPos}
             setStarPos={setStarPos}
