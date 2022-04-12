@@ -1,7 +1,5 @@
 import React, { useContext, useState } from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import { Container, Row, Col, Navbar } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import ManualToolBar from '../component/ManualToolBar';
 import PanZoom from '../component/PanZoom';
@@ -16,10 +14,12 @@ function ManualMeasurement({ imageURLs, originalStarPos }) {
   return (
     <Container fluid>
       <Row>
-        <Col sm={3}>
-          <ManualToolBar />
+        <Col sm={2}>
+          <Navbar sticky="top">
+            <ManualToolBar />
+          </Navbar>
         </Col>
-        <Col>
+        <Col sm={10}>
           <PanZoom
             imageURLs={imageURLs}
             brightnessVal={150}
