@@ -119,6 +119,7 @@ function ExplorePrepare() {
     document.getElementById('current-process').innerHTML = '処理中...';
     const put = async () => {
       setLoading(true);
+
       await axios
         .put(uri + query)
         .then(() => {
@@ -229,7 +230,8 @@ function ExplorePrepare() {
 
     // 自動検出
     await onProcessExecute(`${uri}astsearch_new`, '自動検出');
-    menunames[7].done = true;
+
+    menunames[6].done = true;
     setMenunames(menunames);
     setLoading(false);
   };
