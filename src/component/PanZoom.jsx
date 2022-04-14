@@ -25,6 +25,8 @@ function PanZoom({
   setPositionList,
   setShow,
   show,
+  firstPosition,
+  setFirstPosition,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -52,25 +54,19 @@ function PanZoom({
 
   // panzoomのコンストラクター
   useEffect(() => {
-    let isLastEl = false;
-    let lastEl = [];
-    if (positionList.length > 0) {
-      lastEl = positionList[positionList.length - 1];
-      isLastEl = lastEl.length >= 1;
-    }
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
       maxZoom: 10,
       minZoom: 1,
       bounds: true,
       boundsPadding: 0.7,
       zoomDoubleClickSpeed: 1,
+      transformOrigin: { x: 0.5, y: 0.5 },
       beforeWheel(e) {
         // if (isManual) return false;
         const shouldIgnore = !e.altKey;
         return shouldIgnore;
       },
       beforeMouseDown() {
-        if (isManual) return true;
         // スクロールされる前にisGrabの値を確認
         const val = document.getElementById('grabButton').dataset.active;
         const shouldIgnore = !(val === 'true');
@@ -78,17 +74,15 @@ function PanZoom({
       },
     });
 
-    if (isLastEl)
-      ZPCanvas.current.smoothZoom(
-        lastEl[0].currentMousePos.x,
-        lastEl[0].currentMousePos.y,
-        5,
-      );
+    const lastEl = positionList[positionList.length - 1];
+
+    if (lastEl)
+      ZPCanvas.current.smoothZoom(firstPosition.x, firstPosition.y, 5);
 
     return () => {
       ZPCanvas.current.dispose();
     };
-  }, [positionList, isReload]);
+  }, [firstPosition, isReload]);
 
   // imageの描画
   useEffect(() => {
@@ -219,12 +213,23 @@ function PanZoom({
   }
 
   function saveEventPosition() {
-    if (!isManual || positionList.length < 1) return null;
+    const gval = document.getElementById('grabButton').dataset.active;
+    const gshouldIgnore = gval === 'true';
+    const sval = document.getElementById('selectButton').dataset.active;
+    const sshouldIgnore = sval === 'true';
+
+    if (!isManual || positionList.length < 1 || gshouldIgnore || !sshouldIgnore)
+      return null;
+
     setShow(show);
     const posListLen = positionList.length;
     const lastEl = positionList[posListLen - 1];
 
     if (lastEl.length === 5) return null;
+
+    if (currentPage === 0 && lastEl.length === 0)
+      setFirstPosition(currentMousePos);
+
     const newArr = [...positionList]; // copying the old datas array
     newArr[posListLen - 1].push({ currentMousePos }); // replace e.target.value with whatever you want to change it to
 
@@ -325,6 +330,8 @@ PanZoom.defaultProps = {
   setShow: () => {},
   setPositionList: () => {},
   positionList: [],
+  firstPosition: {},
+  setFirstPosition: () => {},
 };
 
 PanZoom.propTypes = {
@@ -337,10 +344,12 @@ PanZoom.propTypes = {
   contrastVal: PropTypes.number,
   onClickFinishButton: PropTypes.func,
   isManual: PropTypes.bool,
-  positionList: PropTypes.objectOf(PropTypes.object),
+  positionList: PropTypes.arrayOf(PropTypes.array),
   setPositionList: PropTypes.func,
   setShow: PropTypes.func,
   show: PropTypes.bool,
+  firstPosition: PropTypes.bool,
+  setFirstPosition: PropTypes.func,
 };
 
 export default PanZoom;

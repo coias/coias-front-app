@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
-import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
-import { AiOutlineReload } from 'react-icons/ai';
+import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
-import ContrastBar from '../component/ContrastBar';
-import BrightnessBar from '../component/BrightnessBar';
 import { StarPositionContext, PageContext } from '../component/context';
+import COIASToolBar from '../component/COIASToolBar';
+
+// eslint-disable-next-line no-use-before-define
+COIAS.propTypes = {
+  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setImageURLs: PropTypes.func.isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  setOriginalStarPos: PropTypes.func.isRequired,
+};
 
 function COIAS({
   imageURLs,
@@ -198,56 +203,19 @@ function COIAS({
       <PlayMenu imageNames={imageURLs} setImageURLs={setImageURLs} />
       <Container fluid>
         <Row>
-          <Col>
-            <div
-              className="flex-column"
-              style={{ display: 'flex', alignItems: 'center' }}
-            >
-              <Button
-                id="grabButton"
-                data-active={isGrab}
-                variant={isGrab ? 'danger' : 'light'}
-                onClick={() => {
-                  setIsSelect(false);
-                  setIsGrab(!isGrab);
-                }}
-              >
-                <FaHandPaper size={30} />
-              </Button>
-              <Button
-                id="selectButton"
-                data-active={isSelect}
-                variant={isSelect ? 'danger' : 'light'}
-                onClick={() => {
-                  setIsGrab(false);
-                  setIsSelect(!isSelect);
-                }}
-              >
-                <FaMousePointer size={30} />
-              </Button>
-              <Button
-                id="reloadButton"
-                variant="light"
-                onClick={() => {
-                  setIsGrab(false);
-                  setIsSelect(false);
-                  Array.from(
-                    document.getElementsByClassName('form-check-input'),
-                  ).forEach((item) => {
-                    // eslint-disable-next-line no-param-reassign
-                    item.checked = false;
-                  });
-                  setIsGrab(true);
-                  setIsReload(!isReload);
-                }}
-              >
-                <AiOutlineReload size={30} />
-              </Button>
-              <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
-              <ContrastBar val={contrastVal} set={setContrastVal} />
-            </div>
-          </Col>
-          <Col md={11} className="h-100">
+          <COIASToolBar
+            isGrab={isGrab}
+            setIsGrab={setIsGrab}
+            isSelect={isSelect}
+            setIsSelect={setIsSelect}
+            brightnessVal={brightnessVal}
+            contrastVal={contrastVal}
+            setBrightnessVal={setBrightnessVal}
+            setContrastVal={setContrastVal}
+            isReload={isReload}
+            setIsReload={setIsReload}
+          />
+          <Col md={11}>
             <PanZoom
               imageURLs={imageURLs}
               isReload={isReload}
@@ -266,11 +234,3 @@ function COIAS({
 }
 
 export default COIAS;
-
-COIAS.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  setImageURLs: PropTypes.func.isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
-  setOriginalStarPos: PropTypes.func.isRequired,
-};
-
