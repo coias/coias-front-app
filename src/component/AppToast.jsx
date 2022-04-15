@@ -1,12 +1,11 @@
 import { React } from 'react';
 import { Toast } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import styles from './AppToast/AppToast.module.scss';
 
-function AppToast({ show, title, closeCallback }) {
+function AppToast({ show, title, closeCallback, content }) {
   return (
     <Toast
-      className={styles.app_toast}
+      className="app_toast"
       onClose={closeCallback}
       style={{
         display: show ? 'block' : 'none',
@@ -16,7 +15,7 @@ function AppToast({ show, title, closeCallback }) {
         <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
         <strong className="me-auto">{title}</strong>
       </Toast.Header>
-      <Toast.Body id="toast-message">message</Toast.Body>
+      <Toast.Body id="toast-message">{content}</Toast.Body>
     </Toast>
   );
 }
@@ -25,6 +24,11 @@ AppToast.propTypes = {
   show: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
   closeCallback: PropTypes.func.isRequired,
+  content: PropTypes.string,
+};
+
+AppToast.defaultProps = {
+  content: '',
 };
 
 export default AppToast;

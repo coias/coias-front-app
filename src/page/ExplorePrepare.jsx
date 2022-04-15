@@ -11,42 +11,25 @@ import {
   Form,
   InputGroup,
 } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
+
+// eslint-disable-next-line no-use-before-define
+ExplorePrepare.propTypes = {
+  fileNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  setFileNames: PropTypes.func.isRequired,
+  menunames: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setMenunames: PropTypes.func.isRequired,
+};
 
 /**
  * 2022.03.24 y changed.
  * 全自動だけ段分け。
  */
-function ExplorePrepare() {
-  const [menunames, setMenunames] = useState([
-    { id: 1, name: 'ファイル', query: '', done: false },
-    { id: 2, name: '事前処理', query: 'preprocess', done: false },
-    {
-      id: 3,
-      name: 'ビニングマスク',
-      query: 'startsearch2R?binning=',
-      done: false,
-    },
-    {
-      id: 4,
-      name: '軌道取得（確定番号）',
-      query: 'prempsearchC-before',
-      done: false,
-    },
-    {
-      id: 5,
-      name: '軌道取得（仮符号）',
-      query: 'prempsearchC-after',
-      done: false,
-    },
-    { id: 6, name: '自動検出', query: 'astsearch_new', done: false },
-    { id: 7, name: '全自動処理', query: 'AstsearchR?binning=', done: false },
-  ]);
-
+function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
   const uri = process.env.REACT_APP_API_URI;
-  const [fileNames, setFileNames] = useState(['Please input files']);
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
 
@@ -54,6 +37,10 @@ function ExplorePrepare() {
   const [show, setShow] = useState(false);
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
+  const [errorContent, setErrorContent] = useState('');
+
+  const DEFAULT_FILE_NUM = 5;
+
   const handleClose = () => {
     setMenunames(menunames);
     setShow(false);
@@ -69,6 +56,20 @@ function ExplorePrepare() {
       setDisabled(true);
     }
   };
+
+  const updateMenunames = (num) => {
+    // 1. Make a shallow copy of the items
+    const items = [...menunames];
+    // 2. Make a shallow copy of the item you want to mutate
+    const item = { ...items[num] };
+    // 3. Replace the property you're intested in
+    item.done = true;
+    // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+    items[num] = item;
+    // 5. Set the state to our new copy
+    setMenunames(items);
+  };
+
   const handleSubmit = (e) => {
     /* formを使用してファイルを送信
      * 参考リンク
@@ -80,11 +81,44 @@ function ExplorePrepare() {
     const data = new FormData();
     const filesForProps = [];
 
+    if (DEFAULT_FILE_NUM !== files.length) {
+      setErrorContent(`${DEFAULT_FILE_NUM}枚の画像を入力してください`);
+      setShowError(true);
+      handleClose();
+      return null;
+    }
+
     let file;
+    let tmp;
+
+    const pattern =
+      /warp-HSC-([0-9]|[A-Z]){1,2}-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/gm;
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < files.length; i++) {
       file = files[i];
+      const result = file.name.match(pattern);
+      const isMatch = result && result.length === 1 && result[0] === file.name;
+      if (i === 0 && isMatch) {
+        const a = file.name.split(`-`);
+        tmp = `${a[3]}${a[4]}`;
+      } else if (i > 0 && isMatch) {
+        const b = file.name.split(`-`);
+        const isSame = tmp === `${b[3]}${b[4]}`;
+        if (!isSame) {
+          setErrorContent(`${file.name}は観測領域が異なります`);
+          setShowError(true);
+          handleClose();
+          return null;
+        }
+      }
+
+      if (!isMatch) {
+        setErrorContent(`${file.name}のファイル名の形式が違います`);
+        setShowError(true);
+        handleClose();
+        return null;
+      }
       data.append('files', file, file.name);
       filesForProps.push(file.name);
     }
@@ -100,8 +134,9 @@ function ExplorePrepare() {
       await axios
         .post(`${uri}uploadfiles/`, data)
         .then(() => {
-          menunames[0].done = true;
-          setMenunames(menunames);
+          // menunames[0].done = true;
+          // setMenunames(menunames);
+          updateMenunames(0);
           setLoading(false);
         })
         .catch(() => {
@@ -113,6 +148,7 @@ function ExplorePrepare() {
     };
 
     postFiles();
+    return null;
   };
 
   const onProcess = (query) => {
@@ -140,7 +176,6 @@ function ExplorePrepare() {
         .catch((error) => {
           setLoading(false);
           setShowError(true);
-          console.error(error);
           document.getElementById(
             'toast-message',
           ).innerHTML = `${error} : 処理が失敗しました`;
@@ -231,8 +266,10 @@ function ExplorePrepare() {
     // 自動検出
     await onProcessExecute(`${uri}astsearch_new`, '自動検出');
 
-    menunames[6].done = true;
-    setMenunames(menunames);
+    // menunames[6].done = true;
+    // setMenunames(menunames);
+
+    updateMenunames(6);
     setLoading(false);
   };
 
@@ -387,12 +424,15 @@ function ExplorePrepare() {
       <AppToast
         show={showError}
         title="エラー"
+        content={errorContent}
         closeCallback={() => setShowError(false)}
       />
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>ファイルを選択してください</Modal.Title>
+          <Modal.Title>
+            ファイルを{DEFAULT_FILE_NUM}個選択してください
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           アップロード後、画像処理をおこないます。
@@ -410,7 +450,8 @@ function ExplorePrepare() {
               multiple
             />
             <Form.Control.Feedback type="invalid">
-              ファイルを選択してください。ファイルは複数選択できます。
+              ファイルを選択してください。ファイルは{DEFAULT_FILE_NUM}
+              個選択できます。
             </Form.Control.Feedback>
           </InputGroup>
           <Modal.Footer>
