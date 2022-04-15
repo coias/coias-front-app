@@ -71,55 +71,27 @@ function COIAS({
     const getDisp = async () => {
       const response = await axios.get(`${reactApiUri}unknown_disp`);
       const disp = await response.data.result;
-      const starPosLength = Object.keys(starPos).length;
-
-      // H00000の座標で、同じdispかどうかを判定
-      const isSameObj = () => {
-        let flag = false;
-        if (starPosLength === 0) return null;
-        starPos[Object.keys(starPos)[0]].page.forEach((pos, index) => {
-          const dispEl = {
-            x: parseFloat(disp[index][2], 10),
-            y: parseFloat(disp[index][3], 10),
-          };
-          // console.log(dispEl.x, dispEl.y, pos.x, pos.y);
-          if (dispEl.x === pos.x && dispEl.y === pos.y) flag = true;
-        });
-        return flag;
-      };
-
-      // console.log(isSameObj());
-      // console.log(imageURLs, imageURLs.length);
-      // console.log(disp, disp.length);
 
       // 選択を同期させるため、オブジェクトに変更
-      // 二回目以降 (isSameObj())
-      // 初回 && 同画面遷移 (else)
       const toObject = {};
-
-      if (isSameObj()) {
-        setStarPos(starPos);
-        setOriginalStarPos(starPos);
-      } else {
-        disp.forEach((item) => {
-          let star = toObject[item[0]];
-          if (!star) {
-            toObject[item[0]] = {
-              name: item[0],
-              page: [null, null, null, null, null],
-              isSelected: false,
-            };
-            star = toObject[item[0]];
-          }
-          star.page[item[1]] = {
+      disp.forEach((item) => {
+        let star = toObject[item[0]];
+        if (!star) {
+          toObject[item[0]] = {
             name: item[0],
-            x: parseFloat(item[2], 10),
-            y: parseFloat(item[3], 10),
+            page: [null, null, null, null, null],
+            isSelected: false,
           };
-        });
-        setStarPos(toObject);
-        setOriginalStarPos(toObject);
-      }
+          star = toObject[item[0]];
+        }
+        star.page[item[1]] = {
+          name: item[0],
+          x: parseFloat(item[2], 10),
+          y: parseFloat(item[3], 10),
+        };
+      });
+      setStarPos(toObject);
+      setOriginalStarPos(toObject);
     };
 
     window.images = [];
