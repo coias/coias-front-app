@@ -141,8 +141,8 @@ function COIAS({
       };
       masked.onload = onLoad;
       nomasked.onload = onLoad;
-      masked.src = image.mask;
-      nomasked.src = image.nomask;
+      masked.src = `${image.mask}?date=${new Date().getTime()}`;
+      nomasked.src = `${image.nomask}?date=${new Date().getTime()}`;
       return [masked, nomasked];
     });
 
