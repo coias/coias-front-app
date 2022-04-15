@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { Form } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import { PageContext, StarPositionContext } from './context';
 
-function StarsList() {
+function StarsList({ disable }) {
   const { currentPage } = useContext(PageContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   return (
@@ -28,6 +29,7 @@ function StarsList() {
               <div className="mb-3" key={pos.name}>
                 <Form.Check
                   type="checkbox"
+                  disabled={!disable}
                   defaultChecked={pos.isSelected}
                   onChange={() => {
                     const newStarPos = JSON.parse(JSON.stringify(starPos));
@@ -45,5 +47,9 @@ function StarsList() {
     </Form>
   );
 }
+
+StarsList.propTypes = {
+  disable: PropTypes.bool.isRequired,
+};
 
 export default StarsList;

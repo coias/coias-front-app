@@ -167,7 +167,8 @@ function PanZoom({
   function changeColorOnClick() {
     if (
       isManual ||
-      document.getElementById('selectButton').dataset.active !== 'true'
+      document.getElementById('selectButton').dataset.active !== 'true' ||
+      !disable
     ) {
       return;
     }
@@ -301,7 +302,6 @@ function PanZoom({
               {disable ? '再描画' : 'やり直す'}
             </Button>
             <Button
-              disabled={disable}
               variant="danger"
               onClick={() => {
                 onClickFinishButton();
@@ -311,7 +311,7 @@ function PanZoom({
             >
               探索終了
             </Button>
-            <StarsList />
+            <StarsList disable={disable} />
           </Col>
         )}
       </Row>
