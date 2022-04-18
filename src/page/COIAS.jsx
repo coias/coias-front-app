@@ -13,6 +13,7 @@ COIAS.propTypes = {
   setImageURLs: PropTypes.func.isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
+  intervalRef: PropTypes.func.isRequired,
 };
 
 function COIAS({
@@ -20,6 +21,7 @@ function COIAS({
   setImageURLs,
   originalStarPos,
   setOriginalStarPos,
+  intervalRef,
 }) {
   const [isGrab, setIsGrab] = useState(false);
   const [isSelect, setIsSelect] = useState(false);
@@ -37,7 +39,9 @@ function COIAS({
   useEffect(() => {
     setIsGrab(true);
     const toObjectArray = [];
-
+    clearInterval(intervalRef.current);
+    // eslint-disable-next-line no-param-reassign
+    intervalRef.current = null;
     // nginxにある画像を全て取得
     const getImages = async () => {
       const response = await axios.put(`${reactApiUri}copy`);
@@ -113,8 +117,8 @@ function COIAS({
       };
       masked.onload = onLoad;
       nomasked.onload = onLoad;
-      masked.src = `${image.mask}?date=${new Date().getTime()}`;
-      nomasked.src = `${image.nomask}?date=${new Date().getTime()}`;
+      masked.src = `${image.mask}?${new Date().getTime()}`;
+      nomasked.src = `${image.nomask}?${new Date().getTime()}`;
       return [masked, nomasked];
     });
 
@@ -172,7 +176,11 @@ function COIAS({
 
   return (
     <div className="coias-view-main">
-      <PlayMenu imageNames={imageURLs} setImageURLs={setImageURLs} />
+      <PlayMenu
+        imageNames={imageURLs}
+        setImageURLs={setImageURLs}
+        intervalRef={intervalRef}
+      />
       <Container fluid>
         <Row>
           <COIASToolBar

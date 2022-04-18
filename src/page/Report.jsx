@@ -58,14 +58,11 @@ function Report() {
               return `\u00A0\u00A0\u00A0\u00A0\u00A0${trimedStr}`;
             }
             return trimedStr;
-
-
           }),
         );
         setLoading(false);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         setLoading(false);
         setShowError(true);
         document.getElementById('toast-message').innerHTML =

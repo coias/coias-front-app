@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ExplorePrepare from './page/ExplorePrepare';
 import './style/style.scss';
@@ -16,6 +16,7 @@ import {
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
   const [fileNames, setFileNames] = useState(['Please input files']);
+  const intervalRef = useRef(null);
   const [menunames, setMenunames] = useState([
     { id: 1, name: 'ファイル', query: '', done: false },
     { id: 2, name: '事前処理', query: 'preprocess', done: false },
@@ -88,6 +89,7 @@ function App() {
                   path="/COIAS"
                   element={
                     <COIAS
+                      intervalRef={intervalRef}
                       imageURLs={imageURLs}
                       setImageURLs={setImageURLs}
                       originalStarPos={originalStarPos}

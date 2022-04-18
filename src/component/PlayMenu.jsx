@@ -11,13 +11,13 @@ import {
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle } from 'react-icons/bi';
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { PageContext } from './context';
 import SettingModal from './SettingModal';
 import HelpModal from './HelpModal';
 
-function PlayMenu({ imageNames, setImageURLs }) {
+function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
   const [play, setPlay] = useState(false);
@@ -35,13 +35,12 @@ function PlayMenu({ imageNames, setImageURLs }) {
     else setCurrentPage(currentPage - 1);
   };
 
-  const intervalRef = useRef(null);
-
   const onClickBlinkStart = useCallback(() => {
     setPlay(true);
     if (intervalRef.current !== null) {
       return;
     }
+    // eslint-disable-next-line no-param-reassign
     intervalRef.current = setInterval(() => {
       setCurrentPage((c) => {
         if (c === 4) return 0;
@@ -56,6 +55,7 @@ function PlayMenu({ imageNames, setImageURLs }) {
       return;
     }
     clearInterval(intervalRef.current);
+    // eslint-disable-next-line no-param-reassign
     intervalRef.current = null;
   }, []);
 
@@ -177,6 +177,7 @@ function PlayMenu({ imageNames, setImageURLs }) {
 PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
+  intervalRef: PropTypes.func.isRequired,
 };
 
 export default PlayMenu;
