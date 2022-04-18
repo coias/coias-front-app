@@ -11,6 +11,40 @@ import LoadingButton from './LoadingButton';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 
+// eslint-disable-next-line no-use-before-define
+PanZoom.defaultProps = {
+  isManual: false,
+  isReload: false,
+  show: false,
+  brightnessVal: 150,
+  contrastVal: 150,
+  onClickFinishButton: () => {},
+  setShow: () => {},
+  setPositionList: () => {},
+  positionList: [],
+  firstPosition: {},
+  setFirstPosition: () => {},
+};
+
+// eslint-disable-next-line no-use-before-define
+PanZoom.propTypes = {
+  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  starPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  setStarPos: PropTypes.func.isRequired,
+  isReload: PropTypes.bool,
+  brightnessVal: PropTypes.number,
+  contrastVal: PropTypes.number,
+  onClickFinishButton: PropTypes.func,
+  isManual: PropTypes.bool,
+  positionList: PropTypes.arrayOf(PropTypes.array),
+  setPositionList: PropTypes.func,
+  setShow: PropTypes.func,
+  show: PropTypes.bool,
+  firstPosition: PropTypes.bool,
+  setFirstPosition: PropTypes.func,
+};
+
 function PanZoom({
   imageURLs,
   isReload,
@@ -97,18 +131,17 @@ function PanZoom({
       window.imageLoadComplete &&
       imageURLs.length > 0
     ) {
-      setLoading(true);
-
       const w = canvas.width;
       canvas.width = w;
-      // console.log(imageURLs);
       const img = imageURLs[currentPage].nomasked
         ? window.images[currentPage][1]
         : window.images[currentPage][0];
 
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
+      setLoading(true);
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+      setLoading(false);
       Object.keys(starPos)
         .map((key) => starPos[key])
         .forEach((pos) => {
@@ -139,7 +172,6 @@ function PanZoom({
             );
           }
         });
-      setLoading(false);
     }
   }, [currentPage, starPos, isReload, IMAGE_HEIGHT, IMAGE_HEIGHT]);
 
@@ -230,9 +262,9 @@ function PanZoom({
 
     if (currentPage === 0 && lastEl.length === 0)
       setFirstPosition(currentMousePos);
-
-    const newArr = [...positionList]; // copying the old datas array
-    newArr[posListLen - 1].push({ currentMousePos }); // replace e.target.value with whatever you want to change it to
+    // copying the old datas array
+    const newArr = [...positionList];
+    newArr[posListLen - 1].push({ currentMousePos });
 
     setPositionList([...newArr]);
     if (currentPage < 4) setCurrentPage(currentPage + 1);
@@ -263,22 +295,26 @@ function PanZoom({
                 position: 'relative',
               }}
             >
-              <div className="canvas-wapper" ref={ZPCanvasRef}>
-                <canvas
-                  ref={canvasRef}
-                  width={`${IMAGE_WIDTH}px`}
-                  height={`${IMAGE_HEIGHT}px`}
-                  onClick={() => {
-                    changeColorOnClick();
-                    saveEventPosition();
-                  }}
-                  style={{
-                    filter: `contrast(${contrastVal - 50}%) brightness(${
-                      brightnessVal - 50
-                    }%)`,
-                  }}
-                />
-              </div>
+              {loading ? (
+                <LoadingButton loading={loading} />
+              ) : (
+                <div className="canvas-wapper" ref={ZPCanvasRef}>
+                  <canvas
+                    ref={canvasRef}
+                    width={`${IMAGE_WIDTH}px`}
+                    height={`${IMAGE_HEIGHT}px`}
+                    onClick={() => {
+                      changeColorOnClick();
+                      saveEventPosition();
+                    }}
+                    style={{
+                      filter: `contrast(${contrastVal - 50}%) brightness(${
+                        brightnessVal - 50
+                      }%)`,
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </Col>
@@ -308,6 +344,7 @@ function PanZoom({
                 handleClick();
               }}
               className="mb-3 p-3"
+              disabled={disable}
             >
               探索終了
             </Button>
@@ -320,36 +357,5 @@ function PanZoom({
   );
 }
 
-PanZoom.defaultProps = {
-  isManual: false,
-  isReload: false,
-  show: false,
-  brightnessVal: 150,
-  contrastVal: 150,
-  onClickFinishButton: () => {},
-  setShow: () => {},
-  setPositionList: () => {},
-  positionList: [],
-  firstPosition: {},
-  setFirstPosition: () => {},
-};
-
-PanZoom.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
-  starPos: PropTypes.objectOf(PropTypes.object).isRequired,
-  setStarPos: PropTypes.func.isRequired,
-  isReload: PropTypes.bool,
-  brightnessVal: PropTypes.number,
-  contrastVal: PropTypes.number,
-  onClickFinishButton: PropTypes.func,
-  isManual: PropTypes.bool,
-  positionList: PropTypes.arrayOf(PropTypes.array),
-  setPositionList: PropTypes.func,
-  setShow: PropTypes.func,
-  show: PropTypes.bool,
-  firstPosition: PropTypes.bool,
-  setFirstPosition: PropTypes.func,
-};
 
 export default PanZoom;
