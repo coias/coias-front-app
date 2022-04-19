@@ -6,6 +6,7 @@ import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
 import { StarPositionContext, PageContext } from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
+import LoadingButton from '../component/LoadingButton';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
@@ -28,6 +29,7 @@ function COIAS({
   const [isReload, setIsReload] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
+  const [loading, setLoading] = useState(false);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
 
@@ -44,6 +46,7 @@ function COIAS({
     intervalRef.current = null;
     // nginxにある画像を全て取得
     const getImages = async () => {
+      setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
 
@@ -64,6 +67,7 @@ function COIAS({
         o.nomasked = false;
       });
       setImageURLs(toObjectArray);
+      setLoading(false);
     };
 
     getImages();
@@ -73,18 +77,24 @@ function COIAS({
     // 画面表示時、１回だけ処理(unknown_disp.txtの処理)
     // unknown_disp.txtを取得
     const getDisp = async () => {
-      const response = await axios.get(`${reactApiUri}unknown_disp`);
-      const disp = await response.data.result;
+      setLoading(true);
+
+      const res1 = await axios.get(`${reactApiUri}unknown_disp`);
+      const res2 = await axios.get(`${reactApiUri}karifugo_disp`);
+      const res3 = await axios.get(`${reactApiUri}numbered_disp`);
+      const unknownDisp = await res1.data.result;
+      const knownDisp = await res2.data.result.concat(res3.data.result);
 
       // 選択を同期させるため、オブジェクトに変更
       const toObject = {};
-      disp.forEach((item) => {
+      unknownDisp.forEach((item) => {
         let star = toObject[item[0]];
         if (!star) {
           toObject[item[0]] = {
             name: item[0],
             page: [null, null, null, null, null],
             isSelected: false,
+            isKnown : false,
           };
           star = toObject[item[0]];
         }
@@ -94,15 +104,39 @@ function COIAS({
           y: parseFloat(item[3], 10),
         };
       });
+
+      knownDisp.forEach((item) => {
+        let star = toObject[item[0]];
+        if (!star) {
+          toObject[item[0]] = {
+            name: item[0],
+            page: [null, null, null, null, null],
+            isSelected: false,
+            isKnown : true,
+          };
+          star = toObject[item[0]];
+        }
+        star.page[item[1]] = {
+          name: item[0],
+          x: parseFloat(item[2], 10),
+          y: parseFloat(item[3], 10),
+        };
+      });
+
       setStarPos(toObject);
       setOriginalStarPos(toObject);
+       setLoading(false);
+
     };
+
 
     window.images = [];
     window.images = imageURLs.map((image) => {
+      setLoading(true);
       const masked = new Image();
       const nomasked = new Image();
       const onLoad = () => {
+
         window.imageLoadComplete =
           window.images.filter(
             (i) =>
@@ -114,13 +148,18 @@ function COIAS({
         if (window.imageLoadComplete) {
           getDisp();
         }
+
       };
       masked.onload = onLoad;
       nomasked.onload = onLoad;
       masked.src = `${image.mask}?${new Date().getTime()}`;
       nomasked.src = `${image.nomask}?${new Date().getTime()}`;
+      setLoading(false);
+
       return [masked, nomasked];
     });
+
+
 
     setCurrentPage(0);
   }, [imageURLs, isReload]);
@@ -209,6 +248,7 @@ function COIAS({
           </Col>
         </Row>
       </Container>
+      <LoadingButton loading={loading} />
     </div>
   );
 }

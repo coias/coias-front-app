@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { PageContext, MousePositionContext } from './context';
-import LoadingButton from './LoadingButton';
 
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
@@ -84,7 +83,6 @@ function PanZoom({
   const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
-  const [loading, setLoading] = useState(false);
 
   // panzoomのコンストラクター
   useEffect(() => {
@@ -139,9 +137,7 @@ function PanZoom({
 
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
-      setLoading(true);
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
-      setLoading(false);
       Object.keys(starPos)
         .map((key) => starPos[key])
         .forEach((pos) => {
@@ -173,7 +169,7 @@ function PanZoom({
           }
         });
     }
-  }, [currentPage, starPos, isReload, IMAGE_HEIGHT, IMAGE_HEIGHT]);
+  }, [currentPage, starPos, isReload, IMAGE_HEIGHT]);
 
   // マウス移動時の挙動制御
   useEffect(() => {
@@ -233,7 +229,7 @@ function PanZoom({
     Object.keys(newStarPos)
       .map((key) => newStarPos[key])
       .forEach((item) => {
-        if (item.name.startsWith('K')) return null;
+        if (!item.name.startsWith('H')) return null;
         const position = item.page[currentPage];
         if (position && testHit(position.x, position.y)) {
           newStarPos[item.name].isSelected = !item.isSelected;
@@ -295,9 +291,7 @@ function PanZoom({
                 position: 'relative',
               }}
             >
-              {loading ? (
-                <LoadingButton loading={loading} />
-              ) : (
+
                 <div className="canvas-wapper" ref={ZPCanvasRef}>
                   <canvas
                     ref={canvasRef}
@@ -314,7 +308,7 @@ function PanZoom({
                     }}
                   />
                 </div>
-              )}
+
             </div>
           </div>
         </Col>
@@ -352,7 +346,6 @@ function PanZoom({
           </Col>
         )}
       </Row>
-      <LoadingButton loading={loading} />
     </Container>
   );
 }

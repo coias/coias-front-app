@@ -13,12 +13,18 @@ function StarsList({ disable }) {
         .map((key) => starPos[key])
         .map((pos) => {
           if (pos.page[currentPage]) {
-            if (pos.name.startsWith('K')) {
+            if (!pos.isKnown) {
               return (
                 <div className="mb-3" key={pos.name}>
                   <Form.Check
-                    disabled
                     type="checkbox"
+                    disabled={!disable}
+                    defaultChecked={pos.isSelected}
+                    onChange={() => {
+                      const newStarPos = JSON.parse(JSON.stringify(starPos));
+                      newStarPos[pos.name].isSelected = !pos.isSelected;
+                      setStarPos(newStarPos);
+                    }}
                     id={pos.name}
                     label={pos.name}
                   />
@@ -26,20 +32,14 @@ function StarsList({ disable }) {
               );
             }
             return (
-              <div className="mb-3" key={pos.name}>
-                <Form.Check
-                  type="checkbox"
-                  disabled={!disable}
-                  defaultChecked={pos.isSelected}
-                  onChange={() => {
-                    const newStarPos = JSON.parse(JSON.stringify(starPos));
-                    newStarPos[pos.name].isSelected = !pos.isSelected;
-                    setStarPos(newStarPos);
-                  }}
-                  id={pos.name}
-                  label={pos.name}
-                />
-              </div>
+             <div className="mb-3" key={pos.name}>
+                  <Form.Check
+                    disabled
+                    type="checkbox"
+                    id={pos.name}
+                    label={pos.name}
+                  />
+                </div>
             );
           }
           return null;
