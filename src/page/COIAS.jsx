@@ -83,29 +83,6 @@ function COIAS({
       const unknownDisp = await res1.data.result;
       const toObject = {};
 
-      try {
-        const res2 = await axios.get(`${reactApiUri}karifugo_disp`);
-        const res3 = await axios.get(`${reactApiUri}numbered_disp`);
-        const knownDisp = await res2.data.result.concat(res3.data.result);
-        knownDisp.forEach((item) => {
-          let star = toObject[item[0]];
-          if (!star) {
-            toObject[item[0]] = {
-              name: item[0],
-              page: [null, null, null, null, null],
-              isSelected: false,
-              isKnown: true,
-            };
-            star = toObject[item[0]];
-          }
-          star.page[item[1]] = {
-            name: item[0],
-            x: parseFloat(item[2], 10),
-            y: parseFloat(item[3], 10),
-          };
-        });
-        // eslint-disable-next-line no-empty
-      } catch {}
       // 選択を同期させるため、オブジェクトに変更
       unknownDisp.forEach((item) => {
         let star = toObject[item[0]];
@@ -124,6 +101,53 @@ function COIAS({
           y: parseFloat(item[3], 10),
         };
       });
+
+      const res2 = await axios
+        .get(`${reactApiUri}karifugo_disp`)
+        .catch(() => {});
+      const res3 = await axios
+        .get(`${reactApiUri}numbered_disp`)
+        .catch(() => {});
+      if (res2 !== undefined) {
+        const knownDisp = await res2.data.result;
+        knownDisp.forEach((item) => {
+          let star = toObject[item[0]];
+          if (!star) {
+            toObject[item[0]] = {
+              name: item[0],
+              page: [null, null, null, null, null],
+              isSelected: false,
+              isKnown: true,
+            };
+            star = toObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+          };
+        });
+      }
+      if (res3 !== undefined) {
+        const knownDisp = await res3.data.result;
+        knownDisp.forEach((item) => {
+          let star = toObject[item[0]];
+          if (!star) {
+            toObject[item[0]] = {
+              name: item[0],
+              page: [null, null, null, null, null],
+              isSelected: false,
+              isKnown: true,
+            };
+            star = toObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+          };
+        });
+      }
 
       setStarPos(toObject);
       setOriginalStarPos(toObject);
