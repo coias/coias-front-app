@@ -80,13 +80,33 @@ function COIAS({
       setLoading(true);
 
       const res1 = await axios.get(`${reactApiUri}unknown_disp`);
-      const res2 = await axios.get(`${reactApiUri}karifugo_disp`);
-      const res3 = await axios.get(`${reactApiUri}numbered_disp`);
       const unknownDisp = await res1.data.result;
-      const knownDisp = await res2.data.result.concat(res3.data.result);
-
-      // 選択を同期させるため、オブジェクトに変更
       const toObject = {};
+
+      try {
+        const res2 = await axios.get(`${reactApiUri}karifugo_disp`);
+        const res3 = await axios.get(`${reactApiUri}numbered_disp`);
+        const knownDisp = await res2.data.result.concat(res3.data.result);
+        knownDisp.forEach((item) => {
+          let star = toObject[item[0]];
+          if (!star) {
+            toObject[item[0]] = {
+              name: item[0],
+              page: [null, null, null, null, null],
+              isSelected: false,
+              isKnown: true,
+            };
+            star = toObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+          };
+        });
+        // eslint-disable-next-line no-empty
+      } catch {}
+      // 選択を同期させるため、オブジェクトに変更
       unknownDisp.forEach((item) => {
         let star = toObject[item[0]];
         if (!star) {
@@ -94,25 +114,7 @@ function COIAS({
             name: item[0],
             page: [null, null, null, null, null],
             isSelected: false,
-            isKnown : false,
-          };
-          star = toObject[item[0]];
-        }
-        star.page[item[1]] = {
-          name: item[0],
-          x: parseFloat(item[2], 10),
-          y: parseFloat(item[3], 10),
-        };
-      });
-
-      knownDisp.forEach((item) => {
-        let star = toObject[item[0]];
-        if (!star) {
-          toObject[item[0]] = {
-            name: item[0],
-            page: [null, null, null, null, null],
-            isSelected: false,
-            isKnown : true,
+            isKnown: false,
           };
           star = toObject[item[0]];
         }
@@ -125,10 +127,8 @@ function COIAS({
 
       setStarPos(toObject);
       setOriginalStarPos(toObject);
-       setLoading(false);
-
+      setLoading(false);
     };
-
 
     window.images = [];
     window.images = imageURLs.map((image) => {
@@ -136,7 +136,6 @@ function COIAS({
       const masked = new Image();
       const nomasked = new Image();
       const onLoad = () => {
-
         window.imageLoadComplete =
           window.images.filter(
             (i) =>
@@ -148,7 +147,6 @@ function COIAS({
         if (window.imageLoadComplete) {
           getDisp();
         }
-
       };
       masked.onload = onLoad;
       nomasked.onload = onLoad;
@@ -158,8 +156,6 @@ function COIAS({
 
       return [masked, nomasked];
     });
-
-
 
     setCurrentPage(0);
   }, [imageURLs, isReload]);

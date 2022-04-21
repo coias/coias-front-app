@@ -291,24 +291,22 @@ function PanZoom({
                 position: 'relative',
               }}
             >
-
-                <div className="canvas-wapper" ref={ZPCanvasRef}>
-                  <canvas
-                    ref={canvasRef}
-                    width={`${IMAGE_WIDTH}px`}
-                    height={`${IMAGE_HEIGHT}px`}
-                    onClick={() => {
-                      changeColorOnClick();
-                      saveEventPosition();
-                    }}
-                    style={{
-                      filter: `contrast(${contrastVal - 50}%) brightness(${
-                        brightnessVal - 50
-                      }%)`,
-                    }}
-                  />
-                </div>
-
+              <div className="canvas-wapper" ref={ZPCanvasRef}>
+                <canvas
+                  ref={canvasRef}
+                  width={`${IMAGE_WIDTH}px`}
+                  height={`${IMAGE_HEIGHT}px`}
+                  onClick={() => {
+                    changeColorOnClick();
+                    saveEventPosition();
+                  }}
+                  style={{
+                    filter: `contrast(${contrastVal - 50}%) brightness(${
+                      brightnessVal - 50
+                    }%)`,
+                  }}
+                />
+              </div>
             </div>
           </div>
         </Col>
@@ -349,6 +347,5 @@ function PanZoom({
     </Container>
   );
 }
-
 
 export default PanZoom;

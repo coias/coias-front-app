@@ -78,7 +78,7 @@ footer {
 }
 
 .coias-view-main {
-  height: 90vh;
+  height: 100%;
 
   .container-fluid {
     height: calc(100% - 102px);
@@ -90,6 +90,7 @@ footer {
         height: 100%;
       }
 
+      // auto mode
       .col-md-11 {
         height: 100%;
 
@@ -100,6 +101,40 @@ footer {
             height: calc(100% - 50px);
 
             .col-sm-10 {
+              height: 100%;
+            }
+
+            .col-sm-12 {
+              height: 100%;
+            }
+
+            .col-sm-2 {
+              height: 100%;
+            }
+          }
+
+          .star-canvas-control {
+            height: 50px !important;
+            padding-top: 8px;
+          }
+        }
+      }
+
+      // manual mode
+      .col-md-9 {
+        height: 100%;
+
+        .container-fluid {
+          height: 100%;
+
+          .star-canvas-container {
+            height: 100%;
+
+            .col-sm-10 {
+              height: 100%;
+            }
+
+            .col-sm-12 {
               height: 100%;
             }
 
@@ -122,7 +157,7 @@ footer {
 .canvas-wapper {
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow-y: scroll;
   background-color: gray;
 
   &::-webkit-scrollbar {
@@ -158,7 +193,7 @@ footer {
   }
 }
 
-#ex4{
+#ex4 {
   -webkit-appearance: slider-vertical; /* Chromium */
   width: 8px;
   height: 175px;
