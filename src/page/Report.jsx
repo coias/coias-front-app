@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Col, Row, Form, Button } from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
@@ -71,11 +71,11 @@ function Report() {
       });
   };
   // 初回のみのAPIの読み込み
-  useMemo(() => {
+  useEffect(() => {
     getMpc();
   }, []);
 
-  useMemo(() => {
+  useEffect(() => {
     makeSendMpc();
   }, [sendMpcMEA, sendMpcOBS, sendMpcBody]);
 
