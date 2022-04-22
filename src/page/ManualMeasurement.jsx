@@ -29,18 +29,25 @@ function ManualMeasurement({ imageURLs, originalStarPos }) {
     const result = positionList.map((list, i) =>
       list.map(
         (pos, page) =>
-          `('${pos.currentMousePos.x}' , '${pos.currentMousePos.y}', warp${
+          `('${pos.currentMousePos.x}', '${pos.currentMousePos.y}', 'warp${
             page + 1
-          }_bin.fits, '${i}')\n`,
+          }_bin.fits', '${i}')\n`,
       ),
     );
 
-    const text = result[0].join('');
+    const text = result.map((pos) => pos.join('')).join('');
+
+    console.log(text);
+    // memo2
     await axios.put(`${reactApiUri}memo2`, null, {
       params: {
         text,
       },
     });
+
+    // astsearch_manual
+    await axios.put(`${reactApiUri}astsearch_manual`);
+
     navigate('/COIAS');
   };
 
