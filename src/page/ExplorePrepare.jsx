@@ -1,3 +1,7 @@
+/*
+ * 探索準備モード
+ *
+ */
 import axios from 'axios';
 import React, { useState, useRef } from 'react';
 import {
@@ -57,13 +61,13 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
     }
   };
 
-  const updateMenunames = (num) => {
+  const updateMenunames = (num, bool) => {
     // 1. Make a shallow copy of the items
     const items = [...menunames];
     // 2. Make a shallow copy of the item you want to mutate
     const item = { ...items[num] };
     // 3. Replace the property you're intested in
-    item.done = true;
+    item.done = bool;
     // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
     items[num] = item;
     // 5. Set the state to our new copy
@@ -136,7 +140,12 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
         .then(() => {
           // menunames[0].done = true;
           // setMenunames(menunames);
-          updateMenunames(0);
+          // eslint-disable-next-line no-plusplus
+          for (let i = 1; i < menunames.length; i++) {
+            updateMenunames(i, false);
+          }
+          updateMenunames(0, true);
+
           setLoading(false);
         })
         .catch(() => {
@@ -269,7 +278,7 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
     // menunames[6].done = true;
     // setMenunames(menunames);
 
-    updateMenunames(6);
+    updateMenunames(6, true);
     setLoading(false);
   };
 

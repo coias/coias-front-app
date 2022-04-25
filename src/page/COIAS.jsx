@@ -185,7 +185,7 @@ function COIAS({
   }, [imageURLs, isReload]);
 
   // 探索終了ボタンが押された時の処理
-  const onClickFinishButton = async () => {
+  const onClickFinishButton = async (num) => {
     // memo.txtへの出力
     const selectedStars = Object.keys(starPos)
       .map((key) => starPos[key])
@@ -197,11 +197,7 @@ function COIAS({
     await axios.put(`${reactApiUri}prempedit`);
 
     // prempedit3
-    let s = selectedStars[selectedStars.length - 1];
-    while (s.charAt(0) === '0') {
-      s = s.substring(1);
-    }
-    const num = '1';
+    console.log(num);
     await axios.put(`${reactApiUri}prempedit3?num=${num}`);
 
     // redisp

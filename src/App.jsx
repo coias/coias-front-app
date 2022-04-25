@@ -1,12 +1,19 @@
+/**
+ * ExparePrepare : 探索準備モード
+ * COIAS : 探索/再描画
+ * ManualMeasurement : 再測定モード
+ * Report : レポートモード
+ */
+
 import React, { useState, useMemo, useRef } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Header from './component/Header';
 import ExplorePrepare from './page/ExplorePrepare';
-import './style/style.scss';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import COIAS from './page/COIAS';
 import ManualMeasurement from './page/ManualMeasurement';
 import Report from './page/Report';
-import Header from './component/Header';
-import COIAS from './page/COIAS';
+import './style/style.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   PageContext,
   MousePositionContext,

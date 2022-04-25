@@ -9,6 +9,7 @@ import { PageContext, MousePositionContext } from './context';
 
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
+import NewStarModal from './NewStarModal';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
@@ -83,6 +84,17 @@ function PanZoom({
   const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
+  const [starModalShow, setStarModalShow] = useState(false);
+  const onStarModalExit = () => {
+    setDisable(false);
+    Array.from(document.getElementsByClassName('form-check-input')).forEach(
+      (item) => {
+        // eslint-disable-next-line no-param-reassign
+        item.checked = false;
+      },
+    );
+    setStarModalShow(false);
+  };
 
   // panzoomのコンストラクター
   useEffect(() => {
@@ -241,6 +253,7 @@ function PanZoom({
     setStarPos(newStarPos);
   }
 
+  // 再測定時に天体の座標を保存する
   function saveEventPosition() {
     const gval = document.getElementById('grabButton').dataset.active;
     const gshouldIgnore = gval === 'true';
@@ -314,17 +327,11 @@ function PanZoom({
           <Col sm={2}>
             <Button
               variant="success"
-              onClick={(e) => {
-                setDisable(!disable);
-                Array.from(
-                  document.getElementsByClassName('form-check-input'),
-                ).forEach((item) => {
-                  // eslint-disable-next-line no-param-reassign
-                  item.checked = false;
-                });
+              onClick={() => {
                 // eslint-disable-next-line no-unused-expressions
-                disable ? onClickFinishButton(e) : setStarPos(originalStarPos);
+                disable && setStarModalShow(true);
               }}
+              style={{ width: '110px' }}
               className="mb-3 p-3"
             >
               {disable ? '再描画' : 'やり直す'}
@@ -335,6 +342,7 @@ function PanZoom({
                 onClickFinishButton();
                 handleClick();
               }}
+              style={{ width: '110px' }}
               className="mb-3 p-3"
               disabled={disable}
             >
@@ -344,6 +352,15 @@ function PanZoom({
           </Col>
         )}
       </Row>
+      <NewStarModal
+        show={starModalShow}
+        onHide={() => {
+          setStarPos(originalStarPos);
+          setStarModalShow(false);
+        }}
+        onExit={onStarModalExit}
+        onClickFinishButton={onClickFinishButton}
+      />
     </Container>
   );
 }
