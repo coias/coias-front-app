@@ -197,7 +197,6 @@ function COIAS({
     await axios.put(`${reactApiUri}prempedit`);
 
     // prempedit3
-    console.log(num);
     await axios.put(`${reactApiUri}prempedit3?num=${num}`);
 
     // redisp

@@ -14,7 +14,6 @@ function NewStarModal({ show, onHide, onExit, onClickFinishButton }) {
   const validation = () => {
     const pattern = /\d{1,6}/g;
     const result = newName.match(pattern);
-    console.log(result);
     return result !== null && result[0] === newName;
   };
   return (
@@ -36,7 +35,6 @@ function NewStarModal({ show, onHide, onExit, onClickFinishButton }) {
           onSubmit={(e) => {
             e.preventDefault();
             if (validation()) {
-              console.log(newName);
               onClickFinishButton(newName);
               onExit();
             } else {
