@@ -4,9 +4,15 @@ import { Modal, Button, Form } from 'react-bootstrap';
 
 import PropTypes from 'prop-types';
 
-function NewStarModal({ show, onHide, onExit, onClickFinishButton }) {
+function NewStarModal({
+  show,
+  onHide,
+  onExit,
+  onClickFinishButton,
+  newName,
+  setNewName,
+}) {
   const [disable, setDisable] = useState(true);
-  const [newName, setNewName] = useState('1');
   const [alertMessage, setAlertMessage] = useState(
     '変更を加えない場合は次へを押してください',
   );
@@ -88,4 +94,6 @@ NewStarModal.propTypes = {
   onHide: PropTypes.func.isRequired,
   onExit: PropTypes.func.isRequired,
   onClickFinishButton: PropTypes.func.isRequired,
+  setNewName: PropTypes.func.isRequired,
+  newName: PropTypes.string.isRequired,
 };

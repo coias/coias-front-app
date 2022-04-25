@@ -85,6 +85,7 @@ function PanZoom({
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [starModalShow, setStarModalShow] = useState(false);
+  const [newName, setNewName] = useState('1');
   const onStarModalExit = () => {
     setDisable(false);
     Array.from(document.getElementsByClassName('form-check-input')).forEach(
@@ -328,8 +329,9 @@ function PanZoom({
             <Button
               variant="success"
               onClick={() => {
+                setDisable(!disable);
                 // eslint-disable-next-line no-unused-expressions
-                disable && setStarModalShow(true);
+                disable ? setStarModalShow(true) : setStarPos(originalStarPos);
               }}
               style={{ width: '110px' }}
               className="mb-3 p-3"
@@ -339,7 +341,7 @@ function PanZoom({
             <Button
               variant="danger"
               onClick={() => {
-                onClickFinishButton();
+                onClickFinishButton(newName);
                 handleClick();
               }}
               style={{ width: '110px' }}
@@ -360,6 +362,8 @@ function PanZoom({
         }}
         onExit={onStarModalExit}
         onClickFinishButton={onClickFinishButton}
+        newName={newName}
+        setNewName={setNewName}
       />
     </Container>
   );
