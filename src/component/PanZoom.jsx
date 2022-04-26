@@ -360,6 +360,7 @@ function PanZoom({
         onHide={() => {
           setStarPos(originalStarPos);
           setStarModalShow(false);
+          setNewName('1');
         }}
         onExit={() => {
           onStarModalExit();

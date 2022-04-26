@@ -25,7 +25,10 @@ function NewStarModal({
   return (
     <Modal
       show={show}
-      onHide={onHide}
+      onHide={() => {
+        setDisable(!disable);
+        onHide();
+      }}
       onExit={onExit}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
