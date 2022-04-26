@@ -42,6 +42,7 @@ function NewStarModal({
             e.preventDefault();
             if (validation()) {
               onClickFinishButton(newName);
+              setDisable(!disable);
               onExit();
             } else {
               setAlertMessage('数字を入力してください');
@@ -51,7 +52,7 @@ function NewStarModal({
           <Form.Group>
             <Form.Label>先頭の新天体番号を指定する</Form.Label>
             <Form.Control
-              placeholder="H000001の場合 '1' を入力"
+              placeholder="H000005の場合 '5' を入力"
               disabled={disable}
               onChange={(e) => {
                 setNewName(e.target.value);

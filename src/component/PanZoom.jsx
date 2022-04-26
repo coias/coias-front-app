@@ -88,6 +88,7 @@ function PanZoom({
   const [newName, setNewName] = useState('1');
   const onStarModalExit = () => {
     setDisable(false);
+    setNewName('1');
     Array.from(document.getElementsByClassName('form-check-input')).forEach(
       (item) => {
         // eslint-disable-next-line no-param-reassign
@@ -360,7 +361,9 @@ function PanZoom({
           setStarPos(originalStarPos);
           setStarModalShow(false);
         }}
-        onExit={onStarModalExit}
+        onExit={() => {
+          onStarModalExit();
+        }}
         onClickFinishButton={onClickFinishButton}
         newName={newName}
         setNewName={setNewName}
