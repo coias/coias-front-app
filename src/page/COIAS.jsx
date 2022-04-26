@@ -14,7 +14,7 @@ COIAS.propTypes = {
   setImageURLs: PropTypes.func.isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
-  intervalRef: PropTypes.func.isRequired,
+  intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
 };
 
 function COIAS({

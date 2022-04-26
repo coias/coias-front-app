@@ -177,7 +177,7 @@ function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
 PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
-  intervalRef: PropTypes.func.isRequired,
+  intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
 };
 
 export default PlayMenu;

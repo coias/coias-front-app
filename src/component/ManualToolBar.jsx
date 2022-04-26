@@ -74,7 +74,7 @@ function ManualToolBar({ positionList, setPositionList, setFirstPosition }) {
 export default ManualToolBar;
 
 ManualToolBar.propTypes = {
-  positionList: PropTypes.objectOf(PropTypes.object).isRequired,
+  positionList: PropTypes.arrayOf(PropTypes.object).isRequired,
   setPositionList: PropTypes.func.isRequired,
   setFirstPosition: PropTypes.func.isRequired,
 };

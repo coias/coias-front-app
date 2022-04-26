@@ -41,7 +41,7 @@ PanZoom.propTypes = {
   setPositionList: PropTypes.func,
   setShow: PropTypes.func,
   show: PropTypes.bool,
-  firstPosition: PropTypes.bool,
+  firstPosition: PropTypes.objectOf(PropTypes.object),
   setFirstPosition: PropTypes.func,
 };
 

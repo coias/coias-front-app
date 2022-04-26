@@ -37,7 +37,6 @@ function ManualMeasurement({ imageURLs, originalStarPos }) {
 
     const text = result.map((pos) => pos.join('')).join('');
 
-    console.log(text);
     // memo2
     await axios.put(`${reactApiUri}memo2`, null, {
       params: {
