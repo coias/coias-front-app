@@ -27,6 +27,7 @@ function NewStarModal({
       show={show}
       onHide={() => {
         setDisable(!disable);
+        setAlertMessage('変更を加えない場合は次へを押してください');
         onHide();
       }}
       onExit={onExit}
@@ -47,6 +48,7 @@ function NewStarModal({
               onClickFinishButton(newName);
               setDisable(!disable);
               onExit();
+              setAlertMessage('変更を加えない場合は次へを押してください');
             } else {
               setAlertMessage('数字を入力してください');
             }
