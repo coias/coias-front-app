@@ -1,41 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Modal, Button, Form } from 'react-bootstrap';
 
 import PropTypes from 'prop-types';
 
-function NewStarModal({
-  show,
-  onHide,
-  onExit,
-  onClickFinishButton,
-  newName,
-  setNewName,
-}) {
+function NewStarModal({ show, onExit, onClickFinishButton }) {
+  const [newName, setNewName] = useState('1');
   const [disable, setDisable] = useState(true);
   const [alertMessage, setAlertMessage] = useState(
     '変更を加えない場合は次へを押してください',
   );
 
-  const validation = () => {
-    const pattern = /\d{1,6}/g;
-    const result = newName.match(pattern);
-    return result !== null && result[0] === newName;
-  };
+  // initialization
+  useEffect(() => {
+    setNewName('1');
+    setDisable(true);
+  }, [show]);
+
+  const validation = () => /\d{1,6}/g.test(newName);
   return (
     <Modal
       show={show}
-      onHide={() => {
-        setDisable(!disable);
-        setAlertMessage('変更を加えない場合は次へを押してください');
-        onHide();
-      }}
       onExit={onExit}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      backdrop="static"
     >
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
           新天体の番号指定
         </Modal.Title>
@@ -46,22 +38,22 @@ function NewStarModal({
             e.preventDefault();
             if (validation()) {
               onClickFinishButton(newName);
-              setDisable(!disable);
-              onExit();
               setAlertMessage('変更を加えない場合は次へを押してください');
+              onExit();
             } else {
               setAlertMessage('数字を入力してください');
             }
           }}
         >
           <Form.Group>
-            <Form.Label>先頭の新天体番号を指定する</Form.Label>
+            <Form.Label>先頭の新天体番号を指定する(最大６桁)</Form.Label>
             <Form.Control
               placeholder="H000005の場合 '5' を入力"
               disabled={disable}
               onChange={(e) => {
                 setNewName(e.target.value);
               }}
+              maxLength={6}
             />
             <Form.Text className="text-muted">
               <p
@@ -97,9 +89,6 @@ export default NewStarModal;
 
 NewStarModal.propTypes = {
   show: PropTypes.bool.isRequired,
-  onHide: PropTypes.func.isRequired,
   onExit: PropTypes.func.isRequired,
   onClickFinishButton: PropTypes.func.isRequired,
-  setNewName: PropTypes.func.isRequired,
-  newName: PropTypes.string.isRequired,
 };
