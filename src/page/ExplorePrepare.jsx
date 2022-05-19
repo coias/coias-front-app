@@ -31,6 +31,7 @@ ExplorePrepare.propTypes = {
 /**
  * 2022.03.24 y changed.
  * 全自動だけ段分け。
+ *
  */
 function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
   const uri = process.env.REACT_APP_API_URI;
