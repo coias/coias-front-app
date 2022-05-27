@@ -62,7 +62,7 @@ function Header() {
           <NavLink
             to="/Report"
             className={(navData) =>
-              navData.isActive ? 'not-active-no-hover' : 'not-active-no-hover'
+              navData.isActive ? 'active' : 'not-active'
             }
             style={{ textDecoration: 'none', color: 'gray' }}
             onClick={(e) => e.preventDefault() /* do nothing. */}
