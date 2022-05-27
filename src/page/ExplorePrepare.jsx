@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
+// import ExcuteButton from '../component/ExcuteButton';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
@@ -26,6 +27,8 @@ ExplorePrepare.propTypes = {
   setFileNames: PropTypes.func.isRequired,
   menunames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setMenunames: PropTypes.func.isRequired,
+  val: PropTypes.string.isRequired,
+  setVal: PropTypes.func.isRequired,
 };
 
 /**
@@ -33,7 +36,14 @@ ExplorePrepare.propTypes = {
  * 全自動だけ段分け。
  *
  */
-function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
+function ExplorePrepare({
+  fileNames,
+  setFileNames,
+  menunames,
+  setMenunames,
+  val,
+  setVal,
+}) {
   const uri = process.env.REACT_APP_API_URI;
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -43,6 +53,8 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
+
+  const handleSelect = (e) => setVal(e.target.value);
 
   const DEFAULT_FILE_NUM = 5;
 
@@ -301,7 +313,7 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
     // menunames[6].done = true;
     // setMenunames(menunames);
 
-    updateMenunames(6, true);
+    // updateMenunames(6, true);
     setLoading(false);
   };
 
@@ -312,25 +324,25 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
         height: '100%',
       }}
     >
-      <Row xs="auto">
-        <Col>
-          <h4>探索準備 : </h4>
-        </Col>
-        <Row>
-          <Col style={{ margin: 'auto 0' }}>
-            <Button
-              variant={menunames[0].done ? 'success' : 'primary'}
-              style={{ whiteSpace: 'nowrap' }}
-              onClick={() => {
-                handleShow();
-              }}
-            >
-              ファイル
-            </Button>
-          </Col>
+      <div style={{ marginTop: 20, marginBottom: 20 }}>
+        <Row xs="auto">
           <Col>
-            <Row>
-              <div style={{ paddingBottom: 5 }}>
+            <h4>探索準備 : </h4>
+          </Col>
+          <Row>
+            <Col style={{ margin: 'auto 0' }}>
+              <Button
+                variant={menunames[0].done ? 'success' : 'primary'}
+                style={{ whiteSpace: 'nowrap' }}
+                onClick={() => {
+                  handleShow();
+                }}
+              >
+                ファイル
+              </Button>
+            </Col>
+            {val === 'auto' ? (
+              <Col style={{ margin: 'auto 0' }}>
                 <DropdownButton
                   as={ButtonGroup}
                   key="Success"
@@ -345,89 +357,94 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
                     4×4
                   </Dropdown.Item>
                 </DropdownButton>
-              </div>
-            </Row>
-            <ul className="coias-ul">
-              {menunames.map((item) => {
-                if (item.id === 1 || item.name === '全自動処理') {
-                  return null;
-                }
-                if (item.name === 'ビニングマスク') {
-                  return (
-                    <li
-                      key={item.id}
-                      style={{ display: 'flex' }}
-                      className="coias-li"
-                    >
-                      <div>
-                        <DropdownButton
-                          as={ButtonGroup}
-                          variant={item.done ? 'success' : 'primary'}
-                          title={item.name}
-                        >
-                          <Dropdown.Item
-                            eventKey="1"
-                            onClick={() => onProcess(`${item.query}2`)}
-                          >
-                            2×2
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            eventKey="2"
-                            onClick={() => onProcess(`${item.query}4`)}
-                          >
-                            4×4
-                          </Dropdown.Item>
-                        </DropdownButton>
-                      </div>
-                      <div style={{ margin: 'auto 0' }}>
-                        <AiOutlineArrowRight size={24} />
-                      </div>
-                    </li>
-                  );
-                }
-                if (item.name === '自動検出') {
-                  return (
-                    <li key={item.id} className="coias-li">
-                      <Button
-                        style={{ whiteSpace: 'nowrap' }}
-                        onClick={() => {
-                          onProcess(item.query);
-                        }}
-                        variant={item.done ? 'success' : 'primary'}
-                      >
-                        {item.name}
-                      </Button>
-                    </li>
-                  );
-                }
-                return (
-                  <li
-                    key={item.id}
-                    style={{ display: 'flex' }}
-                    className="coias-li"
+              </Col>
+            ) : (
+              <>
+                <Col style={{ padding: 0, paddingLeft: 20 }}>
+                  <Button
+                    id={menunames[1].query}
+                    style={{ whiteSpace: 'nowrap' }}
+                    onClick={() => {
+                      onProcess(menunames[1].query);
+                    }}
+                    variant={menunames[1].done ? 'success' : 'primary'}
                   >
-                    <div>
-                      <Button
-                        id={item.query}
-                        style={{ whiteSpace: 'nowrap' }}
-                        onClick={() => {
-                          onProcess(item.query);
-                        }}
-                        variant={item.done ? 'success' : 'primary'}
-                      >
-                        {item.name}
-                      </Button>
-                    </div>
-                    <div style={{ margin: 'auto 0' }}>
-                      <AiOutlineArrowRight size={24} />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </Col>
+                    {menunames[1].name}
+                  </Button>
+                </Col>
+                <Col style={{ margin: 'auto 0', padding: 0 }}>
+                  <AiOutlineArrowRight size={24} />
+                </Col>
+                <Col style={{ padding: 0 }}>
+                  <DropdownButton
+                    as={ButtonGroup}
+                    variant={menunames[2].done ? 'success' : 'primary'}
+                    title={menunames[2].name}
+                  >
+                    <Dropdown.Item
+                      eventKey="1"
+                      onClick={() => onProcess(`${menunames[2].query}2`)}
+                    >
+                      2×2
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      eventKey="2"
+                      onClick={() => onProcess(`${menunames[2].query}4`)}
+                    >
+                      4×4
+                    </Dropdown.Item>
+                  </DropdownButton>
+                </Col>
+                <Col style={{ margin: 'auto 0', padding: 0 }}>
+                  <AiOutlineArrowRight size={24} />
+                </Col>
+                <Col style={{ padding: 0 }}>
+                  <Button
+                    id={menunames[3].query}
+                    style={{ whiteSpace: 'nowrap' }}
+                    onClick={() => {
+                      onProcess(menunames[3].query);
+                    }}
+                    variant={menunames[3].done ? 'success' : 'primary'}
+                  >
+                    {menunames[3].name}
+                  </Button>
+                </Col>
+                <Col style={{ margin: 'auto 0', padding: 0 }}>
+                  <AiOutlineArrowRight size={24} />
+                </Col>
+                <Col style={{ padding: 0 }}>
+                  <Button
+                    id={menunames[4].query}
+                    style={{ whiteSpace: 'nowrap' }}
+                    onClick={() => {
+                      onProcess(menunames[4].query);
+                    }}
+                    variant={menunames[4].done ? 'success' : 'primary'}
+                  >
+                    {menunames[4].name}
+                  </Button>
+                </Col>
+                <Col style={{ margin: 'auto 0', padding: 0 }}>
+                  <AiOutlineArrowRight size={24} />
+                </Col>
+                <Col style={{ padding: 0 }}>
+                  <Button
+                    id={menunames[5].query}
+                    style={{ whiteSpace: 'nowrap' }}
+                    onClick={() => {
+                      onProcess(menunames[5].query);
+                    }}
+                    variant={menunames[5].done ? 'success' : 'primary'}
+                  >
+                    {menunames[5].name}
+                  </Button>
+                </Col>
+              </>
+            )}
+          </Row>
         </Row>
-      </Row>
+      </div>
 
       <Row
         xs="auto"
@@ -474,6 +491,8 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
           アップロード後、画像処理をおこないます。
           <br />
           処理は時間がかかります。
+          <br />
+          画像処理は全自動処理と手動処理が選択できます。
         </Modal.Body>
 
         <Form onSubmit={handleSubmit} className="m-3">
@@ -490,6 +509,28 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
               個選択できます。
             </Form.Control.Feedback>
           </InputGroup>
+          <Form.Check
+            className="m-3"
+            inline
+            type="radio"
+            label="全自動処理"
+            name="group1"
+            id="auto"
+            value="auto"
+            onChange={handleSelect}
+            checked={val === 'auto'}
+          />
+          <Form.Check
+            className="m-3"
+            inline
+            type="radio"
+            label="手動処理"
+            name="group1"
+            id="manual"
+            value="manual"
+            onChange={handleSelect}
+            checked={val === 'manual'}
+          />
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Close
