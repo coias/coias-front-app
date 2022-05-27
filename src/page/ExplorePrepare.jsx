@@ -62,17 +62,39 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
     }
   };
 
-  const updateMenunames = (num, bool) => {
-    // 1. Make a shallow copy of the items
-    const items = [...menunames];
-    // 2. Make a shallow copy of the item you want to mutate
-    const item = { ...items[num] };
-    // 3. Replace the property you're intested in
-    item.done = bool;
-    // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-    items[num] = item;
-    // 5. Set the state to our new copy
-    setMenunames(items);
+  // const updateMenunames = (num, bool) => {
+  //   // 1. Make a shallow copy of the items
+  //   const items = [...menunames];
+  //   // 2. Make a shallow copy of the item you want to mutate
+  //   const item = { ...items[num] };
+  //   // 3. Replace the property you're intested in
+  //   item.done = bool;
+  //   // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+  //   items[num] = item;
+  //   // 5. Set the state to our new copy
+  //   setMenunames(items);
+  // };
+
+  const updateMenunames = () => {
+    setMenunames((prevMenunames) =>
+      prevMenunames.map((items) =>
+        items.done === true
+          ? {
+              id: items.id,
+              name: items.name,
+              query: items.query,
+              done: false,
+            }
+          : items,
+      ),
+    );
+    setMenunames((prevMenunames) =>
+      prevMenunames.map((items) =>
+        items.id === 1
+          ? { id: items.id, name: items.name, query: items.query, done: true }
+          : items,
+      ),
+    );
   };
 
   const handleSubmit = (e) => {
@@ -142,11 +164,11 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
           // menunames[0].done = true;
           // setMenunames(menunames);
           // eslint-disable-next-line no-plusplus
-          for (let i = 1; i < menunames.length; i++) {
-            updateMenunames(i, false);
-          }
-          updateMenunames(0, true);
-
+          // for (let i = 1; i < menunames.length; i++) {
+          //   updateMenunames(i, false);
+          // }
+          // updateMenunames(0, true);
+          updateMenunames();
           setLoading(false);
         })
         .catch(() => {
@@ -294,40 +316,90 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
         <Col>
           <h4>探索準備 : </h4>
         </Col>
-        <Col>
-          <div className="d-flex" style={{ marginBottom: '10px' }}>
-            <div style={{ marginRight: '20px' }}>
-              <Button
-                variant={menunames[0].done ? 'success' : 'primary'}
-                style={{ whiteSpace: 'nowrap' }}
-                onClick={() => {
-                  handleShow();
-                }}
-              >
-                ファイル
-              </Button>
-            </div>
-            <DropdownButton
-              as={ButtonGroup}
-              key="Success"
-              id="dropdown-variants-Success"
-              variant={menunames[6].done ? 'success' : 'primary'}
-              title={menunames[6].name}
+        <Row>
+          <Col style={{ margin: 'auto 0' }}>
+            <Button
+              variant={menunames[0].done ? 'success' : 'primary'}
+              style={{ whiteSpace: 'nowrap' }}
+              onClick={() => {
+                handleShow();
+              }}
             >
-              <Dropdown.Item eventKey="1" onClick={() => onProcessAuto(2)}>
-                2×2
-              </Dropdown.Item>
-              <Dropdown.Item eventKey="2" onClick={() => onProcessAuto(4)}>
-                4×4
-              </Dropdown.Item>
-            </DropdownButton>
-          </div>
-          <ul className="coias-ul" style={{ marginLeft: '110px' }}>
-            {menunames.map((item) => {
-              if (item.id === 1 || item.name === '全自動処理') {
-                return null;
-              }
-              if (item.name === 'ビニングマスク') {
+              ファイル
+            </Button>
+          </Col>
+          <Col>
+            <Row>
+              <div style={{ paddingBottom: 5 }}>
+                <DropdownButton
+                  as={ButtonGroup}
+                  key="Success"
+                  id="dropdown-variants-Success"
+                  variant={menunames[6].done ? 'success' : 'primary'}
+                  title={menunames[6].name}
+                >
+                  <Dropdown.Item eventKey="1" onClick={() => onProcessAuto(2)}>
+                    2×2
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="2" onClick={() => onProcessAuto(4)}>
+                    4×4
+                  </Dropdown.Item>
+                </DropdownButton>
+              </div>
+            </Row>
+            <ul className="coias-ul">
+              {menunames.map((item) => {
+                if (item.id === 1 || item.name === '全自動処理') {
+                  return null;
+                }
+                if (item.name === 'ビニングマスク') {
+                  return (
+                    <li
+                      key={item.id}
+                      style={{ display: 'flex' }}
+                      className="coias-li"
+                    >
+                      <div>
+                        <DropdownButton
+                          as={ButtonGroup}
+                          variant={item.done ? 'success' : 'primary'}
+                          title={item.name}
+                        >
+                          <Dropdown.Item
+                            eventKey="1"
+                            onClick={() => onProcess(`${item.query}2`)}
+                          >
+                            2×2
+                          </Dropdown.Item>
+                          <Dropdown.Item
+                            eventKey="2"
+                            onClick={() => onProcess(`${item.query}4`)}
+                          >
+                            4×4
+                          </Dropdown.Item>
+                        </DropdownButton>
+                      </div>
+                      <div style={{ margin: 'auto 0' }}>
+                        <AiOutlineArrowRight size={24} />
+                      </div>
+                    </li>
+                  );
+                }
+                if (item.name === '自動検出') {
+                  return (
+                    <li key={item.id} className="coias-li">
+                      <Button
+                        style={{ whiteSpace: 'nowrap' }}
+                        onClick={() => {
+                          onProcess(item.query);
+                        }}
+                        variant={item.done ? 'success' : 'primary'}
+                      >
+                        {item.name}
+                      </Button>
+                    </li>
+                  );
+                }
                 return (
                   <li
                     key={item.id}
@@ -335,72 +407,26 @@ function ExplorePrepare({ fileNames, setFileNames, menunames, setMenunames }) {
                     className="coias-li"
                   >
                     <div>
-                      <DropdownButton
-                        as={ButtonGroup}
+                      <Button
+                        id={item.query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        onClick={() => {
+                          onProcess(item.query);
+                        }}
                         variant={item.done ? 'success' : 'primary'}
-                        title={item.name}
                       >
-                        <Dropdown.Item
-                          eventKey="1"
-                          onClick={() => onProcess(`${item.query}2`)}
-                        >
-                          2×2
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                          eventKey="2"
-                          onClick={() => onProcess(`${item.query}4`)}
-                        >
-                          4×4
-                        </Dropdown.Item>
-                      </DropdownButton>
+                        {item.name}
+                      </Button>
                     </div>
-                    <div>
+                    <div style={{ margin: 'auto 0' }}>
                       <AiOutlineArrowRight size={24} />
                     </div>
                   </li>
                 );
-              }
-              if (item.name === '自動検出') {
-                return (
-                  <li key={item.id} className="coias-li">
-                    <Button
-                      style={{ whiteSpace: 'nowrap' }}
-                      onClick={() => {
-                        onProcess(item.query);
-                      }}
-                      variant={item.done ? 'success' : 'primary'}
-                    >
-                      {item.name}
-                    </Button>
-                  </li>
-                );
-              }
-              return (
-                <li
-                  key={item.id}
-                  style={{ display: 'flex' }}
-                  className="coias-li"
-                >
-                  <div>
-                    <Button
-                      id={item.query}
-                      style={{ whiteSpace: 'nowrap' }}
-                      onClick={() => {
-                        onProcess(item.query);
-                      }}
-                      variant={item.done ? 'success' : 'primary'}
-                    >
-                      {item.name}
-                    </Button>
-                  </div>
-                  <div>
-                    <AiOutlineArrowRight size={24} />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </Col>
+              })}
+            </ul>
+          </Col>
+        </Row>
       </Row>
 
       <Row
