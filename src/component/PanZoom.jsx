@@ -43,6 +43,7 @@ PanZoom.propTypes = {
   show: PropTypes.bool,
   firstPosition: PropTypes.objectOf(PropTypes.object),
   setFirstPosition: PropTypes.func,
+  isRectangle: PropTypes.bool.isRequired,
 };
 
 function PanZoom({
@@ -61,6 +62,7 @@ function PanZoom({
   show,
   firstPosition,
   setFirstPosition,
+  isRectangle,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -85,6 +87,7 @@ function PanZoom({
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [starModalShow, setStarModalShow] = useState(false);
+  const [context, setContext] = useState();
   const onStarModalExit = () => {
     setDisable(false);
     Array.from(document.getElementsByClassName('form-check-input')).forEach(
@@ -128,11 +131,18 @@ function PanZoom({
     };
   }, [firstPosition, isReload]);
 
+  useEffect(() => {
+    // const canvas = document.getElementById('canvas');
+    const canvas = canvasRef.current;
+    const canvasContext = canvas.getContext('2d');
+    setContext(canvasContext);
+  });
+
   // imageの描画
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    // const canvas = canvasRef.current;
+    // const context = canvas.getContext('2d');
+    // context.clearRect(0, 0, canvas.width, canvas.height);
 
     if (
       context &&
@@ -141,8 +151,8 @@ function PanZoom({
       window.imageLoadComplete &&
       imageURLs.length > 0
     ) {
-      const w = canvas.width;
-      canvas.width = w;
+      // const w = canvas.width;
+      // canvas.width = w;
       const img = imageURLs[currentPage].nomasked
         ? window.images[currentPage][1]
         : window.images[currentPage][0];
@@ -161,6 +171,7 @@ function PanZoom({
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
+            context.strokeStyle = isRectangle ? 'rgba(0, 0, 0, 0)' : '';
             context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
 
             // font setting
@@ -181,7 +192,7 @@ function PanZoom({
           }
         });
     }
-  }, [currentPage, starPos, isReload, IMAGE_HEIGHT]);
+  }, [context, currentPage, starPos, isReload, IMAGE_HEIGHT, isRectangle]);
 
   // マウス移動時の挙動制御
   useEffect(() => {

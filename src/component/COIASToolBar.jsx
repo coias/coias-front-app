@@ -18,6 +18,8 @@ COIASToolBar.propTypes = {
   contrastVal: PropTypes.number.isRequired,
   setBrightnessVal: PropTypes.func.isRequired,
   setContrastVal: PropTypes.func.isRequired,
+  isRectangle: PropTypes.bool.isRequired,
+  setIsRectangel: PropTypes.func.isRequired,
 };
 
 function COIASToolBar({
@@ -31,6 +33,8 @@ function COIASToolBar({
   contrastVal,
   setBrightnessVal,
   setContrastVal,
+  isRectangle,
+  setIsRectangel,
 }) {
   return (
     <div
@@ -78,12 +82,23 @@ function COIASToolBar({
             item.checked = false;
           });
           setIsGrab(true);
+          setIsRectangel(false);
           setIsReload(!isReload);
           setBrightnessVal(150);
           setContrastVal(150);
         }}
       >
         <AiOutlineReload size={30} />
+      </Button>
+      <Button
+        id="rectangleButton"
+        data-active={isRectangle}
+        variant={isRectangle ? 'danger' : 'light'}
+        onClick={() => {
+          setIsRectangel(!isRectangle);
+        }}
+      >
+        rectangle
       </Button>
       <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
       <ContrastBar val={contrastVal} set={setContrastVal} />
