@@ -142,10 +142,6 @@ function PanZoom({
 
   // imageの描画
   useEffect(() => {
-    // const canvas = canvasRef.current;
-    // const context = canvas.getContext('2d');
-    // context.clearRect(0, 0, canvas.width, canvas.height);
-
     if (
       context &&
       Object.keys(starPos).length > 0 &&
@@ -153,8 +149,6 @@ function PanZoom({
       window.imageLoadComplete &&
       imageURLs.length > 0
     ) {
-      // const w = canvas.width;
-      // canvas.width = w;
       const img = imageURLs[currentPage].nomasked
         ? window.images[currentPage][1]
         : window.images[currentPage][0];
