@@ -20,6 +20,8 @@ COIASToolBar.propTypes = {
   setContrastVal: PropTypes.func.isRequired,
   isRectangle: PropTypes.bool.isRequired,
   setIsRectangel: PropTypes.func.isRequired,
+  isText: PropTypes.bool.isRequired,
+  setIsText: PropTypes.func.isRequired,
 };
 
 function COIASToolBar({
@@ -35,6 +37,8 @@ function COIASToolBar({
   setContrastVal,
   isRectangle,
   setIsRectangel,
+  isText,
+  setIsText,
 }) {
   return (
     <div
@@ -83,6 +87,7 @@ function COIASToolBar({
           });
           setIsGrab(true);
           setIsRectangel(false);
+          setIsText(false);
           setIsReload(!isReload);
           setBrightnessVal(150);
           setContrastVal(150);
@@ -99,6 +104,16 @@ function COIASToolBar({
         }}
       >
         rectangle
+      </Button>
+      <Button
+        id="textleButton"
+        data-active={isText}
+        variant={isText ? 'danger' : 'light'}
+        onClick={() => {
+          setIsText(!isText);
+        }}
+      >
+        text
       </Button>
       <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
       <ContrastBar val={contrastVal} set={setContrastVal} />

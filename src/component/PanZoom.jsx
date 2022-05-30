@@ -44,6 +44,7 @@ PanZoom.propTypes = {
   firstPosition: PropTypes.objectOf(PropTypes.object),
   setFirstPosition: PropTypes.func,
   isRectangle: PropTypes.bool.isRequired,
+  isText: PropTypes.bool.isRequired,
 };
 
 function PanZoom({
@@ -63,6 +64,7 @@ function PanZoom({
   firstPosition,
   setFirstPosition,
   isRectangle,
+  isText,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -176,6 +178,7 @@ function PanZoom({
 
             // font setting
             context.strokeStyle = 'black';
+            context.strokeStyle = isText ? 'rgba(0, 0, 0, 0)' : '';
             context.lineWidth = 3;
             context.font = '18px serif';
             context.strokeText(
@@ -184,6 +187,7 @@ function PanZoom({
               y - RECT_HEIGHT / 10,
             );
             context.fillStyle = 'red';
+            context.fillStyle = isText ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
               pos.name,
               x - RECT_WIDTH / 10,
@@ -192,7 +196,15 @@ function PanZoom({
           }
         });
     }
-  }, [context, currentPage, starPos, isReload, IMAGE_HEIGHT, isRectangle]);
+  }, [
+    context,
+    currentPage,
+    starPos,
+    isReload,
+    IMAGE_HEIGHT,
+    isRectangle,
+    isText,
+  ]);
 
   // マウス移動時の挙動制御
   useEffect(() => {
