@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
 import { AiOutlineReload } from 'react-icons/ai';
+import { BiHide } from 'react-icons/bi';
 import PropTypes from 'prop-types';
 import ContrastBar from './ContrastBar';
 import BrightnessBar from './BrightnessBar';
@@ -103,7 +104,7 @@ function COIASToolBar({
           setIsRectangel(!isRectangle);
         }}
       >
-        rectangle
+        <BiHide size={30} />
       </Button>
       <Button
         id="textleButton"
@@ -113,7 +114,7 @@ function COIASToolBar({
           setIsText(!isText);
         }}
       >
-        text
+        <BiHide size={30} />
       </Button>
       <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
       <ContrastBar val={contrastVal} set={setContrastVal} />
