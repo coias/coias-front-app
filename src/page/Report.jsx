@@ -54,7 +54,8 @@ function Report() {
         setSendMpcBody(
           result.map((item) => {
             const trimedStr = item.trim();
-            if (trimedStr.startsWith('H') || trimedStr.startsWith('K')) {
+            const splitStr = trimedStr.split(' ');
+            if (splitStr[0].length >= 7) {
               return `\u00A0\u00A0\u00A0\u00A0\u00A0${trimedStr}`;
             }
             return trimedStr;

@@ -316,7 +316,6 @@ function ExplorePrepare({
     // updateMenunames(6, true);
     setLoading(false);
   };
-
   return (
     <div
       style={{
