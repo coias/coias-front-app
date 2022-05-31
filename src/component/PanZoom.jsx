@@ -43,8 +43,7 @@ PanZoom.propTypes = {
   show: PropTypes.bool,
   firstPosition: PropTypes.objectOf(PropTypes.object),
   setFirstPosition: PropTypes.func,
-  isRectangle: PropTypes.bool.isRequired,
-  isText: PropTypes.bool.isRequired,
+  isHide: PropTypes.bool.isRequired,
 };
 
 function PanZoom({
@@ -63,8 +62,7 @@ function PanZoom({
   show,
   firstPosition,
   setFirstPosition,
-  isRectangle,
-  isText,
+  isHide,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -167,12 +165,12 @@ function PanZoom({
             context.lineWidth = 2;
             // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
-            context.strokeStyle = isRectangle ? 'rgba(0, 0, 0, 0)' : '';
+            context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
 
             // font setting
             context.strokeStyle = 'black';
-            context.strokeStyle = isText ? 'rgba(0, 0, 0, 0)' : '';
+            context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.lineWidth = 3;
             context.font = '18px serif';
             context.strokeText(
@@ -181,7 +179,7 @@ function PanZoom({
               y - RECT_HEIGHT / 10,
             );
             context.fillStyle = 'red';
-            context.fillStyle = isText ? 'rgba(0, 0, 0, 0)' : '';
+            context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
               pos.name,
               x - RECT_WIDTH / 10,
@@ -190,15 +188,7 @@ function PanZoom({
           }
         });
     }
-  }, [
-    context,
-    currentPage,
-    starPos,
-    isReload,
-    IMAGE_HEIGHT,
-    isRectangle,
-    isText,
-  ]);
+  }, [context, currentPage, starPos, isReload, IMAGE_HEIGHT, isHide]);
 
   // マウス移動時の挙動制御
   useEffect(() => {

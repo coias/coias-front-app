@@ -27,8 +27,7 @@ function COIAS({
   const [isGrab, setIsGrab] = useState(false);
   const [isSelect, setIsSelect] = useState(false);
   const [isReload, setIsReload] = useState(false);
-  const [isRectangle, setIsRectangel] = useState(false);
-  const [isText, setIsText] = useState(false);
+  const [isHide, setIsHide] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
   const [loading, setLoading] = useState(false);
@@ -250,10 +249,8 @@ function COIAS({
             setContrastVal={setContrastVal}
             isReload={isReload}
             setIsReload={setIsReload}
-            isRectangle={isRectangle}
-            setIsRectangel={setIsRectangel}
-            isText={isText}
-            setIsText={setIsText}
+            isHide={isHide}
+            setIsHide={setIsHide}
           />
           <Col md={11}>
             <PanZoom
@@ -265,8 +262,7 @@ function COIAS({
               originalStarPos={originalStarPos}
               starPos={starPos}
               setStarPos={setStarPos}
-              isRectangle={isRectangle}
-              isText={isText}
+              isHide={isHide}
             />
           </Col>
         </Row>

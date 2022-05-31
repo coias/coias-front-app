@@ -19,10 +19,8 @@ COIASToolBar.propTypes = {
   contrastVal: PropTypes.number.isRequired,
   setBrightnessVal: PropTypes.func.isRequired,
   setContrastVal: PropTypes.func.isRequired,
-  isRectangle: PropTypes.bool.isRequired,
-  setIsRectangel: PropTypes.func.isRequired,
-  isText: PropTypes.bool.isRequired,
-  setIsText: PropTypes.func.isRequired,
+  isHide: PropTypes.bool.isRequired,
+  setIsHide: PropTypes.func.isRequired,
 };
 
 function COIASToolBar({
@@ -36,10 +34,8 @@ function COIASToolBar({
   contrastVal,
   setBrightnessVal,
   setContrastVal,
-  isRectangle,
-  setIsRectangel,
-  isText,
-  setIsText,
+  isHide,
+  setIsHide,
 }) {
   return (
     <div
@@ -87,8 +83,7 @@ function COIASToolBar({
             item.checked = false;
           });
           setIsGrab(true);
-          setIsRectangel(false);
-          setIsText(false);
+          setIsHide(false);
           setIsReload(!isReload);
           setBrightnessVal(150);
           setContrastVal(150);
@@ -97,21 +92,11 @@ function COIASToolBar({
         <AiOutlineReload size={30} />
       </Button>
       <Button
-        id="rectangleButton"
-        data-active={isRectangle}
-        variant={isRectangle ? 'danger' : 'light'}
+        id="hideButton"
+        data-active={isHide}
+        variant={isHide ? 'danger' : 'light'}
         onClick={() => {
-          setIsRectangel(!isRectangle);
-        }}
-      >
-        <BiHide size={30} />
-      </Button>
-      <Button
-        id="textleButton"
-        data-active={isText}
-        variant={isText ? 'danger' : 'light'}
-        onClick={() => {
-          setIsText(!isText);
+          setIsHide(!isHide);
         }}
       >
         <BiHide size={30} />
