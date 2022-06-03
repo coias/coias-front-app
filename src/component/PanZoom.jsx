@@ -88,6 +88,10 @@ function PanZoom({
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [starModalShow, setStarModalShow] = useState(false);
   const [context, setContext] = useState();
+  const [canvasManualRectangleCoordinates, setCanvasManualRectanglCoordinates] =
+    useState([]);
+  const [isZoomIn, setIsZoomIn] = useState(false);
+
   const onStarModalExit = () => {
     setDisable(false);
     Array.from(document.getElementsByClassName('form-check-input')).forEach(
@@ -260,6 +264,61 @@ function PanZoom({
     setStarPos(newStarPos);
   }
 
+  function getForthPoint(coordinates) {
+    const A = coordinates[0];
+    const B = coordinates[1];
+    const C = coordinates[2];
+    const D = { x: C.x - (B.x - A.x), y: C.y - (B.y - A.y) };
+    coordinates.push(D);
+    context.beginPath();
+    context.arc(D.x, D.y, 1, 0, Math.PI * 2, false);
+    context.fill();
+    context.stroke();
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 3; i++) {
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(coordinates[i].x, coordinates[i].y);
+      context.lineTo(coordinates[i + 1].x, coordinates[i + 1].y);
+      context.stroke();
+    }
+    context.lineWidth = 2;
+    context.beginPath();
+    context.moveTo(D.x, D.y);
+    context.lineTo(A.x, A.y);
+    context.stroke();
+  }
+
+  function drawDot() {
+    if (!context) {
+      return;
+    }
+    // rectangle setting
+    const coordinate = currentMousePos;
+    setCanvasManualRectanglCoordinates([
+      ...canvasManualRectangleCoordinates,
+      coordinate,
+    ]);
+    canvasManualRectangleCoordinates.push(coordinate);
+    context.beginPath();
+    context.arc(coordinate.x, coordinate.y, 1, 0, Math.PI * 2, false);
+    context.fill();
+    context.stroke();
+
+    const cmrcLength = canvasManualRectangleCoordinates.length;
+    if (cmrcLength === 3) {
+      getForthPoint(canvasManualRectangleCoordinates);
+
+      setCanvasManualRectanglCoordinates([]);
+      setIsZoomIn(false);
+      setTimeout(() => {
+        if (currentPage < 4) {
+          setCurrentPage(currentPage + 1);
+        }
+      }, 3000);
+    }
+  }
+
   // 再測定時に天体の座標を保存する
   function saveEventPosition() {
     const gval = document.getElementById('grabButton').dataset.active;
@@ -267,14 +326,13 @@ function PanZoom({
     const sval = document.getElementById('selectButton').dataset.active;
     const sshouldIgnore = sval === 'true';
 
-    if (!isManual || positionList.length < 1 || gshouldIgnore || !sshouldIgnore)
-      return null;
+    if (positionList.length < 1 || gshouldIgnore || !sshouldIgnore) return;
 
     setShow(show);
     const posListLen = positionList.length;
     const lastEl = positionList[posListLen - 1];
 
-    if (lastEl.length === 5) return null;
+    if (lastEl.length === 5) return;
 
     if (currentPage === 0 && lastEl.length === 0)
       setFirstPosition(currentMousePos);
@@ -283,9 +341,8 @@ function PanZoom({
     newArr[posListLen - 1].push({ currentMousePos });
 
     setPositionList([...newArr]);
-    if (currentPage < 4) setCurrentPage(currentPage + 1);
 
-    return null;
+    setIsZoomIn(true);
   }
 
   return (
@@ -317,8 +374,13 @@ function PanZoom({
                   width={`${IMAGE_WIDTH}px`}
                   height={`${IMAGE_HEIGHT}px`}
                   onClick={() => {
-                    changeColorOnClick();
-                    saveEventPosition();
+                    if (isManual && !isZoomIn) {
+                      saveEventPosition();
+                    } else if (isManual && isZoomIn) {
+                      drawDot();
+                    } else if (!isManual) {
+                      changeColorOnClick();
+                    }
                   }}
                   style={{
                     filter: `contrast(${contrastVal - 50}%) brightness(${
