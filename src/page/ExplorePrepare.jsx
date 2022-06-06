@@ -74,19 +74,6 @@ function ExplorePrepare({
     }
   };
 
-  // const updateMenunames = (num, bool) => {
-  //   // 1. Make a shallow copy of the items
-  //   const items = [...menunames];
-  //   // 2. Make a shallow copy of the item you want to mutate
-  //   const item = { ...items[num] };
-  //   // 3. Replace the property you're intested in
-  //   item.done = bool;
-  //   // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-  //   items[num] = item;
-  //   // 5. Set the state to our new copy
-  //   setMenunames(items);
-  // };
-
   const updateMenunames = () => {
     setMenunames((prevMenunames) =>
       prevMenunames.map((items) =>
@@ -173,13 +160,6 @@ function ExplorePrepare({
       await axios
         .post(`${uri}uploadfiles/`, data)
         .then(() => {
-          // menunames[0].done = true;
-          // setMenunames(menunames);
-          // eslint-disable-next-line no-plusplus
-          // for (let i = 1; i < menunames.length; i++) {
-          //   updateMenunames(i, false);
-          // }
-          // updateMenunames(0, true);
           updateMenunames();
           setLoading(false);
         })
@@ -310,10 +290,11 @@ function ExplorePrepare({
     // 自動検出
     await onProcessExecute(`${uri}astsearch_new`, '自動検出');
 
-    // menunames[6].done = true;
-    // setMenunames(menunames);
-
-    // updateMenunames(6, true);
+    const items = [...menunames];
+    const item = { ...items[6] };
+    item.done = true;
+    items[6] = item;
+    setMenunames(items);
     setLoading(false);
   };
   return (
