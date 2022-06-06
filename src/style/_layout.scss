@@ -153,27 +153,45 @@ footer {
   }
 }
 
-// canvas自体のスクロール
-.canvas-wapper {
-  width: 100%;
-  height: 100%;
-  overflow-y: scroll;
-  background-color: gray;
+.wrapper {
+  overflow: scroll;
 
   &::-webkit-scrollbar {
     width: 15px;
     height: 15px;
-    margin: 0;
     padding: 0;
+    margin: 0;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: white;
+    background-color: silver;
     border-radius: 0.25rem;
 
     --bg-opacity: 1;
   }
 }
+
+// canvas自体のスクロール
+// .canvas-wapper {
+//   width: 100%;
+//   height: 100%;
+//   overflow-y: scroll;
+//   background-color: gray;
+
+//   &::-webkit-scrollbar {
+//     width: 15px;
+//     height: 15px;
+//     padding: 0;
+//     margin: 0;
+//   }
+
+//   &::-webkit-scrollbar-thumb {
+//     background-color: white;
+//     border-radius: 0.25rem;
+
+//     --bg-opacity: 1;
+//   }
+// }
 
 // 星のリストのスクロールバーを常に表示する
 .star-list {
@@ -194,7 +212,7 @@ footer {
 }
 
 #ex4 {
-  -webkit-appearance: slider-vertical; /* Chromium */
+  appearance: slider-vertical; /* Chromium */
   width: 8px;
   height: 175px;
   padding: 0 5px;

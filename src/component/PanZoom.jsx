@@ -109,9 +109,10 @@ function PanZoom({
       maxZoom: 10,
       minZoom: 1,
       bounds: true,
-      boundsPadding: 0.7,
-      zoomDoubleClickSpeed: 1,
-      transformOrigin: { x: 0.5, y: 0.5 },
+      boundsPadding: 1,
+      // zoomDoubleClickSpeed: 1,
+      // transformOrigin: { x: 0.5, y: 0.5 },
+
       beforeWheel(e) {
         // if (isManual) return false;
         const shouldIgnore = !e.altKey;
@@ -355,20 +356,19 @@ function PanZoom({
               height: '100%',
               paddingTop: '24px',
               position: 'relative',
-              overflow: 'hidden',
             }}
           >
             <MousePosition />
             <div
+              className="wrapper"
               style={{
                 width: '100%',
                 height: '100%',
-                overflow: 'hidden',
-                backgroundColor: 'gray',
+                backgroundColor: 'white',
                 position: 'relative',
               }}
             >
-              <div className="canvas-wapper" ref={ZPCanvasRef}>
+              <div ref={ZPCanvasRef}>
                 <canvas
                   ref={canvasRef}
                   width={`${IMAGE_WIDTH}px`}
@@ -386,6 +386,8 @@ function PanZoom({
                     filter: `contrast(${contrastVal - 50}%) brightness(${
                       brightnessVal - 50
                     }%)`,
+                    cursor: 'move',
+                    overflow: 'scroll',
                   }}
                 />
               </div>
