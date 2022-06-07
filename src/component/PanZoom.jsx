@@ -110,8 +110,8 @@ function PanZoom({
       minZoom: 1,
       bounds: true,
       boundsPadding: 1,
-      // zoomDoubleClickSpeed: 1,
-      // transformOrigin: { x: 0.5, y: 0.5 },
+      zoomDoubleClickSpeed: 1,
+      transformOrigin: { x: 0.5, y: 0.5 },
 
       beforeWheel(e) {
         // if (isManual) return false;
