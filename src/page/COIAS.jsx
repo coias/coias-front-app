@@ -263,6 +263,7 @@ function COIAS({
               starPos={starPos}
               setStarPos={setStarPos}
               isHide={isHide}
+              isGrab={isGrab}
             />
           </Col>
         </Row>

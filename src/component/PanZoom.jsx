@@ -44,6 +44,7 @@ PanZoom.propTypes = {
   firstPosition: PropTypes.objectOf(PropTypes.object),
   setFirstPosition: PropTypes.func,
   isHide: PropTypes.bool.isRequired,
+  isGrab: PropTypes.bool.isRequired,
 };
 
 function PanZoom({
@@ -63,6 +64,7 @@ function PanZoom({
   firstPosition,
   setFirstPosition,
   isHide,
+  isGrab,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -111,7 +113,7 @@ function PanZoom({
       bounds: true,
       boundsPadding: 1,
       zoomDoubleClickSpeed: 1,
-      transformOrigin: { x: 0.5, y: 0.5 },
+      // transformOrigin: { x: 0.5, y: 0.5 },
 
       beforeWheel(e) {
         // if (isManual) return false;
@@ -386,8 +388,7 @@ function PanZoom({
                     filter: `contrast(${contrastVal - 50}%) brightness(${
                       brightnessVal - 50
                     }%)`,
-                    cursor: 'move',
-                    overflow: 'scroll',
+                    cursor: isGrab === true ? 'grab' : '',
                   }}
                 />
               </div>
