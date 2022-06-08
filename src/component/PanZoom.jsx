@@ -110,10 +110,7 @@ function PanZoom({
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
       maxZoom: 10,
       minZoom: 1,
-      bounds: true,
-      boundsPadding: 1,
       zoomDoubleClickSpeed: 1,
-      // transformOrigin: { x: 0.5, y: 0.5 },
 
       beforeWheel(e) {
         // if (isManual) return false;
@@ -121,17 +118,14 @@ function PanZoom({
         return shouldIgnore;
       },
       beforeMouseDown() {
-        // スクロールされる前にisGrabの値を確認
-        const val = document.getElementById('grabButton').dataset.active;
-        const shouldIgnore = !(val === 'true');
-        return shouldIgnore;
+        return 'ignore';
       },
     });
 
     const lastEl = positionList[positionList.length - 1];
 
     if (lastEl)
-      ZPCanvas.current.smoothZoom(firstPosition.x, firstPosition.y, 5);
+      ZPCanvas.current.smoothZoom(firstPosition.x, firstPosition.y, 1);
 
     return () => {
       ZPCanvas.current.dispose();
@@ -139,7 +133,6 @@ function PanZoom({
   }, [firstPosition, isReload]);
 
   useEffect(() => {
-    // const canvas = document.getElementById('canvas');
     const canvas = canvasRef.current;
     const canvasContext = canvas.getContext('2d');
     setContext(canvasContext);
