@@ -40,6 +40,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
               onClickFinishButton(newName);
               setAlertMessage('変更を加えない場合は次へを押してください');
               onExit();
+              setAlertMessage('変更を加えない場合は次へを押してください');
             } else {
               setAlertMessage('数字を入力してください');
             }
