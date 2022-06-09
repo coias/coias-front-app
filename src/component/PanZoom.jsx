@@ -44,7 +44,6 @@ PanZoom.propTypes = {
   firstPosition: PropTypes.objectOf(PropTypes.object),
   setFirstPosition: PropTypes.func,
   isHide: PropTypes.bool.isRequired,
-  isGrab: PropTypes.bool.isRequired,
 };
 
 function PanZoom({
@@ -64,7 +63,6 @@ function PanZoom({
   firstPosition,
   setFirstPosition,
   isHide,
-  isGrab,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -111,6 +109,7 @@ function PanZoom({
       maxZoom: 10,
       minZoom: 1,
       zoomDoubleClickSpeed: 1,
+      transformOrigin: { x: 0, y: 0 },
 
       beforeWheel(e) {
         // if (isManual) return false;
@@ -188,7 +187,15 @@ function PanZoom({
           }
         });
     }
-  }, [context, currentPage, starPos, isReload, IMAGE_HEIGHT, isHide]);
+  }, [
+    context,
+    currentPage,
+    starPos,
+    isReload,
+    IMAGE_HEIGHT,
+    isHide,
+    IMAGE_WIDTH,
+  ]);
 
   // マウス移動時の挙動制御
   useEffect(() => {
@@ -351,6 +358,7 @@ function PanZoom({
               height: '100%',
               paddingTop: '24px',
               position: 'relative',
+              overflow: 'hidden',
             }}
           >
             <MousePosition />
@@ -381,7 +389,6 @@ function PanZoom({
                     filter: `contrast(${contrastVal - 50}%) brightness(${
                       brightnessVal - 50
                     }%)`,
-                    cursor: isGrab === true ? 'grab' : '',
                   }}
                 />
               </div>
