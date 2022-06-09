@@ -51,15 +51,12 @@ function ManualToolBar({ positionList, setPositionList, setFirstPosition }) {
                 >
                   <Accordion.Header>#{index}</Accordion.Header>
                   <Accordion.Body>
-                    {d.map((e) => {
-                      const pos = e.currentMousePos;
-                      return (
-                        <li
-                          id="position"
-                          style={{ listStyleType: 'decimal' }}
-                        >{`${pos.x},${pos.y}`}</li>
-                      );
-                    })}
+                    {d.map((e) => (
+                      <li
+                        id="position"
+                        style={{ listStyleType: 'decimal' }}
+                      >{`${e.x},${e.y}`}</li>
+                    ))}
                   </Accordion.Body>
                 </Accordion.Item>
               ))}

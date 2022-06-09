@@ -1,16 +1,22 @@
 import React, { useContext, useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import axios from 'axios';
+// import axios from 'axios';
 
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import ManualToolBar from '../component/ManualToolBar';
 import PanZoom from '../component/PanZoom';
 import { StarPositionContext } from '../component/context';
 import ConfirmationModal from '../component/ConfirmationModal';
 import COIASToolBar from '../component/COIASToolBar';
+import PlayMenu from '../component/PlayMenu';
 
-function ManualMeasurement({ imageURLs, originalStarPos }) {
+function ManualMeasurement({
+  imageURLs,
+  originalStarPos,
+  setImageURLs,
+  intervalRef,
+}) {
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const [positionList, setPositionList] = useState([]);
   const [show, setShow] = useState(false);
@@ -21,22 +27,37 @@ function ManualMeasurement({ imageURLs, originalStarPos }) {
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
 
-  const reactApiUri = process.env.REACT_APP_API_URI;
-
-  const navigate = useNavigate();
+  // const reactApiUri = process.env.REACT_APP_API_URI;
+  // const navigate = useNavigate();
   const onClickFinishButton = async () => {
-    if (positionList.length === 0) return;
+    const starNameList = Object.keys(starPos).filter((element) =>
+      element.startsWith('H'),
+    );
+    const headStarNumber = Number(
+      starNameList[starNameList.length - 1].replace('H', ''),
+    );
+
+    const getStarNumberStr = (index) =>
+      `H${'00000'.slice(-(6 - headStarNumber.toString().length))}${
+        headStarNumber + index + 1
+      }`;
+
     const result = positionList.map((list, i) =>
       list.map(
         (pos, page) =>
-          `('${pos.currentMousePos.x}', '${pos.currentMousePos.y}', 'warp${
-            page + 1
-          }_bin.fits', '${i}')\n`,
+          `${getStarNumberStr(i)} ${page} ${pos.center.x} ${pos.center.y} ${
+            pos.rectPos1.x
+          } ${pos.rectPos1.y} ${pos.rectPos2.x} ${pos.rectPos2.y} ${
+            pos.rectPos3.x
+          } ${pos.rectPos3.y}\n`,
       ),
     );
 
     const text = result.map((pos) => pos.join('')).join('');
 
+    alert(text);
+
+    /*
     // memo2
     await axios.put(`${reactApiUri}memo2`, null, {
       params: {
@@ -48,10 +69,16 @@ function ManualMeasurement({ imageURLs, originalStarPos }) {
     await axios.put(`${reactApiUri}astsearch_manual`);
 
     navigate('/COIAS');
+    */
   };
 
   return (
     <div className="coias-view-main">
+      <PlayMenu
+        imageNames={imageURLs}
+        setImageURLs={setImageURLs}
+        intervalRef={intervalRef}
+      />
       <Container fluid>
         <Row>
           <COIASToolBar
@@ -109,4 +136,6 @@ export default ManualMeasurement;
 ManualMeasurement.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  setImageURLs: PropTypes.func.isRequired,
+  intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
 };

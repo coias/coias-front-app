@@ -10,6 +10,7 @@ import { PageContext, MousePositionContext } from './context';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 import NewStarModal from './NewStarModal';
+import RectangleConfModal from './RectangleConfModal';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
@@ -89,6 +90,7 @@ function PanZoom({
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [starModalShow, setStarModalShow] = useState(false);
+  const [rectangleModalShow, setRectangleModalShow] = useState(false);
   const [context, setContext] = useState();
   const [canvasManualRectangleCoordinates, setCanvasManualRectanglCoordinates] =
     useState([]);
@@ -103,6 +105,24 @@ function PanZoom({
       },
     );
     setStarModalShow(false);
+  };
+
+  const onRectangleModalExit = () => {
+    setRectangleModalShow(false);
+  };
+
+  const removePositionByIndex = (targetListIndex, targetElementIndex) => {
+    setPositionList(
+      positionList.map((position, index) => {
+        if (index === targetListIndex) {
+          return position.filter(
+            (elementPosition, elementIndex) =>
+              targetElementIndex !== elementIndex,
+          );
+        }
+        return position;
+      }),
+    );
   };
 
   // panzoomのコンストラクター
@@ -138,8 +158,7 @@ function PanZoom({
     setContext(canvasContext);
   });
 
-  // imageの描画
-  useEffect(() => {
+  const drawImage = () => {
     if (
       context &&
       Object.keys(starPos).length > 0 &&
@@ -188,6 +207,11 @@ function PanZoom({
           }
         });
     }
+  };
+
+  // imageの描画
+  useEffect(() => {
+    drawImage();
   }, [context, currentPage, starPos, isReload, IMAGE_HEIGHT, isHide]);
 
   // マウス移動時の挙動制御
@@ -264,24 +288,83 @@ function PanZoom({
     const A = coordinates[0];
     const B = coordinates[1];
     const C = coordinates[2];
-    const D = { x: C.x - (B.x - A.x), y: C.y - (B.y - A.y) };
-    coordinates.push(D);
-    context.beginPath();
-    context.arc(D.x, D.y, 1, 0, Math.PI * 2, false);
-    context.fill();
-    context.stroke();
+    if (A === B || B === C || A === C) {
+      console.log('no');
+    }
+
+    const width = Math.sqrt((B.x - A.x) ** 2 + (B.y - A.y) ** 2);
+    const height = Math.sqrt((C.x - B.x) ** 2 + (C.x - B.x) ** 2);
+    const center = { x: (A.x + C.x) / 2.0, y: (A.y + C.y) / 2.0 };
+
+    let angle;
+    if (B.x !== A.x) {
+      angle = Math.atan((B.y - A.y) / (B.x - A.x));
+    } else if (B.x - A.x > 0.0) {
+      angle = 0.5 * Math.PI;
+    } else {
+      angle = -0.5 * Math.PI;
+    }
+
+    const e1 = { x: Math.cos(angle), y: Math.sin(angle) };
+    const e2 = {
+      x: Math.cos(angle + 0.5 * Math.PI),
+      y: Math.sin(angle + 0.5 * Math.PI),
+    };
+
+    const rectPos1 = {
+      x: Math.floor(center.x - 0.5 * width * e1.x - 0.5 * height * e2.x),
+      y: Math.floor(center.y - 0.5 * width * e1.y - 0.5 * height * e2.y),
+    };
+    const rectPos2 = {
+      x: Math.floor(rectPos1.x + width * e1.x),
+      y: Math.floor(rectPos1.y + width * e1.y),
+    };
+    const rectPos3 = {
+      x: Math.floor(rectPos2.x + height * e2.x),
+      y: Math.floor(rectPos2.y + height * e2.y),
+    };
+    const rectPos4 = {
+      x: Math.floor(rectPos3.x - width * e1.x),
+      y: Math.floor(rectPos3.y - width * e1.y),
+    };
+
+    setPositionList((prevPositionList) => {
+      const prevPositionListCopy = [...prevPositionList];
+      const updatedPositionList =
+        prevPositionListCopy[prevPositionListCopy.length - 1];
+      updatedPositionList[updatedPositionList.length - 1] = {
+        x: center.x,
+        y: center.y,
+        width,
+        height,
+        center,
+        angle,
+        rectPos1,
+        rectPos2,
+        rectPos3,
+        rectPos4,
+      };
+
+      prevPositionListCopy[prevPositionListCopy.length - 1] =
+        updatedPositionList;
+
+      return prevPositionListCopy;
+    });
+
+    const finalCoordinates = [rectPos1, rectPos2, rectPos3, rectPos4];
+
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < 3; i++) {
       context.lineWidth = 2;
       context.beginPath();
-      context.moveTo(coordinates[i].x, coordinates[i].y);
-      context.lineTo(coordinates[i + 1].x, coordinates[i + 1].y);
+      context.moveTo(finalCoordinates[i].x, finalCoordinates[i].y);
+      context.lineTo(finalCoordinates[i + 1].x, finalCoordinates[i + 1].y);
       context.stroke();
     }
     context.lineWidth = 2;
     context.beginPath();
-    context.moveTo(D.x, D.y);
-    context.lineTo(A.x, A.y);
+    context.moveTo(rectPos4.x, rectPos4.y);
+    context.lineTo(rectPos1.x, rectPos1.y);
     context.stroke();
   }
 
@@ -305,13 +388,10 @@ function PanZoom({
     if (cmrcLength === 3) {
       getForthPoint(canvasManualRectangleCoordinates);
 
+      setRectangleModalShow(true);
+
       setCanvasManualRectanglCoordinates([]);
       setIsZoomIn(false);
-      setTimeout(() => {
-        if (currentPage < 4) {
-          setCurrentPage(currentPage + 1);
-        }
-      }, 3000);
     }
   }
 
@@ -334,7 +414,7 @@ function PanZoom({
       setFirstPosition(currentMousePos);
     // copying the old datas array
     const newArr = [...positionList];
-    newArr[posListLen - 1].push({ currentMousePos });
+    newArr[posListLen - 1].push(currentMousePos);
 
     setPositionList([...newArr]);
 
@@ -423,6 +503,23 @@ function PanZoom({
           onStarModalExit();
         }}
         onClickFinishButton={onClickFinishButton}
+      />
+      <RectangleConfModal
+        show={rectangleModalShow}
+        onExit={() => {
+          onRectangleModalExit();
+        }}
+        onClickNext={() => {
+          if (currentPage < 4) {
+            setCurrentPage(currentPage + 1);
+          }
+        }}
+        onClickRetry={() => {
+          const targetListIndex = positionList.length - 1;
+          const targetElementIndex = positionList[targetListIndex].length - 1;
+          removePositionByIndex(targetListIndex, targetElementIndex);
+          drawImage();
+        }}
       />
     </Container>
   );

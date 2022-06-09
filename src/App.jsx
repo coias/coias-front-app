@@ -111,6 +111,7 @@ function App() {
                   path="/ManualMeasurement"
                   element={
                     <ManualMeasurement
+                      intervalRef={intervalRef}
                       imageURLs={imageURLs}
                       setImageURLs={setImageURLs}
                       originalStarPos={originalStarPos}
