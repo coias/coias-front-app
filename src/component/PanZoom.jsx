@@ -91,6 +91,7 @@ function PanZoom({
   const [canvasManualRectangleCoordinates, setCanvasManualRectanglCoordinates] =
     useState([]);
   const [isZoomIn, setIsZoomIn] = useState(false);
+  const [scale, setScale] = useState(0);
 
   const onStarModalExit = () => {
     setDisable(false);
@@ -106,7 +107,7 @@ function PanZoom({
   // panzoomのコンストラクター
   useEffect(() => {
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
-      maxZoom: 10,
+      maxZoom: 3,
       minZoom: 1,
       zoomDoubleClickSpeed: 1,
       transformOrigin: { x: 0, y: 0 },
@@ -114,6 +115,7 @@ function PanZoom({
       beforeWheel(e) {
         // if (isManual) return false;
         const shouldIgnore = !e.altKey;
+        setScale(ZPCanvas.current.getTransform().scale);
         return shouldIgnore;
       },
       beforeMouseDown() {
@@ -158,20 +160,34 @@ function PanZoom({
         .forEach((pos) => {
           if (pos.page[currentPage]) {
             // rectangle setting
+            let linesize;
+            if (3 / scale > 1.5) {
+              linesize = 3 / scale;
+            } else {
+              linesize = 1.5;
+            }
             const position = pos.page[currentPage];
-            const x = position.x - RECT_WIDTH / 2;
-            const y = img.naturalHeight - position.y - RECT_HEIGHT / 2;
-            context.lineWidth = 2;
+            const x = position.x - RECT_WIDTH / scale / 2;
+            const y = img.naturalHeight - position.y - RECT_HEIGHT / scale / 2;
+            context.lineWidth = linesize;
             // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
+            context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
 
             // font setting
+            let fontsize;
+            if (18 / scale > 12) {
+              fontsize = String(18 / scale);
+            } else {
+              fontsize = '12';
+            }
+
+            fontsize += 'px serif';
             context.strokeStyle = 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.lineWidth = 3;
-            context.font = '18px serif';
+            context.font = fontsize;
             context.strokeText(
               pos.name,
               x - RECT_WIDTH / 10,
@@ -195,6 +211,7 @@ function PanZoom({
     IMAGE_HEIGHT,
     isHide,
     IMAGE_WIDTH,
+    scale,
   ]);
 
   // マウス移動時の挙動制御
@@ -213,7 +230,6 @@ function PanZoom({
 
       setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
     }
-
     canvasElem.addEventListener('mousemove', relativeCoords);
   }, []);
 

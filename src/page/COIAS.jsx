@@ -24,8 +24,7 @@ function COIAS({
   setOriginalStarPos,
   intervalRef,
 }) {
-  const [isGrab, setIsGrab] = useState(false);
-  const [isSelect, setIsSelect] = useState(false);
+  const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
   const [isHide, setIsHide] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
@@ -40,7 +39,6 @@ function COIAS({
   // 画面表示時、１回だけ処理(copyの実行、各画像のURL取得)
   // 画面表示時、１回だけ処理(unknown_disp.txtの処理)
   useEffect(() => {
-    setIsGrab(true);
     const toObjectArray = [];
     clearInterval(intervalRef.current);
     // eslint-disable-next-line no-param-reassign
@@ -239,8 +237,6 @@ function COIAS({
       <Container fluid>
         <Row>
           <COIASToolBar
-            isGrab={isGrab}
-            setIsGrab={setIsGrab}
             isSelect={isSelect}
             setIsSelect={setIsSelect}
             brightnessVal={brightnessVal}
@@ -263,7 +259,6 @@ function COIAS({
               starPos={starPos}
               setStarPos={setStarPos}
               isHide={isHide}
-              isGrab={isGrab}
             />
           </Col>
         </Row>
