@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 function RectangleConfModal({ show, onExit, onClickNext, onClickRetry }) {
   return (
-    <Modal show={show} onExit={onExit} size="lg">
+    <Modal show={show} onExit={onExit} size="sm">
       <Modal.Header>
         <Modal.Title>長方形の確認</Modal.Title>
       </Modal.Header>

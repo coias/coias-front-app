@@ -25,6 +25,8 @@ PanZoom.defaultProps = {
   positionList: [],
   firstPosition: {},
   setFirstPosition: () => {},
+  setIsHide: () => {},
+  activeKey: 0,
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -46,6 +48,8 @@ PanZoom.propTypes = {
   setFirstPosition: PropTypes.func,
   isHide: PropTypes.bool.isRequired,
   isGrab: PropTypes.bool.isRequired,
+  setIsHide: PropTypes.func,
+  activeKey: PropTypes.number,
 };
 
 function PanZoom({
@@ -66,6 +70,8 @@ function PanZoom({
   setFirstPosition,
   isHide,
   isGrab,
+  setIsHide,
+  activeKey,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -144,8 +150,9 @@ function PanZoom({
 
     const lastEl = positionList[positionList.length - 1];
 
-    if (lastEl)
-      ZPCanvas.current.smoothZoom(firstPosition.x, firstPosition.y, 1);
+    if (lastEl) {
+      ZPCanvas.current.smoothZoom(firstPosition.x, firstPosition.y, 5);
+    }
 
     return () => {
       ZPCanvas.current.dispose();
@@ -293,8 +300,11 @@ function PanZoom({
     }
 
     const width = Math.sqrt((B.x - A.x) ** 2 + (B.y - A.y) ** 2);
-    const height = Math.sqrt((C.x - B.x) ** 2 + (C.x - B.x) ** 2);
-    const center = { x: (A.x + C.x) / 2.0, y: (A.y + C.y) / 2.0 };
+    const height = Math.sqrt((C.x - B.x) ** 2 + (C.y - B.y) ** 2);
+    const center = {
+      x: Math.floor((A.x + C.x) / 2.0),
+      y: Math.floor((A.y + C.y) / 2.0),
+    };
 
     let angle;
     if (B.x !== A.x) {
@@ -330,9 +340,9 @@ function PanZoom({
 
     setPositionList((prevPositionList) => {
       const prevPositionListCopy = [...prevPositionList];
-      const updatedPositionList =
-        prevPositionListCopy[prevPositionListCopy.length - 1];
-      updatedPositionList[updatedPositionList.length - 1] = {
+      const targetElement = prevPositionListCopy[activeKey][currentPage];
+      const value = {
+        page: currentPage,
         x: center.x,
         y: center.y,
         width,
@@ -344,9 +354,17 @@ function PanZoom({
         rectPos3,
         rectPos4,
       };
-
-      prevPositionListCopy[prevPositionListCopy.length - 1] =
-        updatedPositionList;
+      if (targetElement && targetElement.page === currentPage) {
+        prevPositionListCopy[activeKey].splice(currentPage, 1, value);
+      } else if (targetElement && targetElement.page !== currentPage) {
+        prevPositionListCopy[activeKey].splice(currentPage, 0, value);
+      } else {
+        prevPositionListCopy[activeKey].splice(
+          prevPositionListCopy[activeKey].length - 1,
+          1,
+          value,
+        );
+      }
 
       return prevPositionListCopy;
     });
@@ -372,6 +390,7 @@ function PanZoom({
     if (!context) {
       return;
     }
+    context.strokeStyle = 'black';
     // rectangle setting
     const coordinate = currentMousePos;
     setCanvasManualRectanglCoordinates([
@@ -406,15 +425,39 @@ function PanZoom({
 
     setShow(show);
     const posListLen = positionList.length;
-    const lastEl = positionList[posListLen - 1];
+    const currentEl = positionList[posListLen - 1][currentPage];
 
-    if (lastEl.length === 5) return;
-
-    if (currentPage === 0 && lastEl.length === 0)
+    if (currentEl) {
+      console.log(currentEl, currentEl.length);
+    }
+    if (
+      !currentEl ||
+      currentEl.length === 0 ||
+      currentEl.page === currentPage
+    ) {
       setFirstPosition(currentMousePos);
+      setIsHide(true);
+    }
     // copying the old datas array
     const newArr = [...positionList];
-    newArr[posListLen - 1].push(currentMousePos);
+    const value = {
+      page: currentPage,
+      x: currentMousePos.x,
+      y: currentMousePos.y,
+    };
+    if (
+      newArr[activeKey][currentPage] &&
+      newArr[activeKey][currentPage].page === currentPage
+    ) {
+      newArr[activeKey].splice(currentPage, 1, value);
+    } else if (
+      newArr[activeKey][currentPage] &&
+      newArr[activeKey][currentPage].page !== currentPage
+    ) {
+      newArr[activeKey].splice(currentPage, 0, value);
+    } else {
+      newArr[activeKey].splice(currentPage, 1, value);
+    }
 
     setPositionList([...newArr]);
 
@@ -513,6 +556,8 @@ function PanZoom({
           if (currentPage < 4) {
             setCurrentPage(currentPage + 1);
           }
+          setFirstPosition({});
+          setIsHide(false);
         }}
         onClickRetry={() => {
           const targetListIndex = positionList.length - 1;

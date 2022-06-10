@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 // import axios from 'axios';
 
 import PropTypes from 'prop-types';
@@ -16,9 +16,10 @@ function ManualMeasurement({
   originalStarPos,
   setImageURLs,
   intervalRef,
+  positionList,
+  setPositionList,
 }) {
   const { starPos, setStarPos } = useContext(StarPositionContext);
-  const [positionList, setPositionList] = useState([]);
   const [show, setShow] = useState(false);
   const [firstPosition, setFirstPosition] = useState({});
   const [isGrab, setIsGrab] = useState(false);
@@ -26,6 +27,8 @@ function ManualMeasurement({
   const [isReload, setIsReload] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
+  const [isHide, setIsHide] = useState(false);
+  const [activeKey, setActiveKey] = useState(0);
 
   // const reactApiUri = process.env.REACT_APP_API_URI;
   // const navigate = useNavigate();
@@ -92,13 +95,17 @@ function ManualMeasurement({
             setContrastVal={setContrastVal}
             isReload={isReload}
             setIsReload={setIsReload}
+            isHide={isHide}
+            setIsHide={setIsHide}
           />
           <Col sm={2} md={2}>
-            <Button onClick={() => onClickFinishButton()}>手動測定終了</Button>
             <ManualToolBar
               positionList={positionList}
               setPositionList={setPositionList}
               setFirstPosition={setFirstPosition}
+              onClickFinishButton={onClickFinishButton}
+              activeKey={activeKey}
+              setActiveKey={setActiveKey}
             />
           </Col>
           <Col sm={9} md={9}>
@@ -117,6 +124,9 @@ function ManualMeasurement({
               brightnessVal={brightnessVal}
               contrastVal={contrastVal}
               isReload={isReload}
+              setIsHide={setIsHide}
+              isHide={isHide}
+              activeKey={activeKey}
             />
           </Col>
         </Row>
@@ -138,4 +148,6 @@ ManualMeasurement.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
+  positionList: PropTypes.arrayOf(PropTypes.array).isRequired,
+  setPositionList: PropTypes.func.isRequired,
 };

@@ -65,6 +65,9 @@ function App() {
 
   const [starPos, setStarPos] = useState({});
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
+
+  const [positionList, setPositionList] = useState([]);
+
   return (
     <BrowserRouter style={{ position: 'relative' }}>
       <Header />
@@ -116,6 +119,8 @@ function App() {
                       setImageURLs={setImageURLs}
                       originalStarPos={originalStarPos}
                       setOriginalStarPos={setOriginalStarPos}
+                      positionList={positionList}
+                      setPositionList={setPositionList}
                     />
                   }
                 />
