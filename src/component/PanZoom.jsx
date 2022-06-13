@@ -27,6 +27,7 @@ PanZoom.defaultProps = {
   setFirstPosition: () => {},
   setIsHide: () => {},
   activeKey: 0,
+  defaultZoomRate: 20,
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -50,6 +51,7 @@ PanZoom.propTypes = {
   isGrab: PropTypes.bool.isRequired,
   setIsHide: PropTypes.func,
   activeKey: PropTypes.number,
+  defaultZoomRate: PropTypes.number,
 };
 
 function PanZoom({
@@ -72,6 +74,7 @@ function PanZoom({
   isGrab,
   setIsHide,
   activeKey,
+  defaultZoomRate,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -134,7 +137,7 @@ function PanZoom({
   // panzoomのコンストラクター
   useEffect(() => {
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
-      maxZoom: 10,
+      maxZoom: 100,
       minZoom: 1,
       zoomDoubleClickSpeed: 1,
 
@@ -151,7 +154,11 @@ function PanZoom({
     const lastEl = positionList[positionList.length - 1];
 
     if (lastEl) {
-      ZPCanvas.current.smoothZoom(firstPosition.x, firstPosition.y, 5);
+      ZPCanvas.current.smoothZoom(
+        firstPosition.x,
+        firstPosition.y,
+        defaultZoomRate,
+      );
     }
 
     return () => {
@@ -373,13 +380,13 @@ function PanZoom({
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < 3; i++) {
-      context.lineWidth = 2;
+      context.lineWidth = 1;
       context.beginPath();
       context.moveTo(finalCoordinates[i].x, finalCoordinates[i].y);
       context.lineTo(finalCoordinates[i + 1].x, finalCoordinates[i + 1].y);
       context.stroke();
     }
-    context.lineWidth = 2;
+    context.lineWidth = 1;
     context.beginPath();
     context.moveTo(rectPos4.x, rectPos4.y);
     context.lineTo(rectPos1.x, rectPos1.y);
@@ -488,6 +495,7 @@ function PanZoom({
             >
               <div ref={ZPCanvasRef}>
                 <canvas
+                  className=""
                   ref={canvasRef}
                   width={`${IMAGE_WIDTH}px`}
                   height={`${IMAGE_HEIGHT}px`}
@@ -505,6 +513,7 @@ function PanZoom({
                       brightnessVal - 50
                     }%)`,
                     cursor: isGrab === true ? 'grab' : '',
+                    imageRendering: '-webkit-optimize-contrast',
                   }}
                 />
               </div>

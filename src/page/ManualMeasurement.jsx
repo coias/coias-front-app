@@ -29,6 +29,7 @@ function ManualMeasurement({
   const [contrastVal, setContrastVal] = useState(150);
   const [isHide, setIsHide] = useState(false);
   const [activeKey, setActiveKey] = useState(0);
+  const [defaultZoomRate, setDefaultZoomRate] = useState(20);
 
   // const reactApiUri = process.env.REACT_APP_API_URI;
   // const navigate = useNavigate();
@@ -81,6 +82,8 @@ function ManualMeasurement({
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
         intervalRef={intervalRef}
+        setDefaultZoomRate={setDefaultZoomRate}
+        defaultZoomRate={defaultZoomRate}
       />
       <Container fluid>
         <Row>
@@ -127,6 +130,7 @@ function ManualMeasurement({
               setIsHide={setIsHide}
               isHide={isHide}
               activeKey={activeKey}
+              defaultZoomRate={defaultZoomRate}
             />
           </Col>
         </Row>

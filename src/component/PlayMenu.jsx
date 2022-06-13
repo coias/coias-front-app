@@ -17,7 +17,13 @@ import { PageContext } from './context';
 import SettingModal from './SettingModal';
 import HelpModal from './HelpModal';
 
-function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
+function PlayMenu({
+  imageNames,
+  setImageURLs,
+  intervalRef,
+  setDefaultZoomRate,
+  defaultZoomRate,
+}) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
   const [play, setPlay] = useState(false);
@@ -154,6 +160,8 @@ function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
               }}
               title="表示設定"
               imageURLs={imageNames}
+              setDefaultZoomRate={setDefaultZoomRate}
+              defaultZoomRate={defaultZoomRate}
             />
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
               <BiHelpCircle size={30} />
@@ -178,6 +186,13 @@ PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
+  setDefaultZoomRate: PropTypes.func,
+  defaultZoomRate: PropTypes.number,
+};
+
+PlayMenu.defaultProps = {
+  setDefaultZoomRate: () => {},
+  defaultZoomRate: 0,
 };
 
 export default PlayMenu;

@@ -11,7 +11,7 @@ function ManualToolBar({
   activeKey,
   setActiveKey,
 }) {
-  const { setCurrentPage } = useContext(PageContext);
+  const { currentPage, setCurrentPage } = useContext(PageContext);
 
   const onClickAccordion = (index) => {
     setActiveKey(index);
@@ -57,9 +57,13 @@ function ManualToolBar({
                 <Accordion.Header>#{index}</Accordion.Header>
                 <Accordion.Body>
                   {d.map((e) => (
-                    <li id="position" style={{ listStyleType: 'none' }}>{`${
-                      e.page + 1
-                    }. ${e.x},${e.y}`}</li>
+                    <li
+                      id="position"
+                      style={{
+                        listStyleType: 'none',
+                        color: e.page === currentPage ? 'red' : '',
+                      }}
+                    >{`${e.page + 1}. ${e.x},${e.y}`}</li>
                   ))}
                 </Accordion.Body>
               </Accordion.Item>
