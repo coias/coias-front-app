@@ -32,6 +32,9 @@ function COIAS({
   const [loading, setLoading] = useState(false);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
+  const [start, setStart] = useState(false);
+  const [next, setNext] = useState(false);
+  const [back, setBack] = useState(true);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -227,12 +230,24 @@ function COIAS({
     await axios.put(`${reactApiUri}rename`);
   };
 
+  const keyPress = (e) => {
+    if (e.keyCode === 83) setStart(!start);
+    if (e.keyCode === 39) setNext(!next);
+    if (e.keyCode === 37) setBack(!back);
+  };
+
   return (
-    <div className="coias-view-main">
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    <div className="coias-view-main" onKeyDown={keyPress} tabIndex={-1}>
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
         intervalRef={intervalRef}
+        start={start}
+        next={next}
+        setNext={setNext}
+        back={back}
+        setBack={setBack}
       />
       <Container fluid>
         <Row>

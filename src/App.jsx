@@ -65,9 +65,14 @@ function App() {
 
   const [starPos, setStarPos] = useState({});
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
+
+  const keyPress = (e) => {
+    console.log(e);
+  };
+
   return (
-    <BrowserRouter style={{ position: 'relative' }}>
-      <Header />
+    <BrowserRouter style={{ position: 'relative' }} onKeyDown={keyPress}>
+      <Header onKeyDown={keyPress} />
       <main
         style={{
           position: 'absolute',
