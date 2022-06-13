@@ -186,6 +186,8 @@ function PanZoom({
 
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
+
+      context.imageSmoothingEnabled = false;
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       Object.keys(starPos)
         .map((key) => starPos[key])
@@ -495,7 +497,6 @@ function PanZoom({
             >
               <div ref={ZPCanvasRef}>
                 <canvas
-                  className=""
                   ref={canvasRef}
                   width={`${IMAGE_WIDTH}px`}
                   height={`${IMAGE_HEIGHT}px`}
@@ -513,7 +514,6 @@ function PanZoom({
                       brightnessVal - 50
                     }%)`,
                     cursor: isGrab === true ? 'grab' : '',
-                    imageRendering: '-webkit-optimize-contrast',
                   }}
                 />
               </div>

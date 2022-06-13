@@ -4,6 +4,12 @@
 // Layout
 // =======================
 
+canvas {
+  border: 0;
+  image-rendering: crisp-edges; /* Firefox用 */
+  image-rendering: pixelated; /* Chrome用 */
+}
+
 .l-center {
   display: flex;
   align-items: center;
