@@ -53,10 +53,9 @@ function ExplorePrepare({
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
+  const [fileNum, setFileNum] = useState(0);
 
   const handleSelect = (e) => setVal(e.target.value);
-
-  const DEFAULT_FILE_NUM = 5;
 
   const handleClose = () => {
     setMenunames(menunames);
@@ -107,18 +106,13 @@ function ExplorePrepare({
     const data = new FormData();
     const filesForProps = [];
 
-    if (DEFAULT_FILE_NUM !== files.length) {
-      setErrorContent(`${DEFAULT_FILE_NUM}枚の画像を入力してください`);
-      setShowError(true);
-      handleClose();
-      return null;
-    }
+    setFileNum(files.length);
 
     let file;
     let tmp;
 
     const pattern =
-      /warp-HSC-([0-9]|[A-Z]){1,2}-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/gm;
+      /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/gm;
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < files.length; i++) {
@@ -463,9 +457,7 @@ function ExplorePrepare({
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>
-            ファイルを{DEFAULT_FILE_NUM}個選択してください
-          </Modal.Title>
+          <Modal.Title>ファイルを選択してください</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           アップロード後、画像処理をおこないます。
@@ -485,7 +477,7 @@ function ExplorePrepare({
               multiple
             />
             <Form.Control.Feedback type="invalid">
-              ファイルを選択してください。ファイルは{DEFAULT_FILE_NUM}
+              ファイルを選択してください。ファイルは{fileNum}
               個選択できます。
             </Form.Control.Feedback>
           </InputGroup>
