@@ -57,7 +57,7 @@ function Header() {
             }
             style={{ textDecoration: 'none', color: 'gray' }}
           >
-            <h3 style={{ paddingLeft: 35 }}>再測定</h3>
+            <h3 style={{ paddingLeft: 35 }}>手動測定</h3>
           </NavLink>
           <NavLink
             to="/Report"

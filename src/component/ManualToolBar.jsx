@@ -56,15 +56,24 @@ function ManualToolBar({
               >
                 <Accordion.Header>#{index}</Accordion.Header>
                 <Accordion.Body>
-                  {d.map((e) => (
-                    <li
-                      id="position"
-                      style={{
-                        listStyleType: 'none',
-                        color: e.page === currentPage ? 'red' : '',
-                      }}
-                    >{`${e.page + 1}. ${e.x},${e.y}`}</li>
-                  ))}
+                  {d
+                    .sort((a, b) => {
+                      const keyA = a.page;
+                      const keyB = b.page;
+                      // Compare the 2 dates
+                      if (keyA < keyB) return -1;
+                      if (keyA > keyB) return 1;
+                      return 0;
+                    })
+                    .map((e) => (
+                      <li
+                        id="position"
+                        style={{
+                          listStyleType: 'none',
+                          color: e.page === currentPage ? 'red' : '',
+                        }}
+                      >{`${e.page + 1}. ${e.x},${e.y}`}</li>
+                    ))}
                 </Accordion.Body>
               </Accordion.Item>
             ))}

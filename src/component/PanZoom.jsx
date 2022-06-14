@@ -104,6 +104,7 @@ function PanZoom({
   const [canvasManualRectangleCoordinates, setCanvasManualRectanglCoordinates] =
     useState([]);
   const [isZoomIn, setIsZoomIn] = useState(false);
+  const wrapperRef = useRef(null);
 
   const onStarModalExit = () => {
     setDisable(false);
@@ -134,15 +135,70 @@ function PanZoom({
     );
   };
 
+  const calculateCenterPotision = () => {
+    const imageOrigin = { x: IMAGE_WIDTH / 2, y: IMAGE_HEIGHT / 2 };
+    let newCenterPosition;
+
+    const distanceFromOrigin = Math.sqrt(
+      (imageOrigin.x - currentMousePos.x) ** 2 +
+        (imageOrigin.y - currentMousePos.y) ** 2,
+    );
+    const delta =
+      (distanceFromOrigin / (defaultZoomRate + distanceFromOrigin)) * 10;
+    console.log(delta);
+
+    // chank1
+    if (
+      currentMousePos.x < imageOrigin.x &&
+      currentMousePos.y < imageOrigin.y
+    ) {
+      newCenterPosition = {
+        x: currentMousePos.x - delta,
+        y: currentMousePos.y - delta,
+      };
+    }
+    // chank2
+    else if (
+      currentMousePos.x > imageOrigin.x &&
+      currentMousePos.y < imageOrigin.y
+    ) {
+      newCenterPosition = {
+        x: currentMousePos.x + delta,
+        y: currentMousePos.y - delta,
+      };
+    }
+    // chank3
+    else if (
+      currentMousePos.x > imageOrigin.x &&
+      currentMousePos.y > imageOrigin.y
+    ) {
+      newCenterPosition = {
+        x: currentMousePos.x + delta,
+        y: currentMousePos.y + delta,
+      };
+    }
+    // chank4
+    else if (
+      currentMousePos.x < imageOrigin.x &&
+      currentMousePos.y > imageOrigin.y
+    ) {
+      newCenterPosition = {
+        x: currentMousePos.x - delta,
+        y: currentMousePos.y + delta,
+      };
+    }
+    return newCenterPosition;
+  };
+
   // panzoomのコンストラクター
   useEffect(() => {
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
       maxZoom: 100,
       minZoom: 1,
       zoomDoubleClickSpeed: 1,
+      transformOrigin: { x: 0.5, y: 0.5 },
 
       beforeWheel(e) {
-        // if (isManual) return false;
         const shouldIgnore = !e.altKey;
         return shouldIgnore;
       },
@@ -151,12 +207,12 @@ function PanZoom({
       },
     });
 
-    const lastEl = positionList[positionList.length - 1];
-
-    if (lastEl) {
+    if (isZoomIn) {
+      const centerPosition = calculateCenterPotision();
+      console.log(centerPosition);
       ZPCanvas.current.smoothZoom(
-        firstPosition.x,
-        firstPosition.y,
+        centerPosition.x,
+        centerPosition.y,
         defaultZoomRate,
       );
     }
@@ -164,7 +220,7 @@ function PanZoom({
     return () => {
       ZPCanvas.current.dispose();
     };
-  }, [firstPosition, isReload]);
+  }, [firstPosition, isReload, isZoomIn]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -349,7 +405,7 @@ function PanZoom({
 
     setPositionList((prevPositionList) => {
       const prevPositionListCopy = [...prevPositionList];
-      const targetElement = prevPositionListCopy[activeKey][currentPage];
+      const activeArray = prevPositionListCopy[activeKey];
       const value = {
         page: currentPage,
         x: center.x,
@@ -363,16 +419,13 @@ function PanZoom({
         rectPos3,
         rectPos4,
       };
-      if (targetElement && targetElement.page === currentPage) {
-        prevPositionListCopy[activeKey].splice(currentPage, 1, value);
-      } else if (targetElement && targetElement.page !== currentPage) {
+      const targetIndex = activeArray.findIndex(
+        (activeElement) => activeElement.page === currentPage,
+      );
+      if (targetIndex === -1) {
         prevPositionListCopy[activeKey].splice(currentPage, 0, value);
       } else {
-        prevPositionListCopy[activeKey].splice(
-          prevPositionListCopy[activeKey].length - 1,
-          1,
-          value,
-        );
+        prevPositionListCopy[activeKey].splice(targetIndex, 1, value);
       }
 
       return prevPositionListCopy;
@@ -419,7 +472,6 @@ function PanZoom({
       setRectangleModalShow(true);
 
       setCanvasManualRectanglCoordinates([]);
-      setIsZoomIn(false);
     }
   }
 
@@ -433,39 +485,27 @@ function PanZoom({
     if (positionList.length < 1 || gshouldIgnore || !sshouldIgnore) return;
 
     setShow(show);
-    const posListLen = positionList.length;
-    const currentEl = positionList[posListLen - 1][currentPage];
-
-    if (currentEl) {
-      console.log(currentEl, currentEl.length);
-    }
-    if (
-      !currentEl ||
-      currentEl.length === 0 ||
-      currentEl.page === currentPage
-    ) {
-      setFirstPosition(currentMousePos);
-      setIsHide(true);
-    }
-    // copying the old datas array
     const newArr = [...positionList];
+
+    const activeArray = newArr[activeKey];
+    const targetIndex = activeArray.findIndex(
+      (activeElement) => activeElement.page === currentPage,
+    );
+
     const value = {
       page: currentPage,
       x: currentMousePos.x,
       y: currentMousePos.y,
     };
-    if (
-      newArr[activeKey][currentPage] &&
-      newArr[activeKey][currentPage].page === currentPage
-    ) {
-      newArr[activeKey].splice(currentPage, 1, value);
-    } else if (
-      newArr[activeKey][currentPage] &&
-      newArr[activeKey][currentPage].page !== currentPage
-    ) {
-      newArr[activeKey].splice(currentPage, 0, value);
+
+    if (targetIndex === -1) {
+      activeArray.splice(currentPage, 0, value);
+      setFirstPosition(currentMousePos);
+      setIsHide(true);
     } else {
-      newArr[activeKey].splice(currentPage, 1, value);
+      activeArray.splice(targetIndex, 1, value);
+      setFirstPosition(currentMousePos);
+      setIsHide(true);
     }
 
     setPositionList([...newArr]);
@@ -488,6 +528,7 @@ function PanZoom({
             <MousePosition />
             <div
               className="wrapper"
+              ref={wrapperRef}
               style={{
                 width: '100%',
                 height: '100%',
@@ -567,11 +608,13 @@ function PanZoom({
           }
           setFirstPosition({});
           setIsHide(false);
+          setIsZoomIn(false);
         }}
         onClickRetry={() => {
-          const targetListIndex = positionList.length - 1;
-          const targetElementIndex = positionList[targetListIndex].length - 1;
-          removePositionByIndex(targetListIndex, targetElementIndex);
+          const targetElementIndex = positionList[activeKey].findIndex(
+            (activeArray) => activeArray.page === currentPage,
+          );
+          removePositionByIndex(activeKey, targetElementIndex);
           drawImage();
         }}
       />
