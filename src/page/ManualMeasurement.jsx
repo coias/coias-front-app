@@ -30,7 +30,7 @@ function ManualMeasurement({
   const [contrastVal, setContrastVal] = useState(150);
   const [isHide, setIsHide] = useState(false);
   const [activeKey, setActiveKey] = useState(0);
-  const [defaultZoomRate, setDefaultZoomRate] = useState(20);
+  const [defaultZoomRate, setDefaultZoomRate] = useState(40);
   const [loading, setLoading] = useState(false);
   const { setCurrentPage } = useContext(PageContext);
 
@@ -202,8 +202,8 @@ function ManualMeasurement({
 
     const result = positionList.map((list, i) =>
       list.map(
-        (pos, page) =>
-          `${getStarNumberStr(i)} ${page} ${pos.center.x} ${pos.center.y} ${
+        (pos) =>
+          `${getStarNumberStr(i)} ${pos.page} ${pos.center.x} ${pos.center.y} ${
             pos.rectPos1.x
           } ${pos.rectPos1.y} ${pos.rectPos2.x} ${pos.rectPos2.y} ${
             pos.rectPos3.x

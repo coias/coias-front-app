@@ -51,6 +51,8 @@ function ManualToolBar({
           <Accordion activeKey={`${activeKey}`}>
             {positionList.map((d, index) => (
               <Accordion.Item
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
                 eventKey={index.toString()}
                 onClick={() => onClickAccordion(index)}
               >
@@ -68,6 +70,7 @@ function ManualToolBar({
                     .map((e) => (
                       <li
                         id="position"
+                        key={e.page}
                         style={{
                           listStyleType: 'none',
                           color: e.page === currentPage ? 'red' : '',

@@ -61,25 +61,25 @@ function SettingModal({
                 <Col>
                   <Form.Check
                     name="group1"
-                    label="10"
-                    type="radio"
-                    onChange={() => setDefaultZoomRate(10)}
-                    defaultChecked={defaultZoomRate === 10 && 'true'}
-                  />
-                </Col>
-                <Col>
-                  <Form.Check
-                    name="group1"
-                    label="20"
-                    type="radio"
-                    onChange={() => setDefaultZoomRate(20)}
-                    defaultChecked={defaultZoomRate === 20 && 'true'}
-                  />
-                </Col>
-                <Col>
-                  <Form.Check
-                    name="group1"
                     label="30"
+                    type="radio"
+                    onChange={() => setDefaultZoomRate(50)}
+                    defaultChecked={defaultZoomRate === 50 && 'true'}
+                  />
+                </Col>
+                <Col>
+                  <Form.Check
+                    name="group1"
+                    label="40"
+                    type="radio"
+                    onChange={() => setDefaultZoomRate(40)}
+                    defaultChecked={defaultZoomRate === 40 && 'true'}
+                  />
+                </Col>
+                <Col>
+                  <Form.Check
+                    name="group1"
+                    label="50"
                     type="radio"
                     onChange={() => setDefaultZoomRate(30)}
                     defaultChecked={defaultZoomRate === 30 && 'true'}

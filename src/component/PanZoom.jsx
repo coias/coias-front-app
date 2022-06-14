@@ -10,7 +10,8 @@ import { PageContext, MousePositionContext } from './context';
 import StarsList from './StarsList';
 import MousePosition from './MousePosition';
 import NewStarModal from './NewStarModal';
-import RectangleConfModal from './RectangleConfModal';
+import ManualStarModal from './ManualStarModalShow';
+import useEventListener from '../hooks/useEventListener';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
@@ -23,9 +24,6 @@ PanZoom.defaultProps = {
   setShow: () => {},
   setPositionList: () => {},
   positionList: [],
-  firstPosition: {},
-  setFirstPosition: () => {},
-  setIsHide: () => {},
   activeKey: 0,
   defaultZoomRate: 20,
 };
@@ -45,11 +43,8 @@ PanZoom.propTypes = {
   setPositionList: PropTypes.func,
   setShow: PropTypes.func,
   show: PropTypes.bool,
-  firstPosition: PropTypes.objectOf(PropTypes.object),
-  setFirstPosition: PropTypes.func,
   isHide: PropTypes.bool.isRequired,
   isGrab: PropTypes.bool.isRequired,
-  setIsHide: PropTypes.func,
   activeKey: PropTypes.number,
   defaultZoomRate: PropTypes.number,
 };
@@ -68,11 +63,8 @@ function PanZoom({
   setPositionList,
   setShow,
   show,
-  firstPosition,
-  setFirstPosition,
   isHide,
   isGrab,
-  setIsHide,
   activeKey,
   defaultZoomRate,
 }) {
@@ -99,12 +91,20 @@ function PanZoom({
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [starModalShow, setStarModalShow] = useState(false);
-  const [rectangleModalShow, setRectangleModalShow] = useState(false);
   const [context, setContext] = useState();
-  const [canvasManualRectangleCoordinates, setCanvasManualRectanglCoordinates] =
-    useState([]);
   const [isZoomIn, setIsZoomIn] = useState(false);
-  const wrapperRef = useRef(null);
+  const [manualStarModalShow, setManualStarModalShow] = useState(false);
+
+  function relativeCoords(event) {
+    const bounds = event.target.getBoundingClientRect();
+    const scaleX = event.target.width / bounds.width; // relationship bitmap vs. element for X
+    const scaleY = event.target.height / bounds.height; // relationship bitmap vs. element for Y
+
+    const x = (event.clientX - bounds.left) * scaleX; // scale mouse coordinates after they have
+    const y = (event.clientY - bounds.top) * scaleY; // been adjusted to be relative to element
+
+    setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
+  }
 
   const onStarModalExit = () => {
     setDisable(false);
@@ -115,10 +115,6 @@ function PanZoom({
       },
     );
     setStarModalShow(false);
-  };
-
-  const onRectangleModalExit = () => {
-    setRectangleModalShow(false);
   };
 
   const removePositionByIndex = (targetListIndex, targetElementIndex) => {
@@ -133,61 +129,6 @@ function PanZoom({
         return position;
       }),
     );
-  };
-
-  const calculateCenterPotision = () => {
-    const imageOrigin = { x: IMAGE_WIDTH / 2, y: IMAGE_HEIGHT / 2 };
-    let newCenterPosition;
-
-    const distanceFromOrigin = Math.sqrt(
-      (imageOrigin.x - currentMousePos.x) ** 2 +
-        (imageOrigin.y - currentMousePos.y) ** 2,
-    );
-    const delta =
-      (distanceFromOrigin / (defaultZoomRate + distanceFromOrigin)) * 10;
-    console.log(delta);
-
-    // chank1
-    if (
-      currentMousePos.x < imageOrigin.x &&
-      currentMousePos.y < imageOrigin.y
-    ) {
-      newCenterPosition = {
-        x: currentMousePos.x - delta,
-        y: currentMousePos.y - delta,
-      };
-    }
-    // chank2
-    else if (
-      currentMousePos.x > imageOrigin.x &&
-      currentMousePos.y < imageOrigin.y
-    ) {
-      newCenterPosition = {
-        x: currentMousePos.x + delta,
-        y: currentMousePos.y - delta,
-      };
-    }
-    // chank3
-    else if (
-      currentMousePos.x > imageOrigin.x &&
-      currentMousePos.y > imageOrigin.y
-    ) {
-      newCenterPosition = {
-        x: currentMousePos.x + delta,
-        y: currentMousePos.y + delta,
-      };
-    }
-    // chank4
-    else if (
-      currentMousePos.x < imageOrigin.x &&
-      currentMousePos.y > imageOrigin.y
-    ) {
-      newCenterPosition = {
-        x: currentMousePos.x - delta,
-        y: currentMousePos.y + delta,
-      };
-    }
-    return newCenterPosition;
   };
 
   // panzoomのコンストラクター
@@ -207,20 +148,10 @@ function PanZoom({
       },
     });
 
-    if (isZoomIn) {
-      const centerPosition = calculateCenterPotision();
-      console.log(centerPosition);
-      ZPCanvas.current.smoothZoom(
-        centerPosition.x,
-        centerPosition.y,
-        defaultZoomRate,
-      );
-    }
-
     return () => {
       ZPCanvas.current.dispose();
     };
-  }, [firstPosition, isReload, isZoomIn]);
+  }, [isReload, isZoomIn]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -286,25 +217,7 @@ function PanZoom({
     drawImage();
   }, [context, currentPage, starPos, isReload, IMAGE_HEIGHT, isHide]);
 
-  // マウス移動時の挙動制御
-  useEffect(() => {
-    const canvasElem = canvasRef.current;
-    if (canvasElem === null) {
-      return;
-    }
-    function relativeCoords(event) {
-      const bounds = event.target.getBoundingClientRect();
-      const scaleX = event.target.width / bounds.width; // relationship bitmap vs. element for X
-      const scaleY = event.target.height / bounds.height; // relationship bitmap vs. element for Y
-
-      const x = (event.clientX - bounds.left) * scaleX; // scale mouse coordinates after they have
-      const y = (event.clientY - bounds.top) * scaleY; // been adjusted to be relative to element
-
-      setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
-    }
-
-    canvasElem.addEventListener('mousemove', relativeCoords);
-  }, []);
+  useEventListener('mousemove', relativeCoords, canvasRef.current);
 
   // クリック時に色を変化させるイベントリスナー
   function changeColorOnClick() {
@@ -356,125 +269,6 @@ function PanZoom({
     setStarPos(newStarPos);
   }
 
-  function getForthPoint(coordinates) {
-    const A = coordinates[0];
-    const B = coordinates[1];
-    const C = coordinates[2];
-    if (A === B || B === C || A === C) {
-      console.log('no');
-    }
-
-    const width = Math.sqrt((B.x - A.x) ** 2 + (B.y - A.y) ** 2);
-    const height = Math.sqrt((C.x - B.x) ** 2 + (C.y - B.y) ** 2);
-    const center = {
-      x: Math.floor((A.x + C.x) / 2.0),
-      y: Math.floor((A.y + C.y) / 2.0),
-    };
-
-    let angle;
-    if (B.x !== A.x) {
-      angle = Math.atan((B.y - A.y) / (B.x - A.x));
-    } else if (B.x - A.x > 0.0) {
-      angle = 0.5 * Math.PI;
-    } else {
-      angle = -0.5 * Math.PI;
-    }
-
-    const e1 = { x: Math.cos(angle), y: Math.sin(angle) };
-    const e2 = {
-      x: Math.cos(angle + 0.5 * Math.PI),
-      y: Math.sin(angle + 0.5 * Math.PI),
-    };
-
-    const rectPos1 = {
-      x: Math.floor(center.x - 0.5 * width * e1.x - 0.5 * height * e2.x),
-      y: Math.floor(center.y - 0.5 * width * e1.y - 0.5 * height * e2.y),
-    };
-    const rectPos2 = {
-      x: Math.floor(rectPos1.x + width * e1.x),
-      y: Math.floor(rectPos1.y + width * e1.y),
-    };
-    const rectPos3 = {
-      x: Math.floor(rectPos2.x + height * e2.x),
-      y: Math.floor(rectPos2.y + height * e2.y),
-    };
-    const rectPos4 = {
-      x: Math.floor(rectPos3.x - width * e1.x),
-      y: Math.floor(rectPos3.y - width * e1.y),
-    };
-
-    setPositionList((prevPositionList) => {
-      const prevPositionListCopy = [...prevPositionList];
-      const activeArray = prevPositionListCopy[activeKey];
-      const value = {
-        page: currentPage,
-        x: center.x,
-        y: center.y,
-        width,
-        height,
-        center,
-        angle,
-        rectPos1,
-        rectPos2,
-        rectPos3,
-        rectPos4,
-      };
-      const targetIndex = activeArray.findIndex(
-        (activeElement) => activeElement.page === currentPage,
-      );
-      if (targetIndex === -1) {
-        prevPositionListCopy[activeKey].splice(currentPage, 0, value);
-      } else {
-        prevPositionListCopy[activeKey].splice(targetIndex, 1, value);
-      }
-
-      return prevPositionListCopy;
-    });
-
-    const finalCoordinates = [rectPos1, rectPos2, rectPos3, rectPos4];
-
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < 3; i++) {
-      context.lineWidth = 1;
-      context.beginPath();
-      context.moveTo(finalCoordinates[i].x, finalCoordinates[i].y);
-      context.lineTo(finalCoordinates[i + 1].x, finalCoordinates[i + 1].y);
-      context.stroke();
-    }
-    context.lineWidth = 1;
-    context.beginPath();
-    context.moveTo(rectPos4.x, rectPos4.y);
-    context.lineTo(rectPos1.x, rectPos1.y);
-    context.stroke();
-  }
-
-  function drawDot() {
-    if (!context) {
-      return;
-    }
-    context.strokeStyle = 'black';
-    // rectangle setting
-    const coordinate = currentMousePos;
-    setCanvasManualRectanglCoordinates([
-      ...canvasManualRectangleCoordinates,
-      coordinate,
-    ]);
-    canvasManualRectangleCoordinates.push(coordinate);
-    context.beginPath();
-    context.arc(coordinate.x, coordinate.y, 1, 0, Math.PI * 2, false);
-    context.fill();
-    context.stroke();
-
-    const cmrcLength = canvasManualRectangleCoordinates.length;
-    if (cmrcLength === 3) {
-      getForthPoint(canvasManualRectangleCoordinates);
-
-      setRectangleModalShow(true);
-
-      setCanvasManualRectanglCoordinates([]);
-    }
-  }
-
   // 再測定時に天体の座標を保存する
   function saveEventPosition() {
     const gval = document.getElementById('grabButton').dataset.active;
@@ -500,17 +294,13 @@ function PanZoom({
 
     if (targetIndex === -1) {
       activeArray.splice(currentPage, 0, value);
-      setFirstPosition(currentMousePos);
-      setIsHide(true);
     } else {
       activeArray.splice(targetIndex, 1, value);
-      setFirstPosition(currentMousePos);
-      setIsHide(true);
     }
 
     setPositionList([...newArr]);
 
-    setIsZoomIn(true);
+    setManualStarModalShow(true);
   }
 
   return (
@@ -528,7 +318,6 @@ function PanZoom({
             <MousePosition />
             <div
               className="wrapper"
-              ref={wrapperRef}
               style={{
                 width: '100%',
                 height: '100%',
@@ -544,8 +333,6 @@ function PanZoom({
                   onClick={() => {
                     if (isManual && !isZoomIn) {
                       saveEventPosition();
-                    } else if (isManual && isZoomIn) {
-                      drawDot();
                     } else if (!isManual) {
                       changeColorOnClick();
                     }
@@ -597,25 +384,28 @@ function PanZoom({
         }}
         onClickFinishButton={onClickFinishButton}
       />
-      <RectangleConfModal
-        show={rectangleModalShow}
-        onExit={() => {
-          onRectangleModalExit();
-        }}
-        onClickNext={() => {
-          if (currentPage < 4) {
-            setCurrentPage(currentPage + 1);
-          }
-          setFirstPosition({});
-          setIsHide(false);
-          setIsZoomIn(false);
-        }}
+      <ManualStarModal
+        manualStarModalShow={manualStarModalShow}
+        onHide={() => setManualStarModalShow(false)}
+        defaultZoomRate={defaultZoomRate}
+        imageURLs={imageURLs}
+        activeKey={activeKey}
+        setPositionList={setPositionList}
         onClickRetry={() => {
           const targetElementIndex = positionList[activeKey].findIndex(
             (activeArray) => activeArray.page === currentPage,
           );
           removePositionByIndex(activeKey, targetElementIndex);
-          drawImage();
+        }}
+        onClickNext={() => {
+          if (currentPage < 4) {
+            setCurrentPage(currentPage + 1);
+          }
+          setIsZoomIn(false);
+          setManualStarModalShow(false);
+        }}
+        onExit={() => {
+          removePositionByIndex(activeKey, currentPage);
         }}
       />
     </Container>
