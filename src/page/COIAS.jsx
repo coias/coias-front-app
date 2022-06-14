@@ -15,6 +15,12 @@ COIAS.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
+  start: PropTypes.bool.isRequired,
+  setStart: PropTypes.func.isRequired,
+  next: PropTypes.bool.isRequired,
+  setNext: PropTypes.func.isRequired,
+  back: PropTypes.bool.isRequired,
+  setBack: PropTypes.func.isRequired,
 };
 
 function COIAS({
@@ -23,6 +29,12 @@ function COIAS({
   originalStarPos,
   setOriginalStarPos,
   intervalRef,
+  start,
+  setStart,
+  next,
+  setNext,
+  back,
+  setBack,
 }) {
   const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
@@ -32,9 +44,6 @@ function COIAS({
   const [loading, setLoading] = useState(false);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
-  const [start, setStart] = useState(false);
-  const [next, setNext] = useState(false);
-  const [back, setBack] = useState(true);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -236,9 +245,6 @@ function COIAS({
     if (e.keyCode === 37) setBack(!back);
   };
 
-  // useEffect(() => {
-  //   keyPress();
-  // }, []);
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className="coias-view-main" onKeyDown={keyPress} tabIndex={-1}>
