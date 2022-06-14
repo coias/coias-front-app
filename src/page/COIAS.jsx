@@ -236,6 +236,9 @@ function COIAS({
     if (e.keyCode === 37) setBack(!back);
   };
 
+  // useEffect(() => {
+  //   keyPress();
+  // }, []);
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className="coias-view-main" onKeyDown={keyPress} tabIndex={-1}>

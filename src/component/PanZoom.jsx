@@ -121,6 +121,10 @@ function PanZoom({
       beforeMouseDown() {
         return 'ignore';
       },
+      filterKey() {
+        // don't let panzoom handle this event:
+        return true;
+      },
     });
 
     const lastEl = positionList[positionList.length - 1];
@@ -363,6 +367,17 @@ function PanZoom({
 
     setIsZoomIn(true);
   }
+  const keyInvalid = (e) => {
+    const code = e.keyCode;
+    // eslint-disable-next-line default-case
+    switch (code) {
+      case 37: // ←
+      case 38: // ↑
+      case 39: // →
+      case 40: // ↓
+        e.preventDefault();
+    }
+  };
 
   return (
     <Container fluid>
@@ -378,6 +393,7 @@ function PanZoom({
             }}
           >
             <MousePosition />
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="wrapper"
               style={{
@@ -386,8 +402,16 @@ function PanZoom({
                 backgroundColor: 'white',
                 position: 'relative',
               }}
+              onKeyDown={keyInvalid}
             >
-              <div ref={ZPCanvasRef}>
+              <div
+                ref={ZPCanvasRef}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'red',
+                }}
+              >
                 <canvas
                   ref={canvasRef}
                   width={`${IMAGE_WIDTH}px`}
