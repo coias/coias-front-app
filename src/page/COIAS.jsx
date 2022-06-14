@@ -193,6 +193,7 @@ function COIAS({
     });
 
     setCurrentPage(0);
+    document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
   // 探索終了ボタンが押された時の処理
@@ -247,7 +248,12 @@ function COIAS({
 
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div className="coias-view-main" onKeyDown={keyPress} tabIndex={-1}>
+    <div
+      className="coias-view-main"
+      onKeyDown={keyPress}
+      tabIndex={-1}
+      id="wrapper-coias"
+    >
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}

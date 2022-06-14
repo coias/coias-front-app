@@ -70,8 +70,6 @@ function App() {
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
 
-
-
   return (
     <BrowserRouter style={{ position: 'relative' }}>
       <Header
