@@ -13,7 +13,6 @@ function ManualStarModal({
   setPositionList,
   onClickNext,
   onClickRetry,
-  onExit,
 }) {
   const [context, setContext] = useState();
   const canvasRef = useRef(null);
@@ -71,6 +70,13 @@ function ManualStarModal({
       y: Math.floor(rectPos3.y - width * e1.y),
     };
 
+    context.beginPath();
+    context.arc(rectPos4.x, rectPos4.y, 10, 0, Math.PI * 2, false);
+    context.fill();
+    context.strokeStyle = 'gray';
+
+    context.stroke();
+
     setPositionList((prevPositionList) => {
       const prevPositionListCopy = [...prevPositionList];
       const activeArray = prevPositionListCopy[activeKey];
@@ -100,7 +106,8 @@ function ManualStarModal({
     });
 
     const finalCoordinates = [rectPos1, rectPos2, rectPos3, rectPos4];
-
+    context.fillStyle = 'red';
+    context.strokeStyle = 'red';
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < 3; i++) {
       context.lineWidth = 10;
@@ -120,7 +127,6 @@ function ManualStarModal({
     if (!context) {
       return;
     }
-    context.strokeStyle = 'black';
     // rectangle setting
     const coordinate = currentMousePos;
     setCanvasManualRectanglCoordinates([
@@ -129,7 +135,9 @@ function ManualStarModal({
     ]);
     canvasManualRectangleCoordinates.push(coordinate);
     context.beginPath();
-    context.arc(coordinate.x, coordinate.y, 5, 0, Math.PI * 2, false);
+    context.arc(coordinate.x, coordinate.y, 10, 0, Math.PI * 2, false);
+    context.fillStyle = 'red';
+    context.strokeStyle = 'red';
     context.fill();
     context.stroke();
 
@@ -203,7 +211,9 @@ function ManualStarModal({
       aria-labelledby="contained-modal-title-vcenter"
       centered
       backdrop="static"
-      onExit={onExit}
+      onExit={() => {
+        setCanvasManualRectanglCoordinates([]);
+      }}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
@@ -214,7 +224,9 @@ function ManualStarModal({
         <div>
           <canvas
             ref={canvasRef}
-            style={{ imageRendering: 'pixelated' }}
+            style={{
+              imageRendering: 'pixelated',
+            }}
             width="500px"
             height="500px"
             onClick={
@@ -225,8 +237,9 @@ function ManualStarModal({
           />
         </div>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="d-flex justify-content-between">
         <Button
+          variant="danger"
           onClick={() => {
             onClickRetry();
             drawImage();
@@ -236,6 +249,7 @@ function ManualStarModal({
           やり直す
         </Button>
         <Button
+          variant="success"
           disabled={canvasManualRectangleCoordinates.length !== 3}
           onClick={() => {
             onClickNext();
@@ -261,5 +275,4 @@ ManualStarModal.propTypes = {
   setPositionList: PropTypes.arrayOf(PropTypes.array).isRequired,
   onClickNext: PropTypes.func.isRequired,
   onClickRetry: PropTypes.func.isRequired,
-  onExit: PropTypes.func.isRequired,
 };

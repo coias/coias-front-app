@@ -122,8 +122,7 @@ function PanZoom({
       positionList.map((position, index) => {
         if (index === targetListIndex) {
           return position.filter(
-            (elementPosition, elementIndex) =>
-              targetElementIndex !== elementIndex,
+            (elementPosition) => targetElementIndex !== elementPosition.page,
           );
         }
         return position;
@@ -386,7 +385,10 @@ function PanZoom({
       />
       <ManualStarModal
         manualStarModalShow={manualStarModalShow}
-        onHide={() => setManualStarModalShow(false)}
+        onHide={() => {
+          removePositionByIndex(activeKey, currentPage);
+          setManualStarModalShow(false);
+        }}
         defaultZoomRate={defaultZoomRate}
         imageURLs={imageURLs}
         activeKey={activeKey}
@@ -403,9 +405,6 @@ function PanZoom({
           }
           setIsZoomIn(false);
           setManualStarModalShow(false);
-        }}
-        onExit={() => {
-          removePositionByIndex(activeKey, currentPage);
         }}
       />
     </Container>
