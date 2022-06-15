@@ -137,6 +137,12 @@ function App() {
                       setOriginalStarPos={setOriginalStarPos}
                       positionList={positionList}
                       setPositionList={setPositionList}
+                      start={start}
+                      setStart={setStart}
+                      next={next}
+                      setNext={setNext}
+                      back={back}
+                      setBack={setBack}
                     />
                   }
                 />

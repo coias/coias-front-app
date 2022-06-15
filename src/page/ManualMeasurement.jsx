@@ -19,6 +19,12 @@ function ManualMeasurement({
   positionList,
   setPositionList,
   setOriginalStarPos,
+  start,
+  setStart,
+  next,
+  setNext,
+  back,
+  setBack,
 }) {
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const [show, setShow] = useState(false);
@@ -183,6 +189,7 @@ function ManualMeasurement({
     });
 
     setCurrentPage(0);
+    document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
   // const reactApiUri = process.env.REACT_APP_API_URI;
@@ -230,14 +237,31 @@ function ManualMeasurement({
     */
   };
 
+  const keyPress = (e) => {
+    if (e.keyCode === 83) setStart(!start);
+    if (e.keyCode === 39) setNext(!next);
+    if (e.keyCode === 37) setBack(!back);
+  };
+
   return (
-    <div className="coias-view-main">
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    <div
+      className="coias-view-main"
+      id="wrapper-coias"
+      onKeyDown={keyPress}
+      tabIndex={-1}
+    >
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
         intervalRef={intervalRef}
         setDefaultZoomRate={setDefaultZoomRate}
         defaultZoomRate={defaultZoomRate}
+        start={start}
+        next={next}
+        setNext={setNext}
+        back={back}
+        setBack={setBack}
       />
       <Container fluid>
         <Row>
@@ -309,4 +333,10 @@ ManualMeasurement.propTypes = {
   positionList: PropTypes.arrayOf(PropTypes.array).isRequired,
   setPositionList: PropTypes.func.isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
+  start: PropTypes.bool.isRequired,
+  setStart: PropTypes.func.isRequired,
+  next: PropTypes.bool.isRequired,
+  setNext: PropTypes.func.isRequired,
+  back: PropTypes.bool.isRequired,
+  setBack: PropTypes.func.isRequired,
 };
