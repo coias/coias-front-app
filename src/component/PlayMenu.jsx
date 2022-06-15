@@ -11,7 +11,7 @@ import {
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle } from 'react-icons/bi';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { PageContext } from './context';
 import SettingModal from './SettingModal';
@@ -23,6 +23,11 @@ function PlayMenu({
   intervalRef,
   setDefaultZoomRate,
   defaultZoomRate,
+  start,
+  next,
+  setNext,
+  back,
+  setBack,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -64,6 +69,19 @@ function PlayMenu({
     // eslint-disable-next-line no-param-reassign
     intervalRef.current = null;
   }, []);
+
+  useEffect(() => {
+    if (start) onClickBlinkStart();
+    if (!start) onClickBlinkStop();
+    if (next) {
+      onClickNext();
+      setNext(!next);
+    }
+    if (!back) {
+      onClickBack();
+      setBack(!back);
+    }
+  }, [start, next, back]);
 
   return (
     <Navbar bg="light" expand="lg">
@@ -188,6 +206,11 @@ PlayMenu.propTypes = {
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
   setDefaultZoomRate: PropTypes.func,
   defaultZoomRate: PropTypes.number,
+  start: PropTypes.bool.isRequired,
+  next: PropTypes.bool.isRequired,
+  setNext: PropTypes.func.isRequired,
+  back: PropTypes.bool.isRequired,
+  setBack: PropTypes.func.isRequired,
 };
 
 PlayMenu.defaultProps = {

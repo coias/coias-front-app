@@ -44,7 +44,6 @@ PanZoom.propTypes = {
   setShow: PropTypes.func,
   show: PropTypes.bool,
   isHide: PropTypes.bool.isRequired,
-  isGrab: PropTypes.bool.isRequired,
   activeKey: PropTypes.number,
   defaultZoomRate: PropTypes.number,
 };
@@ -64,7 +63,6 @@ function PanZoom({
   setShow,
   show,
   isHide,
-  isGrab,
   activeKey,
   defaultZoomRate,
 }) {
@@ -94,6 +92,7 @@ function PanZoom({
   const [context, setContext] = useState();
   const [isZoomIn, setIsZoomIn] = useState(false);
   const [manualStarModalShow, setManualStarModalShow] = useState(false);
+  const [scale, setScale] = useState(1);
 
   function relativeCoords(event) {
     const bounds = event.target.getBoundingClientRect();
@@ -140,10 +139,15 @@ function PanZoom({
 
       beforeWheel(e) {
         const shouldIgnore = !e.altKey;
+        setScale(ZPCanvas.current.getTransform().scale);
         return shouldIgnore;
       },
       beforeMouseDown() {
         return 'ignore';
+      },
+      filterKey() {
+        // don't let panzoom handle this event:
+        return true;
       },
     });
 
@@ -180,20 +184,34 @@ function PanZoom({
         .forEach((pos) => {
           if (pos.page[currentPage]) {
             // rectangle setting
+            let linesize;
+            if (3 / scale > 1.5) {
+              linesize = 3 / scale;
+            } else {
+              linesize = 1.5;
+            }
             const position = pos.page[currentPage];
-            const x = position.x - RECT_WIDTH / 2;
-            const y = img.naturalHeight - position.y - RECT_HEIGHT / 2;
-            context.lineWidth = 2;
+            const x = position.x - RECT_WIDTH / scale / 2;
+            const y = img.naturalHeight - position.y - RECT_HEIGHT / scale / 2;
+            context.lineWidth = linesize;
             // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.strokeRect(x, y, RECT_WIDTH, RECT_HEIGHT);
+            context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
 
             // font setting
+            let fontsize;
+            if (18 / scale > 12) {
+              fontsize = String(18 / scale);
+            } else {
+              fontsize = '12';
+            }
+
+            fontsize += 'px serif';
             context.strokeStyle = 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.lineWidth = 3;
-            context.font = '18px serif';
+            context.font = fontsize;
             context.strokeText(
               pos.name,
               x - RECT_WIDTH / 10,
@@ -301,6 +319,17 @@ function PanZoom({
 
     setManualStarModalShow(true);
   }
+  const keyInvalid = (e) => {
+    const code = e.keyCode;
+    // eslint-disable-next-line default-case
+    switch (code) {
+      case 37: // ←
+      case 38: // ↑
+      case 39: // →
+      case 40: // ↓
+        e.preventDefault();
+    }
+  };
 
   return (
     <Container fluid>
@@ -312,9 +341,11 @@ function PanZoom({
               height: '100%',
               paddingTop: '24px',
               position: 'relative',
+              overflow: 'hidden',
             }}
           >
             <MousePosition />
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="wrapper"
               style={{
@@ -323,8 +354,15 @@ function PanZoom({
                 backgroundColor: 'white',
                 position: 'relative',
               }}
+              onKeyDown={keyInvalid}
             >
-              <div ref={ZPCanvasRef}>
+              <div
+                ref={ZPCanvasRef}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
                 <canvas
                   ref={canvasRef}
                   width={`${IMAGE_WIDTH}px`}
@@ -340,7 +378,6 @@ function PanZoom({
                     filter: `contrast(${contrastVal - 50}%) brightness(${
                       brightnessVal - 50
                     }%)`,
-                    cursor: isGrab === true ? 'grab' : '',
                   }}
                 />
               </div>

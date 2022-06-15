@@ -15,6 +15,12 @@ COIAS.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
+  start: PropTypes.bool.isRequired,
+  setStart: PropTypes.func.isRequired,
+  next: PropTypes.bool.isRequired,
+  setNext: PropTypes.func.isRequired,
+  back: PropTypes.bool.isRequired,
+  setBack: PropTypes.func.isRequired,
 };
 
 function COIAS({
@@ -23,9 +29,14 @@ function COIAS({
   originalStarPos,
   setOriginalStarPos,
   intervalRef,
+  start,
+  setStart,
+  next,
+  setNext,
+  back,
+  setBack,
 }) {
-  const [isGrab, setIsGrab] = useState(false);
-  const [isSelect, setIsSelect] = useState(false);
+  const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
   const [isHide, setIsHide] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
@@ -40,7 +51,6 @@ function COIAS({
   // 画面表示時、１回だけ処理(copyの実行、各画像のURL取得)
   // 画面表示時、１回だけ処理(unknown_disp.txtの処理)
   useEffect(() => {
-    setIsGrab(true);
     const toObjectArray = [];
     clearInterval(intervalRef.current);
     // eslint-disable-next-line no-param-reassign
@@ -183,6 +193,7 @@ function COIAS({
     });
 
     setCurrentPage(0);
+    document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
   // 探索終了ボタンが押された時の処理
@@ -229,18 +240,33 @@ function COIAS({
     await axios.put(`${reactApiUri}rename`);
   };
 
+  const keyPress = (e) => {
+    if (e.keyCode === 83) setStart(!start);
+    if (e.keyCode === 39) setNext(!next);
+    if (e.keyCode === 37) setBack(!back);
+  };
+
   return (
-    <div className="coias-view-main">
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    <div
+      className="coias-view-main"
+      onKeyDown={keyPress}
+      tabIndex={-1}
+      id="wrapper-coias"
+    >
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
         intervalRef={intervalRef}
+        start={start}
+        next={next}
+        setNext={setNext}
+        back={back}
+        setBack={setBack}
       />
       <Container fluid>
         <Row>
           <COIASToolBar
-            isGrab={isGrab}
-            setIsGrab={setIsGrab}
             isSelect={isSelect}
             setIsSelect={setIsSelect}
             brightnessVal={brightnessVal}
@@ -263,7 +289,6 @@ function COIAS({
               starPos={starPos}
               setStarPos={setStarPos}
               isHide={isHide}
-              isGrab={isGrab}
             />
           </Col>
         </Row>
