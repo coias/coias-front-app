@@ -288,12 +288,10 @@ function PanZoom({
 
   // 再測定時に天体の座標を保存する
   function saveEventPosition() {
-    const gval = document.getElementById('grabButton').dataset.active;
-    const gshouldIgnore = gval === 'true';
     const sval = document.getElementById('selectButton').dataset.active;
     const sshouldIgnore = sval === 'true';
 
-    if (positionList.length < 1 || gshouldIgnore || !sshouldIgnore) return;
+    if (positionList.length < 1 || !sshouldIgnore) return;
 
     setShow(show);
     const newArr = [...positionList];
