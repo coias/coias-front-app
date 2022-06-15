@@ -23,10 +23,46 @@ function ManualStarModal({
     useState([]);
   const [centerCoordinate, setCenterCoodinate] = useState(null);
 
+  function translateCooditareModalToActual(modalCoordinate) {
+    const relativeX = (modalCoordinate.x * defaultZoomRate) / 500;
+    const relativeY = (modalCoordinate.y * defaultZoomRate) / 500;
+
+    const actualCoordinate = { x: 0, y: 0 };
+    const rectangleHalflength = defaultZoomRate / 2;
+    if (relativeX < rectangleHalflength && relativeY < rectangleHalflength) {
+      actualCoordinate.x = centerCoordinate.x - (defaultZoomRate - relativeX);
+      actualCoordinate.y = centerCoordinate.y - (defaultZoomRate - relativeY);
+    } else if (
+      relativeX > rectangleHalflength &&
+      relativeY < rectangleHalflength
+    ) {
+      actualCoordinate.x = centerCoordinate.x + (defaultZoomRate + relativeX);
+      actualCoordinate.y = centerCoordinate.y - (defaultZoomRate - relativeY);
+    } else if (
+      relativeX > rectangleHalflength &&
+      relativeY > rectangleHalflength
+    ) {
+      actualCoordinate.x = centerCoordinate.x + (defaultZoomRate + relativeX);
+      actualCoordinate.y = centerCoordinate.y + (defaultZoomRate + relativeY);
+    } else if (
+      relativeX < rectangleHalflength &&
+      relativeY > rectangleHalflength
+    ) {
+      actualCoordinate.x = centerCoordinate.x + (defaultZoomRate + relativeX);
+      actualCoordinate.y = centerCoordinate.y - (defaultZoomRate - relativeY);
+    }
+
+    return actualCoordinate;
+  }
+
   function getForthPoint(coordinates) {
     const A = coordinates[0];
     const B = coordinates[1];
     const C = coordinates[2];
+    console.log(A);
+    console.log(B);
+    console.log(C);
+    console.log('==================');
     if (A === B || B === C || A === C) {
       console.log('no');
     }
@@ -80,18 +116,23 @@ function ManualStarModal({
     setPositionList((prevPositionList) => {
       const prevPositionListCopy = [...prevPositionList];
       const activeArray = prevPositionListCopy[activeKey];
+      const actualCenterCoordinate = translateCooditareModalToActual(center);
+      const actualA = translateCooditareModalToActual(rectPos1);
+      const actualB = translateCooditareModalToActual(rectPos2);
+      const actualC = translateCooditareModalToActual(rectPos3);
+      const actualD = translateCooditareModalToActual(rectPos4);
       const value = {
         page: currentPage,
-        x: center.x,
-        y: center.y,
+        x: Math.floor(actualCenterCoordinate.x),
+        y: Math.floor(actualCenterCoordinate.y),
         width,
         height,
         center,
         angle,
-        rectPos1,
-        rectPos2,
-        rectPos3,
-        rectPos4,
+        actualA,
+        actualB,
+        actualC,
+        actualD,
       };
       const targetIndex = activeArray.findIndex(
         (activeElement) => activeElement.page === currentPage,
@@ -196,10 +237,10 @@ function ManualStarModal({
     const scaleX = event.target.width / bounds.width; // relationship bitmap vs. element for X
     const scaleY = event.target.height / bounds.height; // relationship bitmap vs. element for Y
 
-    const x = (event.clientX - bounds.left) * scaleX; // scale mouse coordinates after they have
-    const y = (event.clientY - bounds.top) * scaleY; // been adjusted to be relative to element
+    const modalX = (event.clientX - bounds.left) * scaleX;
+    const modalY = (event.clientY - bounds.top) * scaleY;
 
-    setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
+    setCurrentMousePos({ x: parseInt(modalX, 10), y: parseInt(modalY, 10) });
   }
   useEventListener('mousemove', relativeCoords, canvasRef.current);
 
@@ -212,6 +253,7 @@ function ManualStarModal({
       centered
       backdrop="static"
       onExit={() => {
+        setCenterCoodinate(null);
         setCanvasManualRectanglCoordinates([]);
       }}
     >

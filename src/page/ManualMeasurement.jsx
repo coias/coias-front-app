@@ -156,6 +156,10 @@ function ManualMeasurement({
         });
       }
 
+      positionList.forEach((item) => {
+        console.log(item);
+      });
+
       setStarPos(toObject);
       setOriginalStarPos(toObject);
       setLoading(false);
@@ -211,10 +215,10 @@ function ManualMeasurement({
       list.map(
         (pos) =>
           `${getStarNumberStr(i)} ${pos.page} ${pos.center.x} ${pos.center.y} ${
-            pos.rectPos1.x
-          } ${pos.rectPos1.y} ${pos.rectPos2.x} ${pos.rectPos2.y} ${
-            pos.rectPos3.x
-          } ${pos.rectPos3.y}\n`,
+            pos.actualA.x
+          } ${pos.actualA.y} ${pos.actualB.x} ${pos.actualB.y} ${
+            pos.actualC.x
+          } ${pos.actualC.y}\n`,
       ),
     );
 
@@ -279,16 +283,6 @@ function ManualMeasurement({
             isHide={isHide}
             setIsHide={setIsHide}
           />
-          <Col sm={2} md={2}>
-            <ManualToolBar
-              positionList={positionList}
-              setPositionList={setPositionList}
-              setFirstPosition={setFirstPosition}
-              onClickFinishButton={onClickFinishButton}
-              activeKey={activeKey}
-              setActiveKey={setActiveKey}
-            />
-          </Col>
           <Col sm={9} md={9}>
             <PanZoom
               imageURLs={imageURLs}
@@ -309,6 +303,16 @@ function ManualMeasurement({
               isHide={isHide}
               activeKey={activeKey}
               defaultZoomRate={defaultZoomRate}
+            />
+          </Col>
+          <Col sm={2} md={2}>
+            <ManualToolBar
+              positionList={positionList}
+              setPositionList={setPositionList}
+              setFirstPosition={setFirstPosition}
+              onClickFinishButton={onClickFinishButton}
+              activeKey={activeKey}
+              setActiveKey={setActiveKey}
             />
           </Col>
         </Row>

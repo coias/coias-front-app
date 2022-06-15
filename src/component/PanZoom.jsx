@@ -226,13 +226,78 @@ function PanZoom({
             );
           }
         });
+      positionList.forEach((pos, i) =>
+        pos.forEach((manualPos) => {
+          if (manualPos.page === currentPage) {
+            const starNameList = Object.keys(starPos).filter((element) =>
+              element.startsWith('H'),
+            );
+            const headStarNumber = Number(
+              starNameList[starNameList.length - 1].replace('H', ''),
+            );
+
+            const getStarNumberStr = (index) =>
+              `H${'00000'.slice(-(6 - headStarNumber.toString().length))}${
+                headStarNumber + index + 1
+              }`; // rectangle setting
+
+            let linesize;
+            if (3 / scale > 1.5) {
+              linesize = 3 / scale;
+            } else {
+              linesize = 1.5;
+            }
+            const x = manualPos.x - RECT_WIDTH / scale / 2;
+            const y = manualPos.y - RECT_HEIGHT / scale / 2;
+            context.lineWidth = linesize;
+            // set stroke style depends on manualPos[4]
+            context.strokeStyle = 'blue';
+            context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
+
+            // font setting
+            let fontsize;
+            if (18 / scale > 12) {
+              fontsize = String(18 / scale);
+            } else {
+              fontsize = '12';
+            }
+
+            fontsize += 'px serif';
+            context.strokeStyle = 'blue';
+            context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.lineWidth = 3;
+            context.font = fontsize;
+            context.strokeText(
+              getStarNumberStr(i),
+              x - RECT_WIDTH / 10,
+              y - RECT_HEIGHT / 10,
+            );
+            context.fillStyle = 'white';
+            context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.fillText(
+              getStarNumberStr(i),
+              x - RECT_WIDTH / 10,
+              y - RECT_HEIGHT / 10,
+            );
+          }
+        }),
+      );
     }
   };
 
   // imageの描画
   useEffect(() => {
     drawImage();
-  }, [context, currentPage, starPos, isReload, IMAGE_HEIGHT, isHide]);
+  }, [
+    context,
+    currentPage,
+    starPos,
+    isReload,
+    IMAGE_HEIGHT,
+    isHide,
+    positionList,
+  ]);
 
   useEventListener('mousemove', relativeCoords, canvasRef.current);
 
