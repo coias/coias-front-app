@@ -1,6 +1,7 @@
-import { React, useContext } from 'react';
-import { Button, Row, Col, Accordion } from 'react-bootstrap';
+import { React, useContext, useState, useCallback } from 'react';
+import { Button, Row, Col, Accordion, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import { BiAddToQueue } from 'react-icons/bi';
 import { PageContext } from './context';
 
 function ManualToolBar({
@@ -10,6 +11,7 @@ function ManualToolBar({
   setActiveKey,
 }) {
   const { currentPage } = useContext(PageContext);
+  const [checkedState, setCheckedState] = useState([]);
 
   const onClickAccordion = (index) => {
     setActiveKey(index);
@@ -17,8 +19,29 @@ function ManualToolBar({
 
   const onClickAddButton = () => {
     setPositionList([...positionList, []]);
+    setCheckedState([...checkedState, false]);
     setActiveKey(positionList.length);
   };
+
+  const removePositionListByCheckState = () => {
+    setPositionList(
+      positionList.filter((elementPosition, index) => !checkedState[index]),
+    );
+    setCheckedState(checkedState.filter((element) => !element));
+  };
+
+  const handleOnChange = (position) => {
+    const updatedCheckedState = checkedState.map((item, index) =>
+      index === position ? !item : item,
+    );
+
+    setCheckedState(updatedCheckedState);
+  };
+
+  const isEditMode = useCallback(
+    () => checkedState.find((element) => element === true),
+    [checkedState],
+  );
 
   return (
     <div>
@@ -30,12 +53,11 @@ function ManualToolBar({
           <p style={{ margin: 'auto 0' }}>天体一覧</p>
           <Button
             variant="success"
-            style={{ padding: '10px 20px' }}
             onClick={() => {
               onClickAddButton();
             }}
           >
-            +
+            <BiAddToQueue size={30} />
           </Button>
         </Col>
       </Row>
@@ -43,39 +65,57 @@ function ManualToolBar({
         <Row>
           <Accordion activeKey={`${activeKey}`}>
             {positionList.map((d, index) => (
-              <Accordion.Item
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                eventKey={index.toString()}
-                onClick={() => onClickAccordion(index)}
-              >
-                <Accordion.Header>#{index}</Accordion.Header>
-                <Accordion.Body>
-                  {d
-                    .sort((a, b) => {
-                      const keyA = a.page;
-                      const keyB = b.page;
-                      // Compare the 2 dates
-                      if (keyA < keyB) return -1;
-                      if (keyA > keyB) return 1;
-                      return 0;
-                    })
-                    .map((e) => (
-                      <li
-                        id="position"
-                        key={e.page}
-                        style={{
-                          listStyleType: 'none',
-                          color: e.page === currentPage ? 'red' : '',
-                        }}
-                      >{`${e.page + 1}. ${e.x},${e.y}`}</li>
-                    ))}
-                </Accordion.Body>
-              </Accordion.Item>
+              <div className="d-flex">
+                <Form.Check
+                  style={{ marginTop: '20px' }}
+                  onChange={() => handleOnChange(index)}
+                  checked={checkedState[index]}
+                />
+                <Accordion.Item
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  eventKey={index.toString()}
+                  onClick={() => onClickAccordion(index)}
+                  className="w-100"
+                >
+                  <Accordion.Header>#{index}</Accordion.Header>
+                  <Accordion.Body>
+                    {d
+                      .sort((a, b) => {
+                        const keyA = a.page;
+                        const keyB = b.page;
+                        // Compare the 2 dates
+                        if (keyA < keyB) return -1;
+                        if (keyA > keyB) return 1;
+                        return 0;
+                      })
+                      .map((e) => (
+                        <li
+                          id="position"
+                          key={e.page}
+                          style={{
+                            listStyleType: 'none',
+                            color: e.page === currentPage ? 'red' : '',
+                          }}
+                        >{`${e.page + 1}. ${e.x},${e.y}`}</li>
+                      ))}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </div>
             ))}
           </Accordion>
         </Row>
       </div>
+      {isEditMode() && (
+        <Button
+          variant="danger"
+          onClick={() => {
+            removePositionListByCheckState();
+          }}
+        >
+          削除する
+        </Button>
+      )}
     </div>
   );
 }
