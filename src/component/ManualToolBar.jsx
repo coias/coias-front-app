@@ -6,7 +6,6 @@ import { PageContext } from './context';
 function ManualToolBar({
   positionList,
   setPositionList,
-  setFirstPosition,
   activeKey,
   setActiveKey,
 }) {
@@ -19,7 +18,6 @@ function ManualToolBar({
   const onClickAddButton = () => {
     setPositionList([...positionList, []]);
     setActiveKey(positionList.length);
-    setFirstPosition({});
   };
 
   return (
@@ -85,9 +83,9 @@ function ManualToolBar({
 export default ManualToolBar;
 
 ManualToolBar.propTypes = {
-  positionList: PropTypes.arrayOf(PropTypes.object).isRequired,
+  positionList: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object))
+    .isRequired,
   setPositionList: PropTypes.func.isRequired,
-  setFirstPosition: PropTypes.func.isRequired,
   activeKey: PropTypes.number.isRequired,
   setActiveKey: PropTypes.func.isRequired,
 };

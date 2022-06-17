@@ -18,7 +18,7 @@ PanZoom.defaultProps = {
   setShow: () => {},
   positionList: [],
   disable: false,
-  setManualStarModalShow: false,
+  setManualStarModalShow: () => {},
   isZoomIn: false,
   setIsZoomIn: () => {},
 };
@@ -285,7 +285,7 @@ function PanZoom({
     if (
       isManual ||
       document.getElementById('selectButton').dataset.active !== 'true' ||
-      !disable
+      disable
     ) {
       return;
     }
@@ -353,6 +353,7 @@ function PanZoom({
           width: '100%',
           height: '100%',
           paddingTop: '24px',
+          paddingLeft: 0,
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -383,7 +384,7 @@ function PanZoom({
               onClick={() => {
                 if (isManual) {
                   saveEventPosition();
-                } else if (!isManual) {
+                } else {
                   changeColorOnClick();
                 }
               }}

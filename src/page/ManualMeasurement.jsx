@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
 import PropTypes from 'prop-types';
@@ -14,7 +14,6 @@ import ManualStarModal from '../component/ManualStarModalShow';
 
 function ManualMeasurement({
   imageURLs,
-  originalStarPos,
   setImageURLs,
   intervalRef,
   positionList,
@@ -29,7 +28,6 @@ function ManualMeasurement({
 }) {
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const [show, setShow] = useState(false);
-  const [firstPosition, setFirstPosition] = useState({});
   const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
@@ -213,6 +211,13 @@ function ManualMeasurement({
     if (e.keyCode === 37) setBack(!back);
   };
 
+  const checkIsPositionSelected = () => {
+    if (positionList[activeKey] && positionList[activeKey][currentPage]) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
@@ -235,60 +240,54 @@ function ManualMeasurement({
         onClickFinishButton={onClickFinishButton}
         isManual
       />
-      <Container fluid>
-        <Row>
-          <COIASToolBar
-            isSelect={isSelect}
-            setIsSelect={setIsSelect}
+      <Row>
+        <COIASToolBar
+          isSelect={isSelect}
+          setIsSelect={setIsSelect}
+          brightnessVal={brightnessVal}
+          contrastVal={contrastVal}
+          setBrightnessVal={setBrightnessVal}
+          setContrastVal={setContrastVal}
+          isReload={isReload}
+          setIsReload={setIsReload}
+          isHide={isHide}
+          setIsHide={setIsHide}
+        />
+        <Col sm={9} md={9}>
+          <PanZoom
+            imageURLs={imageURLs}
+            starPos={starPos}
+            setStarPos={setStarPos}
+            isManual
+            positionList={positionList}
+            show={show}
+            setShow={setShow}
             brightnessVal={brightnessVal}
             contrastVal={contrastVal}
-            setBrightnessVal={setBrightnessVal}
-            setContrastVal={setContrastVal}
             isReload={isReload}
-            setIsReload={setIsReload}
             isHide={isHide}
-            setIsHide={setIsHide}
+            setManualStarModalShow={setManualStarModalShow}
+            isZoomIn={isZoomIn}
+            setIsZoomIn={setIsZoomIn}
           />
-          <Col sm={9} md={9}>
-            <PanZoom
-              imageURLs={imageURLs}
-              originalStarPos={originalStarPos}
-              starPos={starPos}
-              setStarPos={setStarPos}
-              isManual
-              positionList={positionList}
-              setPositionList={setPositionList}
-              show={show}
-              setShow={setShow}
-              firstPosition={firstPosition}
-              setFirstPosition={setFirstPosition}
-              brightnessVal={brightnessVal}
-              contrastVal={contrastVal}
-              isReload={isReload}
-              isHide={isHide}
-              setManualStarModalShow={setManualStarModalShow}
-              isZoomIn={isZoomIn}
-              setIsZoomIn={setIsZoomIn}
-            />
-          </Col>
-          <Col sm={2} md={2}>
-            <ManualToolBar
-              positionList={positionList}
-              setPositionList={setPositionList}
-              setFirstPosition={setFirstPosition}
-              onClickFinishButton={onClickFinishButton}
-              activeKey={activeKey}
-              setActiveKey={setActiveKey}
-            />
-          </Col>
-        </Row>
-        <ConfirmationModal
-          show={show}
-          onHide={() => {
-            setShow(false);
-          }}
-        />
-      </Container>
+        </Col>
+        <Col sm={2} md={2}>
+          <ManualToolBar
+            positionList={positionList}
+            setPositionList={setPositionList}
+            onClickFinishButton={onClickFinishButton}
+            activeKey={activeKey}
+            setActiveKey={setActiveKey}
+          />
+        </Col>
+      </Row>
+      <ConfirmationModal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      />
+
       <ManualStarModal
         manualStarModalShow={manualStarModalShow}
         onHide={() => {
@@ -298,9 +297,7 @@ function ManualMeasurement({
         imageURLs={imageURLs}
         activeKey={activeKey}
         setPositionList={setPositionList}
-        isPositionSlected={
-          positionList[activeKey] && positionList[activeKey][currentPage]
-        }
+        isPositionSlected={checkIsPositionSelected()}
         onClickRemove={() => {
           if (window.confirm('本当に削除しますか？')) {
             const targetElementIndex = positionList[activeKey].findIndex(
@@ -323,10 +320,10 @@ export default ManualMeasurement;
 
 ManualMeasurement.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
-  positionList: PropTypes.arrayOf(PropTypes.array).isRequired,
+  positionList: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object))
+    .isRequired,
   setPositionList: PropTypes.func.isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   start: PropTypes.bool.isRequired,

@@ -167,6 +167,7 @@ function PlayMenu({
                     setCurrentPage(index);
                     setRadioValue(e.currentTarget.value);
                   }}
+                  className="d-flex align-items-center"
                 >
                   {name.name}
                 </ToggleButton>
@@ -203,7 +204,13 @@ function PlayMenu({
             />
           </ButtonGroup>
           {isManual ? (
-            <Button onClick={() => onClickFinishButton()}>探索終了</Button>
+            <Button
+              variant="danger"
+              size="lg"
+              onClick={() => onClickFinishButton()}
+            >
+              手動測定終了
+            </Button>
           ) : (
             <div>
               <Button
@@ -215,6 +222,7 @@ function PlayMenu({
                     ? setStarModalShow(true)
                     : setStarPos(originalStarPos);
                 }}
+                size="lg"
               >
                 {disable ? '再描画' : 'やり直す'}
               </Button>
@@ -224,8 +232,9 @@ function PlayMenu({
                   handleClick();
                 }}
                 disabled={disable}
+                size="lg"
               >
-                手動測定終了
+                探索終了
               </Button>
             </div>
           )}
@@ -238,7 +247,7 @@ function PlayMenu({
 PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
-  intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
+  intervalRef: PropTypes.objectOf(PropTypes.number).isRequired,
   setDefaultZoomRate: PropTypes.func,
   defaultZoomRate: PropTypes.number,
   start: PropTypes.bool.isRequired,
@@ -251,7 +260,7 @@ PlayMenu.propTypes = {
   disable: PropTypes.bool,
   setDisable: PropTypes.func,
   setStarModalShow: PropTypes.func,
-  originalStarPos: PropTypes.arrayOf(PropTypes.object),
+  originalStarPos: PropTypes.objectOf(PropTypes.object),
   handleClick: PropTypes.func,
   setStarPos: PropTypes.func,
 };
@@ -263,7 +272,7 @@ PlayMenu.defaultProps = {
   disable: true,
   setDisable: () => {},
   setStarModalShow: () => {},
-  originalStarPos: [],
+  originalStarPos: {},
   handleClick: () => {},
   setStarPos: () => {},
 };
