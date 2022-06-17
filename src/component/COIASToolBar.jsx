@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Col } from 'react-bootstrap';
 import { FaMousePointer } from 'react-icons/fa';
 import { AiOutlineReload } from 'react-icons/ai';
 import { BiHide } from 'react-icons/bi';
@@ -34,14 +34,13 @@ function COIASToolBar({
   setIsHide,
 }) {
   return (
-    <div
+    <Col
       className="flex-column"
       style={{
         display: 'flex',
         alignItems: 'center',
-        width: '50px',
-        marginLeft: '30px',
         marginTop: '30px',
+        padding: 0,
       }}
     >
       <Button
@@ -85,7 +84,7 @@ function COIASToolBar({
       </Button>
       <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
       <ContrastBar val={contrastVal} set={setContrastVal} />
-    </div>
+    </Col>
   );
 }
 

@@ -147,7 +147,8 @@ function Report() {
                 id="send-mpc"
                 style={{ listStyleType: 'none', color: 'white' }}
               >
-                {sendMpc.length > 0 && sendMpc.map((item) => <li>{item}</li>)}
+                {sendMpc.length > 0 &&
+                  sendMpc.map((item) => <li key={item}>{item}</li>)}
               </ul>
             </div>
           </Scrollbars>

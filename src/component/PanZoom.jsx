@@ -1,15 +1,12 @@
 // eslint-disable-next-line object-curly-newline
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import panzoom from 'panzoom';
-import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line object-curly-newline
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { PageContext, MousePositionContext } from './context';
-
-import StarsList from './StarsList';
 import MousePosition from './MousePosition';
-import NewStarModal from './NewStarModal';
+import useEventListener from '../hooks/useEventListener';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
@@ -18,32 +15,31 @@ PanZoom.defaultProps = {
   show: false,
   brightnessVal: 150,
   contrastVal: 150,
-  onClickFinishButton: () => {},
   setShow: () => {},
-  setPositionList: () => {},
   positionList: [],
-  firstPosition: {},
-  setFirstPosition: () => {},
+  disable: false,
+  setManualStarModalShow: () => {},
+  isZoomIn: false,
+  setIsZoomIn: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   starPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setStarPos: PropTypes.func.isRequired,
   isReload: PropTypes.bool,
   brightnessVal: PropTypes.number,
   contrastVal: PropTypes.number,
-  onClickFinishButton: PropTypes.func,
   isManual: PropTypes.bool,
   positionList: PropTypes.arrayOf(PropTypes.array),
-  setPositionList: PropTypes.func,
   setShow: PropTypes.func,
   show: PropTypes.bool,
-  firstPosition: PropTypes.objectOf(PropTypes.object),
-  setFirstPosition: PropTypes.func,
   isHide: PropTypes.bool.isRequired,
+  disable: PropTypes.bool,
+  setManualStarModalShow: PropTypes.func,
+  isZoomIn: PropTypes.bool,
+  setIsZoomIn: PropTypes.func,
 };
 
 function PanZoom({
@@ -51,18 +47,17 @@ function PanZoom({
   isReload,
   brightnessVal,
   contrastVal,
-  onClickFinishButton,
-  originalStarPos,
   starPos,
   setStarPos,
   isManual,
   positionList,
-  setPositionList,
   setShow,
   show,
-  firstPosition,
-  setFirstPosition,
   isHide,
+  disable,
+  setManualStarModalShow,
+  isZoomIn,
+  setIsZoomIn,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -73,12 +68,8 @@ function PanZoom({
   }
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
-  const { currentPage, setCurrentPage } = useContext(PageContext);
-  const [disable, setDisable] = useState(true);
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/Report');
-  };
+  const { currentPage } = useContext(PageContext);
+
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
   const ZPCanvas = useRef(null);
@@ -86,34 +77,30 @@ function PanZoom({
   const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
-  const [starModalShow, setStarModalShow] = useState(false);
+  // const [starModalShow, setStarModalShow] = useState(false);
   const [context, setContext] = useState();
-  const [canvasManualRectangleCoordinates, setCanvasManualRectanglCoordinates] =
-    useState([]);
-  const [isZoomIn, setIsZoomIn] = useState(false);
-  const [scale, setScale] = useState(0);
+  const [scale, setScale] = useState(1);
 
-  const onStarModalExit = () => {
-    setDisable(false);
-    Array.from(document.getElementsByClassName('form-check-input')).forEach(
-      (item) => {
-        // eslint-disable-next-line no-param-reassign
-        item.checked = false;
-      },
-    );
-    setStarModalShow(false);
-  };
+  function relativeCoords(event) {
+    const bounds = event.target.getBoundingClientRect();
+    const scaleX = event.target.width / bounds.width; // relationship bitmap vs. element for X
+    const scaleY = event.target.height / bounds.height; // relationship bitmap vs. element for Y
+
+    const x = (event.clientX - bounds.left) * scaleX; // scale mouse coordinates after they have
+    const y = (event.clientY - bounds.top) * scaleY; // been adjusted to be relative to element
+
+    setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
+  }
 
   // panzoomのコンストラクター
   useEffect(() => {
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
-      maxZoom: 3,
+      maxZoom: 100,
       minZoom: 1,
       zoomDoubleClickSpeed: 1,
-      transformOrigin: { x: 0, y: 0 },
+      transformOrigin: { x: 0.5, y: 0.5 },
 
       beforeWheel(e) {
-        // if (isManual) return false;
         const shouldIgnore = !e.altKey;
         setScale(ZPCanvas.current.getTransform().scale);
         return shouldIgnore;
@@ -121,17 +108,16 @@ function PanZoom({
       beforeMouseDown() {
         return 'ignore';
       },
+      filterKey() {
+        // don't let panzoom handle this event:
+        return true;
+      },
     });
-
-    const lastEl = positionList[positionList.length - 1];
-
-    if (lastEl)
-      ZPCanvas.current.smoothZoom(firstPosition.x, firstPosition.y, 1);
 
     return () => {
       ZPCanvas.current.dispose();
     };
-  }, [firstPosition, isReload]);
+  }, [isReload, isZoomIn]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -139,8 +125,7 @@ function PanZoom({
     setContext(canvasContext);
   });
 
-  // imageの描画
-  useEffect(() => {
+  const drawImage = () => {
     if (
       context &&
       Object.keys(starPos).length > 0 &&
@@ -154,6 +139,8 @@ function PanZoom({
 
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
+
+      context.imageSmoothingEnabled = false;
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       Object.keys(starPos)
         .map((key) => starPos[key])
@@ -202,7 +189,69 @@ function PanZoom({
             );
           }
         });
+      positionList.forEach((pos, i) =>
+        pos.forEach((manualPos) => {
+          if (manualPos.page === currentPage) {
+            const starNameList = Object.keys(starPos).filter((element) =>
+              element.startsWith('H'),
+            );
+            const headStarNumber = Number(
+              starNameList[starNameList.length - 1].replace('H', ''),
+            );
+
+            const getStarNumberStr = (index) =>
+              `H${'00000'.slice(-(6 - headStarNumber.toString().length))}${
+                headStarNumber + index + 1
+              }`; // rectangle setting
+
+            let linesize;
+            if (3 / scale > 1.5) {
+              linesize = 3 / scale;
+            } else {
+              linesize = 1.5;
+            }
+            const x = manualPos.x - RECT_WIDTH / scale / 2;
+            const y = manualPos.y - RECT_HEIGHT / scale / 2;
+            context.lineWidth = linesize;
+            // set stroke style depends on manualPos[4]
+            context.strokeStyle = 'blue';
+            context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
+
+            // font setting
+            let fontsize;
+            if (18 / scale > 12) {
+              fontsize = String(18 / scale);
+            } else {
+              fontsize = '12';
+            }
+
+            fontsize += 'px serif';
+            context.strokeStyle = 'blue';
+            context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.lineWidth = 3;
+            context.font = fontsize;
+            context.strokeText(
+              getStarNumberStr(i),
+              x - RECT_WIDTH / 10,
+              y - RECT_HEIGHT / 10,
+            );
+            context.fillStyle = 'white';
+            context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.fillText(
+              getStarNumberStr(i),
+              x - RECT_WIDTH / 10,
+              y - RECT_HEIGHT / 10,
+            );
+          }
+        }),
+      );
     }
+  };
+
+  // imageの描画
+  useEffect(() => {
+    drawImage();
   }, [
     context,
     currentPage,
@@ -210,35 +259,33 @@ function PanZoom({
     isReload,
     IMAGE_HEIGHT,
     isHide,
-    IMAGE_WIDTH,
-    scale,
+    positionList,
   ]);
 
-  // マウス移動時の挙動制御
-  useEffect(() => {
-    const canvasElem = canvasRef.current;
-    if (canvasElem === null) {
-      return;
-    }
-    function relativeCoords(event) {
-      const bounds = event.target.getBoundingClientRect();
-      const scaleX = event.target.width / bounds.width; // relationship bitmap vs. element for X
-      const scaleY = event.target.height / bounds.height; // relationship bitmap vs. element for Y
+  useEventListener('mousemove', relativeCoords, canvasRef.current);
 
-      const x = (event.clientX - bounds.left) * scaleX; // scale mouse coordinates after they have
-      const y = (event.clientY - bounds.top) * scaleY; // been adjusted to be relative to element
+  // 当たり判定を検出
+  function testHit(thisx, thisy, isManualOption = false) {
+    const point = currentMousePos;
+    const wHalf = RECT_WIDTH / 2;
+    const hHalf = RECT_HEIGHT / 2;
+    const starX = thisx;
+    const starY = isManualOption ? thisy : IMAGE_HEIGHT - thisy;
 
-      setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
-    }
-    canvasElem.addEventListener('mousemove', relativeCoords);
-  }, []);
+    return (
+      starX - wHalf <= point.x &&
+      point.x <= starX + wHalf &&
+      starY - hHalf <= point.y &&
+      point.y <= starY + hHalf
+    );
+  }
 
   // クリック時に色を変化させるイベントリスナー
   function changeColorOnClick() {
     if (
       isManual ||
       document.getElementById('selectButton').dataset.active !== 'true' ||
-      !disable
+      disable
     ) {
       return;
     }
@@ -246,23 +293,6 @@ function PanZoom({
     const isSelect = document.getElementById('selectButton').dataset.active;
     if (canvasElem === null || isSelect === 'false') {
       return;
-    }
-
-    const point = currentMousePos;
-
-    // 当たり判定を検出
-    function testHit(thisx, thisy) {
-      const wHalf = RECT_WIDTH / 2;
-      const hHalf = RECT_HEIGHT / 2;
-      const starX = thisx;
-      const starY = IMAGE_HEIGHT - thisy;
-
-      return (
-        starX - wHalf <= point.x &&
-        point.x <= starX + wHalf &&
-        starY - hHalf <= point.y &&
-        point.y <= starY + hHalf
-      );
     }
 
     window.hitIndex = '';
@@ -283,171 +313,91 @@ function PanZoom({
     setStarPos(newStarPos);
   }
 
-  function getForthPoint(coordinates) {
-    const A = coordinates[0];
-    const B = coordinates[1];
-    const C = coordinates[2];
-    const D = { x: C.x - (B.x - A.x), y: C.y - (B.y - A.y) };
-    coordinates.push(D);
-    context.beginPath();
-    context.arc(D.x, D.y, 1, 0, Math.PI * 2, false);
-    context.fill();
-    context.stroke();
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < 3; i++) {
-      context.lineWidth = 2;
-      context.beginPath();
-      context.moveTo(coordinates[i].x, coordinates[i].y);
-      context.lineTo(coordinates[i + 1].x, coordinates[i + 1].y);
-      context.stroke();
-    }
-    context.lineWidth = 2;
-    context.beginPath();
-    context.moveTo(D.x, D.y);
-    context.lineTo(A.x, A.y);
-    context.stroke();
-  }
-
-  function drawDot() {
-    if (!context) {
-      return;
-    }
-    // rectangle setting
-    const coordinate = currentMousePos;
-    setCanvasManualRectanglCoordinates([
-      ...canvasManualRectangleCoordinates,
-      coordinate,
-    ]);
-    canvasManualRectangleCoordinates.push(coordinate);
-    context.beginPath();
-    context.arc(coordinate.x, coordinate.y, 1, 0, Math.PI * 2, false);
-    context.fill();
-    context.stroke();
-
-    const cmrcLength = canvasManualRectangleCoordinates.length;
-    if (cmrcLength === 3) {
-      getForthPoint(canvasManualRectangleCoordinates);
-
-      setCanvasManualRectanglCoordinates([]);
-      setIsZoomIn(false);
-      setTimeout(() => {
-        if (currentPage < 4) {
-          setCurrentPage(currentPage + 1);
-        }
-      }, 3000);
-    }
-  }
-
   // 再測定時に天体の座標を保存する
   function saveEventPosition() {
-    const gval = document.getElementById('grabButton').dataset.active;
-    const gshouldIgnore = gval === 'true';
+    setIsZoomIn(true);
     const sval = document.getElementById('selectButton').dataset.active;
     const sshouldIgnore = sval === 'true';
 
-    if (positionList.length < 1 || gshouldIgnore || !sshouldIgnore) return;
+    if (positionList.length < 1 || !sshouldIgnore) return;
+
+    positionList.forEach((positions) =>
+      positions.forEach((position) => {
+        if (position && testHit(position.x, position.y, isManual)) {
+          console.log(position);
+        }
+      }),
+    );
 
     setShow(show);
-    const posListLen = positionList.length;
-    const lastEl = positionList[posListLen - 1];
 
-    if (lastEl.length === 5) return;
-
-    if (currentPage === 0 && lastEl.length === 0)
-      setFirstPosition(currentMousePos);
-    // copying the old datas array
-    const newArr = [...positionList];
-    newArr[posListLen - 1].push({ currentMousePos });
-
-    setPositionList([...newArr]);
-
-    setIsZoomIn(true);
+    setManualStarModalShow(true);
   }
 
+  const keyInvalid = (e) => {
+    const code = e.keyCode;
+    // eslint-disable-next-line default-case
+    switch (code) {
+      case 37: // ←
+      case 38: // ↑
+      case 39: // →
+      case 40: // ↓
+        e.preventDefault();
+    }
+  };
+
   return (
-    <Container fluid>
-      <Row className="star-canvas-container">
-        <Col sm={isManual ? 12 : 10}>
+    <Col>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          paddingTop: '24px',
+          paddingLeft: 0,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <MousePosition isZoomIn={isZoomIn} />
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <div
+          className="wrapper"
+          style={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'white',
+            position: 'relative',
+          }}
+          onKeyDown={keyInvalid}
+        >
           <div
+            ref={ZPCanvasRef}
             style={{
               width: '100%',
               height: '100%',
-              paddingTop: '24px',
-              position: 'relative',
-              overflow: 'hidden',
             }}
           >
-            <MousePosition />
-            <div
-              className="wrapper"
+            <canvas
+              ref={canvasRef}
+              width={`${IMAGE_WIDTH}px`}
+              height={`${IMAGE_HEIGHT}px`}
+              onClick={() => {
+                if (isManual) {
+                  saveEventPosition();
+                } else {
+                  changeColorOnClick();
+                }
+              }}
               style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'white',
-                position: 'relative',
+                filter: `contrast(${contrastVal - 50}%) brightness(${
+                  brightnessVal - 50
+                }%)`,
               }}
-            >
-              <div ref={ZPCanvasRef}>
-                <canvas
-                  ref={canvasRef}
-                  width={`${IMAGE_WIDTH}px`}
-                  height={`${IMAGE_HEIGHT}px`}
-                  onClick={() => {
-                    if (isManual && !isZoomIn) {
-                      saveEventPosition();
-                    } else if (isManual && isZoomIn) {
-                      drawDot();
-                    } else if (!isManual) {
-                      changeColorOnClick();
-                    }
-                  }}
-                  style={{
-                    filter: `contrast(${contrastVal - 50}%) brightness(${
-                      brightnessVal - 50
-                    }%)`,
-                  }}
-                />
-              </div>
-            </div>
+            />
           </div>
-        </Col>
-        {!isManual && (
-          <Col sm={2}>
-            <Button
-              variant="success"
-              onClick={() => {
-                setDisable(!disable);
-                // eslint-disable-next-line no-unused-expressions
-                disable ? setStarModalShow(true) : setStarPos(originalStarPos);
-              }}
-              style={{ width: '110px' }}
-              className="mb-3 p-3"
-            >
-              {disable ? '再描画' : 'やり直す'}
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                handleClick();
-              }}
-              style={{ width: '110px' }}
-              className="mb-3 p-3"
-              disabled={disable}
-            >
-              探索終了
-            </Button>
-            <StarsList disable={disable} />
-          </Col>
-        )}
-      </Row>
-      <NewStarModal
-        show={starModalShow}
-        onExit={() => {
-          onStarModalExit();
-        }}
-        onClickFinishButton={onClickFinishButton}
-      />
-    </Container>
+        </div>
+      </div>
+    </Col>
   );
 }
 

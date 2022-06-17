@@ -11,13 +11,32 @@ import {
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle } from 'react-icons/bi';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { PageContext } from './context';
 import SettingModal from './SettingModal';
 import HelpModal from './HelpModal';
 
-function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
+function PlayMenu({
+  imageNames,
+  setImageURLs,
+  intervalRef,
+  setDefaultZoomRate,
+  defaultZoomRate,
+  start,
+  next,
+  setNext,
+  back,
+  setBack,
+  onClickFinishButton,
+  isManual,
+  disable,
+  setDisable,
+  setStarModalShow,
+  originalStarPos,
+  handleClick,
+  setStarPos,
+}) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
   const [play, setPlay] = useState(false);
@@ -58,6 +77,19 @@ function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
     // eslint-disable-next-line no-param-reassign
     intervalRef.current = null;
   }, []);
+
+  useEffect(() => {
+    if (start) onClickBlinkStart();
+    if (!start) onClickBlinkStop();
+    if (next) {
+      onClickNext();
+      setNext(!next);
+    }
+    if (!back) {
+      onClickBack();
+      setBack(!back);
+    }
+  }, [start, next, back]);
 
   return (
     <Navbar bg="light" expand="lg">
@@ -115,8 +147,8 @@ function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
             </Nav.Item>
           </Nav>
         </Col>
-        <Col md={9}>
-          <ButtonGroup aria-label="Basic example">
+        <Col md={9} className="d-flex justify-content-between">
+          <ButtonGroup>
             {imageNames
               .filter((img) => img.visible)
               .map((name, index) => (
@@ -135,6 +167,7 @@ function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
                     setCurrentPage(index);
                     setRadioValue(e.currentTarget.value);
                   }}
+                  className="d-flex align-items-center"
                 >
                   {name.name}
                 </ToggleButton>
@@ -154,6 +187,8 @@ function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
               }}
               title="表示設定"
               imageURLs={imageNames}
+              setDefaultZoomRate={setDefaultZoomRate}
+              defaultZoomRate={defaultZoomRate}
             />
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
               <BiHelpCircle size={30} />
@@ -168,6 +203,41 @@ function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
               imageURLs={imageNames}
             />
           </ButtonGroup>
+          {isManual ? (
+            <Button
+              variant="danger"
+              size="lg"
+              onClick={() => onClickFinishButton()}
+            >
+              手動測定終了
+            </Button>
+          ) : (
+            <div>
+              <Button
+                variant="success"
+                onClick={() => {
+                  setDisable(!disable);
+                  // eslint-disable-next-line no-unused-expressions
+                  disable
+                    ? setStarModalShow(true)
+                    : setStarPos(originalStarPos);
+                }}
+                size="lg"
+              >
+                {disable ? '再描画' : 'やり直す'}
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  handleClick();
+                }}
+                disabled={disable}
+                size="lg"
+              >
+                探索終了
+              </Button>
+            </div>
+          )}
         </Col>
       </Container>
     </Navbar>
@@ -177,7 +247,34 @@ function PlayMenu({ imageNames, setImageURLs, intervalRef }) {
 PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
-  intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
+  intervalRef: PropTypes.objectOf(PropTypes.number).isRequired,
+  setDefaultZoomRate: PropTypes.func,
+  defaultZoomRate: PropTypes.number,
+  start: PropTypes.bool.isRequired,
+  next: PropTypes.bool.isRequired,
+  setNext: PropTypes.func.isRequired,
+  back: PropTypes.bool.isRequired,
+  setBack: PropTypes.func.isRequired,
+  onClickFinishButton: PropTypes.func.isRequired,
+  isManual: PropTypes.bool,
+  disable: PropTypes.bool,
+  setDisable: PropTypes.func,
+  setStarModalShow: PropTypes.func,
+  originalStarPos: PropTypes.objectOf(PropTypes.object),
+  handleClick: PropTypes.func,
+  setStarPos: PropTypes.func,
+};
+
+PlayMenu.defaultProps = {
+  setDefaultZoomRate: () => {},
+  defaultZoomRate: 0,
+  isManual: false,
+  disable: true,
+  setDisable: () => {},
+  setStarModalShow: () => {},
+  originalStarPos: {},
+  handleClick: () => {},
+  setStarPos: () => {},
 };
 
 export default PlayMenu;

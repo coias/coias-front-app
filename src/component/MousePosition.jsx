@@ -1,9 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { BiCurrentLocation } from 'react-icons/bi';
+import PropTypes from 'prop-types';
 import { MousePositionContext } from './context';
 
-function MousePosition() {
+function MousePosition({ isZoomIn }) {
   const { currentMousePos } = useContext(MousePositionContext);
+  const [prevMousePos, setPrevMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (!isZoomIn) {
+      setPrevMousePos(currentMousePos);
+    }
+  }, [currentMousePos]);
+
   return (
     <div
       style={{
@@ -19,9 +28,13 @@ function MousePosition() {
       }}
     >
       <BiCurrentLocation size={24} />
-      {`${currentMousePos.x},${currentMousePos.y}`}
+      {`${prevMousePos.x},${prevMousePos.y}`}
     </div>
   );
 }
 
 export default MousePosition;
+
+MousePosition.propTypes = {
+  isZoomIn: PropTypes.bool.isRequired,
+};

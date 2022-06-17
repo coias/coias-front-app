@@ -17,6 +17,10 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
     setDisable(true);
   }, [show]);
 
+  const keyPress = (e) => {
+    e.stopPropagation();
+  };
+
   const validation = () => /\d{1,6}/g.test(newName);
   return (
     <Modal
@@ -55,6 +59,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
                 setNewName(e.target.value);
               }}
               maxLength={6}
+              onKeyDown={keyPress}
             />
             <Form.Text className="text-muted">
               <p
