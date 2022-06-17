@@ -53,7 +53,10 @@ function ExplorePrepare({
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
-  const [fileNum, setFileNum] = useState(0);
+  const [errorFiles, setErrorFile] = useState([]);
+  /*
+    const [fileNum, setFileNum] = useState(0);
+  */
 
   const handleSelect = (e) => setVal(e.target.value);
 
@@ -105,14 +108,18 @@ function ExplorePrepare({
     const { files } = fileInput.current;
     const data = new FormData();
     const filesForProps = [];
+    setErrorFile([]);
 
-    setFileNum(files.length);
+    /*  setFileNum(files.length); */
 
     let file;
     let tmp;
 
     const pattern =
       /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/gm;
+    /* const addErrorFile = (targetFile) => {
+      setErrorFile([...errorFiles, `${targetFile.name}`]);
+    }; */
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < files.length; i++) {
@@ -134,19 +141,28 @@ function ExplorePrepare({
       }
 
       if (!isMatch) {
+        setErrorFile([...errorFiles, `${file.name}`]);
+        console.log(errorFiles.map((element) => <li>${element}</li>));
+
         setErrorContent(`${file.name}のファイル名の形式が違います`);
-        setShowError(true);
-        handleClose();
+      }
+
+      /* if (!isMatch) {
+        setErrorContent(`${file.name}のファイル名の形式が違います`);
+        // setShowError(true); //左下にポップアップさせる文
+        // handleClose(); //閉じちゃうやつ
         return null;
       }
+      */
       data.append('files', file, file.name);
       filesForProps.push(file.name);
+      setErrorContent(``);
     }
 
     setFileNames(filesForProps);
 
     const postFiles = async () => {
-      handleClose();
+      // handleClose();
       document.getElementById('current-process').innerHTML =
         'アップロード中...';
       setLoading(true);
@@ -256,7 +272,7 @@ function ExplorePrepare({
     if (!result) {
       return;
     }
-    // ビニングマスク（size: 2 or 4）
+    // ビニングマスク（size: 2 or 4）自動の時は2で固定
     result = await onProcessExecute(
       `${uri}startsearch2R?binning=${size}`,
       `ビニングマスク（${size === 2 ? '2x2' : '4x4'}）`,
@@ -469,17 +485,32 @@ function ExplorePrepare({
 
         <Form onSubmit={handleSubmit} className="m-3">
           <InputGroup hasValidation>
-            <Form.Control
-              type="file"
-              ref={fileInput}
-              onChange={handleChange}
-              isInvalid={valid}
-              multiple
-            />
+            <Row>
+              <Form.Control
+                type="file"
+                ref={fileInput}
+                onChange={handleChange}
+                isInvalid={valid}
+                multiple
+              />
+            </Row>
+            {/*
             <Form.Control.Feedback type="invalid">
               ファイルを選択してください。ファイルは{fileNum}
               個選択できます。
             </Form.Control.Feedback>
+              */}
+            <Row>
+              {errorFiles.map((element) => (
+                <p
+                  style={{
+                    color: element.startsWith('') && 'red',
+                  }}
+                >
+                  {element}
+                </p>
+              ))}
+            </Row>
           </InputGroup>
           <Form.Check
             className="m-3"
