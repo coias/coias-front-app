@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import ManualToolBar from '../component/ManualToolBar';
 import PanZoom from '../component/PanZoom';
 import { PageContext, StarPositionContext } from '../component/context';
-import ConfirmationModal from '../component/ConfirmationModal';
 import COIASToolBar from '../component/COIASToolBar';
 import PlayMenu from '../component/PlayMenu';
 import ManualStarModal from '../component/ManualStarModalShow';
@@ -83,31 +82,37 @@ function ManualMeasurement({
   useEffect(() => {
     // 画面表示時、１回だけ処理(unknown_disp.txtの処理)
     // unknown_disp.txtを取得
-    const getDisp = async () => {
+    const getReDisp = async () => {
       setLoading(true);
 
-      const res1 = await axios.put(`${reactApiUri}redisp`);
-      const reDisp = await res1.data.result;
       const toObject = {};
+      await axios
+        .put(`${reactApiUri}redisp`)
+        .then((res) => {
+          const reDisp = res.data.result;
 
-      // 選択を同期させるため、オブジェクトに変更
-      reDisp.forEach((item) => {
-        let star = toObject[item[0]];
-        if (!star) {
-          toObject[item[0]] = {
-            name: item[0],
-            page: [null, null, null, null, null],
-            isSelected: false,
-            isKnown: false,
-          };
-          star = toObject[item[0]];
-        }
-        star.page[item[1]] = {
-          name: item[0],
-          x: parseFloat(item[2], 10),
-          y: parseFloat(item[3], 10),
-        };
-      });
+          // 選択を同期させるため、オブジェクトに変更
+          reDisp.forEach((item) => {
+            let star = toObject[item[0]];
+            if (!star) {
+              toObject[item[0]] = {
+                name: item[0],
+                page: [null, null, null, null, null],
+                isSelected: false,
+                isKnown: false,
+              };
+              star = toObject[item[0]];
+            }
+            star.page[item[1]] = {
+              name: item[0],
+              x: parseFloat(item[2], 10),
+              y: parseFloat(item[3], 10),
+            };
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
       setStarPos(toObject);
       setOriginalStarPos(toObject);
@@ -129,7 +134,7 @@ function ManualMeasurement({
               i[1].naturalWidth !== 0,
           ).length === window.images.length;
         if (window.imageLoadComplete) {
-          getDisp();
+          getReDisp();
         }
       };
       masked.onload = onLoad;
@@ -281,12 +286,6 @@ function ManualMeasurement({
           />
         </Col>
       </Row>
-      <ConfirmationModal
-        show={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      />
 
       <ManualStarModal
         manualStarModalShow={manualStarModalShow}
