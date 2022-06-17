@@ -12,7 +12,8 @@ function ManualStarModal({
   activeKey,
   setPositionList,
   onClickNext,
-  onClickRetry,
+  onClickRemove,
+  isPositionSlected,
 }) {
   const [context, setContext] = useState();
   const canvasRef = useRef(null);
@@ -24,45 +25,22 @@ function ManualStarModal({
   const [centerCoordinate, setCenterCoodinate] = useState(null);
 
   function translateCooditareModalToActual(modalCoordinate) {
-    const relativeX = (modalCoordinate.x * defaultZoomRate) / 500;
-    const relativeY = (modalCoordinate.y * defaultZoomRate) / 500;
+    const canvasLeftUpperPositionX = centerCoordinate.x - defaultZoomRate / 2;
+    const canvasLeftUpperPositionY = centerCoordinate.y - defaultZoomRate / 2;
 
-    const actualCoordinate = { x: 0, y: 0 };
-    const rectangleHalflength = defaultZoomRate / 2;
-    if (relativeX < rectangleHalflength && relativeY < rectangleHalflength) {
-      actualCoordinate.x = centerCoordinate.x - (defaultZoomRate - relativeX);
-      actualCoordinate.y = centerCoordinate.y - (defaultZoomRate - relativeY);
-    } else if (
-      relativeX > rectangleHalflength &&
-      relativeY < rectangleHalflength
-    ) {
-      actualCoordinate.x = centerCoordinate.x + (defaultZoomRate + relativeX);
-      actualCoordinate.y = centerCoordinate.y - (defaultZoomRate - relativeY);
-    } else if (
-      relativeX > rectangleHalflength &&
-      relativeY > rectangleHalflength
-    ) {
-      actualCoordinate.x = centerCoordinate.x + (defaultZoomRate + relativeX);
-      actualCoordinate.y = centerCoordinate.y + (defaultZoomRate + relativeY);
-    } else if (
-      relativeX < rectangleHalflength &&
-      relativeY > rectangleHalflength
-    ) {
-      actualCoordinate.x = centerCoordinate.x + (defaultZoomRate + relativeX);
-      actualCoordinate.y = centerCoordinate.y - (defaultZoomRate - relativeY);
-    }
+    const canvasXRelPos = modalCoordinate.x / 500;
 
-    return actualCoordinate;
+    return {
+      x: Math.floor(canvasLeftUpperPositionX + canvasXRelPos * defaultZoomRate),
+      y: Math.floor(canvasLeftUpperPositionY + canvasXRelPos * defaultZoomRate),
+    };
   }
 
-  function getForthPoint(coordinates) {
+  function getForthPoint(coordinates, isDone) {
     const A = coordinates[0];
     const B = coordinates[1];
     const C = coordinates[2];
-    console.log(A);
-    console.log(B);
-    console.log(C);
-    console.log('==================');
+
     if (A === B || B === C || A === C) {
       console.log('no');
     }
@@ -107,57 +85,59 @@ function ManualStarModal({
     };
 
     context.beginPath();
-    context.arc(rectPos4.x, rectPos4.y, 10, 0, Math.PI * 2, false);
+    context.arc(rectPos4.x, rectPos4.y, 5, 0, Math.PI * 2, false);
     context.fill();
     context.strokeStyle = 'gray';
 
     context.stroke();
 
-    setPositionList((prevPositionList) => {
-      const prevPositionListCopy = [...prevPositionList];
-      const activeArray = prevPositionListCopy[activeKey];
-      const actualCenterCoordinate = translateCooditareModalToActual(center);
-      const actualA = translateCooditareModalToActual(rectPos1);
-      const actualB = translateCooditareModalToActual(rectPos2);
-      const actualC = translateCooditareModalToActual(rectPos3);
-      const actualD = translateCooditareModalToActual(rectPos4);
-      const value = {
-        page: currentPage,
-        x: Math.floor(actualCenterCoordinate.x),
-        y: Math.floor(actualCenterCoordinate.y),
-        width,
-        height,
-        center,
-        angle,
-        actualA,
-        actualB,
-        actualC,
-        actualD,
-      };
-      const targetIndex = activeArray.findIndex(
-        (activeElement) => activeElement.page === currentPage,
-      );
-      if (targetIndex === -1) {
-        prevPositionListCopy[activeKey].splice(currentPage, 0, value);
-      } else {
-        prevPositionListCopy[activeKey].splice(targetIndex, 1, value);
-      }
+    if (isDone) {
+      setPositionList((prevPositionList) => {
+        const prevPositionListCopy = [...prevPositionList];
+        const activeArray = prevPositionListCopy[activeKey];
+        const actualCenterCoordinate = translateCooditareModalToActual(center);
+        const actualA = translateCooditareModalToActual(rectPos1);
+        const actualB = translateCooditareModalToActual(rectPos2);
+        const actualC = translateCooditareModalToActual(rectPos3);
+        const actualD = translateCooditareModalToActual(rectPos4);
+        const value = {
+          page: currentPage,
+          x: Math.floor(actualCenterCoordinate.x),
+          y: Math.floor(actualCenterCoordinate.y),
+          width,
+          height,
+          center: actualCenterCoordinate,
+          angle,
+          actualA,
+          actualB,
+          actualC,
+          actualD,
+        };
+        const targetIndex = activeArray.findIndex(
+          (activeElement) => activeElement.page === currentPage,
+        );
+        if (targetIndex === -1) {
+          prevPositionListCopy[activeKey].splice(currentPage, 0, value);
+        } else {
+          prevPositionListCopy[activeKey].splice(targetIndex, 1, value);
+        }
 
-      return prevPositionListCopy;
-    });
+        return prevPositionListCopy;
+      });
+    }
 
     const finalCoordinates = [rectPos1, rectPos2, rectPos3, rectPos4];
     context.fillStyle = 'red';
     context.strokeStyle = 'red';
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < 3; i++) {
-      context.lineWidth = 10;
+      context.lineWidth = 5;
       context.beginPath();
       context.moveTo(finalCoordinates[i].x, finalCoordinates[i].y);
       context.lineTo(finalCoordinates[i + 1].x, finalCoordinates[i + 1].y);
       context.stroke();
     }
-    context.lineWidth = 10;
+    context.lineWidth = 5;
     context.beginPath();
     context.moveTo(rectPos4.x, rectPos4.y);
     context.lineTo(rectPos1.x, rectPos1.y);
@@ -176,7 +156,7 @@ function ManualStarModal({
     ]);
     canvasManualRectangleCoordinates.push(coordinate);
     context.beginPath();
-    context.arc(coordinate.x, coordinate.y, 10, 0, Math.PI * 2, false);
+    context.arc(coordinate.x, coordinate.y, 5, 0, Math.PI * 2, false);
     context.fillStyle = 'red';
     context.strokeStyle = 'red';
     context.fill();
@@ -184,7 +164,7 @@ function ManualStarModal({
 
     const cmrcLength = canvasManualRectangleCoordinates.length;
     if (cmrcLength === 3) {
-      getForthPoint(canvasManualRectangleCoordinates);
+      getForthPoint(canvasManualRectangleCoordinates, false);
     }
   }
 
@@ -277,25 +257,34 @@ function ManualStarModal({
                 : () => drawDot()
             }
           />
+          {isPositionSlected && (
+            <Button
+              variant="danger"
+              onClick={() => {
+                onClickRemove();
+              }}
+            >
+              消す
+            </Button>
+          )}
         </div>
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between">
         <Button
           variant="danger"
           onClick={() => {
-            onClickRetry();
             drawImage();
-            setCanvasManualRectanglCoordinates([]);
           }}
         >
           やり直す
         </Button>
+
         <Button
           variant="success"
           disabled={canvasManualRectangleCoordinates.length !== 3}
           onClick={() => {
             onClickNext();
-            setCanvasManualRectanglCoordinates([]);
+            getForthPoint(canvasManualRectangleCoordinates, true);
             setCenterCoodinate(null);
           }}
         >
@@ -316,5 +305,6 @@ ManualStarModal.propTypes = {
   activeKey: PropTypes.number.isRequired,
   setPositionList: PropTypes.arrayOf(PropTypes.array).isRequired,
   onClickNext: PropTypes.func.isRequired,
-  onClickRetry: PropTypes.func.isRequired,
+  onClickRemove: PropTypes.func.isRequired,
+  isPositionSlected: PropTypes.bool.isRequired,
 };

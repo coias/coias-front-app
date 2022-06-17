@@ -10,6 +10,7 @@ import { PageContext, StarPositionContext } from '../component/context';
 import ConfirmationModal from '../component/ConfirmationModal';
 import COIASToolBar from '../component/COIASToolBar';
 import PlayMenu from '../component/PlayMenu';
+import ManualStarModal from '../component/ManualStarModalShow';
 
 function ManualMeasurement({
   imageURLs,
@@ -29,8 +30,7 @@ function ManualMeasurement({
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const [show, setShow] = useState(false);
   const [firstPosition, setFirstPosition] = useState({});
-  const [isGrab, setIsGrab] = useState(false);
-  const [isSelect, setIsSelect] = useState(false);
+  const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
@@ -38,7 +38,10 @@ function ManualMeasurement({
   const [activeKey, setActiveKey] = useState(0);
   const [defaultZoomRate, setDefaultZoomRate] = useState(40);
   const [loading, setLoading] = useState(false);
-  const { setCurrentPage } = useContext(PageContext);
+  const [manualStarModalShow, setManualStarModalShow] = useState(false);
+  const [isZoomIn, setIsZoomIn] = useState(false);
+
+  const { currentPage, setCurrentPage } = useContext(PageContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -46,7 +49,6 @@ function ManualMeasurement({
   // 画面表示時、１回だけ処理(copyの実行、各画像のURL取得)
   // 画面表示時、１回だけ処理(unknown_disp.txtの処理)
   useEffect(() => {
-    setIsGrab(true);
     const toObjectArray = [];
     clearInterval(intervalRef.current);
     // eslint-disable-next-line no-param-reassign
@@ -86,12 +88,12 @@ function ManualMeasurement({
     const getDisp = async () => {
       setLoading(true);
 
-      const res1 = await axios.get(`${reactApiUri}unknown_disp`);
-      const unknownDisp = await res1.data.result;
+      const res1 = await axios.put(`${reactApiUri}redisp`);
+      const reDisp = await res1.data.result;
       const toObject = {};
 
       // 選択を同期させるため、オブジェクトに変更
-      unknownDisp.forEach((item) => {
+      reDisp.forEach((item) => {
         let star = toObject[item[0]];
         if (!star) {
           toObject[item[0]] = {
@@ -107,57 +109,6 @@ function ManualMeasurement({
           x: parseFloat(item[2], 10),
           y: parseFloat(item[3], 10),
         };
-      });
-
-      const res2 = await axios
-        .get(`${reactApiUri}karifugo_disp`)
-        .catch(() => {});
-      const res3 = await axios
-        .get(`${reactApiUri}numbered_disp`)
-        .catch(() => {});
-      if (res2 !== undefined) {
-        const knownDisp = await res2.data.result;
-        knownDisp.forEach((item) => {
-          let star = toObject[item[0]];
-          if (!star) {
-            toObject[item[0]] = {
-              name: item[0],
-              page: [null, null, null, null, null],
-              isSelected: false,
-              isKnown: true,
-            };
-            star = toObject[item[0]];
-          }
-          star.page[item[1]] = {
-            name: item[0],
-            x: parseFloat(item[2], 10),
-            y: parseFloat(item[3], 10),
-          };
-        });
-      }
-      if (res3 !== undefined) {
-        const knownDisp = await res3.data.result;
-        knownDisp.forEach((item) => {
-          let star = toObject[item[0]];
-          if (!star) {
-            toObject[item[0]] = {
-              name: item[0],
-              page: [null, null, null, null, null],
-              isSelected: false,
-              isKnown: true,
-            };
-            star = toObject[item[0]];
-          }
-          star.page[item[1]] = {
-            name: item[0],
-            x: parseFloat(item[2], 10),
-            y: parseFloat(item[3], 10),
-          };
-        });
-      }
-
-      positionList.forEach((item) => {
-        console.log(item);
       });
 
       setStarPos(toObject);
@@ -211,6 +162,8 @@ function ManualMeasurement({
         headStarNumber + index + 1
       }`;
 
+    console.log(positionList[0][0]);
+
     const result = positionList.map((list, i) =>
       list.map(
         (pos) =>
@@ -241,6 +194,19 @@ function ManualMeasurement({
     */
   };
 
+  const removePositionByIndex = (targetListIndex, targetElementIndex) => {
+    setPositionList(
+      positionList.map((position, index) => {
+        if (index === targetListIndex) {
+          return position.filter(
+            (elementPosition) => targetElementIndex !== elementPosition.page,
+          );
+        }
+        return position;
+      }),
+    );
+  };
+
   const keyPress = (e) => {
     if (e.keyCode === 83) setStart(!start);
     if (e.keyCode === 39) setNext(!next);
@@ -266,12 +232,12 @@ function ManualMeasurement({
         setNext={setNext}
         back={back}
         setBack={setBack}
+        onClickFinishButton={onClickFinishButton}
+        isManual
       />
       <Container fluid>
         <Row>
           <COIASToolBar
-            isGrab={isGrab}
-            setIsGrab={setIsGrab}
             isSelect={isSelect}
             setIsSelect={setIsSelect}
             brightnessVal={brightnessVal}
@@ -299,10 +265,10 @@ function ManualMeasurement({
               brightnessVal={brightnessVal}
               contrastVal={contrastVal}
               isReload={isReload}
-              setIsHide={setIsHide}
               isHide={isHide}
-              activeKey={activeKey}
-              defaultZoomRate={defaultZoomRate}
+              setManualStarModalShow={setManualStarModalShow}
+              isZoomIn={isZoomIn}
+              setIsZoomIn={setIsZoomIn}
             />
           </Col>
           <Col sm={2} md={2}>
@@ -323,6 +289,32 @@ function ManualMeasurement({
           }}
         />
       </Container>
+      <ManualStarModal
+        manualStarModalShow={manualStarModalShow}
+        onHide={() => {
+          setManualStarModalShow(false);
+        }}
+        defaultZoomRate={defaultZoomRate}
+        imageURLs={imageURLs}
+        activeKey={activeKey}
+        setPositionList={setPositionList}
+        isPositionSlected={
+          positionList[activeKey] && positionList[activeKey][currentPage]
+        }
+        onClickRemove={() => {
+          if (window.confirm('本当に削除しますか？')) {
+            const targetElementIndex = positionList[activeKey].findIndex(
+              (activeArray) => activeArray.page === currentPage,
+            );
+            removePositionByIndex(activeKey, targetElementIndex);
+            setManualStarModalShow(false);
+          }
+        }}
+        onClickNext={() => {
+          setIsZoomIn(false);
+          setManualStarModalShow(false);
+        }}
+      />
     </div>
   );
 }

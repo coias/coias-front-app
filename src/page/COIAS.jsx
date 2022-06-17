@@ -2,11 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
 import { StarPositionContext, PageContext } from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
 import LoadingButton from '../component/LoadingButton';
+import StarsList from '../component/StarsList';
+import NewStarModal from '../component/NewStarModal';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
@@ -42,8 +45,14 @@ function COIAS({
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
   const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(true);
+  const [starModalShow, setStarModalShow] = useState(false);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate('/Report');
+  };
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -246,6 +255,17 @@ function COIAS({
     if (e.keyCode === 37) setBack(!back);
   };
 
+  const onStarModalExit = () => {
+    setDisable(false);
+    Array.from(document.getElementsByClassName('form-check-input')).forEach(
+      (item) => {
+        // eslint-disable-next-line no-param-reassign
+        item.checked = false;
+      },
+    );
+    setStarModalShow(false);
+  };
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
@@ -263,6 +283,13 @@ function COIAS({
         setNext={setNext}
         back={back}
         setBack={setBack}
+        onClickFinishButton={onClickFinishButton}
+        disable={disable}
+        setDisable={setDisable}
+        setStarModalShow={setStarModalShow}
+        originalStarPos={originalStarPos}
+        handleClick={handleClick}
+        setStarPos={setStarPos}
       />
       <Container fluid>
         <Row>
@@ -278,7 +305,7 @@ function COIAS({
             isHide={isHide}
             setIsHide={setIsHide}
           />
-          <Col md={11}>
+          <Col md={10}>
             <PanZoom
               imageURLs={imageURLs}
               isReload={isReload}
@@ -289,11 +316,23 @@ function COIAS({
               starPos={starPos}
               setStarPos={setStarPos}
               isHide={isHide}
+              setStarModalShow={starModalShow}
+              setDisable={setDisable}
             />
+          </Col>
+          <Col md={1} sm={1}>
+            <StarsList disable={disable} />
           </Col>
         </Row>
       </Container>
       <LoadingButton loading={loading} />
+      <NewStarModal
+        show={starModalShow}
+        onExit={() => {
+          onStarModalExit();
+        }}
+        onClickFinishButton={onClickFinishButton}
+      />
     </div>
   );
 }

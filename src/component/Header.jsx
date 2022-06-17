@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Row, Col } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+import { MdOutlineLockOpen, MdOutlineLock } from 'react-icons/md';
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line no-use-before-define
@@ -19,6 +20,7 @@ function Header({ start, setStart, next, setNext, back, setBack }) {
     if (e.keyCode === 39) setNext(!next);
     if (e.keyCode === 37) setBack(!back);
   };
+  const isLocked = true;
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div onKeyDown={keyPress} tabIndex={-1}>
@@ -85,7 +87,20 @@ function Header({ start, setStart, next, setNext, back, setBack }) {
               style={{ textDecoration: 'none', color: 'gray' }}
               onClick={(e) => e.preventDefault() /* do nothing. */}
             >
-              <h3 style={{ paddingLeft: 35 }}>レポート</h3>
+              <div className="d-flex" style={{ paddingLeft: 35 }}>
+                <h3 style={{ position: 'absolute' }}>レポート</h3>
+                {isLocked ? (
+                  <MdOutlineLock
+                    size={26}
+                    style={{ position: 'relative', top: -15, left: 100 }}
+                  />
+                ) : (
+                  <MdOutlineLockOpen
+                    size={26}
+                    style={{ position: 'relative', top: -15, left: 100 }}
+                  />
+                )}
+              </div>
             </NavLink>
           </Nav>
         </Navbar.Collapse>

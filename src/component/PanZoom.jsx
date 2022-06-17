@@ -1,16 +1,11 @@
 // eslint-disable-next-line object-curly-newline
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import panzoom from 'panzoom';
-import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line object-curly-newline
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { PageContext, MousePositionContext } from './context';
-
-import StarsList from './StarsList';
 import MousePosition from './MousePosition';
-import NewStarModal from './NewStarModal';
-import ManualStarModal from './ManualStarModalShow';
 import useEventListener from '../hooks/useEventListener';
 
 // eslint-disable-next-line no-use-before-define
@@ -20,32 +15,31 @@ PanZoom.defaultProps = {
   show: false,
   brightnessVal: 150,
   contrastVal: 150,
-  onClickFinishButton: () => {},
   setShow: () => {},
-  setPositionList: () => {},
   positionList: [],
-  activeKey: 0,
-  defaultZoomRate: 20,
+  disable: false,
+  setManualStarModalShow: false,
+  isZoomIn: false,
+  setIsZoomIn: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   starPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setStarPos: PropTypes.func.isRequired,
   isReload: PropTypes.bool,
   brightnessVal: PropTypes.number,
   contrastVal: PropTypes.number,
-  onClickFinishButton: PropTypes.func,
   isManual: PropTypes.bool,
   positionList: PropTypes.arrayOf(PropTypes.array),
-  setPositionList: PropTypes.func,
   setShow: PropTypes.func,
   show: PropTypes.bool,
   isHide: PropTypes.bool.isRequired,
-  activeKey: PropTypes.number,
-  defaultZoomRate: PropTypes.number,
+  disable: PropTypes.bool,
+  setManualStarModalShow: PropTypes.func,
+  isZoomIn: PropTypes.bool,
+  setIsZoomIn: PropTypes.func,
 };
 
 function PanZoom({
@@ -53,18 +47,17 @@ function PanZoom({
   isReload,
   brightnessVal,
   contrastVal,
-  onClickFinishButton,
-  originalStarPos,
   starPos,
   setStarPos,
   isManual,
   positionList,
-  setPositionList,
   setShow,
   show,
   isHide,
-  activeKey,
-  defaultZoomRate,
+  disable,
+  setManualStarModalShow,
+  isZoomIn,
+  setIsZoomIn,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -75,12 +68,8 @@ function PanZoom({
   }
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
-  const { currentPage, setCurrentPage } = useContext(PageContext);
-  const [disable, setDisable] = useState(true);
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/Report');
-  };
+  const { currentPage } = useContext(PageContext);
+
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
   const ZPCanvas = useRef(null);
@@ -88,10 +77,8 @@ function PanZoom({
   const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
-  const [starModalShow, setStarModalShow] = useState(false);
+  // const [starModalShow, setStarModalShow] = useState(false);
   const [context, setContext] = useState();
-  const [isZoomIn, setIsZoomIn] = useState(false);
-  const [manualStarModalShow, setManualStarModalShow] = useState(false);
   const [scale, setScale] = useState(1);
 
   function relativeCoords(event) {
@@ -104,30 +91,6 @@ function PanZoom({
 
     setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
   }
-
-  const onStarModalExit = () => {
-    setDisable(false);
-    Array.from(document.getElementsByClassName('form-check-input')).forEach(
-      (item) => {
-        // eslint-disable-next-line no-param-reassign
-        item.checked = false;
-      },
-    );
-    setStarModalShow(false);
-  };
-
-  const removePositionByIndex = (targetListIndex, targetElementIndex) => {
-    setPositionList(
-      positionList.map((position, index) => {
-        if (index === targetListIndex) {
-          return position.filter(
-            (elementPosition) => targetElementIndex !== elementPosition.page,
-          );
-        }
-        return position;
-      }),
-    );
-  };
 
   // panzoomのコンストラクター
   useEffect(() => {
@@ -301,6 +264,22 @@ function PanZoom({
 
   useEventListener('mousemove', relativeCoords, canvasRef.current);
 
+  // 当たり判定を検出
+  function testHit(thisx, thisy, isManualOption = false) {
+    const point = currentMousePos;
+    const wHalf = RECT_WIDTH / 2;
+    const hHalf = RECT_HEIGHT / 2;
+    const starX = thisx;
+    const starY = isManualOption ? thisy : IMAGE_HEIGHT - thisy;
+
+    return (
+      starX - wHalf <= point.x &&
+      point.x <= starX + wHalf &&
+      starY - hHalf <= point.y &&
+      point.y <= starY + hHalf
+    );
+  }
+
   // クリック時に色を変化させるイベントリスナー
   function changeColorOnClick() {
     if (
@@ -314,23 +293,6 @@ function PanZoom({
     const isSelect = document.getElementById('selectButton').dataset.active;
     if (canvasElem === null || isSelect === 'false') {
       return;
-    }
-
-    const point = currentMousePos;
-
-    // 当たり判定を検出
-    function testHit(thisx, thisy) {
-      const wHalf = RECT_WIDTH / 2;
-      const hHalf = RECT_HEIGHT / 2;
-      const starX = thisx;
-      const starY = IMAGE_HEIGHT - thisy;
-
-      return (
-        starX - wHalf <= point.x &&
-        point.x <= starX + wHalf &&
-        starY - hHalf <= point.y &&
-        point.y <= starY + hHalf
-      );
     }
 
     window.hitIndex = '';
@@ -353,35 +315,25 @@ function PanZoom({
 
   // 再測定時に天体の座標を保存する
   function saveEventPosition() {
+    setIsZoomIn(true);
     const sval = document.getElementById('selectButton').dataset.active;
     const sshouldIgnore = sval === 'true';
 
     if (positionList.length < 1 || !sshouldIgnore) return;
 
-    setShow(show);
-    const newArr = [...positionList];
-
-    const activeArray = newArr[activeKey];
-    const targetIndex = activeArray.findIndex(
-      (activeElement) => activeElement.page === currentPage,
+    positionList.forEach((positions) =>
+      positions.forEach((position) => {
+        if (position && testHit(position.x, position.y, isManual)) {
+          console.log(position);
+        }
+      }),
     );
 
-    const value = {
-      page: currentPage,
-      x: currentMousePos.x,
-      y: currentMousePos.y,
-    };
-
-    if (targetIndex === -1) {
-      activeArray.splice(currentPage, 0, value);
-    } else {
-      activeArray.splice(targetIndex, 1, value);
-    }
-
-    setPositionList([...newArr]);
+    setShow(show);
 
     setManualStarModalShow(true);
   }
+
   const keyInvalid = (e) => {
     const code = e.keyCode;
     // eslint-disable-next-line default-case
@@ -395,119 +347,56 @@ function PanZoom({
   };
 
   return (
-    <Container fluid>
-      <Row className="star-canvas-container">
-        <Col sm={isManual ? 12 : 10}>
+    <Col>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          paddingTop: '24px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <MousePosition isZoomIn={isZoomIn} />
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <div
+          className="wrapper"
+          style={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'white',
+            position: 'relative',
+          }}
+          onKeyDown={keyInvalid}
+        >
           <div
+            ref={ZPCanvasRef}
             style={{
               width: '100%',
               height: '100%',
-              paddingTop: '24px',
-              position: 'relative',
-              overflow: 'hidden',
             }}
           >
-            <MousePosition />
-            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-            <div
-              className="wrapper"
+            <canvas
+              ref={canvasRef}
+              width={`${IMAGE_WIDTH}px`}
+              height={`${IMAGE_HEIGHT}px`}
+              onClick={() => {
+                if (isManual) {
+                  saveEventPosition();
+                } else if (!isManual) {
+                  changeColorOnClick();
+                }
+              }}
               style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'white',
-                position: 'relative',
+                filter: `contrast(${contrastVal - 50}%) brightness(${
+                  brightnessVal - 50
+                }%)`,
               }}
-              onKeyDown={keyInvalid}
-            >
-              <div
-                ref={ZPCanvasRef}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
-                <canvas
-                  ref={canvasRef}
-                  width={`${IMAGE_WIDTH}px`}
-                  height={`${IMAGE_HEIGHT}px`}
-                  onClick={() => {
-                    if (isManual && !isZoomIn) {
-                      saveEventPosition();
-                    } else if (!isManual) {
-                      changeColorOnClick();
-                    }
-                  }}
-                  style={{
-                    filter: `contrast(${contrastVal - 50}%) brightness(${
-                      brightnessVal - 50
-                    }%)`,
-                  }}
-                />
-              </div>
-            </div>
+            />
           </div>
-        </Col>
-        {!isManual && (
-          <Col sm={2}>
-            <Button
-              variant="success"
-              onClick={() => {
-                setDisable(!disable);
-                // eslint-disable-next-line no-unused-expressions
-                disable ? setStarModalShow(true) : setStarPos(originalStarPos);
-              }}
-              style={{ width: '110px' }}
-              className="mb-3 p-3"
-            >
-              {disable ? '再描画' : 'やり直す'}
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                handleClick();
-              }}
-              style={{ width: '110px' }}
-              className="mb-3 p-3"
-              disabled={disable}
-            >
-              探索終了
-            </Button>
-            <StarsList disable={disable} />
-          </Col>
-        )}
-      </Row>
-      <NewStarModal
-        show={starModalShow}
-        onExit={() => {
-          onStarModalExit();
-        }}
-        onClickFinishButton={onClickFinishButton}
-      />
-      <ManualStarModal
-        manualStarModalShow={manualStarModalShow}
-        onHide={() => {
-          removePositionByIndex(activeKey, currentPage);
-          setManualStarModalShow(false);
-        }}
-        defaultZoomRate={defaultZoomRate}
-        imageURLs={imageURLs}
-        activeKey={activeKey}
-        setPositionList={setPositionList}
-        onClickRetry={() => {
-          const targetElementIndex = positionList[activeKey].findIndex(
-            (activeArray) => activeArray.page === currentPage,
-          );
-          removePositionByIndex(activeKey, targetElementIndex);
-        }}
-        onClickNext={() => {
-          if (currentPage < 4) {
-            setCurrentPage(currentPage + 1);
-          }
-          setIsZoomIn(false);
-          setManualStarModalShow(false);
-        }}
-      />
-    </Container>
+        </div>
+      </div>
+    </Col>
   );
 }
 

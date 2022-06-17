@@ -7,11 +7,10 @@ function ManualToolBar({
   positionList,
   setPositionList,
   setFirstPosition,
-  onClickFinishButton,
   activeKey,
   setActiveKey,
 }) {
-  const { currentPage, setCurrentPage } = useContext(PageContext);
+  const { currentPage } = useContext(PageContext);
 
   const onClickAccordion = (index) => {
     setActiveKey(index);
@@ -20,15 +19,11 @@ function ManualToolBar({
   const onClickAddButton = () => {
     setPositionList([...positionList, []]);
     setActiveKey(positionList.length);
-    setCurrentPage(0);
     setFirstPosition({});
   };
 
   return (
     <div>
-      <Row>
-        <Button onClick={() => onClickFinishButton()}>手動測定終了</Button>
-      </Row>
       <Row className="m-4">
         <Col
           className="d-flex justify-content-between"
@@ -93,7 +88,6 @@ ManualToolBar.propTypes = {
   positionList: PropTypes.arrayOf(PropTypes.object).isRequired,
   setPositionList: PropTypes.func.isRequired,
   setFirstPosition: PropTypes.func.isRequired,
-  onClickFinishButton: PropTypes.func.isRequired,
   activeKey: PropTypes.number.isRequired,
   setActiveKey: PropTypes.func.isRequired,
 };

@@ -28,6 +28,14 @@ function PlayMenu({
   setNext,
   back,
   setBack,
+  onClickFinishButton,
+  isManual,
+  disable,
+  setDisable,
+  setStarModalShow,
+  originalStarPos,
+  handleClick,
+  setStarPos,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -139,8 +147,8 @@ function PlayMenu({
             </Nav.Item>
           </Nav>
         </Col>
-        <Col md={9}>
-          <ButtonGroup aria-label="Basic example">
+        <Col md={9} className="d-flex justify-content-between">
+          <ButtonGroup>
             {imageNames
               .filter((img) => img.visible)
               .map((name, index) => (
@@ -194,6 +202,33 @@ function PlayMenu({
               imageURLs={imageNames}
             />
           </ButtonGroup>
+          {isManual ? (
+            <Button onClick={() => onClickFinishButton()}>探索終了</Button>
+          ) : (
+            <div>
+              <Button
+                variant="success"
+                onClick={() => {
+                  setDisable(!disable);
+                  // eslint-disable-next-line no-unused-expressions
+                  disable
+                    ? setStarModalShow(true)
+                    : setStarPos(originalStarPos);
+                }}
+              >
+                {disable ? '再描画' : 'やり直す'}
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  handleClick();
+                }}
+                disabled={disable}
+              >
+                手動測定終了
+              </Button>
+            </div>
+          )}
         </Col>
       </Container>
     </Navbar>
@@ -211,11 +246,26 @@ PlayMenu.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
+  onClickFinishButton: PropTypes.func.isRequired,
+  isManual: PropTypes.bool,
+  disable: PropTypes.bool,
+  setDisable: PropTypes.func,
+  setStarModalShow: PropTypes.func,
+  originalStarPos: PropTypes.arrayOf(PropTypes.object),
+  handleClick: PropTypes.func,
+  setStarPos: PropTypes.func,
 };
 
 PlayMenu.defaultProps = {
   setDefaultZoomRate: () => {},
   defaultZoomRate: 0,
+  isManual: false,
+  disable: true,
+  setDisable: () => {},
+  setStarModalShow: () => {},
+  originalStarPos: [],
+  handleClick: () => {},
+  setStarPos: () => {},
 };
 
 export default PlayMenu;
