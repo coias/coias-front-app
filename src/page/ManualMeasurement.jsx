@@ -1,5 +1,6 @@
+/* eslint-disable no-param-reassign */
 import React, { useContext, useEffect, useState } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 import axios from 'axios';
 
 import PropTypes from 'prop-types';
@@ -10,6 +11,7 @@ import { PageContext, StarPositionContext } from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
 import PlayMenu from '../component/PlayMenu';
 import ManualStarModal from '../component/ManualStarModalShow';
+import { convertPng2FitsCoords } from '../utils/CONSTANTS';
 
 function ManualMeasurement({
   imageURLs,
@@ -25,7 +27,6 @@ function ManualMeasurement({
   back,
   setBack,
 }) {
-  const { starPos, setStarPos } = useContext(StarPositionContext);
   const [show, setShow] = useState(false);
   const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
@@ -37,8 +38,10 @@ function ManualMeasurement({
   const [loading, setLoading] = useState(false);
   const [manualStarModalShow, setManualStarModalShow] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
+  const [leadStarNumber, setLeadStarNumber] = useState(0);
 
-  const { currentPage, setCurrentPage } = useContext(PageContext);
+  const { starPos, setStarPos } = useContext(StarPositionContext);
+  const { setCurrentPage } = useContext(PageContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -114,6 +117,8 @@ function ManualMeasurement({
           console.log(error);
         });
 
+      setLeadStarNumber(Number(Object.keys(toObject)[0].replace('H', '')) + 1);
+
       setStarPos(toObject);
       setOriginalStarPos(toObject);
       setLoading(false);
@@ -150,51 +155,42 @@ function ManualMeasurement({
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
-  // const reactApiUri = process.env.REACT_APP_API_URI;
-  // const navigate = useNavigate();
   const onClickFinishButton = async () => {
-    const starNameList = Object.keys(starPos).filter((element) =>
-      element.startsWith('H'),
-    );
-    const headStarNumber = Number(
-      starNameList[starNameList.length - 1].replace('H', ''),
-    );
+    let FITSSIZE = [];
 
-    const getStarNumberStr = (index) =>
-      `H${'00000'.slice(-(6 - headStarNumber.toString().length))}${
-        headStarNumber + index + 1
-      }`;
-
-    console.log(positionList[0][0]);
+    await axios
+      .get(`${reactApiUri}fits_size`)
+      .then((res) => res.data.result)
+      .then((data) => {
+        FITSSIZE = data;
+      })
+      .catch((e) => console.error(e));
 
     const result = positionList.map((list, i) =>
-      list.map(
-        (pos) =>
-          `${getStarNumberStr(i)} ${pos.page} ${pos.center.x} ${pos.center.y} ${
-            pos.actualA.x
-          } ${pos.actualA.y} ${pos.actualB.x} ${pos.actualB.y} ${
-            pos.actualC.x
-          } ${pos.actualC.y}\n`,
-      ),
+      list.map((pos) => {
+        const convertedCenter = convertPng2FitsCoords(pos.center, FITSSIZE);
+        const convertedA = convertPng2FitsCoords(pos.actualA, FITSSIZE);
+        const convertedB = convertPng2FitsCoords(pos.actualB, FITSSIZE);
+        const convertedC = convertPng2FitsCoords(pos.actualC, FITSSIZE);
+
+        return `${leadStarNumber + i} ${pos.page} ${convertedCenter.x} ${
+          convertedCenter.y
+        } ${convertedA.x} ${convertedA.y} ${convertedB.x} ${convertedB.y} ${
+          convertedC.x
+        } ${convertedC.y}`;
+      }),
     );
 
-    const text = result.map((pos) => pos.join('')).join('');
+    const text = result.map((pos) => pos.join(''));
 
-    alert(text);
-
-    /*
-    // memo2
-    await axios.put(`${reactApiUri}memo2`, null, {
-      params: {
-        text,
-      },
-    });
-
+    // memo
+    await axios.put(`${reactApiUri}memo`, text);
+    // memo_manual
+    await axios.put(`${reactApiUri}memo_manual`, text);
     // astsearch_manual
-    await axios.put(`${reactApiUri}astsearch_manual`);
+    // await axios.put(`${reactApiUri}astsearch_manual`);
 
-    navigate('/COIAS');
-    */
+    // navigate('/COIAS');
   };
 
   const removePositionByIndex = (targetListIndex, targetElementIndex) => {
@@ -214,13 +210,6 @@ function ManualMeasurement({
     if (e.keyCode === 83) setStart(!start);
     if (e.keyCode === 39) setNext(!next);
     if (e.keyCode === 37) setBack(!back);
-  };
-
-  const checkIsPositionSelected = () => {
-    if (positionList[activeKey] && positionList[activeKey][currentPage]) {
-      return true;
-    }
-    return false;
   };
 
   return (
@@ -245,71 +234,69 @@ function ManualMeasurement({
         onClickFinishButton={onClickFinishButton}
         isManual
       />
-      <Row>
-        <COIASToolBar
-          isSelect={isSelect}
-          setIsSelect={setIsSelect}
-          brightnessVal={brightnessVal}
-          contrastVal={contrastVal}
-          setBrightnessVal={setBrightnessVal}
-          setContrastVal={setContrastVal}
-          isReload={isReload}
-          setIsReload={setIsReload}
-          isHide={isHide}
-          setIsHide={setIsHide}
-        />
-        <Col sm={9} md={9}>
-          <PanZoom
-            imageURLs={imageURLs}
-            starPos={starPos}
-            setStarPos={setStarPos}
-            isManual
-            positionList={positionList}
-            show={show}
-            setShow={setShow}
+      <Container fluid>
+        <Row className="m-0 p-0">
+          <COIASToolBar
+            isSelect={isSelect}
+            setIsSelect={setIsSelect}
             brightnessVal={brightnessVal}
             contrastVal={contrastVal}
+            setBrightnessVal={setBrightnessVal}
+            setContrastVal={setContrastVal}
             isReload={isReload}
+            setIsReload={setIsReload}
             isHide={isHide}
-            setManualStarModalShow={setManualStarModalShow}
-            isZoomIn={isZoomIn}
-            setIsZoomIn={setIsZoomIn}
+            setIsHide={setIsHide}
           />
-        </Col>
-        <Col sm={2} md={2}>
-          <ManualToolBar
-            positionList={positionList}
-            setPositionList={setPositionList}
-            onClickFinishButton={onClickFinishButton}
-            activeKey={activeKey}
-            setActiveKey={setActiveKey}
-          />
-        </Col>
-      </Row>
+          <Col sm={9} md={9}>
+            <PanZoom
+              imageURLs={imageURLs}
+              starPos={starPos}
+              setStarPos={setStarPos}
+              isManual
+              positionList={positionList}
+              show={show}
+              setShow={setShow}
+              brightnessVal={brightnessVal}
+              contrastVal={contrastVal}
+              isReload={isReload}
+              isHide={isHide}
+              setManualStarModalShow={setManualStarModalShow}
+              isZoomIn={isZoomIn}
+              setIsZoomIn={setIsZoomIn}
+              leadStarNumber={leadStarNumber}
+              activeKey={activeKey}
+              removePositionByIndex={removePositionByIndex}
+            />
+          </Col>
+          <Col sm={2} md={2}>
+            <ManualToolBar
+              positionList={positionList}
+              setPositionList={setPositionList}
+              onClickFinishButton={onClickFinishButton}
+              activeKey={activeKey}
+              setActiveKey={setActiveKey}
+              leadStarNumber={leadStarNumber}
+            />
+          </Col>
+        </Row>
+      </Container>
 
       <ManualStarModal
         manualStarModalShow={manualStarModalShow}
         onHide={() => {
           setManualStarModalShow(false);
+          setIsZoomIn(false);
         }}
         defaultZoomRate={defaultZoomRate}
         imageURLs={imageURLs}
         activeKey={activeKey}
         setPositionList={setPositionList}
-        isPositionSlected={checkIsPositionSelected()}
-        onClickRemove={() => {
-          if (window.confirm('本当に削除しますか？')) {
-            const targetElementIndex = positionList[activeKey].findIndex(
-              (activeArray) => activeArray.page === currentPage,
-            );
-            removePositionByIndex(activeKey, targetElementIndex);
-            setManualStarModalShow(false);
-          }
-        }}
         onClickNext={() => {
           setIsZoomIn(false);
           setManualStarModalShow(false);
         }}
+        leadStarNumber={leadStarNumber}
       />
     </div>
   );

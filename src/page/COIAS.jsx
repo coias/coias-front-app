@@ -212,6 +212,7 @@ function COIAS({
       .map((key) => starPos[key])
       .filter((item) => item.isSelected)
       .map((item) => item.name.substring(1));
+    console.log(selectedStars);
     await axios.put(`${reactApiUri}memo`, selectedStars);
 
     // prempedit

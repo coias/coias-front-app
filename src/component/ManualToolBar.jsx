@@ -9,6 +9,7 @@ function ManualToolBar({
   setPositionList,
   activeKey,
   setActiveKey,
+  leadStarNumber,
 }) {
   const { currentPage } = useContext(PageContext);
   const [checkedState, setCheckedState] = useState([]);
@@ -45,10 +46,10 @@ function ManualToolBar({
 
   return (
     <div>
-      <Row className="m-4">
+      <Row className="m-3">
         <Col
           className="d-flex justify-content-between"
-          style={{ background: 'white', width: '100%', padding: '0' }}
+          style={{ background: 'white', padding: 0 }}
         >
           <p style={{ margin: 'auto 0' }}>天体一覧</p>
           <Button
@@ -65,7 +66,8 @@ function ManualToolBar({
         <Row>
           <Accordion activeKey={`${activeKey}`}>
             {positionList.map((d, index) => (
-              <div className="d-flex">
+              // eslint-disable-next-line react/no-array-index-key
+              <div className="d-flex" key={index}>
                 <Form.Check
                   style={{ marginTop: '20px' }}
                   onChange={() => handleOnChange(index)}
@@ -78,7 +80,11 @@ function ManualToolBar({
                   onClick={() => onClickAccordion(index)}
                   className="w-100"
                 >
-                  <Accordion.Header>#{index}</Accordion.Header>
+                  <Accordion.Header>
+                    {`#H${'000000'.slice(
+                      (leadStarNumber + index).toString().length - 6,
+                    )}${leadStarNumber + index}`}
+                  </Accordion.Header>
                   <Accordion.Body>
                     {d
                       .sort((a, b) => {
@@ -127,5 +133,6 @@ ManualToolBar.propTypes = {
     .isRequired,
   setPositionList: PropTypes.func.isRequired,
   activeKey: PropTypes.number.isRequired,
+  leadStarNumber: PropTypes.number.isRequired,
   setActiveKey: PropTypes.func.isRequired,
 };

@@ -39,7 +39,7 @@ function COIASToolBar({
       style={{
         display: 'flex',
         alignItems: 'center',
-        marginTop: '30px',
+        height: '100%',
         padding: 0,
       }}
     >

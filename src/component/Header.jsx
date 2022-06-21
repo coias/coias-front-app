@@ -23,7 +23,7 @@ function Header({ start, setStart, next, setNext, back, setBack }) {
   const isLocked = true;
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div onKeyDown={keyPress} tabIndex={-1}>
+    <div onKeyDown={keyPress} tabIndex={-1} className="coias-header">
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand className="px-3">
           <Row>

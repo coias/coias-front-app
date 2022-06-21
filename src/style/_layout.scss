@@ -84,7 +84,10 @@ footer {
 }
 
 .coias-view-main {
+  width: 100%;
   height: 100%;
+  padding: 0;
+  margin: 0;
 
   .container-fluid {
     height: calc(100% - 102px);
@@ -97,10 +100,10 @@ footer {
       }
 
       // auto mode
-      .col-md-11 {
+      .col-md-10 {
         height: 100%;
 
-        .container-fluid {
+        .wrapper {
           height: calc(100% - 24px);
 
           .star-canvas-container {
@@ -126,34 +129,26 @@ footer {
         }
       }
 
+      .col-md-1 {
+        height: 100%;
+      }
+
       // manual mode
       .col-md-9 {
         height: 100%;
 
-        .container-fluid {
+        .wrapper {
           height: 100%;
-
-          .star-canvas-container {
-            height: 100%;
-
-            .col-sm-10 {
-              height: 100%;
-            }
-
-            .col-sm-12 {
-              height: 100%;
-            }
-
-            .col-sm-2 {
-              height: 100%;
-            }
-          }
-
-          .star-canvas-control {
-            height: 50px !important;
-            padding-top: 8px;
-          }
         }
+
+        .star-canvas-control {
+          height: 50px !important;
+          padding-top: 8px;
+        }
+      }
+
+      .col-md-2 {
+        height: 100%;
       }
     }
   }
@@ -177,28 +172,6 @@ footer {
   }
 }
 
-// // canvas自体のスクロール
-// .canvas-wapper {
-//   width: 100%;
-//   height: 100%;
-//   overflow-y: scroll;
-//   background-color: gray;
-
-//   &::-webkit-scrollbar {
-//     width: 15px;
-//     height: 15px;
-//     padding: 0;
-//     margin: 0;
-//   }
-
-//   &::-webkit-scrollbar-thumb {
-//     background-color: white;
-//     border-radius: 0.25rem;
-
-//     --bg-opacity: 1;
-//   }
-// }
-
 // 星のリストのスクロールバーを常に表示する
 .star-list {
   height: calc(100% - 84px);
@@ -220,12 +193,12 @@ footer {
 #ex4 {
   appearance: slider-vertical; /* Chromium */
   width: 8px;
-  height: 175px;
+  height: 87%;
   padding: 0 5px;
 }
 
 .manual-list {
-  max-height: 70vh;
+  max-height: 60vh;
   overflow-x: hidden;
   overflow-y: scroll;
 
