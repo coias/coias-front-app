@@ -7,6 +7,7 @@ import {
   ToggleButton,
   ButtonGroup,
   Form,
+  Spinner,
 } from 'react-bootstrap';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
@@ -36,6 +37,9 @@ function PlayMenu({
   originalStarPos,
   handleClick,
   setStarPos,
+  isSaveLoading,
+  setIsAutoSave,
+  isAutoSave,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -189,6 +193,8 @@ function PlayMenu({
               imageURLs={imageNames}
               setDefaultZoomRate={setDefaultZoomRate}
               defaultZoomRate={defaultZoomRate}
+              setIsAutoSave={setIsAutoSave}
+              isAutoSave={isAutoSave}
             />
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
               <BiHelpCircle size={30} />
@@ -203,13 +209,18 @@ function PlayMenu({
               imageURLs={imageNames}
             />
           </ButtonGroup>
+
           {isManual ? (
             <Button
               variant="danger"
               size="lg"
               onClick={() => onClickFinishButton()}
             >
-              手動測定終了
+              {isSaveLoading ? (
+                <Spinner animation="border" size="md" />
+              ) : (
+                '手動測定終了'
+              )}
             </Button>
           ) : (
             <div>
@@ -263,6 +274,9 @@ PlayMenu.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object),
   handleClick: PropTypes.func,
   setStarPos: PropTypes.func,
+  isSaveLoading: PropTypes.bool,
+  setIsAutoSave: PropTypes.func,
+  isAutoSave: PropTypes.bool,
 };
 
 PlayMenu.defaultProps = {
@@ -275,6 +289,9 @@ PlayMenu.defaultProps = {
   originalStarPos: {},
   handleClick: () => {},
   setStarPos: () => {},
+  isSaveLoading: false,
+  setIsAutoSave: () => {},
+  isAutoSave: false,
 };
 
 export default PlayMenu;

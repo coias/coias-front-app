@@ -39,6 +39,9 @@ function ManualMeasurement({
   const [manualStarModalShow, setManualStarModalShow] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
   const [leadStarNumber, setLeadStarNumber] = useState(0);
+  const [fitsSize, setFitsSize] = useState([]);
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [isAutoSave, setIsAutoSave] = useState(true);
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -156,41 +159,46 @@ function ManualMeasurement({
   }, [imageURLs, isReload]);
 
   const onClickFinishButton = async () => {
+    setIsSaveLoading(true);
     let FITSSIZE = [];
+    if (fitsSize.length === 0) {
+      await axios
+        .get(`${reactApiUri}fits_size`)
+        .then((res) => res.data.result)
+        .then((data) => {
+          FITSSIZE = data;
+          setFitsSize(data);
+        })
+        .catch((e) => console.error(e));
+    } else {
+      FITSSIZE = fitsSize;
+    }
 
-    await axios
-      .get(`${reactApiUri}fits_size`)
-      .then((res) => res.data.result)
-      .then((data) => {
-        FITSSIZE = data;
-      })
-      .catch((e) => console.error(e));
-
-    const result = positionList.map((list, i) =>
-      list.map((pos) => {
+    const result = positionList.flatMap((list, i) =>
+      list.flatMap((pos) => {
         const convertedCenter = convertPng2FitsCoords(pos.center, FITSSIZE);
         const convertedA = convertPng2FitsCoords(pos.actualA, FITSSIZE);
         const convertedB = convertPng2FitsCoords(pos.actualB, FITSSIZE);
         const convertedC = convertPng2FitsCoords(pos.actualC, FITSSIZE);
 
-        return `${leadStarNumber + i} ${pos.page} ${convertedCenter.x} ${
-          convertedCenter.y
-        } ${convertedA.x} ${convertedA.y} ${convertedB.x} ${convertedB.y} ${
-          convertedC.x
-        } ${convertedC.y}`;
+        return `${'000000'.slice((leadStarNumber + i).toString().length - 6)}${
+          leadStarNumber + i
+        } ${pos.page} ${convertedCenter.x} ${convertedCenter.y} ${
+          convertedA.x
+        } ${convertedA.y} ${convertedB.x} ${convertedB.y} ${convertedC.x} ${
+          convertedC.y
+        }`;
       }),
     );
 
-    const text = result.map((pos) => pos.join(''));
+    const text = result.flatMap((pos) => pos);
 
     // memo
     await axios.put(`${reactApiUri}memo`, text);
     // memo_manual
     await axios.put(`${reactApiUri}memo_manual`, text);
-    // astsearch_manual
-    // await axios.put(`${reactApiUri}astsearch_manual`);
 
-    // navigate('/COIAS');
+    setIsSaveLoading(false);
   };
 
   const removePositionByIndex = (targetListIndex, targetElementIndex) => {
@@ -233,6 +241,9 @@ function ManualMeasurement({
         setBack={setBack}
         onClickFinishButton={onClickFinishButton}
         isManual
+        isSaveLoading={isSaveLoading}
+        setIsAutoSave={setIsAutoSave}
+        isAutoSave={isAutoSave}
       />
       <Container fluid>
         <Row className="m-0 p-0">
@@ -295,6 +306,9 @@ function ManualMeasurement({
         onClickNext={() => {
           setIsZoomIn(false);
           setManualStarModalShow(false);
+          if (isAutoSave) {
+            onClickFinishButton();
+          }
         }}
         leadStarNumber={leadStarNumber}
       />
