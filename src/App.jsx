@@ -73,14 +73,7 @@ function App() {
 
   return (
     <BrowserRouter style={{ position: 'relative' }}>
-      <Header
-        start={start}
-        setStart={setStart}
-        next={next}
-        setNext={setNext}
-        back={back}
-        setBack={setBack}
-      />
+      <Header />
       <main
         style={{
           position: 'absolute',
