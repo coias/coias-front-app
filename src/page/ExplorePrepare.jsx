@@ -117,9 +117,8 @@ function ExplorePrepare({
 
     const pattern =
       /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/gm;
-    /* const addErrorFile = (targetFile) => {
-      setErrorFile([...errorFiles, `${targetFile.name}`]);
-    }; */
+
+    const errorFileNames = [];
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < files.length; i++) {
@@ -133,36 +132,23 @@ function ExplorePrepare({
         const b = file.name.split(`-`);
         const isSame = tmp === `${b[3]}${b[4]}`;
         if (!isSame) {
-          setErrorContent(`${file.name}は観測領域が異なります`);
-          setShowError(true);
-          handleClose();
-          return null;
+          errorFileNames.push(`${file.name}は観測領域が異なります`);
         }
       }
 
       if (!isMatch) {
-        setErrorFile([...errorFiles, `${file.name}`]);
-        console.log(errorFiles.map((element) => <li>${element}</li>));
-
-        setErrorContent(`${file.name}のファイル名の形式が違います`);
+        errorFileNames.push(`${file.name}のファイル名の形式が違います`);
       }
 
-      /* if (!isMatch) {
-        setErrorContent(`${file.name}のファイル名の形式が違います`);
-        // setShowError(true); //左下にポップアップさせる文
-        // handleClose(); //閉じちゃうやつ
-        return null;
-      }
-      */
       data.append('files', file, file.name);
       filesForProps.push(file.name);
       setErrorContent(``);
     }
 
-    setFileNames(filesForProps);
+    setErrorFile(errorFileNames);
 
     const postFiles = async () => {
-      // handleClose();
+      handleClose();
       document.getElementById('current-process').innerHTML =
         'アップロード中...';
       setLoading(true);
@@ -181,7 +167,10 @@ function ExplorePrepare({
         });
     };
 
-    postFiles();
+    if (errorFileNames.length === 0) {
+      setFileNames(filesForProps);
+      postFiles();
+    }
     return null;
   };
 
@@ -307,6 +296,7 @@ function ExplorePrepare({
     setMenunames(items);
     setLoading(false);
   };
+
   return (
     <div
       style={{
