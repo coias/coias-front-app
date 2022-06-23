@@ -1,8 +1,14 @@
 import React from 'react';
-import { Modal, Button, Row, Col } from 'react-bootstrap';
+import { Modal, Button, Row, Col, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-function SettingModal({ show, onHide, imageURLs }) {
+function SettingModal({
+  show,
+  onHide,
+  imageURLs,
+  setDefaultZoomRate,
+  defaultZoomRate,
+}) {
   return (
     <Modal
       show={show}
@@ -47,6 +53,42 @@ function SettingModal({ show, onHide, imageURLs }) {
             </Col>
           </Row>
         ))}
+        {defaultZoomRate !== 0 && (
+          <>
+            <h4>拡大率を選んでください。</h4>
+            <Form>
+              <Row>
+                <Col>
+                  <Form.Check
+                    name="group1"
+                    label="30"
+                    type="radio"
+                    onChange={() => setDefaultZoomRate(50)}
+                    defaultChecked={defaultZoomRate === 50 && 'true'}
+                  />
+                </Col>
+                <Col>
+                  <Form.Check
+                    name="group1"
+                    label="40"
+                    type="radio"
+                    onChange={() => setDefaultZoomRate(40)}
+                    defaultChecked={defaultZoomRate === 40 && 'true'}
+                  />
+                </Col>
+                <Col>
+                  <Form.Check
+                    name="group1"
+                    label="50"
+                    type="radio"
+                    onChange={() => setDefaultZoomRate(30)}
+                    defaultChecked={defaultZoomRate === 30 && 'true'}
+                  />
+                </Col>
+              </Row>
+            </Form>
+          </>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onHide}>閉じる</Button>
@@ -61,4 +103,6 @@ SettingModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setDefaultZoomRate: PropTypes.func.isRequired,
+  defaultZoomRate: PropTypes.number.isRequired,
 };
