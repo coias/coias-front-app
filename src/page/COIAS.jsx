@@ -70,11 +70,8 @@ function COIAS({
     const getImages = async () => {
       setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
-      console.log(response);
       let dataList = [];
-      console.log(dataList);
       dataList = await response.data.result.sort();
-      console.log(dataList);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);

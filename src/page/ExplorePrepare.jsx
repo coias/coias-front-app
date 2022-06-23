@@ -152,7 +152,7 @@ function ExplorePrepare({
       document.getElementById('current-process').innerHTML =
         'アップロード中...';
       setLoading(true);
-      // await axios.delete(`${uri}deletefiles`);
+      await axios.delete(`${uri}deletefiles`);
       await axios
         .post(`${uri}uploadfiles/`, data)
         .then(() => {
