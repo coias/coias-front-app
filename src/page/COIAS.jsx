@@ -24,6 +24,7 @@ COIAS.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
+  setLeadStarNumber: PropTypes.func.isRequired,
 };
 
 function COIAS({
@@ -38,6 +39,7 @@ function COIAS({
   setNext,
   back,
   setBack,
+  setLeadStarNumber,
 }) {
   const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
@@ -169,6 +171,14 @@ function COIAS({
         });
       }
 
+      const starListH = Object.keys(toObject).filter((name) =>
+        name.startsWith('H'),
+      );
+
+      const leadNum =
+        Number(starListH[starListH.length - 1].replace('H', '')) + 1;
+
+      setLeadStarNumber(leadNum);
       setStarPos(toObject);
       setOriginalStarPos(toObject);
       setLoading(false);
@@ -212,7 +222,6 @@ function COIAS({
       .map((key) => starPos[key])
       .filter((item) => item.isSelected)
       .map((item) => item.name.substring(1));
-    console.log(selectedStars);
     await axios.put(`${reactApiUri}memo`, selectedStars);
 
     // prempedit

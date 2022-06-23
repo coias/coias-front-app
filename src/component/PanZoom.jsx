@@ -320,8 +320,19 @@ function PanZoom({
 
     if (positionList.length < 1 || !sshouldIgnore) return;
 
+    console.log(
+      positionList[activeKey][currentPage],
+      positionList[activeKey][currentPage].page === currentPage + 1,
+      testHit(
+        positionList[activeKey][currentPage].x,
+        positionList[activeKey][currentPage].y,
+        isManual,
+      ),
+    );
+
     if (
       positionList[activeKey][currentPage] &&
+      positionList[activeKey][currentPage].page === currentPage &&
       testHit(
         positionList[activeKey][currentPage].x,
         positionList[activeKey][currentPage].y,

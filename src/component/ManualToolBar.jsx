@@ -12,7 +12,7 @@ function ManualToolBar({
   leadStarNumber,
 }) {
   const { currentPage } = useContext(PageContext);
-  const [checkedState, setCheckedState] = useState([]);
+  const [checkedState, setCheckedState] = useState([false]);
 
   const onClickAccordion = (index) => {
     setActiveKey(index);

@@ -26,6 +26,7 @@ function ManualMeasurement({
   setNext,
   back,
   setBack,
+  leadStarNumber,
 }) {
   const [show, setShow] = useState(false);
   const [isSelect, setIsSelect] = useState(true);
@@ -38,7 +39,6 @@ function ManualMeasurement({
   const [loading, setLoading] = useState(false);
   const [manualStarModalShow, setManualStarModalShow] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
-  const [leadStarNumber, setLeadStarNumber] = useState(0);
   const [fitsSize, setFitsSize] = useState([]);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [isAutoSave, setIsAutoSave] = useState(true);
@@ -119,8 +119,6 @@ function ManualMeasurement({
         .catch((error) => {
           console.log(error);
         });
-
-      setLeadStarNumber(Number(Object.keys(toObject)[0].replace('H', '')) + 1);
 
       setStarPos(toObject);
       setOriginalStarPos(toObject);
@@ -332,4 +330,5 @@ ManualMeasurement.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
+  leadStarNumber: PropTypes.number.isRequired,
 };
