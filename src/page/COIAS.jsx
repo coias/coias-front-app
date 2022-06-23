@@ -15,6 +15,7 @@ COIAS.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
+  fileNum: PropTypes.number.isRequired,
 };
 
 function COIAS({
@@ -23,6 +24,7 @@ function COIAS({
   originalStarPos,
   setOriginalStarPos,
   intervalRef,
+  fileNum,
 }) {
   const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
@@ -47,7 +49,11 @@ function COIAS({
     const getImages = async () => {
       setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
-      const dataList = await response.data.result.sort();
+      console.log(response);
+      let dataList = [];
+      console.log(dataList);
+      dataList = await response.data.result.sort();
+      console.log(dataList);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -88,7 +94,7 @@ function COIAS({
         if (!star) {
           toObject[item[0]] = {
             name: item[0],
-            page: [null, null, null, null, null],
+            page: Array(fileNum).fill(null),
             isSelected: false,
             isKnown: false,
           };
@@ -114,7 +120,7 @@ function COIAS({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
-              page: [null, null, null, null, null],
+              page: Array(fileNum).fill(null),
               isSelected: false,
               isKnown: true,
             };
@@ -134,7 +140,7 @@ function COIAS({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
-              page: [null, null, null, null, null],
+              page: Array(fileNum).fill(null),
               isSelected: false,
               isKnown: true,
             };
