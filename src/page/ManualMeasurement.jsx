@@ -49,7 +49,7 @@ function ManualMeasurement({
   const [confirmationModalShow, setConfirmationModalShow] = useState(false);
 
   const navigate = useNavigate();
-
+  const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage, setCurrentPage } = useContext(PageContext);
 
@@ -68,6 +68,7 @@ function ManualMeasurement({
       setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
+      setFileNum(dataList.length / 2);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -261,6 +262,7 @@ function ManualMeasurement({
         isSaveLoading={isSaveLoading}
         setIsAutoSave={setIsAutoSave}
         isAutoSave={isAutoSave}
+        fileNum={fileNum}
       />
       <Container fluid>
         <Row className="m-0 p-0">
