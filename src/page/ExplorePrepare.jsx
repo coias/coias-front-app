@@ -53,6 +53,7 @@ function ExplorePrepare({
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
+  const [processName, setProcessName] = useState('');
 
   const handleSelect = (e) => setVal(e.target.value);
 
@@ -153,8 +154,8 @@ function ExplorePrepare({
 
     const postFiles = async () => {
       handleClose();
-      document.getElementById('current-process').innerHTML =
-        'アップロード中...';
+      setProcessName('アップロード中...');
+
       setLoading(true);
       await axios.delete(`${uri}deletefiles`);
       await axios
@@ -176,7 +177,7 @@ function ExplorePrepare({
   };
 
   const onProcess = (query) => {
-    document.getElementById('current-process').innerHTML = '処理中...';
+    setProcessName('処理中...');
     const put = async () => {
       setLoading(true);
 
@@ -218,7 +219,7 @@ function ExplorePrepare({
   const onProcessExecute = async (url, query) => {
     let result = true;
     const uriQuery = url.split('/')[3];
-    document.getElementById('current-process').innerHTML = `${query}...`;
+    setProcessName(`${query}...`);
     await axios
       .put(url)
       .then(() => {
@@ -453,7 +454,7 @@ function ExplorePrepare({
         </Col>
       </Row>
 
-      <LoadingButton loading={loading} />
+      <LoadingButton loading={loading} processName={processName} />
 
       <AppToast
         show={showError}
@@ -490,28 +491,41 @@ function ExplorePrepare({
               個選択できます。
             </Form.Control.Feedback>
           </InputGroup>
-          <Form.Check
-            className="m-3"
-            inline
-            type="radio"
-            label="全自動処理"
-            name="group1"
-            id="auto"
-            value="auto"
-            onChange={handleSelect}
-            checked={val === 'auto'}
-          />
-          <Form.Check
-            className="m-3"
-            inline
-            type="radio"
-            label="手動処理"
-            name="group1"
-            id="manual"
-            value="manual"
-            onChange={handleSelect}
-            checked={val === 'manual'}
-          />
+          <div className="d-flex justify-content-between">
+            <Form.Check
+              className="m-3"
+              inline
+              type="radio"
+              label="全自動処理"
+              name="group1"
+              id="auto"
+              value="auto"
+              onChange={handleSelect}
+              checked={val === 'auto'}
+            />
+            <Form.Check
+              className="m-3"
+              inline
+              type="radio"
+              label="手動処理"
+              name="group1"
+              id="manual"
+              value="manual"
+              onChange={handleSelect}
+              checked={val === 'manual'}
+            />
+            <Button
+              onClick={async () => {
+                handleClose();
+                setProcessName('小惑星データ更新中...');
+                setLoading(true);
+                await axios.put(`${uri}getMPCORB_and_mpc2edb`);
+                setLoading(false);
+              }}
+            >
+              小惑星データ更新
+            </Button>
+          </div>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Close
