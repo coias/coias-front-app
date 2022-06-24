@@ -54,9 +54,6 @@ function ExplorePrepare({
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
-  /*
-    const [fileNum, setFileNum] = useState(0);
-  */
 
   const handleSelect = (e) => setVal(e.target.value);
 
@@ -109,8 +106,6 @@ function ExplorePrepare({
     const data = new FormData();
     const filesForProps = [];
     setErrorFile([]);
-
-    /*  setFileNum(files.length); */
 
     let file;
     let tmp;
@@ -484,12 +479,6 @@ function ExplorePrepare({
                 multiple
               />
             </Row>
-            {/*
-            <Form.Control.Feedback type="invalid">
-              ファイルを選択してください。ファイルは{fileNum}
-              個選択できます。
-            </Form.Control.Feedback>
-              */}
             <Row>
               {errorFiles.map((element) => (
                 <p

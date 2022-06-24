@@ -18,7 +18,6 @@ COIAS.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
-  fileNum: PropTypes.number.isRequired,
   start: PropTypes.bool.isRequired,
   setStart: PropTypes.func.isRequired,
   next: PropTypes.bool.isRequired,
@@ -33,7 +32,6 @@ function COIAS({
   originalStarPos,
   setOriginalStarPos,
   intervalRef,
-  fileNum,
   start,
   setStart,
   next,
@@ -49,6 +47,7 @@ function COIAS({
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(true);
   const [starModalShow, setStarModalShow] = useState(false);
+  const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const navigate = useNavigate();
@@ -70,8 +69,8 @@ function COIAS({
     const getImages = async () => {
       setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
-      let dataList = [];
-      dataList = await response.data.result.sort();
+      const dataList = await response.data.result.sort();
+      setFileNum(dataList.length / 2);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -293,6 +292,7 @@ function COIAS({
         originalStarPos={originalStarPos}
         handleClick={handleClick}
         setStarPos={setStarPos}
+        fileNum={fileNum}
       />
       <Container fluid>
         <Row>

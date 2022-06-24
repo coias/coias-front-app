@@ -36,6 +36,7 @@ function PlayMenu({
   originalStarPos,
   handleClick,
   setStarPos,
+  fileNum,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -169,7 +170,7 @@ function PlayMenu({
                   }}
                   className="d-flex align-items-center"
                 >
-                  {name.name}
+                  {fileNum < 8 ? name.name : index + 1}
                 </ToggleButton>
               ))}
             <Button
@@ -263,6 +264,7 @@ PlayMenu.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object),
   handleClick: PropTypes.func,
   setStarPos: PropTypes.func,
+  fileNum: PropTypes.number.isRequired,
 };
 
 PlayMenu.defaultProps = {
