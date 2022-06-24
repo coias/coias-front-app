@@ -9,11 +9,13 @@ function ConfirmationModal({
   activeKey,
   leadStarNumber,
   onClickYes,
+  onExit,
 }) {
   return (
     <Modal
       show={show}
       onHide={onHide}
+      onExit={onExit}
       size="sm"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -45,6 +47,7 @@ export default ConfirmationModal;
 ConfirmationModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
+  onExit: PropTypes.func.isRequired,
   onClickYes: PropTypes.func.isRequired,
   positionList: PropTypes.arrayOf(PropTypes.array).isRequired,
   activeKey: PropTypes.number.isRequired,

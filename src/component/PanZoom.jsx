@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { PageContext, MousePositionContext } from './context';
 import MousePosition from './MousePosition';
 import useEventListener from '../hooks/useEventListener';
-import ConfirmationModal from './ConfirmationModal';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
@@ -22,7 +21,8 @@ PanZoom.defaultProps = {
   setIsZoomIn: () => {},
   leadStarNumber: 0,
   activeKey: 0,
-  removePositionByIndex: () => {},
+  confirmationModalShow: false,
+  setConfirmationModalShow: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -42,7 +42,8 @@ PanZoom.propTypes = {
   setIsZoomIn: PropTypes.func,
   leadStarNumber: PropTypes.number,
   activeKey: PropTypes.number,
-  removePositionByIndex: PropTypes.func,
+  confirmationModalShow: PropTypes.bool,
+  setConfirmationModalShow: PropTypes.func,
 };
 
 function PanZoom({
@@ -61,7 +62,8 @@ function PanZoom({
   setIsZoomIn,
   leadStarNumber,
   activeKey,
-  removePositionByIndex,
+  confirmationModalShow,
+  setConfirmationModalShow,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -83,7 +85,6 @@ function PanZoom({
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [context, setContext] = useState();
   const [scale, setScale] = useState(1);
-  const [confirmationModalShow, setConfirmationModalShow] = useState(false);
 
   function relativeCoords(event) {
     const bounds = event.target.getBoundingClientRect();
@@ -259,6 +260,7 @@ function PanZoom({
     isHide,
     positionList,
     activeKey,
+    confirmationModalShow,
   ]);
 
   useEventListener('mousemove', relativeCoords, canvasRef.current);
@@ -320,22 +322,15 @@ function PanZoom({
 
     if (positionList.length < 1 || !sshouldIgnore) return;
 
-    console.log(
-      positionList[activeKey][currentPage],
-      positionList[activeKey][currentPage].page === currentPage + 1,
-      testHit(
-        positionList[activeKey][currentPage].x,
-        positionList[activeKey][currentPage].y,
-        isManual,
-      ),
+    const currentPageIndex = positionList[activeKey].findIndex(
+      (e) => e.page === currentPage,
     );
 
     if (
-      positionList[activeKey][currentPage] &&
-      positionList[activeKey][currentPage].page === currentPage &&
+      currentPageIndex !== -1 &&
       testHit(
-        positionList[activeKey][currentPage].x,
-        positionList[activeKey][currentPage].y,
+        positionList[activeKey][currentPageIndex].x,
+        positionList[activeKey][currentPageIndex].y,
         isManual,
       )
     ) {
@@ -408,20 +403,6 @@ function PanZoom({
           </div>
         </div>
       </div>
-
-      <ConfirmationModal
-        show={confirmationModalShow}
-        onHide={() => setConfirmationModalShow(false)}
-        removePositionByIndex={removePositionByIndex}
-        setManualStarModalShow={setManualStarModalShow}
-        positionList={positionList}
-        activeKey={activeKey}
-        leadStarNumber={leadStarNumber}
-        onClickYes={() => {
-          removePositionByIndex(activeKey, currentPage);
-          setConfirmationModalShow(false);
-        }}
-      />
     </Col>
   );
 }

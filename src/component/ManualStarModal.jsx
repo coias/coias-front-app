@@ -13,6 +13,7 @@ function ManualStarModal({
   setPositionList,
   onClickNext,
   leadStarNumber,
+  autoSave,
 }) {
   const [context, setContext] = useState();
   const canvasRef = useRef(null);
@@ -233,6 +234,7 @@ function ManualStarModal({
         setCenterCoodinate(null);
         setCanvasManualRectanglCoordinates([]);
       }}
+      onExited={autoSave}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
@@ -298,5 +300,6 @@ ManualStarModal.propTypes = {
   activeKey: PropTypes.number.isRequired,
   setPositionList: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
+  autoSave: PropTypes.func.isRequired,
   leadStarNumber: PropTypes.number.isRequired,
 };

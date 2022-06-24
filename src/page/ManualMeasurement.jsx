@@ -4,14 +4,16 @@ import { Row, Col, Container } from 'react-bootstrap';
 import axios from 'axios';
 
 import PropTypes from 'prop-types';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ManualToolBar from '../component/ManualToolBar';
 import PanZoom from '../component/PanZoom';
 import { PageContext, StarPositionContext } from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
 import PlayMenu from '../component/PlayMenu';
-import ManualStarModal from '../component/ManualStarModalShow';
+import ManualStarModal from '../component/ManualStarModal';
 import { convertPng2FitsCoords } from '../utils/CONSTANTS';
+import ManualAlertModal from '../component/ManualAlertModal';
+import ConfirmationModal from '../component/ConfirmationModal';
 
 function ManualMeasurement({
   imageURLs,
@@ -27,6 +29,7 @@ function ManualMeasurement({
   back,
   setBack,
   leadStarNumber,
+  setLeadStarNumber,
 }) {
   const [show, setShow] = useState(false);
   const [isSelect, setIsSelect] = useState(true);
@@ -38,13 +41,17 @@ function ManualMeasurement({
   const [defaultZoomRate, setDefaultZoomRate] = useState(40);
   const [loading, setLoading] = useState(false);
   const [manualStarModalShow, setManualStarModalShow] = useState(false);
+  const [manualAlertModalShow, setManualAlertModalShow] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
   const [fitsSize, setFitsSize] = useState([]);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [isAutoSave, setIsAutoSave] = useState(true);
+  const [confirmationModalShow, setConfirmationModalShow] = useState(false);
+
+  const navigate = useNavigate();
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
-  const { setCurrentPage } = useContext(PageContext);
+  const { currentPage, setCurrentPage } = useContext(PageContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -103,7 +110,7 @@ function ManualMeasurement({
             if (!star) {
               toObject[item[0]] = {
                 name: item[0],
-                page: [null, null, null, null, null],
+                page: Array(5).fill(null),
                 isSelected: false,
                 isKnown: false,
               };
@@ -117,12 +124,24 @@ function ManualMeasurement({
           });
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
 
-      setStarPos(toObject);
-      setOriginalStarPos(toObject);
-      setLoading(false);
+      // TODO : 動的なエラーハンドリング
+      if (toObject['awk:']) {
+        setManualAlertModalShow(true);
+      } else {
+        const res1 = await axios.get(`${reactApiUri}unknown_disp`);
+        const unknownDisp = await res1.data.result;
+
+        const leadNum =
+          Number(unknownDisp[unknownDisp.length - 1][0].replace('H', '')) + 1;
+
+        setLeadStarNumber(leadNum);
+        setStarPos(toObject);
+        setOriginalStarPos(toObject);
+        setLoading(false);
+      }
     };
 
     window.images = [];
@@ -275,7 +294,8 @@ function ManualMeasurement({
               setIsZoomIn={setIsZoomIn}
               leadStarNumber={leadStarNumber}
               activeKey={activeKey}
-              removePositionByIndex={removePositionByIndex}
+              confirmationModalShow={confirmationModalShow}
+              setConfirmationModalShow={setConfirmationModalShow}
             />
           </Col>
           <Col sm={2} md={2}>
@@ -304,11 +324,35 @@ function ManualMeasurement({
         onClickNext={() => {
           setIsZoomIn(false);
           setManualStarModalShow(false);
-          if (isAutoSave) {
-            onClickFinishButton();
-          }
         }}
+        autoSave={isAutoSave ? () => onClickFinishButton() : () => {}}
         leadStarNumber={leadStarNumber}
+      />
+
+      <ConfirmationModal
+        show={confirmationModalShow}
+        onHide={() => {
+          setConfirmationModalShow(false);
+        }}
+        onExit={() => setIsZoomIn(false)}
+        onEntered={() => setIsZoomIn(true)}
+        removePositionByIndex={removePositionByIndex}
+        setManualStarModalShow={setManualStarModalShow}
+        positionList={positionList}
+        activeKey={activeKey}
+        leadStarNumber={leadStarNumber}
+        onClickYes={() => {
+          removePositionByIndex(activeKey, currentPage);
+          setConfirmationModalShow(false);
+        }}
+      />
+
+      <ManualAlertModal
+        manualAlertModalShow={manualAlertModalShow}
+        onClickOk={() => {
+          navigate('/COIAS');
+          setManualAlertModalShow(false);
+        }}
       />
     </div>
   );
@@ -331,4 +375,5 @@ ManualMeasurement.propTypes = {
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
   leadStarNumber: PropTypes.number.isRequired,
+  setLeadStarNumber: PropTypes.func.isRequired,
 };

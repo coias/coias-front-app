@@ -117,7 +117,6 @@ function App() {
                       setNext={setNext}
                       back={back}
                       setBack={setBack}
-                      setLeadStarNumber={setLeadStarNumber}
                     />
                   }
                 />
@@ -139,6 +138,7 @@ function App() {
                       back={back}
                       setBack={setBack}
                       leadStarNumber={leadStarNumber}
+                      setLeadStarNumber={setLeadStarNumber}
                     />
                   }
                 />

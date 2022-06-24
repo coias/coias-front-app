@@ -19,15 +19,25 @@ function ManualToolBar({
   };
 
   const onClickAddButton = () => {
+    // TODO : 動的に確保する ５->N
     setPositionList([...positionList, []]);
     setCheckedState([...checkedState, false]);
     setActiveKey(positionList.length);
   };
 
   const removePositionListByCheckState = () => {
+    document.getElementById('wrapper-coias').focus();
+    let cnt = 1;
+
     setPositionList(
-      positionList.filter((elementPosition, index) => !checkedState[index]),
+      positionList.filter((elementPosition, index) => {
+        if (index + 1 < activeKey && !checkedState[index]) {
+          cnt += 1;
+        }
+        return !checkedState[index];
+      }),
     );
+    setActiveKey(activeKey - (activeKey - cnt));
     setCheckedState(checkedState.filter((element) => !element));
   };
 
@@ -69,6 +79,7 @@ function ManualToolBar({
               // eslint-disable-next-line react/no-array-index-key
               <div className="d-flex" key={index}>
                 <Form.Check
+                  key={d}
                   style={{ marginTop: '20px' }}
                   onChange={() => handleOnChange(index)}
                   checked={checkedState[index]}

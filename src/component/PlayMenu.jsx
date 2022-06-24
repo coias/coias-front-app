@@ -205,7 +205,7 @@ function PlayMenu({
                 setHelpModalShow(false);
                 setImageURLs(JSON.parse(JSON.stringify(imageNames)));
               }}
-              title="表示設定"
+              title="ヘルプ"
               imageURLs={imageNames}
             />
           </ButtonGroup>
