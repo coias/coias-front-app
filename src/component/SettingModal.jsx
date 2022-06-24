@@ -8,6 +8,8 @@ function SettingModal({
   imageURLs,
   setDefaultZoomRate,
   defaultZoomRate,
+  setIsAutoSave,
+  isAutoSave,
 }) {
   return (
     <Modal
@@ -61,7 +63,7 @@ function SettingModal({
                 <Col>
                   <Form.Check
                     name="group1"
-                    label="30"
+                    label="小"
                     type="radio"
                     onChange={() => setDefaultZoomRate(50)}
                     defaultChecked={defaultZoomRate === 50 && 'true'}
@@ -70,7 +72,7 @@ function SettingModal({
                 <Col>
                   <Form.Check
                     name="group1"
-                    label="40"
+                    label="中"
                     type="radio"
                     onChange={() => setDefaultZoomRate(40)}
                     defaultChecked={defaultZoomRate === 40 && 'true'}
@@ -79,10 +81,33 @@ function SettingModal({
                 <Col>
                   <Form.Check
                     name="group1"
-                    label="50"
+                    label="大"
                     type="radio"
                     onChange={() => setDefaultZoomRate(30)}
                     defaultChecked={defaultZoomRate === 30 && 'true'}
+                  />
+                </Col>
+              </Row>
+              <h4>オートセーブ</h4>
+              <Row>
+                <Col>
+                  <Form.Check
+                    name="group2"
+                    label="ON"
+                    type="radio"
+                    onChange={() => setIsAutoSave(true)}
+                    defaultChecked={isAutoSave && 'true'}
+                    className="m-3"
+                  />
+                </Col>
+                <Col>
+                  <Form.Check
+                    name="group2"
+                    label="OFF"
+                    type="radio"
+                    onChange={() => setIsAutoSave(false)}
+                    defaultChecked={!isAutoSave && 'true'}
+                    className="m-3"
                   />
                 </Col>
               </Row>
@@ -105,4 +130,6 @@ SettingModal.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setDefaultZoomRate: PropTypes.func.isRequired,
   defaultZoomRate: PropTypes.number.isRequired,
+  setIsAutoSave: PropTypes.func.isRequired,
+  isAutoSave: PropTypes.bool.isRequired,
 };

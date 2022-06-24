@@ -7,6 +7,7 @@ import {
   ToggleButton,
   ButtonGroup,
   Form,
+  Spinner,
 } from 'react-bootstrap';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
@@ -37,6 +38,9 @@ function PlayMenu({
   handleClick,
   setStarPos,
   fileNum,
+  isSaveLoading,
+  setIsAutoSave,
+  isAutoSave,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -190,6 +194,8 @@ function PlayMenu({
               imageURLs={imageNames}
               setDefaultZoomRate={setDefaultZoomRate}
               defaultZoomRate={defaultZoomRate}
+              setIsAutoSave={setIsAutoSave}
+              isAutoSave={isAutoSave}
             />
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
               <BiHelpCircle size={30} />
@@ -200,17 +206,22 @@ function PlayMenu({
                 setHelpModalShow(false);
                 setImageURLs(JSON.parse(JSON.stringify(imageNames)));
               }}
-              title="表示設定"
+              title="ヘルプ"
               imageURLs={imageNames}
             />
           </ButtonGroup>
+
           {isManual ? (
             <Button
               variant="danger"
               size="lg"
               onClick={() => onClickFinishButton()}
             >
-              手動測定終了
+              {isSaveLoading ? (
+                <Spinner animation="border" size="md" />
+              ) : (
+                '手動測定終了'
+              )}
             </Button>
           ) : (
             <div>
@@ -265,6 +276,9 @@ PlayMenu.propTypes = {
   handleClick: PropTypes.func,
   setStarPos: PropTypes.func,
   fileNum: PropTypes.number.isRequired,
+  isSaveLoading: PropTypes.bool,
+  setIsAutoSave: PropTypes.func,
+  isAutoSave: PropTypes.bool,
 };
 
 PlayMenu.defaultProps = {
@@ -277,6 +291,9 @@ PlayMenu.defaultProps = {
   originalStarPos: {},
   handleClick: () => {},
   setStarPos: () => {},
+  isSaveLoading: false,
+  setIsAutoSave: () => {},
+  isAutoSave: false,
 };
 
 export default PlayMenu;

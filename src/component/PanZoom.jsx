@@ -12,15 +12,17 @@ import useEventListener from '../hooks/useEventListener';
 PanZoom.defaultProps = {
   isManual: false,
   isReload: false,
-  show: false,
   brightnessVal: 150,
   contrastVal: 150,
-  setShow: () => {},
   positionList: [],
   disable: false,
   setManualStarModalShow: () => {},
   isZoomIn: false,
   setIsZoomIn: () => {},
+  leadStarNumber: 0,
+  activeKey: 0,
+  confirmationModalShow: false,
+  setConfirmationModalShow: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -33,13 +35,15 @@ PanZoom.propTypes = {
   contrastVal: PropTypes.number,
   isManual: PropTypes.bool,
   positionList: PropTypes.arrayOf(PropTypes.array),
-  setShow: PropTypes.func,
-  show: PropTypes.bool,
   isHide: PropTypes.bool.isRequired,
   disable: PropTypes.bool,
   setManualStarModalShow: PropTypes.func,
   isZoomIn: PropTypes.bool,
   setIsZoomIn: PropTypes.func,
+  leadStarNumber: PropTypes.number,
+  activeKey: PropTypes.number,
+  confirmationModalShow: PropTypes.bool,
+  setConfirmationModalShow: PropTypes.func,
 };
 
 function PanZoom({
@@ -51,13 +55,15 @@ function PanZoom({
   setStarPos,
   isManual,
   positionList,
-  setShow,
-  show,
   isHide,
   disable,
   setManualStarModalShow,
   isZoomIn,
   setIsZoomIn,
+  leadStarNumber,
+  activeKey,
+  confirmationModalShow,
+  setConfirmationModalShow,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -77,7 +83,6 @@ function PanZoom({
   const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
-  // const [starModalShow, setStarModalShow] = useState(false);
   const [context, setContext] = useState();
   const [scale, setScale] = useState(1);
 
@@ -142,6 +147,8 @@ function PanZoom({
 
       context.imageSmoothingEnabled = false;
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+
+      context.imageSmoothingEnabled = true;
       Object.keys(starPos)
         .map((key) => starPos[key])
         .forEach((pos) => {
@@ -192,18 +199,7 @@ function PanZoom({
       positionList.forEach((pos, i) =>
         pos.forEach((manualPos) => {
           if (manualPos.page === currentPage) {
-            const starNameList = Object.keys(starPos).filter((element) =>
-              element.startsWith('H'),
-            );
-            const headStarNumber = Number(
-              starNameList[starNameList.length - 1].replace('H', ''),
-            );
-
-            const getStarNumberStr = (index) =>
-              `H${'00000'.slice(-(6 - headStarNumber.toString().length))}${
-                headStarNumber + index + 1
-              }`; // rectangle setting
-
+            // rectangle setting
             let linesize;
             if (3 / scale > 1.5) {
               linesize = 3 / scale;
@@ -213,8 +209,7 @@ function PanZoom({
             const x = manualPos.x - RECT_WIDTH / scale / 2;
             const y = manualPos.y - RECT_HEIGHT / scale / 2;
             context.lineWidth = linesize;
-            // set stroke style depends on manualPos[4]
-            context.strokeStyle = 'blue';
+            context.strokeStyle = i === activeKey ? 'red' : 'blue';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
 
@@ -227,19 +222,23 @@ function PanZoom({
             }
 
             fontsize += 'px serif';
-            context.strokeStyle = 'blue';
+            context.strokeStyle = i === activeKey ? 'red' : 'blue';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.lineWidth = 3;
+            context.lineWidth = 2;
             context.font = fontsize;
             context.strokeText(
-              getStarNumberStr(i),
+              `H${'000000'.slice((leadStarNumber + i).toString().length - 6)}${
+                leadStarNumber + i
+              }`,
               x - RECT_WIDTH / 10,
               y - RECT_HEIGHT / 10,
             );
-            context.fillStyle = 'white';
+            context.fillStyle = i === activeKey ? 'white' : 'white';
             context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
-              getStarNumberStr(i),
+              `H${'000000'.slice((leadStarNumber + i).toString().length - 6)}${
+                leadStarNumber + i
+              }`,
               x - RECT_WIDTH / 10,
               y - RECT_HEIGHT / 10,
             );
@@ -260,6 +259,8 @@ function PanZoom({
     IMAGE_HEIGHT,
     isHide,
     positionList,
+    activeKey,
+    confirmationModalShow,
   ]);
 
   useEventListener('mousemove', relativeCoords, canvasRef.current);
@@ -321,17 +322,22 @@ function PanZoom({
 
     if (positionList.length < 1 || !sshouldIgnore) return;
 
-    positionList.forEach((positions) =>
-      positions.forEach((position) => {
-        if (position && testHit(position.x, position.y, isManual)) {
-          console.log(position);
-        }
-      }),
+    const currentPageIndex = positionList[activeKey].findIndex(
+      (e) => e.page === currentPage,
     );
 
-    setShow(show);
-
-    setManualStarModalShow(true);
+    if (
+      currentPageIndex !== -1 &&
+      testHit(
+        positionList[activeKey][currentPageIndex].x,
+        positionList[activeKey][currentPageIndex].y,
+        isManual,
+      )
+    ) {
+      setConfirmationModalShow(true);
+    } else {
+      setManualStarModalShow(true);
+    }
   }
 
   const keyInvalid = (e) => {

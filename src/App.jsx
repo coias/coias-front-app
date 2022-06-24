@@ -52,6 +52,7 @@ function App() {
 
   const [imageURLs, setImageURLs] = useState([]);
   const [originalStarPos, setOriginalStarPos] = useState({});
+  const [leadStarNumber, setLeadStarNumber] = useState(0);
   const pageValue = useMemo(
     () => ({ currentPage, setCurrentPage }),
     [currentPage],
@@ -66,21 +67,14 @@ function App() {
   const [starPos, setStarPos] = useState({});
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
 
-  const [positionList, setPositionList] = useState([]);
+  const [positionList, setPositionList] = useState([[]]);
   const [start, setStart] = useState(false);
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
 
   return (
     <BrowserRouter style={{ position: 'relative' }}>
-      <Header
-        start={start}
-        setStart={setStart}
-        next={next}
-        setNext={setNext}
-        back={back}
-        setBack={setBack}
-      />
+      <Header />
       <main
         style={{
           position: 'absolute',
@@ -143,6 +137,8 @@ function App() {
                       setNext={setNext}
                       back={back}
                       setBack={setBack}
+                      leadStarNumber={leadStarNumber}
+                      setLeadStarNumber={setLeadStarNumber}
                     />
                   }
                 />

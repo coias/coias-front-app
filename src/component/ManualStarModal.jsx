@@ -12,8 +12,8 @@ function ManualStarModal({
   activeKey,
   setPositionList,
   onClickNext,
-  onClickRemove,
-  isPositionSlected,
+  leadStarNumber,
+  autoSave,
 }) {
   const [context, setContext] = useState();
   const canvasRef = useRef(null);
@@ -229,17 +229,20 @@ function ManualStarModal({
       show={manualStarModalShow}
       onHide={onHide}
       size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
       backdrop="static"
       onExit={() => {
         setCenterCoodinate(null);
         setCanvasManualRectanglCoordinates([]);
       }}
+      onExited={autoSave}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          3点を入力してください
+          {`#H${'000000'.slice(
+            (leadStarNumber + activeKey).toString().length - 6,
+          )}${leadStarNumber + activeKey}, ${
+            currentPage + 1
+          }枚目の3点を入力してください`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -257,16 +260,6 @@ function ManualStarModal({
                 : () => drawDot()
             }
           />
-          {isPositionSlected && (
-            <Button
-              variant="danger"
-              onClick={() => {
-                onClickRemove();
-              }}
-            >
-              消す
-            </Button>
-          )}
         </div>
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between">
@@ -274,6 +267,7 @@ function ManualStarModal({
           variant="danger"
           onClick={() => {
             drawImage();
+            setCanvasManualRectanglCoordinates([]);
           }}
         >
           やり直す
@@ -286,6 +280,7 @@ function ManualStarModal({
             onClickNext();
             getForthPoint(canvasManualRectangleCoordinates, true);
             setCenterCoodinate(null);
+            setCanvasManualRectanglCoordinates([]);
           }}
         >
           完了
@@ -305,7 +300,6 @@ ManualStarModal.propTypes = {
   activeKey: PropTypes.number.isRequired,
   setPositionList: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
-  onClickRemove: PropTypes.func.isRequired,
-  isPositionSlected: PropTypes.oneOfType([PropTypes.bool, PropTypes.symbol])
-    .isRequired,
+  autoSave: PropTypes.func.isRequired,
+  leadStarNumber: PropTypes.number.isRequired,
 };

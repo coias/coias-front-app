@@ -8,13 +8,11 @@ function BrightnessBar({ val, set }) {
       style={{
         opacity: 0.5,
         width: '35px',
-        height: '230px',
+        height: '40%',
         color: 'white',
         backgroundColor: 'black',
         borderRadius: '5px',
         textAlign: 'center',
-        marginBottom: '30px',
-        marginTop: '30px',
       }}
     >
       <ImBrightnessContrast size={30} />
