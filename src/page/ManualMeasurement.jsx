@@ -11,7 +11,10 @@ import { PageContext, StarPositionContext } from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
 import PlayMenu from '../component/PlayMenu';
 import ManualStarModal from '../component/ManualStarModal';
-import { convertPng2FitsCoords } from '../utils/CONSTANTS';
+import {
+  convertFits2PngCoords,
+  convertPng2FitsCoords,
+} from '../utils/CONSTANTS';
 import ManualAlertModal from '../component/ManualAlertModal';
 import ConfirmationModal from '../component/ConfirmationModal';
 
@@ -56,6 +59,16 @@ function ManualMeasurement({
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
 
+  const getFitsSize = async () => {
+    await axios
+      .get(`${reactApiUri}fits_size`)
+      .then((res) => res.data.result)
+      .then((data) => {
+        setFitsSize(data);
+      })
+      .catch((e) => console.error(e));
+  };
+
   // 画面表示時、１回だけ処理(copyの実行、各画像のURL取得)
   // 画面表示時、１回だけ処理(unknown_disp.txtの処理)
   useEffect(() => {
@@ -90,6 +103,7 @@ function ManualMeasurement({
     };
     console.log(loading);
     getImages();
+    getFitsSize();
   }, []);
 
   useEffect(() => {
@@ -144,6 +158,56 @@ function ManualMeasurement({
       }
     };
 
+    const getMemoManual = async () => {
+      await axios
+        .get(`${reactApiUri}memo_manual`)
+        .then((response) => response.data.memo_manual)
+        .then((starsList) => {
+          const toPositionList = [];
+          starsList.forEach((star, index) => {
+            const starInfo = star.split(' ');
+            const prevStarName = starsList[index - 1]?.split(' ')[0];
+            const center = convertFits2PngCoords(
+              [Number(starInfo[2]), Number(starInfo[3])],
+              fitsSize,
+            );
+            const A = convertFits2PngCoords(
+              [Number(starInfo[4]), Number(starInfo[5])],
+              fitsSize,
+            );
+            const B = convertFits2PngCoords(
+              [Number(starInfo[6]), Number(starInfo[7])],
+              fitsSize,
+            );
+            const C = convertFits2PngCoords(
+              [Number(starInfo[8]), Number(starInfo[9])],
+              fitsSize,
+            );
+
+            const value = {
+              page: Number(starInfo[1]),
+              x: center.x,
+              y: center.y,
+              center,
+              actualA: A,
+              actualB: B,
+              actualC: C,
+            };
+            if (starInfo[0] !== prevStarName) {
+              toPositionList.push([]);
+            }
+            toPositionList[toPositionList.length - 1].splice(
+              Number(value.page),
+              1,
+              value,
+            );
+            console.log(toPositionList);
+          });
+          setPositionList(toPositionList);
+        })
+        .catch((e) => console.error(e));
+    };
+
     window.images = [];
     window.images = imageURLs.map((image) => {
       setLoading(true);
@@ -160,6 +224,7 @@ function ManualMeasurement({
           ).length === window.images.length;
         if (window.imageLoadComplete) {
           getReDisp();
+          getMemoManual();
         }
       };
       masked.onload = onLoad;
@@ -177,26 +242,13 @@ function ManualMeasurement({
 
   const onClickFinishButton = async () => {
     setIsSaveLoading(true);
-    let FITSSIZE = [];
-    if (fitsSize.length === 0) {
-      await axios
-        .get(`${reactApiUri}fits_size`)
-        .then((res) => res.data.result)
-        .then((data) => {
-          FITSSIZE = data;
-          setFitsSize(data);
-        })
-        .catch((e) => console.error(e));
-    } else {
-      FITSSIZE = fitsSize;
-    }
 
     const result = positionList.flatMap((list, i) =>
       list.flatMap((pos) => {
-        const convertedCenter = convertPng2FitsCoords(pos.center, FITSSIZE);
-        const convertedA = convertPng2FitsCoords(pos.actualA, FITSSIZE);
-        const convertedB = convertPng2FitsCoords(pos.actualB, FITSSIZE);
-        const convertedC = convertPng2FitsCoords(pos.actualC, FITSSIZE);
+        const convertedCenter = convertPng2FitsCoords(pos.center, fitsSize);
+        const convertedA = convertPng2FitsCoords(pos.actualA, fitsSize);
+        const convertedB = convertPng2FitsCoords(pos.actualB, fitsSize);
+        const convertedC = convertPng2FitsCoords(pos.actualC, fitsSize);
 
         return `${'000000'.slice((leadStarNumber + i).toString().length - 6)}${
           leadStarNumber + i
