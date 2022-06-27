@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
+import ErrorModal from '../component/ErrorModal';
 // import ExcuteButton from '../component/ExcuteButton';
 
 // eslint-disable-next-line no-use-before-define
@@ -54,6 +55,8 @@ function ExplorePrepare({
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
   const [processName, setProcessName] = useState('');
+  const [errorNumber, setErrorNumber] = useState(0);
+  const [showProcessError, setShowProcessError] = useState(false);
 
   const handleSelect = (e) => setVal(e.target.value);
 
@@ -204,6 +207,7 @@ function ExplorePrepare({
           document.getElementById(
             'toast-message',
           ).innerHTML = `${error} : 処理が失敗しました`;
+          setErrorNumber(11);
         });
     };
     if (query.length > 0) put();
@@ -426,6 +430,13 @@ function ExplorePrepare({
             )}
           </Row>
         </Row>
+        <Button
+          onClick={() => {
+            setShowProcessError(true);
+          }}
+        >
+          ERROR
+        </Button>
       </div>
 
       <Row
@@ -536,6 +547,11 @@ function ExplorePrepare({
           </Modal.Footer>
         </Form>
       </Modal>
+      <ErrorModal
+        show={showProcessError}
+        errorNumber={errorNumber}
+        setShow={setShowProcessError}
+      />
     </div>
   );
 }
