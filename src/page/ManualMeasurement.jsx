@@ -50,6 +50,7 @@ function ManualMeasurement({
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [isAutoSave, setIsAutoSave] = useState(true);
   const [confirmationModalShow, setConfirmationModalShow] = useState(false);
+  const [checkedState, setCheckedState] = useState([false]);
 
   const navigate = useNavigate();
 
@@ -203,6 +204,7 @@ function ManualMeasurement({
             );
           });
           setPositionList(toPositionList);
+          setCheckedState(Array(toPositionList.length - 1).fill(false));
         })
         .catch((e) => console.error(e));
     };
@@ -353,6 +355,8 @@ function ManualMeasurement({
               activeKey={activeKey}
               setActiveKey={setActiveKey}
               leadStarNumber={leadStarNumber}
+              checkedState={checkedState}
+              setCheckedState={setCheckedState}
             />
           </Col>
         </Row>

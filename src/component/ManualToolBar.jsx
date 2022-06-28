@@ -1,4 +1,4 @@
-import { React, useContext, useState, useCallback } from 'react';
+import { React, useContext, useCallback } from 'react';
 import { Button, Row, Col, Accordion, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { BiAddToQueue } from 'react-icons/bi';
@@ -10,9 +10,10 @@ function ManualToolBar({
   activeKey,
   setActiveKey,
   leadStarNumber,
+  checkedState,
+  setCheckedState,
 }) {
   const { currentPage } = useContext(PageContext);
-  const [checkedState, setCheckedState] = useState([false]);
 
   const onClickAccordion = (index) => {
     setActiveKey(index);
@@ -40,6 +41,8 @@ function ManualToolBar({
     const updatedCheckedState = checkedState.map((item, index) =>
       index === position ? !item : item,
     );
+
+    console.log(updatedCheckedState);
 
     setCheckedState(updatedCheckedState);
   };
@@ -141,4 +144,6 @@ ManualToolBar.propTypes = {
   activeKey: PropTypes.number.isRequired,
   leadStarNumber: PropTypes.number.isRequired,
   setActiveKey: PropTypes.func.isRequired,
+  checkedState: PropTypes.arrayOf(PropTypes.bool).isRequired,
+  setCheckedState: PropTypes.func.isRequired,
 };
