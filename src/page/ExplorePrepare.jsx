@@ -461,58 +461,57 @@ function ExplorePrepare({
           <Modal.Title>ファイルを選択してください</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
-          <Modal.Body>
-            <div className="m-5 justify-content-center">
-              アップロード後、画像処理をおこないます。
-              <br />
-              処理は時間がかかります。
-              <br />
-              画像処理は全自動処理と手動処理が選択できます。
-              <InputGroup hasValidation>
-                <Row>
-                  <Form.Control
-                    type="file"
-                    ref={fileInput}
-                    onChange={handleChange}
-                    isInvalid={valid}
-                    multiple
-                  />
-                </Row>
-                <Row>
-                  {errorFiles.map((element) => (
-                    <p
-                      style={{
-                        color: element.startsWith('') && 'red',
-                      }}
-                    >
-                      {element}
-                    </p>
-                  ))}
-                </Row>
-              </InputGroup>
-              <Form.Check
-                className="m-3"
-                inline
-                type="radio"
-                label="全自動処理"
-                name="group1"
-                id="auto"
-                value="auto"
-                onChange={handleSelect}
-                checked={val === 'auto'}
-              />
-              <Form.Check
-                className="m-3"
-                inline
-                type="radio"
-                label="手動処理"
-                name="group1"
-                id="manual"
-                value="manual"
-                onChange={handleSelect}
-                checked={val === 'manual'}
-              />
-            </div>
+          <Modal.Body className="mx-3">
+            アップロード後、画像処理をおこないます。
+            <br />
+            処理は時間がかかります。
+            <br />
+            画像処理は全自動処理と手動処理が選択できます。
+            <InputGroup hasValidation className="mt-3">
+              <Row>
+                <Form.Control
+                  type="file"
+                  ref={fileInput}
+                  onChange={handleChange}
+                  isInvalid={valid}
+                  multiple
+                  className="mx-2"
+                />
+              </Row>
+              <Row>
+                {errorFiles.map((element) => (
+                  <p
+                    style={{
+                      color: element.startsWith('') && 'red',
+                    }}
+                  >
+                    {element}
+                  </p>
+                ))}
+              </Row>
+            </InputGroup>
+            <Form.Check
+              className="mt-3"
+              inline
+              type="radio"
+              label="全自動処理"
+              name="group1"
+              id="auto"
+              value="auto"
+              onChange={handleSelect}
+              checked={val === 'auto'}
+            />
+            <Form.Check
+              className="mt-3"
+              inline
+              type="radio"
+              label="手動処理"
+              name="group1"
+              id="manual"
+              value="manual"
+              onChange={handleSelect}
+              checked={val === 'manual'}
+            />
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
