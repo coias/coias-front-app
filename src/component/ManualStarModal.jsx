@@ -13,7 +13,7 @@ function ManualStarModal({
   setPositionList,
   onClickNext,
   leadStarNumber,
-  autoSave,
+  onExited,
 }) {
   const [context, setContext] = useState();
   const canvasRef = useRef(null);
@@ -227,15 +227,18 @@ function ManualStarModal({
   return (
     <Modal
       show={manualStarModalShow}
-      onHide={onHide}
+      onHide={() => {
+        onHide();
+        setCenterCoodinate(null);
+        setCanvasManualRectanglCoordinates([]);
+      }}
       size="lg"
       backdrop="static"
       onExit={() => {
         setCenterCoodinate(null);
         setCanvasManualRectanglCoordinates([]);
       }}
-      onExited={autoSave}
-      animation={false}
+      onExited={onExited}
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
@@ -301,6 +304,6 @@ ManualStarModal.propTypes = {
   activeKey: PropTypes.number.isRequired,
   setPositionList: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
-  autoSave: PropTypes.func.isRequired,
+  onExited: PropTypes.func.isRequired,
   leadStarNumber: PropTypes.number.isRequired,
 };

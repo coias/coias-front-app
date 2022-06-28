@@ -260,9 +260,6 @@ function ManualMeasurement({
     );
 
     const text = result.flatMap((pos) => pos);
-
-    // memo
-    await axios.put(`${reactApiUri}memo`, text);
     // memo_manual
     await axios.put(`${reactApiUri}memo_manual`, text);
 
@@ -353,7 +350,6 @@ function ManualMeasurement({
             <ManualToolBar
               positionList={positionList}
               setPositionList={setPositionList}
-              onClickFinishButton={onClickFinishButton}
               activeKey={activeKey}
               setActiveKey={setActiveKey}
               leadStarNumber={leadStarNumber}
@@ -376,7 +372,11 @@ function ManualMeasurement({
           setIsZoomIn(false);
           setManualStarModalShow(false);
         }}
-        autoSave={isAutoSave ? () => onClickFinishButton() : () => {}}
+        onExited={() => {
+          if (isAutoSave) {
+            onClickFinishButton();
+          }
+        }}
         leadStarNumber={leadStarNumber}
       />
 
