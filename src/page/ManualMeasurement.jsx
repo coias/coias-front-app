@@ -201,7 +201,6 @@ function ManualMeasurement({
               1,
               value,
             );
-            console.log(toPositionList);
           });
           setPositionList(toPositionList);
         })

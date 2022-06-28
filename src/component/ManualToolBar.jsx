@@ -27,17 +27,12 @@ function ManualToolBar({
 
   const removePositionListByCheckState = () => {
     document.getElementById('wrapper-coias').focus();
-    let cnt = 1;
 
-    setPositionList(
-      positionList.filter((elementPosition, index) => {
-        if (index + 1 < activeKey && !checkedState[index]) {
-          cnt += 1;
-        }
-        return !checkedState[index];
-      }),
+    const filteredList = positionList.filter(
+      (elementPosition, index) => !checkedState[index],
     );
-    setActiveKey(activeKey - (activeKey - cnt));
+    setPositionList(filteredList);
+    setActiveKey(filteredList.length - 1);
     setCheckedState(checkedState.filter((element) => !element));
   };
 

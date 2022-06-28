@@ -23,8 +23,6 @@ export const convertFits2PngCoords = (fitsPosition, FITSSIZES) => {
     y: window.images[0][0].naturalHeight,
   };
 
-  console.log(PNGSIZES);
-
   const fitsXRelPos = fitsPosition[0] / FITSSIZES[0];
   const fitsYRelPos = fitsPosition[1] / FITSSIZES[1];
 

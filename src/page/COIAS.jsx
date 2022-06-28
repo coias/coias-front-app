@@ -47,6 +47,11 @@ function COIAS({
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(true);
   const [starModalShow, setStarModalShow] = useState(false);
+  const [memoList, setMemoList] = useState([]);
+  const [selectedListState, setSelectedListState] = useState([]);
+  const [isAutoSave, setIsAutoSave] = useState(true);
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
+
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const navigate = useNavigate();
@@ -89,8 +94,15 @@ function COIAS({
       setImageURLs(toObjectArray);
       setLoading(false);
     };
+    const getMemo = async () => {
+      await axios
+        .get(`${reactApiUri}memo`)
+        .then((res) => setMemoList(res.data.memo))
+        .catch((e) => console.error(e));
+    };
 
     getImages();
+    getMemo();
   }, []);
 
   useEffect(() => {
@@ -110,7 +122,9 @@ function COIAS({
           toObject[item[0]] = {
             name: item[0],
             page: [null, null, null, null, null],
-            isSelected: false,
+            isSelected: memoList.find(
+              (memoName) => memoName === item[0].replace('H', ''),
+            ),
             isKnown: false,
           };
           star = toObject[item[0]];
@@ -169,6 +183,14 @@ function COIAS({
         });
       }
 
+      setSelectedListState(
+        Object.values(toObject).map((star) => {
+          if (star.isSelected) {
+            return true;
+          }
+          return false;
+        }),
+      );
       setStarPos(toObject);
       setOriginalStarPos(toObject);
       setLoading(false);
@@ -188,7 +210,7 @@ function COIAS({
               i[1].complete &&
               i[1].naturalWidth !== 0,
           ).length === window.images.length;
-        if (window.imageLoadComplete) {
+        if (window.imageLoadComplete && !isReload && isAutoSave) {
           getDisp();
         }
       };
@@ -203,7 +225,7 @@ function COIAS({
 
     setCurrentPage(0);
     document.getElementById('wrapper-coias').focus();
-  }, [imageURLs, isReload]);
+  }, [imageURLs, memoList, isReload]);
 
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async (num) => {
@@ -252,12 +274,6 @@ function COIAS({
 
   const onStarModalExit = () => {
     setDisable(false);
-    Array.from(document.getElementsByClassName('form-check-input')).forEach(
-      (item) => {
-        // eslint-disable-next-line no-param-reassign
-        item.checked = false;
-      },
-    );
     setStarModalShow(false);
   };
 
@@ -285,6 +301,9 @@ function COIAS({
         originalStarPos={originalStarPos}
         handleClick={handleClick}
         setStarPos={setStarPos}
+        isAutoSave={isAutoSave}
+        setIsAutoSave={setIsAutoSave}
+        isSaveLoading={isSaveLoading}
       />
       <Container fluid>
         <Row>
@@ -313,10 +332,28 @@ function COIAS({
               isHide={isHide}
               setStarModalShow={starModalShow}
               setDisable={setDisable}
+              setSelectedListState={setSelectedListState}
             />
           </Col>
           <Col md={1} sm={1}>
-            <StarsList disable={disable} />
+            <StarsList
+              disable={disable}
+              writeMemo={
+                isAutoSave
+                  ? async (newStarPos) => {
+                      setIsSaveLoading(true);
+                      // memo.txtへの出力
+                      const selectedStars = Object.values(newStarPos)
+                        .filter((p) => p.isSelected)
+                        .map((e) => e.name.replace('H', ''));
+                      await axios.put(`${reactApiUri}memo`, selectedStars);
+                      setIsSaveLoading(false);
+                    }
+                  : () => {}
+              }
+              selectedListState={selectedListState}
+              setSelectedListState={setSelectedListState}
+            />
           </Col>
         </Row>
       </Container>

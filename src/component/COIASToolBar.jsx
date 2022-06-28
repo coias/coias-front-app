@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Col } from 'react-bootstrap';
 import { FaMousePointer } from 'react-icons/fa';
 import { AiOutlineReload } from 'react-icons/ai';
@@ -6,6 +6,7 @@ import { BiHide } from 'react-icons/bi';
 import PropTypes from 'prop-types';
 import ContrastBar from './ContrastBar';
 import BrightnessBar from './BrightnessBar';
+import { StarPositionContext } from './context';
 
 // eslint-disable-next-line no-use-before-define
 COIASToolBar.propTypes = {
@@ -33,6 +34,7 @@ function COIASToolBar({
   isHide,
   setIsHide,
 }) {
+  const { setStarPos } = useContext(StarPositionContext);
   return (
     <Col
       className="flex-column"
@@ -58,16 +60,17 @@ function COIASToolBar({
         variant="light"
         onClick={() => {
           setIsSelect(false);
-          Array.from(
-            document.getElementsByClassName('form-check-input'),
-          ).forEach((item) => {
-            // eslint-disable-next-line no-param-reassign
-            item.checked = false;
-          });
           setIsHide(false);
           setIsReload(!isReload);
           setBrightnessVal(150);
           setContrastVal(150);
+          setStarPos((prevStarPos) => {
+            const newStarPos = prevStarPos;
+            Object.keys(prevStarPos).forEach((key) => {
+              newStarPos[key].isSelected = false;
+            });
+            return newStarPos;
+          });
         }}
       >
         <AiOutlineReload size={30} />

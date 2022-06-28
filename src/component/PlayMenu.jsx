@@ -245,7 +245,11 @@ function PlayMenu({
                 disabled={disable}
                 size="lg"
               >
-                探索終了
+                {isSaveLoading ? (
+                  <Spinner animation="border" size="md" />
+                ) : (
+                  '探索終了'
+                )}
               </Button>
             </div>
           )}
@@ -274,9 +278,9 @@ PlayMenu.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object),
   handleClick: PropTypes.func,
   setStarPos: PropTypes.func,
-  isSaveLoading: PropTypes.bool,
-  setIsAutoSave: PropTypes.func,
-  isAutoSave: PropTypes.bool,
+  isSaveLoading: PropTypes.bool.isRequired,
+  setIsAutoSave: PropTypes.func.isRequired,
+  isAutoSave: PropTypes.bool.isRequired,
 };
 
 PlayMenu.defaultProps = {
@@ -289,9 +293,6 @@ PlayMenu.defaultProps = {
   originalStarPos: {},
   handleClick: () => {},
   setStarPos: () => {},
-  isSaveLoading: false,
-  setIsAutoSave: () => {},
-  isAutoSave: false,
 };
 
 export default PlayMenu;
