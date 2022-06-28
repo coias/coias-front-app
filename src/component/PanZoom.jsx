@@ -103,19 +103,21 @@ function PanZoom({
   // panzoomのコンストラクター
   useEffect(() => {
     ZPCanvas.current = panzoom(ZPCanvasRef.current, {
-      maxZoom: 100,
+      maxZoom: 3,
       minZoom: 1,
       zoomDoubleClickSpeed: 1,
-      transformOrigin: { x: 0.5, y: 0.5 },
+      bounds: true,
+      boundsPadding: 1,
+      // transformOrigin: { x: 0.5, y: 0.5 },
 
       beforeWheel(e) {
         const shouldIgnore = !e.altKey;
         setScale(ZPCanvas.current.getTransform().scale);
         return shouldIgnore;
       },
-      beforeMouseDown() {
-        return 'ignore';
-      },
+      // beforeMouseDown() {
+      //   return 'ignore';
+      // },
       filterKey() {
         // don't let panzoom handle this event:
         return true;
@@ -371,21 +373,24 @@ function PanZoom({
         <MousePosition isZoomIn={isZoomIn} />
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
         <div
-          className="wrapper"
+          // className="wrapper"
           style={{
             width: '100%',
             height: '100%',
             backgroundColor: 'white',
             position: 'relative',
+            overflow: 'none',
           }}
           onKeyDown={keyInvalid}
         >
           <div
             ref={ZPCanvasRef}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
+            style={
+              {
+                // width: '100%',
+                // height: '100%',
+              }
+            }
           >
             <canvas
               ref={canvasRef}
@@ -402,6 +407,9 @@ function PanZoom({
                 filter: `contrast(${contrastVal - 50}%) brightness(${
                   brightnessVal - 50
                 }%)`,
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
               }}
             />
           </div>

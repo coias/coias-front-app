@@ -55,8 +55,9 @@ function ExplorePrepare({
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
   const [processName, setProcessName] = useState('');
-  const [errorNumber, setErrorNumber] = useState(0);
   const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState();
+  const [errorReason, setErrorReason] = useState();
 
   const handleSelect = (e) => setVal(e.target.value);
 
@@ -183,10 +184,9 @@ function ExplorePrepare({
     setProcessName('処理中...');
     const put = async () => {
       setLoading(true);
-
       await axios
         .put(uri + query)
-        .then(() => {
+        .then((response) => {
           const updatedMenunames = menunames.map((item) => {
             if (
               item.query === query ||
@@ -195,6 +195,11 @@ function ExplorePrepare({
             ) {
               // eslint-disable-next-line no-param-reassign
               item.done = true;
+            }
+            if (response.data.place !== '正常終了') {
+              setErrorPlace(response.data.place);
+              setErrorReason(response.data.reason);
+              setShowProcessError(true);
             }
             return item;
           });
@@ -207,7 +212,6 @@ function ExplorePrepare({
           document.getElementById(
             'toast-message',
           ).innerHTML = `${error} : 処理が失敗しました`;
-          setErrorNumber(11);
         });
     };
     if (query.length > 0) put();
@@ -430,13 +434,6 @@ function ExplorePrepare({
             )}
           </Row>
         </Row>
-        <Button
-          onClick={() => {
-            setShowProcessError(true);
-          }}
-        >
-          ERROR
-        </Button>
       </div>
 
       <Row
@@ -549,8 +546,9 @@ function ExplorePrepare({
       </Modal>
       <ErrorModal
         show={showProcessError}
-        errorNumber={errorNumber}
         setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
       />
     </div>
   );
