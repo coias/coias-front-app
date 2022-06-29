@@ -204,7 +204,7 @@ function ManualMeasurement({
             );
           });
           setPositionList(toPositionList);
-          setCheckedState(Array(toPositionList.length - 1).fill(false));
+          setCheckedState(Array(toPositionList.length).fill(false));
         })
         .catch((e) => console.error(e));
     };
@@ -241,10 +241,12 @@ function ManualMeasurement({
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
-  const onClickFinishButton = async () => {
+  const onClickFinishButton = async (filteredList = []) => {
     setIsSaveLoading(true);
 
-    const result = positionList.flatMap((list, i) =>
+    const targetList = filteredList.length === 0 ? positionList : filteredList;
+
+    const result = targetList.flatMap((list, i) =>
       list.flatMap((pos) => {
         const convertedCenter = convertPng2FitsCoords(pos.center, fitsSize);
         const convertedA = convertPng2FitsCoords(pos.actualA, fitsSize);
@@ -357,6 +359,7 @@ function ManualMeasurement({
               leadStarNumber={leadStarNumber}
               checkedState={checkedState}
               setCheckedState={setCheckedState}
+              onClickFinishButton={onClickFinishButton}
             />
           </Col>
         </Row>
