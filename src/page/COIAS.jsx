@@ -277,6 +277,16 @@ function COIAS({
     setStarModalShow(false);
   };
 
+  const writeMemo = async (newStarPos) => {
+    setIsSaveLoading(true);
+    // memo.txtへの出力
+    const selectedStars = Object.values(newStarPos)
+      .filter((p) => p.isSelected)
+      .map((e) => e.name.replace('H', ''));
+    await axios.put(`${reactApiUri}memo`, selectedStars);
+    setIsSaveLoading(false);
+  };
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
@@ -333,24 +343,13 @@ function COIAS({
               setStarModalShow={starModalShow}
               setDisable={setDisable}
               setSelectedListState={setSelectedListState}
+              writeMemo={isAutoSave ? writeMemo : () => {}}
             />
           </Col>
           <Col md={1} sm={1}>
             <StarsList
               disable={disable}
-              writeMemo={
-                isAutoSave
-                  ? async (newStarPos) => {
-                      setIsSaveLoading(true);
-                      // memo.txtへの出力
-                      const selectedStars = Object.values(newStarPos)
-                        .filter((p) => p.isSelected)
-                        .map((e) => e.name.replace('H', ''));
-                      await axios.put(`${reactApiUri}memo`, selectedStars);
-                      setIsSaveLoading(false);
-                    }
-                  : () => {}
-              }
+              writeMemo={isAutoSave ? writeMemo : () => {}}
               selectedListState={selectedListState}
               setSelectedListState={setSelectedListState}
             />

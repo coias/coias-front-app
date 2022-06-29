@@ -23,6 +23,7 @@ PanZoom.defaultProps = {
   activeKey: 0,
   confirmationModalShow: false,
   setConfirmationModalShow: () => {},
+  writeMemo: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -44,6 +45,7 @@ PanZoom.propTypes = {
   activeKey: PropTypes.number,
   confirmationModalShow: PropTypes.bool,
   setConfirmationModalShow: PropTypes.func,
+  writeMemo: PropTypes.func,
 };
 
 function PanZoom({
@@ -64,6 +66,7 @@ function PanZoom({
   activeKey,
   confirmationModalShow,
   setConfirmationModalShow,
+  writeMemo,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -311,6 +314,7 @@ function PanZoom({
         }
         return null;
       });
+    writeMemo(newStarPos);
     setStarPos(newStarPos);
   }
 
