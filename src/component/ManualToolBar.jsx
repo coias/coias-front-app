@@ -88,7 +88,11 @@ function ManualToolBar({
                   onClick={() => onClickAccordion(index)}
                   className="w-100"
                 >
-                  <Accordion.Header>
+                  <Accordion.Header
+                    onClick={() =>
+                      document.getElementById('wrapper-coias').focus()
+                    }
+                  >
                     {`#H${'000000'.slice(
                       (leadStarNumber + index).toString().length - 6,
                     )}${leadStarNumber + index}`}
