@@ -1,6 +1,7 @@
-import { React, useContext, useState, useCallback } from 'react';
+import { React, useContext, useCallback } from 'react';
 import { Button, Row, Col, Accordion, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import { v4 as uuidv4 } from 'uuid';
 import { BiAddToQueue } from 'react-icons/bi';
 import { PageContext } from './context';
 
@@ -10,9 +11,11 @@ function ManualToolBar({
   activeKey,
   setActiveKey,
   leadStarNumber,
+  checkedState,
+  setCheckedState,
+  onClickFinishButton,
 }) {
   const { currentPage } = useContext(PageContext);
-  const [checkedState, setCheckedState] = useState([false]);
 
   const onClickAccordion = (index) => {
     setActiveKey(index);
@@ -27,17 +30,13 @@ function ManualToolBar({
 
   const removePositionListByCheckState = () => {
     document.getElementById('wrapper-coias').focus();
-    let cnt = 1;
 
-    setPositionList(
-      positionList.filter((elementPosition, index) => {
-        if (index + 1 < activeKey && !checkedState[index]) {
-          cnt += 1;
-        }
-        return !checkedState[index];
-      }),
+    const filteredList = positionList.filter(
+      (elementPosition, index) => !checkedState[index],
     );
-    setActiveKey(activeKey - (activeKey - cnt));
+    setPositionList(filteredList);
+    onClickFinishButton(filteredList);
+    setActiveKey(filteredList.length - 1);
     setCheckedState(checkedState.filter((element) => !element));
   };
 
@@ -76,22 +75,24 @@ function ManualToolBar({
         <Row>
           <Accordion activeKey={`${activeKey}`}>
             {positionList.map((d, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <div className="d-flex" key={index}>
+              <div className="d-flex" key={uuidv4()}>
                 <Form.Check
-                  key={d}
+                  key={uuidv4()}
                   style={{ marginTop: '20px' }}
                   onChange={() => handleOnChange(index)}
                   checked={checkedState[index]}
                 />
                 <Accordion.Item
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
+                  key={uuidv4()}
                   eventKey={index.toString()}
                   onClick={() => onClickAccordion(index)}
                   className="w-100"
                 >
-                  <Accordion.Header>
+                  <Accordion.Header
+                    onClick={() =>
+                      document.getElementById('wrapper-coias').focus()
+                    }
+                  >
                     {`#H${'000000'.slice(
                       (leadStarNumber + index).toString().length - 6,
                     )}${leadStarNumber + index}`}
@@ -146,4 +147,7 @@ ManualToolBar.propTypes = {
   activeKey: PropTypes.number.isRequired,
   leadStarNumber: PropTypes.number.isRequired,
   setActiveKey: PropTypes.func.isRequired,
+  checkedState: PropTypes.arrayOf(PropTypes.bool).isRequired,
+  setCheckedState: PropTypes.func.isRequired,
+  onClickFinishButton: PropTypes.func.isRequired,
 };

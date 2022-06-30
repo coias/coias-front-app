@@ -48,6 +48,11 @@ function COIAS({
   const [disable, setDisable] = useState(true);
   const [starModalShow, setStarModalShow] = useState(false);
   const [fileNum, setFileNum] = useState(0);
+  const [memoList, setMemoList] = useState([]);
+  const [selectedListState, setSelectedListState] = useState([]);
+  const [isAutoSave, setIsAutoSave] = useState(true);
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
+
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const navigate = useNavigate();
@@ -91,8 +96,15 @@ function COIAS({
       setImageURLs(toObjectArray);
       setLoading(false);
     };
+    const getMemo = async () => {
+      await axios
+        .get(`${reactApiUri}memo`)
+        .then((res) => setMemoList(res.data.memo))
+        .catch((e) => console.error(e));
+    };
 
     getImages();
+    getMemo();
   }, []);
 
   useEffect(() => {
@@ -112,7 +124,9 @@ function COIAS({
           toObject[item[0]] = {
             name: item[0],
             page: Array(fileNum).fill(null),
-            isSelected: false,
+            isSelected: memoList.find(
+              (memoName) => memoName === item[0].replace('H', ''),
+            ),
             isKnown: false,
           };
           star = toObject[item[0]];
@@ -138,7 +152,9 @@ function COIAS({
             toObject[item[0]] = {
               name: item[0],
               page: Array(fileNum).fill(null),
-              isSelected: false,
+              isSelected: memoList.find(
+                (memoName) => memoName === item[0].replace('H', ''),
+              ),
               isKnown: true,
             };
             star = toObject[item[0]];
@@ -158,7 +174,9 @@ function COIAS({
             toObject[item[0]] = {
               name: item[0],
               page: Array(fileNum).fill(null),
-              isSelected: false,
+              isSelected: memoList.find(
+                (memoName) => memoName === item[0].replace('H', ''),
+              ),
               isKnown: true,
             };
             star = toObject[item[0]];
@@ -171,6 +189,14 @@ function COIAS({
         });
       }
 
+      setSelectedListState(
+        Object.values(toObject).map((star) => {
+          if (star.isSelected) {
+            return true;
+          }
+          return false;
+        }),
+      );
       setStarPos(toObject);
       setOriginalStarPos(toObject);
       setLoading(false);
@@ -190,7 +216,7 @@ function COIAS({
               i[1].complete &&
               i[1].naturalWidth !== 0,
           ).length === window.images.length;
-        if (window.imageLoadComplete) {
+        if (window.imageLoadComplete && !isReload && isAutoSave) {
           getDisp();
         }
       };
@@ -205,7 +231,7 @@ function COIAS({
 
     setCurrentPage(0);
     document.getElementById('wrapper-coias').focus();
-  }, [imageURLs, isReload]);
+  }, [imageURLs, memoList, isReload]);
 
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async (num) => {
@@ -219,7 +245,7 @@ function COIAS({
     const response = await axios.put(
       `${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`,
     );
-    const redisp = await response.data.result;
+    const redisp = await response.data[0].result;
 
     // 選択を同期させるため、オブジェクトに変更
     const toObject = {};
@@ -228,8 +254,10 @@ function COIAS({
       if (!star) {
         toObject[item[0]] = {
           name: item[0],
-          page: [null, null, null, null, null],
-          isSelected: false,
+          page: Array(fileNum).fill(null),
+          isSelected: memoList.find(
+            (memoName) => memoName === item[0].replace('H', ''),
+          ),
         };
         star = toObject[item[0]];
       }
@@ -254,13 +282,17 @@ function COIAS({
 
   const onStarModalExit = () => {
     setDisable(false);
-    Array.from(document.getElementsByClassName('form-check-input')).forEach(
-      (item) => {
-        // eslint-disable-next-line no-param-reassign
-        item.checked = false;
-      },
-    );
     setStarModalShow(false);
+  };
+
+  const writeMemo = async (newStarPos) => {
+    setIsSaveLoading(true);
+    // memo.txtへの出力
+    const selectedStars = Object.values(newStarPos)
+      .filter((p) => p.isSelected)
+      .map((e) => e.name.replace('H', ''));
+    await axios.put(`${reactApiUri}memo`, selectedStars);
+    setIsSaveLoading(false);
   };
 
   return (
@@ -288,6 +320,9 @@ function COIAS({
         handleClick={handleClick}
         setStarPos={setStarPos}
         fileNum={fileNum}
+        isAutoSave={isAutoSave}
+        setIsAutoSave={setIsAutoSave}
+        isSaveLoading={isSaveLoading}
       />
       <Container fluid>
         <Row>
@@ -316,10 +351,17 @@ function COIAS({
               isHide={isHide}
               setStarModalShow={starModalShow}
               setDisable={setDisable}
+              setSelectedListState={setSelectedListState}
+              writeMemo={isAutoSave ? writeMemo : () => {}}
             />
           </Col>
           <Col md={1} sm={1}>
-            <StarsList disable={disable} />
+            <StarsList
+              disable={disable}
+              writeMemo={isAutoSave ? writeMemo : () => {}}
+              selectedListState={selectedListState}
+              setSelectedListState={setSelectedListState}
+            />
           </Col>
         </Row>
       </Container>

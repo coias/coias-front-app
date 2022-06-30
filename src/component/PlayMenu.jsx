@@ -7,7 +7,6 @@ import {
   ToggleButton,
   ButtonGroup,
   Form,
-  Spinner,
 } from 'react-bootstrap';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
@@ -38,7 +37,6 @@ function PlayMenu({
   handleClick,
   setStarPos,
   fileNum,
-  isSaveLoading,
   setIsAutoSave,
   isAutoSave,
 }) {
@@ -211,17 +209,15 @@ function PlayMenu({
             />
           </ButtonGroup>
 
+          {/* オートセーブ時のローディングisSaveLoading && <Spinner animation="border" size="lg" /> */}
+
           {isManual ? (
             <Button
               variant="danger"
-              size="lg"
+              size="sm"
               onClick={() => onClickFinishButton()}
             >
-              {isSaveLoading ? (
-                <Spinner animation="border" size="md" />
-              ) : (
-                '手動測定終了'
-              )}
+              手動測定終了
             </Button>
           ) : (
             <div>
@@ -276,9 +272,8 @@ PlayMenu.propTypes = {
   handleClick: PropTypes.func,
   setStarPos: PropTypes.func,
   fileNum: PropTypes.number.isRequired,
-  isSaveLoading: PropTypes.bool,
-  setIsAutoSave: PropTypes.func,
-  isAutoSave: PropTypes.bool,
+  setIsAutoSave: PropTypes.func.isRequired,
+  isAutoSave: PropTypes.bool.isRequired,
 };
 
 PlayMenu.defaultProps = {
@@ -291,9 +286,6 @@ PlayMenu.defaultProps = {
   originalStarPos: {},
   handleClick: () => {},
   setStarPos: () => {},
-  isSaveLoading: false,
-  setIsAutoSave: () => {},
-  isAutoSave: false,
 };
 
 export default PlayMenu;
