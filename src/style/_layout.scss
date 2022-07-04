@@ -83,6 +83,24 @@ footer {
   text-align: center;
 }
 
+.wrapper {
+  overflow: scroll;
+
+  &::-webkit-scrollbar {
+    width: 15px;
+    height: 15px;
+    padding: 0;
+    margin: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 0.25rem;
+
+    --bg-opacity: 1;
+  }
+}
+
 .coias-view-main {
   width: 100%;
   height: 100%;
@@ -103,29 +121,25 @@ footer {
       .col-md-10 {
         height: 100%;
 
-        .wrapper {
-          height: calc(100% - 24px);
+        .star-canvas-container {
+          height: calc(100% - 50px);
 
-          .star-canvas-container {
-            height: calc(100% - 50px);
-
-            .col-sm-10 {
-              height: 100%;
-            }
-
-            .col-sm-12 {
-              height: 100%;
-            }
-
-            .col-sm-2 {
-              height: 100%;
-            }
+          .col-sm-10 {
+            height: 100%;
           }
 
-          .star-canvas-control {
-            height: 50px !important;
-            padding-top: 8px;
+          .col-sm-12 {
+            height: 100%;
           }
+
+          .col-sm-2 {
+            height: 100%;
+          }
+        }
+
+        .star-canvas-control {
+          height: 50px !important;
+          padding-top: 8px;
         }
       }
 
@@ -151,24 +165,6 @@ footer {
         height: 100%;
       }
     }
-  }
-}
-
-.wrapper {
-  overflow: scroll;
-
-  &::-webkit-scrollbar {
-    width: 15px;
-    height: 15px;
-    padding: 0;
-    margin: 0;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: gray;
-    border-radius: 0.25rem;
-
-    --bg-opacity: 1;
   }
 }
 
