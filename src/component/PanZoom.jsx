@@ -1,8 +1,7 @@
 // eslint-disable-next-line object-curly-newline
 import React, { useRef, useEffect, useContext, useState } from 'react';
-import panzoom from 'panzoom';
 // eslint-disable-next-line object-curly-newline
-import { Col } from 'react-bootstrap';
+import { Col, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import {
   PageContext,
@@ -81,14 +80,23 @@ function PanZoom({
 
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
-  const ZPCanvas = useRef(null);
+  // const ZPCanvas = useRef(null);
   const RECT_WIDTH = 40;
   const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [context, setContext] = useState();
-  const [scale, setScale] = useState(1);
   const { starPos, setStarPos } = useContext(StarPositionContext);
+  const [zoomValue, setZoomValue] = useState(1.5);
+  const [loaded, setLoaded] = useState(0);
+  const [scaleButton, setScaleButton] = useState([
+    { id: 1, done: false },
+    { id: 10, done: false },
+    { id: 25, done: true },
+    { id: 50, done: false },
+    { id: 100, done: false },
+    { id: 200, done: false },
+  ]);
 
   function relativeCoords(event) {
     const bounds = event.target.getBoundingClientRect();
@@ -101,38 +109,11 @@ function PanZoom({
     setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
   }
 
-  // panzoomのコンストラクター
-  useEffect(() => {
-    ZPCanvas.current = panzoom(ZPCanvasRef.current, {
-      maxZoom: 100,
-      minZoom: 1,
-      zoomDoubleClickSpeed: 1,
-      transformOrigin: { x: 0.5, y: 0.5 },
-
-      beforeWheel(e) {
-        const shouldIgnore = !e.altKey;
-        setScale(ZPCanvas.current.getTransform().scale);
-        return shouldIgnore;
-      },
-      beforeMouseDown() {
-        return 'ignore';
-      },
-      filterKey() {
-        // don't let panzoom handle this event:
-        return true;
-      },
-    });
-
-    return () => {
-      ZPCanvas.current.dispose();
-    };
-  }, [isReload, isZoomIn]);
-
   useEffect(() => {
     const canvas = canvasRef.current;
     const canvasContext = canvas.getContext('2d');
     setContext(canvasContext);
-  });
+  }, []);
 
   const drawImage = async () => {
     if (
@@ -149,95 +130,86 @@ function PanZoom({
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
 
-      context.imageSmoothingEnabled = false;
-      context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
-
       context.imageSmoothingEnabled = true;
 
-      console.log('Panzoom', starPos);
+      if (IMAGE_HEIGHT !== 0 && loaded !== 2) {
+        setLoaded(1);
+      }
+
+      if (loaded === 1) {
+        context.scale(2, 2);
+        setLoaded(2);
+      }
+
+      context.drawImage(img, 0, 0, img.naturalHeight, img.naturalWidth);
+
       Object.keys(starPos)
         .map((key) => starPos[key])
         .forEach((pos) => {
           if (pos.page[currentPage]) {
             // rectangle setting
-            let linesize;
-            if (3 / scale > 1.5) {
-              linesize = 3 / scale;
-            } else {
-              linesize = 1.5;
-            }
             const position = pos.page[currentPage];
-            const x = position.x - RECT_WIDTH / scale / 2;
-            const y = img.naturalHeight - position.y - RECT_HEIGHT / scale / 2;
-            context.lineWidth = linesize;
+            const x = position.x - RECT_WIDTH / zoomValue / 2;
+            const y =
+              img.naturalHeight - position.y - RECT_HEIGHT / zoomValue / 2;
+            context.lineWidth = 3 / zoomValue < 1 ? 1 : 3 / zoomValue;
+            // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.strokeRect(
+              x,
+              y,
+              RECT_WIDTH / zoomValue,
+              RECT_HEIGHT / zoomValue,
+            );
 
-            context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
-            // font setting
-            let fontsize;
-            if (18 / scale > 12) {
-              fontsize = String(18 / scale);
-            } else {
-              fontsize = '12';
-            }
-
-            fontsize += 'px serif';
             context.strokeStyle = 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.lineWidth = 3;
-            context.font = fontsize;
+            context.lineWidth = 4 / zoomValue < 2 ? 2 : 4 / zoomValue;
+            context.font = `${20 / zoomValue < 8 ? 8 : 20 / zoomValue}px serif`;
             context.strokeText(
               pos.name,
-              x - RECT_WIDTH / 10,
-              y - RECT_HEIGHT / 10,
+              x - RECT_WIDTH / zoomValue / 10,
+              y - RECT_HEIGHT / zoomValue / 10,
             );
             context.fillStyle = 'red';
             context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
               pos.name,
-              x - RECT_WIDTH / 10,
-              y - RECT_HEIGHT / 10,
+              x - RECT_WIDTH / zoomValue / 10,
+              y - RECT_HEIGHT / zoomValue / 10,
             );
           }
         });
       if (!disable) {
         positionList.forEach((pos, i) =>
           pos.forEach((manualPos) => {
-            if (manualPos.page === currentPage && isManual) {
+            if (manualPos.page === currentPage) {
               // rectangle setting
-              let linesize;
-              if (3 / scale > 1.5) {
-                linesize = 3 / scale;
-              } else {
-                linesize = 1.5;
-              }
-              const x = manualPos.x - RECT_WIDTH / scale / 2;
-              const y = manualPos.y - RECT_HEIGHT / scale / 2;
-              context.lineWidth = linesize;
+              const x = manualPos.x - RECT_WIDTH / zoomValue / 2;
+              const y = manualPos.y - RECT_HEIGHT / zoomValue / 2;
               context.strokeStyle = i === activeKey ? 'red' : 'blue';
               context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-              context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
+              context.strokeRect(
+                x,
+                y,
+                RECT_WIDTH / zoomValue,
+                RECT_HEIGHT / zoomValue,
+              );
 
               // font setting
-              let fontsize;
-              if (18 / scale > 12) {
-                fontsize = String(18 / scale);
-              } else {
-                fontsize = '12';
-              }
-
-              fontsize += 'px serif';
               context.strokeStyle = i === activeKey ? 'red' : 'blue';
               context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
               context.lineWidth = 2;
-              context.font = fontsize;
+              context.font = `${
+                20 / zoomValue < 8 ? 8 : 20 / zoomValue
+              }px serif`;
               context.strokeText(
                 `H${'000000'.slice(
                   (leadStarNumber + i).toString().length - 6,
                 )}${leadStarNumber + i}`,
-                x - RECT_WIDTH / 10,
-                y - RECT_HEIGHT / 10,
+                x - RECT_WIDTH / zoomValue / 10,
+                y - RECT_HEIGHT / zoomValue / 10,
               );
               context.fillStyle = i === activeKey ? 'white' : 'white';
               context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
@@ -245,8 +217,8 @@ function PanZoom({
                 `H${'000000'.slice(
                   (leadStarNumber + i).toString().length - 6,
                 )}${leadStarNumber + i}`,
-                x - RECT_WIDTH / 10,
-                y - RECT_HEIGHT / 10,
+                x - RECT_WIDTH / zoomValue / 10,
+                y - RECT_HEIGHT / zoomValue / 10,
               );
             }
           }),
@@ -269,6 +241,8 @@ function PanZoom({
     activeKey,
     confirmationModalShow,
     disable,
+    zoomValue,
+    loaded,
   ]);
 
   useEventListener('mousemove', relativeCoords, canvasRef.current);
@@ -276,10 +250,10 @@ function PanZoom({
   // 当たり判定を検出
   function testHit(thisx, thisy, isManualOption = false) {
     const point = currentMousePos;
-    const wHalf = RECT_WIDTH / 2;
-    const hHalf = RECT_HEIGHT / 2;
-    const starX = thisx;
-    const starY = isManualOption ? thisy : IMAGE_HEIGHT - thisy;
+    const wHalf = RECT_WIDTH / zoomValue;
+    const hHalf = RECT_HEIGHT / zoomValue;
+    const starX = thisx * 2;
+    const starY = isManualOption ? thisy : (IMAGE_HEIGHT - thisy) * 2;
 
     return (
       starX - wHalf <= point.x &&
@@ -336,6 +310,7 @@ function PanZoom({
     const currentPageIndex = positionList[activeKey].findIndex(
       (e) => e.page === currentPage,
     );
+    console.log(currentMousePos);
 
     if (
       currentPageIndex !== -1 &&
@@ -356,48 +331,99 @@ function PanZoom({
     // eslint-disable-next-line default-case
     switch (code) {
       case 37: // ←
-      case 38: // ↑
       case 39: // →
-      case 40: // ↓
         e.preventDefault();
+    }
+  };
+
+  const updateScaleButton = (id) => {
+    setScaleButton((prevScaleButton) =>
+      prevScaleButton.map((items) =>
+        items.id === id
+          ? {
+              id: items.id,
+              done: true,
+            }
+          : {
+              id: items.id,
+              done: false,
+            },
+      ),
+    );
+  };
+
+  const zoom = (e) => {
+    const data = e.target.id;
+    // zoomCanvas();
+    switch (data) {
+      case '1':
+        setZoomValue(1);
+        updateScaleButton(1);
+        break;
+      case '10':
+        setZoomValue(1.25);
+        updateScaleButton(10);
+        break;
+      case '25':
+        setZoomValue(1.5);
+        updateScaleButton(25);
+        break;
+      case '50':
+        setZoomValue(2);
+        updateScaleButton(50);
+        break;
+      case '100':
+        setZoomValue(3);
+        updateScaleButton(100);
+        break;
+      case '200':
+        setZoomValue(6);
+        updateScaleButton(200);
+        break;
+      default:
+        break;
     }
   };
 
   return (
     <Col>
       <div
+        className="main-canvas"
         style={{
           width: '100%',
           height: '100%',
-          paddingTop: '24px',
           paddingLeft: 0,
           position: 'relative',
-          overflow: 'hidden',
+          overflow: 'nonw',
         }}
       >
         <MousePosition isZoomIn={isZoomIn} />
+        <div>
+          {scaleButton.map((item) => (
+            <Button
+              variant={item.done ? 'primary' : 'secondary'}
+              id={item.id}
+              onClick={(e) => zoom(e)}
+            >
+              {`×${item.id}`}
+            </Button>
+          ))}
+        </div>
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
         <div
           className="wrapper"
           style={{
             width: '100%',
-            height: '100%',
-            backgroundColor: 'white',
+            height: 'calc(100% - 40px)',
             position: 'relative',
           }}
           onKeyDown={keyInvalid}
         >
-          <div
-            ref={ZPCanvasRef}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-          >
+          <div ref={ZPCanvasRef}>
             <canvas
               ref={canvasRef}
-              width={`${IMAGE_WIDTH}px`}
-              height={`${IMAGE_HEIGHT}px`}
+              width={`${IMAGE_WIDTH * 2}px`}
+              height={`${IMAGE_HEIGHT * 2}px`}
               onClick={() => {
                 if (isManual) {
                   saveEventPosition();
@@ -409,6 +435,13 @@ function PanZoom({
                 filter: `contrast(${contrastVal - 50}%) brightness(${
                   brightnessVal - 50
                 }%)`,
+                transformOrigin: '0 0',
+                transform: `scale(${zoomValue})`,
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
+                imageRendering: 'pixelated',
+                backfaceVisibility: 'hidden',
               }}
             />
           </div>
