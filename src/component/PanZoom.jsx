@@ -302,6 +302,7 @@ function PanZoom({
     const currentPageIndex = positionList[activeKey].findIndex(
       (e) => e.page === currentPage,
     );
+    console.log(currentMousePos);
 
     if (
       currentPageIndex !== -1 &&

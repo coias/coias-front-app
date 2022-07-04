@@ -28,7 +28,7 @@ function MousePosition({ isZoomIn }) {
       }}
     >
       <BiCurrentLocation size={24} />
-      {`${prevMousePos.x},${prevMousePos.y}`}
+      {`${prevMousePos.x / 2},${prevMousePos.y / 2}`}
     </div>
   );
 }
