@@ -4,7 +4,11 @@ import panzoom from 'panzoom';
 // eslint-disable-next-line object-curly-newline
 import { Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { PageContext, MousePositionContext } from './context';
+import {
+  PageContext,
+  MousePositionContext,
+  StarPositionContext,
+} from './context';
 import MousePosition from './MousePosition';
 import useEventListener from '../hooks/useEventListener';
 
@@ -29,8 +33,6 @@ PanZoom.defaultProps = {
 // eslint-disable-next-line no-use-before-define
 PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  starPos: PropTypes.objectOf(PropTypes.object).isRequired,
-  setStarPos: PropTypes.func.isRequired,
   isReload: PropTypes.bool,
   brightnessVal: PropTypes.number,
   contrastVal: PropTypes.number,
@@ -53,8 +55,6 @@ function PanZoom({
   isReload,
   brightnessVal,
   contrastVal,
-  starPos,
-  setStarPos,
   isManual,
   positionList,
   isHide,
@@ -88,6 +88,7 @@ function PanZoom({
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [context, setContext] = useState();
   const [scale, setScale] = useState(1);
+  const { starPos, setStarPos } = useContext(StarPositionContext);
 
   function relativeCoords(event) {
     const bounds = event.target.getBoundingClientRect();
@@ -133,7 +134,7 @@ function PanZoom({
     setContext(canvasContext);
   });
 
-  const drawImage = () => {
+  const drawImage = async () => {
     if (
       context &&
       Object.keys(starPos).length > 0 &&
@@ -152,6 +153,8 @@ function PanZoom({
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
 
       context.imageSmoothingEnabled = true;
+
+      console.log('Panzoom', starPos);
       Object.keys(starPos)
         .map((key) => starPos[key])
         .forEach((pos) => {
@@ -167,11 +170,10 @@ function PanZoom({
             const x = position.x - RECT_WIDTH / scale / 2;
             const y = img.naturalHeight - position.y - RECT_HEIGHT / scale / 2;
             context.lineWidth = linesize;
-            // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
 
+            context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
             // font setting
             let fontsize;
             if (18 / scale > 12) {
@@ -199,55 +201,57 @@ function PanZoom({
             );
           }
         });
-      positionList.forEach((pos, i) =>
-        pos.forEach((manualPos) => {
-          if (manualPos.page === currentPage) {
-            // rectangle setting
-            let linesize;
-            if (3 / scale > 1.5) {
-              linesize = 3 / scale;
-            } else {
-              linesize = 1.5;
-            }
-            const x = manualPos.x - RECT_WIDTH / scale / 2;
-            const y = manualPos.y - RECT_HEIGHT / scale / 2;
-            context.lineWidth = linesize;
-            context.strokeStyle = i === activeKey ? 'red' : 'blue';
-            context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
+      if (!disable) {
+        positionList.forEach((pos, i) =>
+          pos.forEach((manualPos) => {
+            if (manualPos.page === currentPage && isManual) {
+              // rectangle setting
+              let linesize;
+              if (3 / scale > 1.5) {
+                linesize = 3 / scale;
+              } else {
+                linesize = 1.5;
+              }
+              const x = manualPos.x - RECT_WIDTH / scale / 2;
+              const y = manualPos.y - RECT_HEIGHT / scale / 2;
+              context.lineWidth = linesize;
+              context.strokeStyle = i === activeKey ? 'red' : 'blue';
+              context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+              context.strokeRect(x, y, RECT_WIDTH / scale, RECT_HEIGHT / scale);
 
-            // font setting
-            let fontsize;
-            if (18 / scale > 12) {
-              fontsize = String(18 / scale);
-            } else {
-              fontsize = '12';
-            }
+              // font setting
+              let fontsize;
+              if (18 / scale > 12) {
+                fontsize = String(18 / scale);
+              } else {
+                fontsize = '12';
+              }
 
-            fontsize += 'px serif';
-            context.strokeStyle = i === activeKey ? 'red' : 'blue';
-            context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.lineWidth = 2;
-            context.font = fontsize;
-            context.strokeText(
-              `H${'000000'.slice((leadStarNumber + i).toString().length - 6)}${
-                leadStarNumber + i
-              }`,
-              x - RECT_WIDTH / 10,
-              y - RECT_HEIGHT / 10,
-            );
-            context.fillStyle = i === activeKey ? 'white' : 'white';
-            context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.fillText(
-              `H${'000000'.slice((leadStarNumber + i).toString().length - 6)}${
-                leadStarNumber + i
-              }`,
-              x - RECT_WIDTH / 10,
-              y - RECT_HEIGHT / 10,
-            );
-          }
-        }),
-      );
+              fontsize += 'px serif';
+              context.strokeStyle = i === activeKey ? 'red' : 'blue';
+              context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+              context.lineWidth = 2;
+              context.font = fontsize;
+              context.strokeText(
+                `H${'000000'.slice(
+                  (leadStarNumber + i).toString().length - 6,
+                )}${leadStarNumber + i}`,
+                x - RECT_WIDTH / 10,
+                y - RECT_HEIGHT / 10,
+              );
+              context.fillStyle = i === activeKey ? 'white' : 'white';
+              context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
+              context.fillText(
+                `H${'000000'.slice(
+                  (leadStarNumber + i).toString().length - 6,
+                )}${leadStarNumber + i}`,
+                x - RECT_WIDTH / 10,
+                y - RECT_HEIGHT / 10,
+              );
+            }
+          }),
+        );
+      }
     }
   };
 
@@ -264,6 +268,7 @@ function PanZoom({
     positionList,
     activeKey,
     confirmationModalShow,
+    disable,
   ]);
 
   useEventListener('mousemove', relativeCoords, canvasRef.current);
@@ -320,6 +325,8 @@ function PanZoom({
 
   // 再測定時に天体の座標を保存する
   function saveEventPosition() {
+    if (disable) return;
+
     setIsZoomIn(true);
     const sval = document.getElementById('selectButton').dataset.active;
     const sshouldIgnore = sval === 'true';
