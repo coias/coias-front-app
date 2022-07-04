@@ -318,8 +318,6 @@ function ManualMeasurement({
         console.error(error);
       });
 
-    console.log('ManualMea', starPos);
-
     setOriginalStarPos(starPos);
     setStarPos(toObject);
     setLoading(false);

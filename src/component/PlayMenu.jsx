@@ -223,7 +223,6 @@ function PlayMenu({
                     variant="success"
                     onClick={() => {
                       if (disable) {
-                        console.log('playMenu', originalStarPos);
                         setStarPos(originalStarPos);
                       } else {
                         handleClick();

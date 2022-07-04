@@ -249,12 +249,17 @@ function PanZoom({
 
   // 当たり判定を検出
   function testHit(thisx, thisy, isManualOption = false) {
-    const point = currentMousePos;
-    const wHalf = RECT_WIDTH / zoomValue;
-    const hHalf = RECT_HEIGHT / zoomValue;
-    const starX = thisx * 2;
-    const starY = isManualOption ? thisy : (IMAGE_HEIGHT - thisy) * 2;
-
+    const point = { x: currentMousePos.x / 2, y: currentMousePos.y / 2 };
+    const wHalf = RECT_WIDTH / (zoomValue * 2);
+    const hHalf = RECT_HEIGHT / (zoomValue * 2);
+    const starX = thisx;
+    const starY = isManualOption ? thisy : IMAGE_HEIGHT - thisy;
+    console.log(
+      starX - wHalf <= point.x,
+      point.x <= starX + wHalf,
+      starY - hHalf <= point.y,
+      point.y <= starY + hHalf,
+    );
     return (
       starX - wHalf <= point.x &&
       point.x <= starX + wHalf &&
@@ -310,7 +315,6 @@ function PanZoom({
     const currentPageIndex = positionList[activeKey].findIndex(
       (e) => e.page === currentPage,
     );
-    console.log(currentMousePos);
 
     if (
       currentPageIndex !== -1 &&
