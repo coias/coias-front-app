@@ -27,6 +27,7 @@ PanZoom.defaultProps = {
   confirmationModalShow: false,
   setConfirmationModalShow: () => {},
   writeMemo: () => {},
+  setConfirmMessage: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -47,6 +48,7 @@ PanZoom.propTypes = {
   confirmationModalShow: PropTypes.bool,
   setConfirmationModalShow: PropTypes.func,
   writeMemo: PropTypes.func,
+  setConfirmMessage: PropTypes.func,
 };
 
 function PanZoom({
@@ -66,6 +68,7 @@ function PanZoom({
   confirmationModalShow,
   setConfirmationModalShow,
   writeMemo,
+  setConfirmMessage,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -254,12 +257,6 @@ function PanZoom({
     const hHalf = RECT_HEIGHT / (zoomValue * 2);
     const starX = thisx;
     const starY = isManualOption ? thisy : IMAGE_HEIGHT - thisy;
-    console.log(
-      starX - wHalf <= point.x,
-      point.x <= starX + wHalf,
-      starY - hHalf <= point.y,
-      point.y <= starY + hHalf,
-    );
     return (
       starX - wHalf <= point.x &&
       point.x <= starX + wHalf &&
@@ -316,16 +313,19 @@ function PanZoom({
       (e) => e.page === currentPage,
     );
 
-    if (
-      currentPageIndex !== -1 &&
-      testHit(
-        positionList[activeKey][currentPageIndex].x,
-        positionList[activeKey][currentPageIndex].y,
-        isManual,
-      )
-    ) {
+    const hitJudge = testHit(
+      positionList[activeKey][currentPageIndex]?.x,
+      positionList[activeKey][currentPageIndex]?.y,
+      isManual,
+    );
+
+    if (currentPageIndex !== -1 && hitJudge) {
       setConfirmationModalShow(true);
-    } else {
+      setConfirmMessage('を削除しますか？');
+    } else if (currentPageIndex !== -1 && !hitJudge) {
+      setConfirmationModalShow(true);
+      setConfirmMessage('は既に選択されていますが更新しますか？');
+    } else if (currentPageIndex === -1) {
       setManualStarModalShow(true);
     }
   }

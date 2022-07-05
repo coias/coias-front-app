@@ -53,6 +53,7 @@ function ManualMeasurement({
   const [checkedState, setCheckedState] = useState([false]);
   const [isRedisp, setIsRedisp] = useState(false);
   const [fitsSize, setFitsSize] = useState({});
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -389,6 +390,7 @@ function ManualMeasurement({
               setOriginalStarPos={setOriginalStarPos}
               fitsSize={fitsSize}
               disable={isRedisp}
+              setConfirmMessage={setConfirmMessage}
             />
           </Col>
           <Col sm={2} md={2}>
@@ -445,9 +447,14 @@ function ManualMeasurement({
         activeKey={activeKey}
         leadStarNumber={leadStarNumber}
         onClickYes={() => {
-          removePositionByIndex(activeKey, currentPage);
           setConfirmationModalShow(false);
+          if (confirmMessage.includes('削除')) {
+            removePositionByIndex(activeKey, currentPage);
+          } else if (confirmMessage.includes('更新')) {
+            setManualStarModalShow(true);
+          }
         }}
+        confirmMessage={confirmMessage}
       />
 
       <ManualAlertModal
@@ -456,6 +463,8 @@ function ManualMeasurement({
           navigate('/COIAS');
           setManualAlertModalShow(false);
         }}
+        alertMessage="再描画を行ってください"
+        alertButtonMessage="探索/再描画に戻る"
       />
     </div>
   );
