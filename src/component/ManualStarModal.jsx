@@ -27,8 +27,10 @@ function ManualStarModal({
   const [isWithin, setIsWithin] = useState(true);
 
   function translateCooditareModalToActual(modalCoordinate) {
-    const canvasLeftUpperPositionX = centerCoordinate.x - defaultZoomRate / 2;
-    const canvasLeftUpperPositionY = centerCoordinate.y - defaultZoomRate / 2;
+    const canvasLeftUpperPositionX =
+      centerCoordinate.x / 2 - defaultZoomRate / 2;
+    const canvasLeftUpperPositionY =
+      centerCoordinate.y / 2 - defaultZoomRate / 2;
 
     const canvasXRelPos = modalCoordinate.x / 500;
     const canvasYRelPos = modalCoordinate.y / 500;
@@ -98,20 +100,13 @@ function ManualStarModal({
     const actualC = translateCooditareModalToActual(rectPos3);
     const actualD = translateCooditareModalToActual(rectPos4);
 
-    console.log(
-      actualA,
-      actualB,
-      actualC,
-      actualD,
-      window.images[0][0].naturalWidth,
-    );
     setIsWithin(
       ![actualA, actualB, actualC, actualD].some(
         (pos) =>
-          pos.x < -1 ||
-          pos.y < -1 ||
-          window.images[0][0].naturalWidth <= pos.x / 2 ||
-          window.images[0][0].naturalHeight <= pos.y / 2,
+          pos.x < 0 ||
+          pos.y < 0 ||
+          window.images[0][0].naturalWidth <= pos.x ||
+          window.images[0][0].naturalHeight <= pos.y,
       ),
     );
     if (isDone) {
@@ -122,8 +117,8 @@ function ManualStarModal({
 
         const value = {
           page: currentPage,
-          x: Math.floor(actualCenterCoordinate.x / 2),
-          y: Math.floor(actualCenterCoordinate.y / 2),
+          x: Math.floor(actualCenterCoordinate.x),
+          y: Math.floor(actualCenterCoordinate.y),
           width,
           height,
           center: {
@@ -131,10 +126,10 @@ function ManualStarModal({
             y: actualCenterCoordinate.y / 2,
           },
           angle,
-          actualA: { x: actualA.x / 2, y: actualA.y / 2 },
-          actualB: { x: actualB.x / 2, y: actualB.y / 2 },
-          actualC: { x: actualC.x / 2, y: actualC.y / 2 },
-          actualD: { x: actualD.x / 2, y: actualD.y / 2 },
+          actualA: { x: actualA.x, y: actualA.y },
+          actualB: { x: actualB.x, y: actualB.y },
+          actualC: { x: actualC.x, y: actualC.y },
+          actualD: { x: actualD.x, y: actualD.y },
         };
         const targetIndex = activeArray.findIndex(
           (activeElement) => activeElement.page === currentPage,
@@ -149,22 +144,17 @@ function ManualStarModal({
       });
     }
 
-    const finalCoordinates = [rectPos1, rectPos2, rectPos3, rectPos4];
+    const finalCoordinates = [rectPos1, rectPos2, rectPos3, rectPos4, rectPos1];
     context.fillStyle = 'red';
     context.strokeStyle = 'red';
     // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       context.lineWidth = 5;
       context.beginPath();
       context.moveTo(finalCoordinates[i].x, finalCoordinates[i].y);
       context.lineTo(finalCoordinates[i + 1].x, finalCoordinates[i + 1].y);
       context.stroke();
     }
-    context.lineWidth = 5;
-    context.beginPath();
-    context.moveTo(rectPos4.x, rectPos4.y);
-    context.lineTo(rectPos1.x, rectPos1.y);
-    context.stroke();
   }
 
   function drawDot() {

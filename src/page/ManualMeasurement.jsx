@@ -439,7 +439,10 @@ function ManualMeasurement({
         onHide={() => {
           setConfirmationModalShow(false);
         }}
-        onExit={() => setIsZoomIn(false)}
+        onExit={() => {
+          setIsZoomIn(false);
+          document.getElementById('wrapper-coias').focus();
+        }}
         onEntered={() => setIsZoomIn(true)}
         removePositionByIndex={removePositionByIndex}
         setManualStarModalShow={setManualStarModalShow}
