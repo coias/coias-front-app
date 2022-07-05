@@ -233,7 +233,6 @@ function ExplorePrepare({
           ) {
             // eslint-disable-next-line no-param-reassign
             item.done = true;
-            setShowError(true);
           }
           if (response.data.place !== '正常終了') {
             setErrorPlace(response.data.place);

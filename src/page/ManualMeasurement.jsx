@@ -18,6 +18,7 @@ import {
 import ManualAlertModal from '../component/ManualAlertModal';
 import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
+import ErrorModal from '../component/ErrorModal';
 
 function ManualMeasurement({
   imageURLs,
@@ -53,6 +54,9 @@ function ManualMeasurement({
   const [checkedState, setCheckedState] = useState([false]);
   const [isRedisp, setIsRedisp] = useState(false);
   const [fitsSize, setFitsSize] = useState({});
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState();
+  const [errorReason, setErrorReason] = useState();
 
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -293,6 +297,11 @@ function ManualMeasurement({
       .put(`${reactApiUri}AstsearchR_after_manual`)
       .then((res) => {
         const rereDisp = res.data.reredisp.split('\n');
+        if (res.data.place !== '正常終了') {
+          setErrorPlace(res.data.place);
+          setErrorReason(res.data.reason);
+          setShowProcessError(true);
+        }
 
         // 選択を同期させるため、オブジェクトに変更
         rereDisp.forEach((items) => {
@@ -456,6 +465,12 @@ function ManualMeasurement({
           navigate('/COIAS');
           setManualAlertModalShow(false);
         }}
+      />
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
       />
     </div>
   );
