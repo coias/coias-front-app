@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Col, Row, Form, Button } from 'react-bootstrap';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { useLocation } from 'react-router-dom';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
 
@@ -14,7 +15,7 @@ function Report() {
   const [sendMpc, setSendMpc] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
-
+  const location = useLocation();
   const makeSendMpc = async () => {
     const header = [
       'COD 568',
@@ -47,7 +48,11 @@ function Report() {
   const getMpc = async () => {
     setLoading(true);
     await axios
-      .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
+      .put(
+        `${reactApiUri}AstsearchR_afterReCOIAS?isManual=${
+          location.state.isManual ? 'true' : 'false'
+        }`,
+      )
       .then((response) => {
         const mpctext = response.data.send_mpc;
         const result = mpctext.split('\n');

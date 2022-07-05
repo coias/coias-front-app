@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
@@ -10,7 +10,15 @@ function ConfirmationModal({
   leadStarNumber,
   onClickYes,
   onExit,
+  confirmMessage,
 }) {
+  const generateConfirmMessage = useCallback(
+    () =>
+      `H${'000000'.slice((leadStarNumber + activeKey).toString().length - 6)}${
+        leadStarNumber + activeKey
+      }${confirmMessage}`,
+    [confirmMessage],
+  );
   return (
     <Modal
       show={show}
@@ -24,13 +32,7 @@ function ConfirmationModal({
         <Modal.Title id="contained-modal-title-vcenter">確認</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {positionList[activeKey] && (
-          <p>
-            {`H${'000000'.slice(
-              (leadStarNumber + activeKey).toString().length - 6,
-            )}${leadStarNumber + activeKey}を削除しますか？`}
-          </p>
-        )}
+        {positionList[activeKey] && <p>{generateConfirmMessage()}</p>}
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between">
         <Button onClick={onHide}>いいえ</Button>
@@ -52,4 +54,5 @@ ConfirmationModal.propTypes = {
   positionList: PropTypes.arrayOf(PropTypes.array).isRequired,
   activeKey: PropTypes.number.isRequired,
   leadStarNumber: PropTypes.number.isRequired,
+  confirmMessage: PropTypes.string.isRequired,
 };

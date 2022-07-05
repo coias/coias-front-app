@@ -7,13 +7,14 @@ import {
   ToggleButton,
   ButtonGroup,
   Form,
+  Spinner,
 } from 'react-bootstrap';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle } from 'react-icons/bi';
 import React, { useCallback, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { PageContext } from './context';
+import { PageContext, StarPositionContext } from './context';
 import SettingModal from './SettingModal';
 import HelpModal from './HelpModal';
 
@@ -28,17 +29,17 @@ function PlayMenu({
   setNext,
   back,
   setBack,
-  onClickFinishButton,
   isManual,
   disable,
   setDisable,
   setStarModalShow,
   originalStarPos,
   handleClick,
-  setStarPos,
   fileNum,
   setIsAutoSave,
   isAutoSave,
+  loading,
+  handleNavigate,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -46,6 +47,7 @@ function PlayMenu({
   const [settingModalShow, setSettingModalShow] = useState(false);
   const [helpModalShow, setHelpModalShow] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
+  const { setStarPos } = useContext(StarPositionContext);
 
   const onClickNext = () => {
     if (currentPage === 4) setCurrentPage(0);
@@ -212,13 +214,36 @@ function PlayMenu({
           {/* オートセーブ時のローディングisSaveLoading && <Spinner animation="border" size="lg" /> */}
 
           {isManual ? (
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => onClickFinishButton()}
-            >
-              手動測定終了
-            </Button>
+            <div>
+              {loading ? (
+                <Spinner size="md" animation="border" />
+              ) : (
+                <>
+                  <Button
+                    variant="success"
+                    onClick={() => {
+                      if (disable) {
+                        setStarPos(originalStarPos);
+                      } else {
+                        handleClick();
+                      }
+                      setDisable(!disable);
+                    }}
+                    size="md"
+                  >
+                    {disable ? 'やり直す' : '再描画'}
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="md"
+                    disabled={!disable}
+                    onClick={() => handleNavigate()}
+                  >
+                    手動測定終了
+                  </Button>
+                </>
+              )}
+            </div>
           ) : (
             <div>
               <Button
@@ -230,7 +255,7 @@ function PlayMenu({
                     ? setStarModalShow(true)
                     : setStarPos(originalStarPos);
                 }}
-                size="lg"
+                size="md"
               >
                 {disable ? '再描画' : 'やり直す'}
               </Button>
@@ -240,7 +265,7 @@ function PlayMenu({
                   handleClick();
                 }}
                 disabled={disable}
-                size="lg"
+                size="md"
               >
                 探索終了
               </Button>
@@ -263,17 +288,17 @@ PlayMenu.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
-  onClickFinishButton: PropTypes.func.isRequired,
   isManual: PropTypes.bool,
   disable: PropTypes.bool,
   setDisable: PropTypes.func,
   setStarModalShow: PropTypes.func,
-  originalStarPos: PropTypes.objectOf(PropTypes.object),
+  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   handleClick: PropTypes.func,
-  setStarPos: PropTypes.func,
   fileNum: PropTypes.number.isRequired,
   setIsAutoSave: PropTypes.func.isRequired,
+  handleNavigate: PropTypes.func,
   isAutoSave: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
 };
 
 PlayMenu.defaultProps = {
@@ -283,9 +308,9 @@ PlayMenu.defaultProps = {
   disable: true,
   setDisable: () => {},
   setStarModalShow: () => {},
-  originalStarPos: {},
   handleClick: () => {},
-  setStarPos: () => {},
+  loading: false,
+  handleNavigate: () => {},
 };
 
 export default PlayMenu;

@@ -11,8 +11,8 @@ export const convertPng2FitsCoords = (pngPosition, FITSSIZES) => {
   const fitsXRelPos = pngXRelPos;
   const fitsYRelPos = 1.0 - pngYRelPos;
 
-  const fitsXPosition = Math.floor(fitsXRelPos * FITSSIZES[0]);
-  const fitsYPosition = Math.floor(fitsYRelPos * FITSSIZES[1]);
+  const fitsXPosition = Math.floor(fitsXRelPos * FITSSIZES.x);
+  const fitsYPosition = Math.floor(fitsYRelPos * FITSSIZES.y);
 
   return { x: fitsXPosition, y: fitsYPosition };
 };
@@ -23,8 +23,8 @@ export const convertFits2PngCoords = (fitsPosition, FITSSIZES) => {
     y: window.images[0][0].naturalHeight,
   };
 
-  const fitsXRelPos = fitsPosition[0] / FITSSIZES[0];
-  const fitsYRelPos = fitsPosition[1] / FITSSIZES[1];
+  const fitsXRelPos = fitsPosition[0] / FITSSIZES.x;
+  const fitsYRelPos = fitsPosition[1] / FITSSIZES.y;
 
   const pngXRelPos = fitsXRelPos;
   const pngYRelPos = 1.0 - fitsYRelPos;
