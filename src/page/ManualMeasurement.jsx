@@ -16,6 +16,7 @@ import {
   convertPng2FitsCoords,
 } from '../utils/CONSTANTS';
 import ManualAlertModal from '../component/ManualAlertModal';
+import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
 
 function ManualMeasurement({
@@ -33,6 +34,7 @@ function ManualMeasurement({
   setBack,
   leadStarNumber,
   setLeadStarNumber,
+  originalStarPos,
 }) {
   const [show, setShow] = useState(false);
   const [isSelect, setIsSelect] = useState(true);
@@ -46,32 +48,25 @@ function ManualMeasurement({
   const [manualStarModalShow, setManualStarModalShow] = useState(false);
   const [manualAlertModalShow, setManualAlertModalShow] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
-  const [fitsSize, setFitsSize] = useState([]);
-  const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [isAutoSave, setIsAutoSave] = useState(true);
   const [confirmationModalShow, setConfirmationModalShow] = useState(false);
   const [checkedState, setCheckedState] = useState([false]);
+  const [isRedisp, setIsRedisp] = useState(false);
+  const [fitsSize, setFitsSize] = useState({});
 
   const navigate = useNavigate();
-
+  const handleNavigate = () => {
+    navigate('/Report', { state: { isManual: true } });
+  };
+  const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage, setCurrentPage } = useContext(PageContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
 
-  const getFitsSize = async () => {
-    await axios
-      .get(`${reactApiUri}fits_size`)
-      .then((res) => res.data.result)
-      .then((data) => {
-        setFitsSize(data);
-      })
-      .catch((e) => console.error(e));
-  };
-
   // 画面表示時、１回だけ処理(copyの実行、各画像のURL取得)
-  // 画面表示時、１回だけ処理(unknown_disp.txtの処理)
+  // 画面表示時、１回だけ処理(redisp.txtの処理)
   useEffect(() => {
     const toObjectArray = [];
     clearInterval(intervalRef.current);
@@ -79,9 +74,9 @@ function ManualMeasurement({
     intervalRef.current = null;
     // nginxにある画像を全て取得
     const getImages = async () => {
-      setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
+      setFileNum(dataList.length / 2);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -100,16 +95,23 @@ function ManualMeasurement({
         o.nomasked = false;
       });
       setImageURLs(toObjectArray);
-      setLoading(false);
     };
-    console.log(loading);
-    getImages();
+    const getFitsSize = async () => {
+      await axios
+        .get(`${reactApiUri}fits_size`)
+        .then((res) => res.data.result)
+        .then((data) => {
+          setFitsSize({ x: data[0], y: data[1] });
+        })
+        .catch((e) => console.error(e));
+    };
     getFitsSize();
+    getImages();
   }, []);
 
   useEffect(() => {
-    // 画面表示時、１回だけ処理(unknown_disp.txtの処理)
-    // unknown_disp.txtを取得
+    // 画面表示時、１回だけ処理(redisp.txtの処理)
+    // redisp.txtを取得
     const getReDisp = async () => {
       setLoading(true);
 
@@ -154,7 +156,6 @@ function ManualMeasurement({
 
         setLeadStarNumber(leadNum);
         setStarPos(toObject);
-        setOriginalStarPos(toObject);
         setLoading(false);
       }
     };
@@ -204,7 +205,7 @@ function ManualMeasurement({
             );
           });
           setPositionList(toPositionList);
-          setCheckedState(Array(toPositionList.length - 1).fill(false));
+          setCheckedState(Array(toPositionList.length).fill(false));
         })
         .catch((e) => console.error(e));
     };
@@ -241,10 +242,10 @@ function ManualMeasurement({
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
-  const onClickFinishButton = async () => {
-    setIsSaveLoading(true);
+  const onClickFinishButton = async (filteredList = []) => {
+    const targetList = filteredList.length === 0 ? positionList : filteredList;
 
-    const result = positionList.flatMap((list, i) =>
+    const result = targetList.flatMap((list, i) =>
       list.flatMap((pos) => {
         const convertedCenter = convertPng2FitsCoords(pos.center, fitsSize);
         const convertedA = convertPng2FitsCoords(pos.actualA, fitsSize);
@@ -261,11 +262,7 @@ function ManualMeasurement({
       }),
     );
 
-    const text = result.flatMap((pos) => pos);
-    // memo_manual
-    await axios.put(`${reactApiUri}memo_manual`, text);
-
-    setIsSaveLoading(false);
+    await axios.put(`${reactApiUri}memo_manual`, result);
   };
 
   const removePositionByIndex = (targetListIndex, targetElementIndex) => {
@@ -285,6 +282,45 @@ function ManualMeasurement({
     if (e.keyCode === 83) setStart(!start);
     if (e.keyCode === 39) setNext(!next);
     if (e.keyCode === 37) setBack(!back);
+  };
+
+  const handleClick = async () => {
+    setLoading(true);
+
+    const toObject = {};
+
+    await axios
+      .put(`${reactApiUri}AstsearchR_after_manual`)
+      .then((res) => {
+        const rereDisp = res.data.reredisp.split('\n');
+
+        // 選択を同期させるため、オブジェクトに変更
+        rereDisp.forEach((items) => {
+          const item = items.split(' ');
+          let star = toObject[item[0]];
+          if (!star) {
+            toObject[item[0]] = {
+              name: item[0],
+              page: Array(5).fill(null),
+              isSelected: false,
+              isKnown: false,
+            };
+            star = toObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+          };
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    setOriginalStarPos(starPos);
+    setStarPos(toObject);
+    setLoading(false);
   };
 
   return (
@@ -308,9 +344,15 @@ function ManualMeasurement({
         setBack={setBack}
         onClickFinishButton={onClickFinishButton}
         isManual
-        isSaveLoading={isSaveLoading}
         setIsAutoSave={setIsAutoSave}
         isAutoSave={isAutoSave}
+        fileNum={fileNum}
+        disable={isRedisp}
+        setDisable={setIsRedisp}
+        handleClick={handleClick}
+        originalStarPos={originalStarPos}
+        loading={loading}
+        handleNavigate={handleNavigate}
       />
       <Container fluid>
         <Row className="m-0 p-0">
@@ -329,8 +371,6 @@ function ManualMeasurement({
           <Col sm={9} md={9}>
             <PanZoom
               imageURLs={imageURLs}
-              starPos={starPos}
-              setStarPos={setStarPos}
               isManual
               positionList={positionList}
               show={show}
@@ -346,18 +386,26 @@ function ManualMeasurement({
               activeKey={activeKey}
               confirmationModalShow={confirmationModalShow}
               setConfirmationModalShow={setConfirmationModalShow}
+              setOriginalStarPos={setOriginalStarPos}
+              fitsSize={fitsSize}
+              disable={isRedisp}
             />
           </Col>
           <Col sm={2} md={2}>
-            <ManualToolBar
-              positionList={positionList}
-              setPositionList={setPositionList}
-              activeKey={activeKey}
-              setActiveKey={setActiveKey}
-              leadStarNumber={leadStarNumber}
-              checkedState={checkedState}
-              setCheckedState={setCheckedState}
-            />
+            {isRedisp ? (
+              <StarsList disable={isRedisp} isManual />
+            ) : (
+              <ManualToolBar
+                positionList={positionList}
+                setPositionList={setPositionList}
+                activeKey={activeKey}
+                setActiveKey={setActiveKey}
+                leadStarNumber={leadStarNumber}
+                checkedState={checkedState}
+                setCheckedState={setCheckedState}
+                onClickFinishButton={onClickFinishButton}
+              />
+            )}
           </Col>
         </Row>
       </Container>
@@ -423,6 +471,7 @@ ManualMeasurement.propTypes = {
     .isRequired,
   setPositionList: PropTypes.func.isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   start: PropTypes.bool.isRequired,
   setStart: PropTypes.func.isRequired,
   next: PropTypes.bool.isRequired,

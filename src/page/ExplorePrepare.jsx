@@ -58,10 +58,9 @@ function ExplorePrepare({
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState();
   const [errorReason, setErrorReason] = useState();
+  const [errorFiles, setErrorFile] = useState([]);
 
   const handleSelect = (e) => setVal(e.target.value);
-
-  const DEFAULT_FILE_NUM = 5;
 
   const handleClose = () => {
     setMenunames(menunames);
@@ -111,19 +110,15 @@ function ExplorePrepare({
     const { files } = fileInput.current;
     const data = new FormData();
     const filesForProps = [];
-
-    if (DEFAULT_FILE_NUM !== files.length) {
-      setErrorContent(`${DEFAULT_FILE_NUM}枚の画像を入力してください`);
-      setShowError(true);
-      handleClose();
-      return null;
-    }
+    setErrorFile([]);
 
     let file;
     let tmp;
 
     const pattern =
-      /warp-HSC-([0-9]|[A-Z]){1,2}-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/gm;
+      /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/gm;
+
+    const errorFileNames = [];
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < files.length; i++) {
@@ -137,24 +132,20 @@ function ExplorePrepare({
         const b = file.name.split(`-`);
         const isSame = tmp === `${b[3]}${b[4]}`;
         if (!isSame) {
-          setErrorContent(`${file.name}は観測領域が異なります`);
-          setShowError(true);
-          handleClose();
-          return null;
+          errorFileNames.push(`${file.name}は観測領域が異なります`);
         }
       }
 
       if (!isMatch) {
-        setErrorContent(`${file.name}のファイル名の形式が違います`);
-        setShowError(true);
-        handleClose();
-        return null;
+        errorFileNames.push(`${file.name}のファイル名の形式が違います`);
       }
+
       data.append('files', file, file.name);
       filesForProps.push(file.name);
+      setErrorContent(``);
     }
 
-    setFileNames(filesForProps);
+    setErrorFile(errorFileNames);
 
     const postFiles = async () => {
       handleClose();
@@ -176,7 +167,10 @@ function ExplorePrepare({
         });
     };
 
-    postFiles();
+    if (errorFileNames.length === 0) {
+      setFileNames(filesForProps);
+      postFiles();
+    }
     return null;
   };
 
@@ -277,7 +271,7 @@ function ExplorePrepare({
     if (!result) {
       return;
     }
-    // ビニングマスク（size: 2 or 4）
+    // ビニングマスク（size: 2 or 4）自動の時は2で固定
     result = await onProcessExecute(
       `${uri}startsearch2R?binning=${size}`,
       `ビニングマスク（${size === 2 ? '2x2' : '4x4'}）`,
@@ -479,32 +473,64 @@ function ExplorePrepare({
 
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>
-            ファイルを{DEFAULT_FILE_NUM}個選択してください
-          </Modal.Title>
+          <Modal.Title>ファイルを選択してください</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          アップロード後、画像処理をおこないます。
-          <br />
-          処理は時間がかかります。
-          <br />
-          画像処理は全自動処理と手動処理が選択できます。
-        </Modal.Body>
-
-        <Form onSubmit={handleSubmit} className="m-3">
-          <InputGroup hasValidation>
-            <Form.Control
-              type="file"
-              ref={fileInput}
-              onChange={handleChange}
-              isInvalid={valid}
-              multiple
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body className="mx-3">
+            アップロード後、画像処理をおこないます。
+            <br />
+            処理は時間がかかります。
+            <br />
+            画像処理は全自動処理と手動処理が選択できます。
+            <InputGroup hasValidation className="mt-3">
+              <Row>
+                <Form.Control
+                  type="file"
+                  ref={fileInput}
+                  onChange={handleChange}
+                  isInvalid={valid}
+                  multiple
+                  className="mx-2"
+                />
+              </Row>
+              <Row>
+                {errorFiles.map((element) => (
+                  <p
+                    style={{
+                      color: element.startsWith('') && 'red',
+                    }}
+                  >
+                    {element}
+                  </p>
+                ))}
+              </Row>
+            </InputGroup>
+            <Form.Check
+              className="mt-3"
+              inline
+              type="radio"
+              label="全自動処理"
+              name="group1"
+              id="auto"
+              value="auto"
+              onChange={handleSelect}
+              checked={val === 'auto'}
+            />
+            <Form.Check
+              className="mt-3"
+              inline
+              type="radio"
+              label="手動処理"
+              name="group1"
+              id="manual"
+              value="manual"
+              onChange={handleSelect}
+              checked={val === 'manual'}
             />
             <Form.Control.Feedback type="invalid">
-              ファイルを選択してください。ファイルは{DEFAULT_FILE_NUM}
-              個選択できます。
+              ファイルを選択してください。
             </Form.Control.Feedback>
-          </InputGroup>
+          </Modal.Body>
           <div className="d-flex justify-content-between">
             <Form.Check
               className="m-3"

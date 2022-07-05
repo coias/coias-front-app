@@ -102,16 +102,19 @@ function ManualStarModal({
         const actualD = translateCooditareModalToActual(rectPos4);
         const value = {
           page: currentPage,
-          x: Math.floor(actualCenterCoordinate.x),
-          y: Math.floor(actualCenterCoordinate.y),
+          x: Math.floor(actualCenterCoordinate.x / 2),
+          y: Math.floor(actualCenterCoordinate.y / 2),
           width,
           height,
-          center: actualCenterCoordinate,
+          center: {
+            x: actualCenterCoordinate.x / 2,
+            y: actualCenterCoordinate.y / 2,
+          },
           angle,
-          actualA,
-          actualB,
-          actualC,
-          actualD,
+          actualA: { x: actualA.x / 2, y: actualA.y / 2 },
+          actualB: { x: actualB.x / 2, y: actualB.y / 2 },
+          actualC: { x: actualC.x / 2, y: actualC.y / 2 },
+          actualD: { x: actualD.x / 2, y: actualD.y / 2 },
         };
         const targetIndex = activeArray.findIndex(
           (activeElement) => activeElement.page === currentPage,
@@ -187,8 +190,8 @@ function ManualStarModal({
 
       context.drawImage(
         img,
-        imageZoomCenter.x - defaultZoomRate / 2,
-        imageZoomCenter.y - defaultZoomRate / 2,
+        imageZoomCenter.x / 2 - defaultZoomRate / 2,
+        imageZoomCenter.y / 2 - defaultZoomRate / 2,
         defaultZoomRate,
         defaultZoomRate,
         0,

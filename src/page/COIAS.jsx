@@ -48,6 +48,7 @@ function COIAS({
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(true);
   const [starModalShow, setStarModalShow] = useState(false);
+  const [fileNum, setFileNum] = useState(0);
   const [memoList, setMemoList] = useState([]);
   const [selectedListState, setSelectedListState] = useState([]);
   const [isAutoSave, setIsAutoSave] = useState(true);
@@ -60,7 +61,7 @@ function COIAS({
   const { setCurrentPage } = useContext(PageContext);
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate('/Report');
+    navigate('/Report', { state: { isManual: false } });
   };
 
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -78,6 +79,7 @@ function COIAS({
       setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
+      setFileNum(dataList.length / 2);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -125,7 +127,7 @@ function COIAS({
         if (!star) {
           toObject[item[0]] = {
             name: item[0],
-            page: [null, null, null, null, null],
+            page: Array(fileNum).fill(null),
             isSelected: memoList.find(
               (memoName) => memoName === item[0].replace('H', ''),
             ),
@@ -153,8 +155,10 @@ function COIAS({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
-              page: [null, null, null, null, null],
-              isSelected: false,
+              page: Array(fileNum).fill(null),
+              isSelected: memoList.find(
+                (memoName) => memoName === item[0].replace('H', ''),
+              ),
               isKnown: true,
             };
             star = toObject[item[0]];
@@ -173,8 +177,10 @@ function COIAS({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
-              page: [null, null, null, null, null],
-              isSelected: false,
+              page: Array(fileNum).fill(null),
+              isSelected: memoList.find(
+                (memoName) => memoName === item[0].replace('H', ''),
+              ),
               isKnown: true,
             };
             star = toObject[item[0]];
@@ -248,7 +254,7 @@ function COIAS({
       setErrorReason(response.data.reason);
       setShowProcessError(true);
     }
-    const redisp = await response.data[0].result;
+    const redisp = await response.data.result;
 
     // 選択を同期させるため、オブジェクトに変更
     const toObject = {};
@@ -257,8 +263,10 @@ function COIAS({
       if (!star) {
         toObject[item[0]] = {
           name: item[0],
-          page: [null, null, null, null, null],
-          isSelected: false,
+          page: Array(fileNum).fill(null),
+          isSelected: memoList.find(
+            (memoName) => memoName === item[0].replace('H', ''),
+          ),
         };
         star = toObject[item[0]];
       }
@@ -320,6 +328,7 @@ function COIAS({
         originalStarPos={originalStarPos}
         handleClick={handleClick}
         setStarPos={setStarPos}
+        fileNum={fileNum}
         isAutoSave={isAutoSave}
         setIsAutoSave={setIsAutoSave}
         isSaveLoading={isSaveLoading}
