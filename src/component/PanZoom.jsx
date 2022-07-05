@@ -91,11 +91,11 @@ function PanZoom({
   const [loaded, setLoaded] = useState(0);
   const [scaleButton, setScaleButton] = useState([
     { id: 1, done: false },
-    { id: 10, done: false },
-    { id: 25, done: true },
-    { id: 50, done: false },
-    { id: 100, done: false },
-    { id: 200, done: false },
+    { id: 1.25, done: false },
+    { id: 1.5, done: true },
+    { id: 2, done: false },
+    { id: 3, done: false },
+    { id: 6, done: false },
   ]);
 
   function relativeCoords(event) {
@@ -358,25 +358,25 @@ function PanZoom({
         setZoomValue(1);
         updateScaleButton(1);
         break;
-      case '10':
+      case '1.25':
         setZoomValue(1.25);
-        updateScaleButton(10);
+        updateScaleButton(1.25);
         break;
-      case '25':
+      case '1.5':
         setZoomValue(1.5);
-        updateScaleButton(25);
+        updateScaleButton(1.5);
         break;
-      case '50':
+      case '2':
         setZoomValue(2);
-        updateScaleButton(50);
+        updateScaleButton(2);
         break;
-      case '100':
+      case '3':
         setZoomValue(3);
-        updateScaleButton(100);
+        updateScaleButton(3);
         break;
-      case '200':
+      case '6':
         setZoomValue(6);
-        updateScaleButton(200);
+        updateScaleButton(6);
         break;
       default:
         break;
