@@ -15,7 +15,7 @@ import {
   convertFits2PngCoords,
   convertPng2FitsCoords,
 } from '../utils/CONSTANTS';
-import ManualAlertModal from '../component/ManualAlertModal';
+import AlertModal from '../component/AlertModal';
 import ConfirmationModal from '../component/ConfirmationModal';
 
 function ManualMeasurement({
@@ -407,12 +407,13 @@ function ManualMeasurement({
         }}
       />
 
-      <ManualAlertModal
-        manualAlertModalShow={manualAlertModalShow}
+      <AlertModal
+        alertModalShow={manualAlertModalShow}
         onClickOk={() => {
           navigate('/COIAS');
           setManualAlertModalShow(false);
         }}
+        title="Alert"
       />
     </div>
   );

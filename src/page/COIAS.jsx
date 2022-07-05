@@ -10,6 +10,7 @@ import COIASToolBar from '../component/COIASToolBar';
 import LoadingButton from '../component/LoadingButton';
 import StarsList from '../component/StarsList';
 import NewStarModal from '../component/NewStarModal';
+import AlertModal from '../component/AlertModal';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
@@ -52,6 +53,7 @@ function COIAS({
   const [selectedListState, setSelectedListState] = useState([]);
   const [isAutoSave, setIsAutoSave] = useState(true);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [COIASAlertModalshow, setCOIASAlertModalshow] = useState(false);
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -75,6 +77,12 @@ function COIAS({
       setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
+      /* dataListが空の時の処理 モーダルでエラーを表示（前の画面に） */
+      console.log(dataList);
+      if (dataList.length === 0) {
+        console.log('エラー');
+      }
+
       setFileNum(dataList.length / 2);
 
       await dataList.forEach((data) => {
@@ -201,6 +209,7 @@ function COIAS({
       setOriginalStarPos(toObject);
       setLoading(false);
     };
+    setStarPos({});
 
     window.images = [];
     window.images = imageURLs.map((image) => {
@@ -245,7 +254,7 @@ function COIAS({
     const response = await axios.put(
       `${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`,
     );
-    const redisp = await response.data.result;
+    const redisp = await response.data[0].result;
 
     // 選択を同期させるため、オブジェクトに変更
     const toObject = {};
@@ -372,6 +381,14 @@ function COIAS({
           onStarModalExit();
         }}
         onClickFinishButton={onClickFinishButton}
+      />
+
+      <AlertModal
+        alertModalShow={COIASAlertModalshow}
+        onClick={() => {
+          navigate('/ExplorePrepare');
+          setCOIASAlertModalshow(false);
+        }}
       />
     </div>
   );
