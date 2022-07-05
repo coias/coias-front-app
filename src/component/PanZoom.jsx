@@ -254,12 +254,6 @@ function PanZoom({
     const hHalf = RECT_HEIGHT / (zoomValue * 2);
     const starX = thisx;
     const starY = isManualOption ? thisy : IMAGE_HEIGHT - thisy;
-    console.log(
-      starX - wHalf <= point.x,
-      point.x <= starX + wHalf,
-      starY - hHalf <= point.y,
-      point.y <= starY + hHalf,
-    );
     return (
       starX - wHalf <= point.x &&
       point.x <= starX + wHalf &&
