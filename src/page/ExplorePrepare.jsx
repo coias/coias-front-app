@@ -230,7 +230,7 @@ function ExplorePrepare({
     setProcessName(`${query}...`);
     await axios
       .put(url)
-      .then(() => {
+      .then((response) => {
         const updatedMenunames = menunames.map((item) => {
           if (
             item.query === uriQuery ||
@@ -239,6 +239,12 @@ function ExplorePrepare({
           ) {
             // eslint-disable-next-line no-param-reassign
             item.done = true;
+            setShowError(true);
+          }
+          if (response.data.place !== '正常終了') {
+            setErrorPlace(response.data.place);
+            setErrorReason(response.data.reason);
+            setShowProcessError(true);
           }
           return item;
         });
@@ -524,11 +530,15 @@ function ExplorePrepare({
             />
             <Button
               onClick={async () => {
-                handleClose();
-                setProcessName('小惑星データ更新中...');
-                setLoading(true);
-                await axios.put(`${uri}getMPCORB_and_mpc2edb`);
-                setLoading(false);
+                try {
+                  handleClose();
+                  setProcessName('小惑星データ更新中...');
+                  setLoading(true);
+                  await axios.put(`${uri}getMPCORB_and_mpc2edb`);
+                  setLoading(false);
+                } catch {
+                  showProcessError(true);
+                }
               }}
             >
               小惑星データ更新

@@ -13,8 +13,7 @@ function ErrorModal({ show, setShow, errorPlace, errorReason }) {
         setLog(response.data.result);
       })
       .catch(() => {
-        document.getElementById('toast-message').innerHTML =
-          'エラーが発生しました';
+        console.log('エラーが発生しました');
       });
     const file = new Blob(
       log.map((item) => `${item}\n`),
@@ -53,7 +52,7 @@ function ErrorModal({ show, setShow, errorPlace, errorReason }) {
             downloadFIle();
           }}
         >
-          Downloads
+          Download log
         </Button>
         <Button variant="secondary" onClick={handleClose}>
           Close

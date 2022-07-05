@@ -10,6 +10,7 @@ import COIASToolBar from '../component/COIASToolBar';
 import LoadingButton from '../component/LoadingButton';
 import StarsList from '../component/StarsList';
 import NewStarModal from '../component/NewStarModal';
+import ErrorModal from '../component/ErrorModal';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
@@ -51,6 +52,9 @@ function COIAS({
   const [selectedListState, setSelectedListState] = useState([]);
   const [isAutoSave, setIsAutoSave] = useState(true);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState();
+  const [errorReason, setErrorReason] = useState();
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -239,6 +243,11 @@ function COIAS({
     const response = await axios.put(
       `${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`,
     );
+    if (response.data.place !== '正常終了') {
+      setErrorPlace(response.data.place);
+      setErrorReason(response.data.reason);
+      setShowProcessError(true);
+    }
     const redisp = await response.data[0].result;
 
     // 選択を同期させるため、オブジェクトに変更
@@ -363,6 +372,12 @@ function COIAS({
           onStarModalExit();
         }}
         onClickFinishButton={onClickFinishButton}
+      />
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
       />
     </div>
   );
