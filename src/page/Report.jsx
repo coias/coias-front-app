@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Col, Row, Form, Button } from 'react-bootstrap';
-import { Scrollbars } from 'react-custom-scrollbars';
-import { useLocation } from 'react-router-dom';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
 
@@ -15,7 +13,6 @@ function Report() {
   const [sendMpc, setSendMpc] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
-  const location = useLocation();
   const makeSendMpc = async () => {
     const header = [
       'COD 568',
@@ -48,11 +45,7 @@ function Report() {
   const getMpc = async () => {
     setLoading(true);
     await axios
-      .put(
-        `${reactApiUri}AstsearchR_afterReCOIAS?isManual=${
-          location.state.isManual ? 'true' : 'false'
-        }`,
-      )
+      .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
       .then((response) => {
         const mpctext = response.data.send_mpc;
         const result = mpctext.split('\n');
@@ -134,29 +127,19 @@ function Report() {
           <h4>レポート:</h4>
         </Col>
         <Col>
-          <Scrollbars
+          <div
             style={{
               backgroundColor: 'black',
               width: '1000px',
-              height: '1000px',
+              height: '70vh',
+              overflow: 'scroll',
             }}
           >
-            <div
-              style={{
-                backgroundColor: 'black',
-                width: '1000px',
-                height: '1000px',
-              }}
-            >
-              <ul
-                id="send-mpc"
-                style={{ listStyleType: 'none', color: 'white' }}
-              >
-                {sendMpc.length > 0 &&
-                  sendMpc.map((item) => <li key={item}>{item}</li>)}
-              </ul>
-            </div>
-          </Scrollbars>
+            <ul id="send-mpc" style={{ listStyleType: 'none', color: 'white' }}>
+              {sendMpc.length > 0 &&
+                sendMpc.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </div>
         </Col>
       </Row>
       <LoadingButton loading={loading} />

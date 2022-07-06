@@ -57,7 +57,7 @@ function ManualMeasurement({
 
   const navigate = useNavigate();
   const handleNavigate = () => {
-    navigate('/Report', { state: { isManual: true } });
+    navigate('/Report');
   };
   const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
