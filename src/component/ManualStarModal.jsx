@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { MousePositionContext, PageContext } from './context';
 import useEventListener from '../hooks/useEventListener';
-import ManualAlertModal from './ManualAlertModal';
+import AlertModal from './AlertModal';
 
 function ManualStarModal({
   manualStarModalShow,
@@ -308,8 +308,8 @@ function ManualStarModal({
           </Button>
         </Modal.Footer>
       </Modal>
-      <ManualAlertModal
-        manualAlertModalShow={!isWithin}
+      <AlertModal
+        alertModalShow={!isWithin}
         onClickOk={() => {
           context.clearRect(0, 0, 500, 500);
           drawImage();

@@ -15,7 +15,7 @@ import {
   convertFits2PngCoords,
   convertPng2FitsCoords,
 } from '../utils/CONSTANTS';
-import ManualAlertModal from '../component/ManualAlertModal';
+import AlertModal from '../component/AlertModal';
 import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
 
@@ -46,7 +46,7 @@ function ManualMeasurement({
   const [defaultZoomRate, setDefaultZoomRate] = useState(40);
   const [loading, setLoading] = useState(false);
   const [manualStarModalShow, setManualStarModalShow] = useState(false);
-  const [manualAlertModalShow, setManualAlertModalShow] = useState(false);
+  const [alertModalShow, setAlertModalShow] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
   const [isAutoSave, setIsAutoSave] = useState(true);
   const [confirmationModalShow, setConfirmationModalShow] = useState(false);
@@ -147,7 +147,7 @@ function ManualMeasurement({
 
       // TODO : 動的なエラーハンドリング
       if (toObject['awk:']) {
-        setManualAlertModalShow(true);
+        setAlertModalShow(true);
       } else {
         const res1 = await axios.get(`${reactApiUri}unknown_disp`);
         const unknownDisp = await res1.data.result;
@@ -460,11 +460,11 @@ function ManualMeasurement({
         confirmMessage={confirmMessage}
       />
 
-      <ManualAlertModal
-        manualAlertModalShow={manualAlertModalShow}
+      <AlertModal
+        alertModalShow={alertModalShow}
         onClickOk={() => {
           navigate('/COIAS');
-          setManualAlertModalShow(false);
+          setAlertModalShow(false);
         }}
         alertMessage="再描画を行ってください"
         alertButtonMessage="探索/再描画に戻る"
