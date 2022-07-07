@@ -526,33 +526,6 @@ function ExplorePrepare({
               onChange={handleSelect}
               checked={val === 'manual'}
             />
-            <Form.Control.Feedback type="invalid">
-              ファイルを選択してください。
-            </Form.Control.Feedback>
-          </Modal.Body>
-          <div className="d-flex justify-content-between">
-            <Form.Check
-              className="m-3"
-              inline
-              type="radio"
-              label="全自動処理"
-              name="group1"
-              id="auto"
-              value="auto"
-              onChange={handleSelect}
-              checked={val === 'auto'}
-            />
-            <Form.Check
-              className="m-3"
-              inline
-              type="radio"
-              label="手動処理"
-              name="group1"
-              id="manual"
-              value="manual"
-              onChange={handleSelect}
-              checked={val === 'manual'}
-            />
             <Button
               onClick={async () => {
                 try {
@@ -568,7 +541,11 @@ function ExplorePrepare({
             >
               小惑星データ更新
             </Button>
-          </div>
+            <Form.Control.Feedback type="invalid">
+              ファイルを選択してください。
+            </Form.Control.Feedback>
+          </Modal.Body>
+
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Close

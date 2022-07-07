@@ -24,8 +24,6 @@ function ManualMeasurement({
   imageURLs,
   setImageURLs,
   intervalRef,
-  positionList,
-  setPositionList,
   setOriginalStarPos,
   start,
   setStart,
@@ -58,6 +56,7 @@ function ManualMeasurement({
   const [errorPlace, setErrorPlace] = useState();
   const [errorReason, setErrorReason] = useState();
   const [confirmMessage, setConfirmMessage] = useState('');
+  const [positionList, setPositionList] = useState([[]]);
 
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -494,9 +493,6 @@ ManualMeasurement.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
-  positionList: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object))
-    .isRequired,
-  setPositionList: PropTypes.func.isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   start: PropTypes.bool.isRequired,
