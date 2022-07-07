@@ -10,6 +10,7 @@ import COIASToolBar from '../component/COIASToolBar';
 import LoadingButton from '../component/LoadingButton';
 import StarsList from '../component/StarsList';
 import NewStarModal from '../component/NewStarModal';
+import ErrorModal from '../component/ErrorModal';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
@@ -51,7 +52,9 @@ function COIAS({
   const [memoList, setMemoList] = useState([]);
   const [selectedListState, setSelectedListState] = useState([]);
   const [isAutoSave, setIsAutoSave] = useState(true);
-  const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState();
+  const [errorReason, setErrorReason] = useState();
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -233,6 +236,10 @@ function COIAS({
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, memoList, isReload]);
 
+  useEffect(() => {
+    console.log(selectedListState);
+  }, [selectedListState]);
+
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async (num) => {
     // memo.txtへの出力
@@ -245,7 +252,12 @@ function COIAS({
     const response = await axios.put(
       `${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`,
     );
-    const redisp = await response.data.result;
+    if (response.data.place !== '正常終了') {
+      setErrorPlace(response.data.place);
+      setErrorReason(response.data.reason);
+      setShowProcessError(true);
+    }
+    const redisp = response.data.result;
 
     // 選択を同期させるため、オブジェクトに変更
     const toObject = {};
@@ -255,9 +267,7 @@ function COIAS({
         toObject[item[0]] = {
           name: item[0],
           page: Array(fileNum).fill(null),
-          isSelected: memoList.find(
-            (memoName) => memoName === item[0].replace('H', ''),
-          ),
+          isSelected: false,
         };
         star = toObject[item[0]];
       }
@@ -286,13 +296,11 @@ function COIAS({
   };
 
   const writeMemo = async (newStarPos) => {
-    setIsSaveLoading(true);
     // memo.txtへの出力
     const selectedStars = Object.values(newStarPos)
       .filter((p) => p.isSelected)
       .map((e) => e.name.replace('H', ''));
     await axios.put(`${reactApiUri}memo`, selectedStars);
-    setIsSaveLoading(false);
   };
 
   return (
@@ -322,7 +330,6 @@ function COIAS({
         fileNum={fileNum}
         isAutoSave={isAutoSave}
         setIsAutoSave={setIsAutoSave}
-        isSaveLoading={isSaveLoading}
       />
       <Container fluid>
         <Row>
@@ -350,7 +357,7 @@ function COIAS({
               setStarPos={setStarPos}
               isHide={isHide}
               setStarModalShow={starModalShow}
-              setDisable={setDisable}
+              disable={disable}
               setSelectedListState={setSelectedListState}
               writeMemo={isAutoSave ? writeMemo : () => {}}
             />
@@ -372,6 +379,12 @@ function COIAS({
           onStarModalExit();
         }}
         onClickFinishButton={onClickFinishButton}
+      />
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
       />
     </div>
   );

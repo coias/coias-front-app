@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
+import ErrorModal from '../component/ErrorModal';
 // import ExcuteButton from '../component/ExcuteButton';
 
 // eslint-disable-next-line no-use-before-define
@@ -53,6 +54,10 @@ function ExplorePrepare({
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
+  const [processName, setProcessName] = useState('');
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState();
+  const [errorReason, setErrorReason] = useState();
   const [errorFiles, setErrorFile] = useState([]);
 
   const handleSelect = (e) => setVal(e.target.value);
@@ -144,8 +149,8 @@ function ExplorePrepare({
 
     const postFiles = async () => {
       handleClose();
-      document.getElementById('current-process').innerHTML =
-        'アップロード中...';
+      setProcessName('アップロード中...');
+
       setLoading(true);
       await axios.delete(`${uri}deletefiles`);
       await axios
@@ -170,13 +175,12 @@ function ExplorePrepare({
   };
 
   const onProcess = (query) => {
-    document.getElementById('current-process').innerHTML = '処理中...';
+    setProcessName('処理中...');
     const put = async () => {
       setLoading(true);
-
       await axios
         .put(uri + query)
-        .then(() => {
+        .then((response) => {
           const updatedMenunames = menunames.map((item) => {
             if (
               item.query === query ||
@@ -185,6 +189,11 @@ function ExplorePrepare({
             ) {
               // eslint-disable-next-line no-param-reassign
               item.done = true;
+            }
+            if (response.data.place !== '正常終了') {
+              setErrorPlace(response.data.place);
+              setErrorReason(response.data.reason);
+              setShowProcessError(true);
             }
             return item;
           });
@@ -212,10 +221,10 @@ function ExplorePrepare({
   const onProcessExecute = async (url, query) => {
     let result = true;
     const uriQuery = url.split('/')[3];
-    document.getElementById('current-process').innerHTML = `${query}...`;
+    setProcessName(`${query}...`);
     await axios
       .put(url)
-      .then(() => {
+      .then((response) => {
         const updatedMenunames = menunames.map((item) => {
           if (
             item.query === uriQuery ||
@@ -224,6 +233,11 @@ function ExplorePrepare({
           ) {
             // eslint-disable-next-line no-param-reassign
             item.done = true;
+          }
+          if (response.data.place !== '正常終了') {
+            setErrorPlace(response.data.place);
+            setErrorReason(response.data.reason);
+            setShowProcessError(true);
           }
           return item;
         });
@@ -447,7 +461,7 @@ function ExplorePrepare({
         </Col>
       </Row>
 
-      <LoadingButton loading={loading} />
+      <LoadingButton loading={loading} processName={processName} />
 
       <AppToast
         show={showError}
@@ -512,7 +526,26 @@ function ExplorePrepare({
               onChange={handleSelect}
               checked={val === 'manual'}
             />
+            <Button
+              onClick={async () => {
+                try {
+                  handleClose();
+                  setProcessName('小惑星データ更新中...');
+                  setLoading(true);
+                  await axios.put(`${uri}getMPCORB_and_mpc2edb`);
+                  setLoading(false);
+                } catch {
+                  showProcessError(true);
+                }
+              }}
+            >
+              小惑星データ更新
+            </Button>
+            <Form.Control.Feedback type="invalid">
+              ファイルを選択してください。
+            </Form.Control.Feedback>
           </Modal.Body>
+
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Close
@@ -523,6 +556,12 @@ function ExplorePrepare({
           </Modal.Footer>
         </Form>
       </Modal>
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
+      />
     </div>
   );
 }

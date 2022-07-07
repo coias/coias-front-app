@@ -67,7 +67,6 @@ function App() {
   const [starPos, setStarPos] = useState({});
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
 
-  const [positionList, setPositionList] = useState([[]]);
   const [start, setStart] = useState(false);
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
@@ -129,8 +128,6 @@ function App() {
                       setImageURLs={setImageURLs}
                       originalStarPos={originalStarPos}
                       setOriginalStarPos={setOriginalStarPos}
-                      positionList={positionList}
-                      setPositionList={setPositionList}
                       start={start}
                       setStart={setStart}
                       next={next}

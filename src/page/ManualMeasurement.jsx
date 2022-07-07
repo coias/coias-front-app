@@ -18,13 +18,12 @@ import {
 import AlertModal from '../component/AlertModal';
 import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
+import ErrorModal from '../component/ErrorModal';
 
 function ManualMeasurement({
   imageURLs,
   setImageURLs,
   intervalRef,
-  positionList,
-  setPositionList,
   setOriginalStarPos,
   start,
   setStart,
@@ -53,7 +52,11 @@ function ManualMeasurement({
   const [checkedState, setCheckedState] = useState([false]);
   const [isRedisp, setIsRedisp] = useState(false);
   const [fitsSize, setFitsSize] = useState({});
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState();
+  const [errorReason, setErrorReason] = useState();
   const [confirmMessage, setConfirmMessage] = useState('');
+  const [positionList, setPositionList] = useState([[]]);
 
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -294,6 +297,11 @@ function ManualMeasurement({
       .put(`${reactApiUri}AstsearchR_after_manual`)
       .then((res) => {
         const rereDisp = res.data.reredisp.split('\n');
+        if (res.data.place !== '正常終了') {
+          setErrorPlace(res.data.place);
+          setErrorReason(res.data.reason);
+          setShowProcessError(true);
+        }
 
         // 選択を同期させるため、オブジェクトに変更
         rereDisp.forEach((items) => {
@@ -469,6 +477,12 @@ function ManualMeasurement({
         alertMessage="再描画を行ってください"
         alertButtonMessage="探索/再描画に戻る"
       />
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
+      />
     </div>
   );
 }
@@ -479,9 +493,6 @@ ManualMeasurement.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
-  positionList: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object))
-    .isRequired,
-  setPositionList: PropTypes.func.isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   start: PropTypes.bool.isRequired,
