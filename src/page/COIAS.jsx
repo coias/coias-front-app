@@ -236,10 +236,6 @@ function COIAS({
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, memoList, isReload]);
 
-  useEffect(() => {
-    console.log(selectedListState);
-  }, [selectedListState]);
-
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async (num) => {
     // memo.txtへの出力

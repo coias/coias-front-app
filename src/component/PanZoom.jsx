@@ -296,7 +296,6 @@ function PanZoom({
           //   newStarPos[item.name].isSelected;
           setSelectedListState((prevList) => {
             const prevListCopy = prevList.concat();
-            console.log(prevListCopy[index]);
             prevListCopy[index] = !prevListCopy[index];
             return prevListCopy;
           });

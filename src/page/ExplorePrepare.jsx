@@ -225,6 +225,7 @@ function ExplorePrepare({
     await axios
       .put(url)
       .then((response) => {
+        console.log(response);
         const updatedMenunames = menunames.map((item) => {
           if (
             item.query === uriQuery ||

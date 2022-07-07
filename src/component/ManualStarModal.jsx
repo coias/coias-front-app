@@ -122,8 +122,8 @@ function ManualStarModal({
           width,
           height,
           center: {
-            x: actualCenterCoordinate.x / 2,
-            y: actualCenterCoordinate.y / 2,
+            x: actualCenterCoordinate.x,
+            y: actualCenterCoordinate.y,
           },
           angle,
           actualA: { x: actualA.x, y: actualA.y },

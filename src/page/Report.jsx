@@ -181,10 +181,12 @@ function Report() {
           </Row>
         </Col>
       </Row>
-      <LoadingButton loading={loading} />
+      <LoadingButton loading={loading} processName="レポートデータ取得中…" />
       <AlertModal
         alertModalShow={showError}
-        onClickOk={() => {}}
+        onClickOk={() => {
+          setShowError(false);
+        }}
         alertMessage={errorMessage}
         alertButtonMessage="はい"
       />
