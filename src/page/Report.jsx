@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Col, Row, Form, Button } from 'react-bootstrap';
-import { Scrollbars } from 'react-custom-scrollbars';
-import { useLocation } from 'react-router-dom';
 import LoadingButton from '../component/LoadingButton';
-import AppToast from '../component/AppToast';
+import AlertModal from '../component/AlertModal';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -15,7 +13,8 @@ function Report() {
   const [sendMpc, setSendMpc] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
-  const location = useLocation();
+  const [errorMessage, setErrorMessage] = useState('');
+
   const makeSendMpc = async () => {
     const header = [
       'COD 568',
@@ -48,11 +47,7 @@ function Report() {
   const getMpc = async () => {
     setLoading(true);
     await axios
-      .put(
-        `${reactApiUri}AstsearchR_afterReCOIAS?isManual=${
-          location.state.isManual ? 'true' : 'false'
-        }`,
-      )
+      .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
       .then((response) => {
         const mpctext = response.data.send_mpc;
         const result = mpctext.split('\n');
@@ -68,12 +63,37 @@ function Report() {
         );
         setLoading(false);
       })
-      .catch(() => {
+      .catch((e) => {
         setLoading(false);
         setShowError(true);
-        document.getElementById('toast-message').innerHTML =
-          '処理が失敗しました。やり直してください。';
-        setSendMpc('処理が失敗しました。やり直してください。');
+        setErrorMessage('send_mpcが空です');
+        console.error(e);
+      });
+  };
+
+  const downloadFinalAllFIle = async () => {
+    await axios
+      .get(`${reactApiUri}final_all`)
+      .then((response) => response.data.finalall)
+      .then((finalall) => {
+        const finalAllArray = finalall.split('\n');
+        const element = document.createElement('a');
+        const file = new Blob(
+          finalAllArray.map((content) => `${content}\n`),
+          {
+            type: 'text/plain',
+          },
+        );
+        element.href = URL.createObjectURL(file);
+        element.download = 'final_all.txt';
+        document.body.appendChild(element); // Required for this to work in FireFox
+        element.click();
+      })
+      .catch((e) => {
+        setLoading(false);
+        setShowError(true);
+        console.error(e);
+        setErrorMessage('final_all.txtがありません');
       });
   };
   // 初回のみのAPIの読み込み
@@ -116,16 +136,6 @@ function Report() {
                 }}
               />
             </Col>
-            <Col md={1}>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  downloadFIle();
-                }}
-              >
-                Downlaod
-              </Button>
-            </Col>
           </Row>
         </Form.Group>
       </Form>
@@ -133,37 +143,50 @@ function Report() {
         <Col>
           <h4>レポート:</h4>
         </Col>
-        <Col>
-          <Scrollbars
+        <Col md={8}>
+          <div
             style={{
               backgroundColor: 'black',
-              width: '1000px',
-              height: '1000px',
+              height: '70vh',
+              overflow: 'scroll',
             }}
           >
-            <div
-              style={{
-                backgroundColor: 'black',
-                width: '1000px',
-                height: '1000px',
+            <ul id="send-mpc" style={{ listStyleType: 'none', color: 'white' }}>
+              {sendMpc.length > 0 &&
+                sendMpc.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </div>
+        </Col>
+        <Col className="flex-column justify-centent-end">
+          <Row>
+            <Button
+              variant="primary"
+              onClick={() => {
+                downloadFIle();
               }}
             >
-              <ul
-                id="send-mpc"
-                style={{ listStyleType: 'none', color: 'white' }}
-              >
-                {sendMpc.length > 0 &&
-                  sendMpc.map((item) => <li key={item}>{item}</li>)}
-              </ul>
-            </div>
-          </Scrollbars>
+              Downlaod send_mpc
+            </Button>
+          </Row>
+          <Row>
+            <Button
+              variant="primary"
+              onClick={() => {
+                downloadFinalAllFIle();
+              }}
+              className="mt-3"
+            >
+              Downlaod final_all
+            </Button>
+          </Row>
         </Col>
       </Row>
       <LoadingButton loading={loading} />
-      <AppToast
-        show={showError}
-        title="エラー"
-        closeCallback={() => setShowError(false)}
+      <AlertModal
+        alertModalShow={showError}
+        onClickOk={() => {}}
+        alertMessage={errorMessage}
+        alertButtonMessage="はい"
       />
     </div>
   );

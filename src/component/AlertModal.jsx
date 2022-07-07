@@ -2,25 +2,32 @@ import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-function ManualAlertModal({ manualAlertModalShow, onClickOk }) {
+function AlertModal({
+  alertModalShow,
+  onClickOk,
+  alertMessage,
+  alertButtonMessage,
+}) {
   return (
-    <Modal show={manualAlertModalShow} size="sm" backdrop="static">
+    <Modal show={alertModalShow} size="sm" backdrop="static">
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">アラート</Modal.Title>
       </Modal.Header>
-      <Modal.Body>再描画を行ってください</Modal.Body>
+      <Modal.Body>{alertMessage}</Modal.Body>
       <Modal.Footer className="d-flex justify-content-end">
         <Button variant="success" onClick={() => onClickOk()}>
-          探索/再描画に戻る
+          {alertButtonMessage}
         </Button>
       </Modal.Footer>
     </Modal>
   );
 }
 
-export default ManualAlertModal;
+export default AlertModal;
 
-ManualAlertModal.propTypes = {
-  manualAlertModalShow: PropTypes.bool.isRequired,
+AlertModal.propTypes = {
+  alertModalShow: PropTypes.bool.isRequired,
   onClickOk: PropTypes.func.isRequired,
+  alertMessage: PropTypes.string.isRequired,
+  alertButtonMessage: PropTypes.string.isRequired,
 };

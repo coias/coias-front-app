@@ -61,7 +61,7 @@ function COIAS({
   const { setCurrentPage } = useContext(PageContext);
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate('/Report', { state: { isManual: false } });
+    navigate('/Report');
   };
 
   const reactApiUri = process.env.REACT_APP_API_URI;

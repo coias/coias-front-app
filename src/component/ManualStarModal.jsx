@@ -3,6 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { MousePositionContext, PageContext } from './context';
 import useEventListener from '../hooks/useEventListener';
+import AlertModal from './AlertModal';
 
 function ManualStarModal({
   manualStarModalShow,
@@ -23,16 +24,20 @@ function ManualStarModal({
   const [canvasManualRectangleCoordinates, setCanvasManualRectanglCoordinates] =
     useState([]);
   const [centerCoordinate, setCenterCoodinate] = useState(null);
+  const [isWithin, setIsWithin] = useState(true);
 
   function translateCooditareModalToActual(modalCoordinate) {
-    const canvasLeftUpperPositionX = centerCoordinate.x - defaultZoomRate / 2;
-    const canvasLeftUpperPositionY = centerCoordinate.y - defaultZoomRate / 2;
+    const canvasLeftUpperPositionX =
+      centerCoordinate.x / 2 - defaultZoomRate / 2;
+    const canvasLeftUpperPositionY =
+      centerCoordinate.y / 2 - defaultZoomRate / 2;
 
     const canvasXRelPos = modalCoordinate.x / 500;
+    const canvasYRelPos = modalCoordinate.y / 500;
 
     return {
       x: Math.floor(canvasLeftUpperPositionX + canvasXRelPos * defaultZoomRate),
-      y: Math.floor(canvasLeftUpperPositionY + canvasXRelPos * defaultZoomRate),
+      y: Math.floor(canvasLeftUpperPositionY + canvasYRelPos * defaultZoomRate),
     };
   }
 
@@ -40,7 +45,6 @@ function ManualStarModal({
     const A = coordinates[0];
     const B = coordinates[1];
     const C = coordinates[2];
-
     if (A === B || B === C || A === C) {
       console.log('no');
     }
@@ -91,19 +95,30 @@ function ManualStarModal({
 
     context.stroke();
 
+    const actualA = translateCooditareModalToActual(rectPos1);
+    const actualB = translateCooditareModalToActual(rectPos2);
+    const actualC = translateCooditareModalToActual(rectPos3);
+    const actualD = translateCooditareModalToActual(rectPos4);
+
+    setIsWithin(
+      ![actualA, actualB, actualC, actualD].some(
+        (pos) =>
+          pos.x < 0 ||
+          pos.y < 0 ||
+          window.images[0][0].naturalWidth <= pos.x ||
+          window.images[0][0].naturalHeight <= pos.y,
+      ),
+    );
     if (isDone) {
       setPositionList((prevPositionList) => {
         const prevPositionListCopy = [...prevPositionList];
         const activeArray = prevPositionListCopy[activeKey];
         const actualCenterCoordinate = translateCooditareModalToActual(center);
-        const actualA = translateCooditareModalToActual(rectPos1);
-        const actualB = translateCooditareModalToActual(rectPos2);
-        const actualC = translateCooditareModalToActual(rectPos3);
-        const actualD = translateCooditareModalToActual(rectPos4);
+
         const value = {
           page: currentPage,
-          x: Math.floor(actualCenterCoordinate.x / 2),
-          y: Math.floor(actualCenterCoordinate.y / 2),
+          x: Math.floor(actualCenterCoordinate.x),
+          y: Math.floor(actualCenterCoordinate.y),
           width,
           height,
           center: {
@@ -111,10 +126,10 @@ function ManualStarModal({
             y: actualCenterCoordinate.y / 2,
           },
           angle,
-          actualA: { x: actualA.x / 2, y: actualA.y / 2 },
-          actualB: { x: actualB.x / 2, y: actualB.y / 2 },
-          actualC: { x: actualC.x / 2, y: actualC.y / 2 },
-          actualD: { x: actualD.x / 2, y: actualD.y / 2 },
+          actualA: { x: actualA.x, y: actualA.y },
+          actualB: { x: actualB.x, y: actualB.y },
+          actualC: { x: actualC.x, y: actualC.y },
+          actualD: { x: actualD.x, y: actualD.y },
         };
         const targetIndex = activeArray.findIndex(
           (activeElement) => activeElement.page === currentPage,
@@ -129,22 +144,17 @@ function ManualStarModal({
       });
     }
 
-    const finalCoordinates = [rectPos1, rectPos2, rectPos3, rectPos4];
+    const finalCoordinates = [rectPos1, rectPos2, rectPos3, rectPos4, rectPos1];
     context.fillStyle = 'red';
     context.strokeStyle = 'red';
     // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       context.lineWidth = 5;
       context.beginPath();
       context.moveTo(finalCoordinates[i].x, finalCoordinates[i].y);
       context.lineTo(finalCoordinates[i + 1].x, finalCoordinates[i + 1].y);
       context.stroke();
     }
-    context.lineWidth = 5;
-    context.beginPath();
-    context.moveTo(rectPos4.x, rectPos4.y);
-    context.lineTo(rectPos1.x, rectPos1.y);
-    context.stroke();
   }
 
   function drawDot() {
@@ -228,72 +238,88 @@ function ManualStarModal({
   useEventListener('mousemove', relativeCoords, canvasRef.current);
 
   return (
-    <Modal
-      show={manualStarModalShow}
-      onHide={() => {
-        onHide();
-        setCenterCoodinate(null);
-        setCanvasManualRectanglCoordinates([]);
-      }}
-      size="lg"
-      backdrop="static"
-      onExit={() => {
-        setCenterCoodinate(null);
-        setCanvasManualRectanglCoordinates([]);
-      }}
-      onExited={onExited}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          {`#H${'000000'.slice(
-            (leadStarNumber + activeKey).toString().length - 6,
-          )}${leadStarNumber + activeKey}, ${
-            currentPage + 1
-          }枚目の3点を入力してください`}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div>
-          <canvas
-            ref={canvasRef}
-            style={{
-              imageRendering: 'pixelated',
+    <>
+      <Modal
+        show={manualStarModalShow}
+        onHide={() => {
+          onHide();
+          setCenterCoodinate(null);
+          setCanvasManualRectanglCoordinates([]);
+        }}
+        size="lg"
+        backdrop="static"
+        onExit={() => {
+          setCenterCoodinate(null);
+          setCanvasManualRectanglCoordinates([]);
+        }}
+        onExited={onExited}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {`#H${'000000'.slice(
+              (leadStarNumber + activeKey).toString().length - 6,
+            )}${leadStarNumber + activeKey}, ${
+              currentPage + 1
+            }枚目の3点を入力してください`}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <canvas
+              ref={canvasRef}
+              style={{
+                imageRendering: 'pixelated',
+              }}
+              width="500px"
+              height="500px"
+              onClick={
+                canvasManualRectangleCoordinates.length === 3
+                  ? () => {}
+                  : () => drawDot()
+              }
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="d-flex justify-content-between">
+          <Button
+            variant="danger"
+            onClick={() => {
+              context.clearRect(0, 0, 500, 500);
+              drawImage();
+              setCanvasManualRectanglCoordinates([]);
             }}
-            width="500px"
-            height="500px"
-            onClick={
-              canvasManualRectangleCoordinates.length === 3
-                ? () => {}
-                : () => drawDot()
-            }
-          />
-        </div>
-      </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-between">
-        <Button
-          variant="danger"
-          onClick={() => {
-            drawImage();
-            setCanvasManualRectanglCoordinates([]);
-          }}
-        >
-          やり直す
-        </Button>
+          >
+            やり直す
+          </Button>
 
-        <Button
-          variant="success"
-          disabled={canvasManualRectangleCoordinates.length !== 3}
-          onClick={() => {
-            onClickNext();
-            getForthPoint(canvasManualRectangleCoordinates, true);
-            setCenterCoodinate(null);
-            setCanvasManualRectanglCoordinates([]);
-          }}
-        >
-          完了
-        </Button>
-      </Modal.Footer>
-    </Modal>
+          <Button
+            variant="success"
+            disabled={
+              canvasManualRectangleCoordinates.length !== 3 || !isWithin
+            }
+            onClick={() => {
+              onClickNext();
+              getForthPoint(canvasManualRectangleCoordinates, true);
+              setCenterCoodinate(null);
+              setCanvasManualRectanglCoordinates([]);
+            }}
+          >
+            完了
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <AlertModal
+        alertModalShow={!isWithin}
+        onClickOk={() => {
+          context.clearRect(0, 0, 500, 500);
+          drawImage();
+          setCanvasManualRectanglCoordinates([]);
+          setIsWithin(true);
+        }}
+        alertMessage="画像の範囲内を選択してください"
+        alertButtonMessage="選択しなおす"
+      />
+    </>
   );
 }
 
