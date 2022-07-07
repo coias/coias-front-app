@@ -84,8 +84,8 @@ function PanZoom({
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
   // const ZPCanvas = useRef(null);
-  const RECT_WIDTH = 40;
-  const RECT_HEIGHT = 40;
+  // const RECT_WIDTH = 40;
+  // const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [context, setContext] = useState();
@@ -99,6 +99,8 @@ function PanZoom({
     { id: 2, done: false },
     { id: 3, done: false },
     { id: 6, done: false },
+    { id: 10, done: false },
+    { id: 20, done: false },
   ]);
 
   function relativeCoords(event) {
@@ -111,6 +113,19 @@ function PanZoom({
 
     setCurrentMousePos({ x: parseInt(x, 10), y: parseInt(y, 10) });
   }
+
+  const calcRectangle = () => {
+    // console.log(IMAGE_WIDTH / zoomValue);
+    let rectSize;
+    if (IMAGE_WIDTH / zoomValue >= 400) {
+      rectSize = 40;
+    } else if (IMAGE_WIDTH / zoomValue < 400) {
+      rectSize = IMAGE_WIDTH / zoomValue / 10;
+    } else if (IMAGE_WIDTH / zoomValue < 50) {
+      rectSize = 5;
+    }
+    return rectSize;
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -145,6 +160,8 @@ function PanZoom({
       }
 
       context.drawImage(img, 0, 0, img.naturalHeight, img.naturalWidth);
+      const RECT_SIZE = calcRectangle();
+      // console.log(RECT_SIZE);
 
       Object.keys(starPos)
         .map((key) => starPos[key])
@@ -152,36 +169,26 @@ function PanZoom({
           if (pos.page[currentPage]) {
             // rectangle setting
             const position = pos.page[currentPage];
-            const x = position.x - RECT_WIDTH / zoomValue / 2;
-            const y =
-              img.naturalHeight - position.y - RECT_HEIGHT / zoomValue / 2;
-            context.lineWidth = 3 / zoomValue < 1 ? 1 : 3 / zoomValue;
+            const x = position.x - RECT_SIZE / 2;
+            const y = img.naturalHeight - position.y - RECT_SIZE / 2;
+            context.lineWidth = RECT_SIZE * 0.075;
             // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.strokeRect(
-              x,
-              y,
-              RECT_WIDTH / zoomValue,
-              RECT_HEIGHT / zoomValue,
-            );
+            context.strokeRect(x, y, RECT_SIZE, RECT_SIZE);
 
             context.strokeStyle = 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.lineWidth = 4 / zoomValue < 2 ? 2 : 4 / zoomValue;
-            context.font = `${20 / zoomValue < 8 ? 8 : 20 / zoomValue}px serif`;
+            context.lineWidth = RECT_SIZE * 0.075;
+            context.font = `${RECT_SIZE * 0.5}px serif`;
             context.strokeText(
               pos.name,
-              x - RECT_WIDTH / zoomValue / 10,
-              y - RECT_HEIGHT / zoomValue / 10,
+              x - RECT_SIZE / 10,
+              y - RECT_SIZE / 10,
             );
             context.fillStyle = 'red';
             context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-            context.fillText(
-              pos.name,
-              x - RECT_WIDTH / zoomValue / 10,
-              y - RECT_HEIGHT / zoomValue / 10,
-            );
+            context.fillText(pos.name, x - RECT_SIZE / 10, y - RECT_SIZE / 10);
           }
         });
       if (!disable) {
@@ -189,30 +196,31 @@ function PanZoom({
           pos.forEach((manualPos) => {
             if (manualPos.page === currentPage) {
               // rectangle setting
-              const x = manualPos.x - RECT_WIDTH / zoomValue / 2;
-              const y = manualPos.y - RECT_HEIGHT / zoomValue / 2;
+              // const x =
+              //   zoomValue > 2
+              //     ? manualPos.x - MIN_WIDTH_HEIGHT / 2
+              //     : manualPos.x - RECT_WIDTH / zoomValue / 2;
+              // const y =
+              //   zoomValue > 2
+              //     ? manualPos.y - MIN_WIDTH_HEIGHT / 2
+              //     : manualPos.y - RECT_HEIGHT / zoomValue / 2;
+              const x = manualPos.x - RECT_SIZE / 2;
+              const y = manualPos.y - RECT_SIZE / 2;
               context.strokeStyle = i === activeKey ? 'red' : 'blue';
               context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-              context.strokeRect(
-                x,
-                y,
-                RECT_WIDTH / zoomValue,
-                RECT_HEIGHT / zoomValue,
-              );
+              context.strokeRect(x, y, RECT_SIZE, RECT_SIZE);
 
               // font setting
               context.strokeStyle = i === activeKey ? 'red' : 'blue';
               context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
-              context.lineWidth = 2;
-              context.font = `${
-                20 / zoomValue < 8 ? 8 : 20 / zoomValue
-              }px serif`;
+              context.lineWidth = RECT_SIZE * 0.075;
+              context.font = `${RECT_SIZE * 0.5}px serif`;
               context.strokeText(
                 `H${'000000'.slice(
                   (leadStarNumber + i).toString().length - 6,
                 )}${leadStarNumber + i}`,
-                x - RECT_WIDTH / zoomValue / 10,
-                y - RECT_HEIGHT / zoomValue / 10,
+                x - RECT_SIZE / 10,
+                y - RECT_SIZE / 10,
               );
               context.fillStyle = i === activeKey ? 'white' : 'white';
               context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
@@ -220,8 +228,8 @@ function PanZoom({
                 `H${'000000'.slice(
                   (leadStarNumber + i).toString().length - 6,
                 )}${leadStarNumber + i}`,
-                x - RECT_WIDTH / zoomValue / 10,
-                y - RECT_HEIGHT / zoomValue / 10,
+                x - RECT_SIZE / 10,
+                y - RECT_SIZE / 10,
               );
             }
           }),
@@ -252,9 +260,10 @@ function PanZoom({
 
   // 当たり判定を検出
   function testHit(thisx, thisy, isManualOption = false) {
+    const RECT_SIZE = calcRectangle();
     const point = { x: currentMousePos.x / 2, y: currentMousePos.y / 2 };
-    const wHalf = RECT_WIDTH / (zoomValue * 2);
-    const hHalf = RECT_HEIGHT / (zoomValue * 2);
+    const wHalf = RECT_SIZE / 2;
+    const hHalf = RECT_SIZE / 2;
     const starX = thisx;
     const starY = isManualOption ? thisy : IMAGE_HEIGHT - thisy;
     return (
@@ -384,6 +393,14 @@ function PanZoom({
         setZoomValue(6);
         updateScaleButton(6);
         break;
+      case '10':
+        setZoomValue(10);
+        updateScaleButton(10);
+        break;
+      case '20':
+        setZoomValue(20);
+        updateScaleButton(20);
+        break;
       default:
         break;
     }
@@ -422,9 +439,11 @@ function PanZoom({
             position: 'relative',
           }}
           onKeyDown={keyInvalid}
+          id="contaner"
         >
           <div ref={ZPCanvasRef}>
             <canvas
+              id="canvas"
               ref={canvasRef}
               width={`${IMAGE_WIDTH * 2}px`}
               height={`${IMAGE_HEIGHT * 2}px`}
