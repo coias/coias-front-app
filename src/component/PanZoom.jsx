@@ -50,6 +50,8 @@ PanZoom.propTypes = {
   writeMemo: PropTypes.func,
   setConfirmMessage: PropTypes.func,
   setSelectedListState: PropTypes.func,
+  // eslint-disable-next-line react/require-default-props
+  // setCanvasScale: PropTypes.func,
 };
 
 function PanZoom({
@@ -71,6 +73,7 @@ function PanZoom({
   writeMemo,
   setConfirmMessage,
   setSelectedListState,
+  // setCanvasScale,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -85,15 +88,13 @@ function PanZoom({
 
   const { currentMousePos, setCurrentMousePos } =
     useContext(MousePositionContext);
-  // const ZPCanvas = useRef(null);
-  // const RECT_WIDTH = 40;
-  // const RECT_HEIGHT = 40;
   const [IMAGE_WIDTH, setImageWidth] = useState(0);
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [context, setContext] = useState();
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const [zoomValue, setZoomValue] = useState(1.5);
   const [loaded, setLoaded] = useState(0);
+  const [scaleValue, setScaleValue] = useState(0);
   const [scaleButton, setScaleButton] = useState([
     { id: 1, done: false },
     { id: 1.25, done: false },
@@ -104,6 +105,8 @@ function PanZoom({
     { id: 10, done: false },
     { id: 20, done: false },
   ]);
+
+  const dataSetOfImageSize = [5100, 2100, 1050];
 
   function relativeCoords(event) {
     const bounds = event.target.getBoundingClientRect();
@@ -156,13 +159,22 @@ function PanZoom({
       }
 
       if (loaded === 1) {
-        context.scale(2, 2);
+        if (img.naturalHeight > dataSetOfImageSize[1]) {
+          context.scale(2, 2);
+          setScaleValue(2);
+          // setCanvasScale(2);
+        } else if (img.naturalHeight > dataSetOfImageSize[2]) {
+          context.scale(4, 4);
+          setScaleValue(4);
+        } else {
+          context.scale(6, 6);
+          setScaleValue(6);
+        }
         setLoaded(2);
       }
 
-      context.drawImage(img, 0, 0, img.naturalHeight, img.naturalWidth);
+      context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       const RECT_SIZE = calcRectangle();
-      // console.log(RECT_SIZE);
 
       Object.keys(starPos)
         .map((key) => starPos[key])
@@ -196,15 +208,6 @@ function PanZoom({
         positionList.forEach((pos, i) =>
           pos.forEach((manualPos) => {
             if (manualPos.page === currentPage) {
-              // rectangle setting
-              // const x =
-              //   zoomValue > 2
-              //     ? manualPos.x - MIN_WIDTH_HEIGHT / 2
-              //     : manualPos.x - RECT_WIDTH / zoomValue / 2;
-              // const y =
-              //   zoomValue > 2
-              //     ? manualPos.y - MIN_WIDTH_HEIGHT / 2
-              //     : manualPos.y - RECT_HEIGHT / zoomValue / 2;
               const x = manualPos.x - RECT_SIZE / 2;
               const y = manualPos.y - RECT_SIZE / 2;
               context.strokeStyle = i === activeKey ? 'red' : 'blue';
@@ -262,7 +265,10 @@ function PanZoom({
   // 当たり判定を検出
   function testHit(thisx, thisy, isManualOption = false) {
     const RECT_SIZE = calcRectangle();
-    const point = { x: currentMousePos.x / 2, y: currentMousePos.y / 2 };
+    const point = {
+      x: currentMousePos.x / scaleValue,
+      y: currentMousePos.y / scaleValue,
+    };
     const wHalf = RECT_SIZE / 2;
     const hHalf = RECT_SIZE / 2;
     const starX = thisx;
@@ -304,7 +310,6 @@ function PanZoom({
           //   newStarPos[item.name].isSelected;
           setSelectedListState((prevList) => {
             const prevListCopy = prevList.concat();
-            console.log(prevListCopy[index]);
             prevListCopy[index] = !prevListCopy[index];
             return prevListCopy;
           });
@@ -413,6 +418,30 @@ function PanZoom({
     }
   };
 
+  const calcCanvasWidth = () => {
+    let canvasSize;
+    if (IMAGE_WIDTH > dataSetOfImageSize[1]) {
+      canvasSize = IMAGE_WIDTH * 2;
+    } else if (IMAGE_WIDTH > dataSetOfImageSize[2]) {
+      canvasSize = IMAGE_WIDTH * 4;
+    } else {
+      canvasSize = IMAGE_WIDTH * 6;
+    }
+    return canvasSize;
+  };
+
+  const calcCanvasHeight = () => {
+    let canvasSize;
+    if (IMAGE_HEIGHT > dataSetOfImageSize[1]) {
+      canvasSize = IMAGE_HEIGHT * 2;
+    } else if (IMAGE_HEIGHT > dataSetOfImageSize[2]) {
+      canvasSize = IMAGE_HEIGHT * 4;
+    } else {
+      canvasSize = IMAGE_HEIGHT * 6;
+    }
+    return canvasSize;
+  };
+
   return (
     <Col>
       <div
@@ -453,8 +482,8 @@ function PanZoom({
             <canvas
               id="canvas"
               ref={canvasRef}
-              width={`${IMAGE_WIDTH * 2}px`}
-              height={`${IMAGE_HEIGHT * 2}px`}
+              width={`${calcCanvasWidth()}px`}
+              height={`${calcCanvasHeight()}px`}
               onClick={() => {
                 if (isManual) {
                   saveEventPosition();

@@ -26,11 +26,27 @@ function ManualStarModal({
   const [centerCoordinate, setCenterCoodinate] = useState(null);
   const [isWithin, setIsWithin] = useState(true);
 
+  const canvasScale = () => {
+    const img = imageURLs[currentPage].nomasked
+      ? window.images[currentPage][1]
+      : window.images[currentPage][0];
+
+    let scale;
+    if (img.naturalHeight > 2100) {
+      scale = 2;
+    } else if (img.naturalHeight > 1050) {
+      scale = 4;
+    } else {
+      scale = 6;
+    }
+    return scale;
+  };
+
   function translateCooditareModalToActual(modalCoordinate) {
     const canvasLeftUpperPositionX =
-      centerCoordinate.x / 2 - defaultZoomRate / 2;
+      centerCoordinate.x / canvasScale() - defaultZoomRate / 2;
     const canvasLeftUpperPositionY =
-      centerCoordinate.y / 2 - defaultZoomRate / 2;
+      centerCoordinate.y / canvasScale() - defaultZoomRate / 2;
 
     const canvasXRelPos = modalCoordinate.x / 500;
     const canvasYRelPos = modalCoordinate.y / 500;
@@ -122,8 +138,8 @@ function ManualStarModal({
           width,
           height,
           center: {
-            x: actualCenterCoordinate.x / 2,
-            y: actualCenterCoordinate.y / 2,
+            x: actualCenterCoordinate.x,
+            y: actualCenterCoordinate.y,
           },
           angle,
           actualA: { x: actualA.x, y: actualA.y },
@@ -200,8 +216,8 @@ function ManualStarModal({
 
       context.drawImage(
         img,
-        imageZoomCenter.x / 2 - defaultZoomRate / 2,
-        imageZoomCenter.y / 2 - defaultZoomRate / 2,
+        imageZoomCenter.x / canvasScale() - defaultZoomRate / 2,
+        imageZoomCenter.y / canvasScale() - defaultZoomRate / 2,
         defaultZoomRate,
         defaultZoomRate,
         0,
