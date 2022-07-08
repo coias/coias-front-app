@@ -152,7 +152,7 @@ function PanZoom({
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
 
-      context.imageSmoothingEnabled = true;
+      context.imageSmoothingEnabled = false;
 
       if (IMAGE_HEIGHT !== 0 && loaded !== 2) {
         setLoaded(1);
@@ -175,6 +175,15 @@ function PanZoom({
 
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       const RECT_SIZE = calcRectangle();
+      console.log(
+        '画像サイズ : ',
+        IMAGE_WIDTH,
+        '/',
+        zoomValue,
+        '=',
+        IMAGE_WIDTH / zoomValue,
+      );
+      console.log('四角のサイズ : ', RECT_SIZE);
 
       Object.keys(starPos)
         .map((key) => starPos[key])
@@ -377,9 +386,25 @@ function PanZoom({
     );
   };
 
+  // useEffect(() => {
+  //   // scroll
+  //   const div = document.getElementById('container');
+  //   const pastScrollTop = div.scrollTop;
+  //   const pastScrollLeft = div.scrollLeft;
+  //   div.scrollTop = 1000000;
+  //   div.scrollLeft = 1000000;
+  //   const MAX_SCROLLTOP = div.scrollTop;
+  //   const MAX_SCROLLLEFT = div.scrollLeft;
+  //   console.log('pas Top', pastScrollTop);
+  //   console.log('pas Left', pastScrollLeft);
+  //   console.log('max Top', MAX_SCROLLTOP);
+  //   console.log('max Left', MAX_SCROLLLEFT);
+  //   div.scrollTop = 0;
+  //   div.scrollLeft = 0;
+  // }, [zoomValue]);
+
   const zoom = (e) => {
     const data = e.target.id;
-    // zoomCanvas();
     switch (data) {
       case '1':
         setZoomValue(1);
@@ -476,7 +501,7 @@ function PanZoom({
             overflow: 'none',
           }}
           onKeyDown={keyInvalid}
-          id="contaner"
+          id="container"
         >
           <div ref={ZPCanvasRef}>
             <canvas
@@ -501,7 +526,6 @@ function PanZoom({
                 maxHeight: '100%',
                 objectFit: 'contain',
                 imageRendering: 'pixelated',
-                backfaceVisibility: 'hidden',
               }}
             />
           </div>
