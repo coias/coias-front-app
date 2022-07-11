@@ -326,6 +326,7 @@ function COIAS({
         fileNum={fileNum}
         isAutoSave={isAutoSave}
         setIsAutoSave={setIsAutoSave}
+        setOriginalStarPos={setOriginalStarPos}
       />
       <Container fluid>
         <Row>
