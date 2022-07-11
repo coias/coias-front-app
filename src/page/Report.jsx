@@ -168,8 +168,19 @@ function Report() {
             <Button
               variant="primary"
               onClick={() => {
+                getMpc();
+              }}
+            >
+              レポート作成をやり直す
+            </Button>
+          </Row>
+          <Row>
+            <Button
+              variant="primary"
+              onClick={() => {
                 downloadFIle();
               }}
+              className="mt-3"
             >
               Downlaod send_mpc
             </Button>
