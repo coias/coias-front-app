@@ -414,6 +414,7 @@ function PanZoom({
             <Button
               variant={item.done ? 'primary' : 'secondary'}
               id={item.id}
+              key={item.id}
               onClick={(e) => zoom(e)}
             >
               {`×${item.id}`}

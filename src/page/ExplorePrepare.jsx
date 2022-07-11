@@ -56,8 +56,8 @@ function ExplorePrepare({
   const [errorContent, setErrorContent] = useState('');
   const [processName, setProcessName] = useState('');
   const [showProcessError, setShowProcessError] = useState(false);
-  const [errorPlace, setErrorPlace] = useState();
-  const [errorReason, setErrorReason] = useState();
+  const [errorPlace, setErrorPlace] = useState('');
+  const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
 
   const handleSelect = (e) => setVal(e.target.value);
@@ -160,9 +160,9 @@ function ExplorePrepare({
           setLoading(false);
         })
         .catch(() => {
-          document.getElementById('toast-message').innerHTML =
-            'ファイルアップロードが失敗しました';
-          setShowError(true);
+          setShowProcessError(true);
+          setErrorPlace('ファイルアップロード');
+          setErrorReason('ファイルアップロードに失敗しました');
           setLoading(false);
         });
     };
@@ -180,7 +180,7 @@ function ExplorePrepare({
       setLoading(true);
       await axios
         .put(uri + query)
-        .then((response) => {
+        .then(() => {
           const updatedMenunames = menunames.map((item) => {
             if (
               item.query === query ||
@@ -190,22 +190,19 @@ function ExplorePrepare({
               // eslint-disable-next-line no-param-reassign
               item.done = true;
             }
-            if (response.data.place !== '正常終了') {
-              setErrorPlace(response.data.place);
-              setErrorReason(response.data.reason);
-              setShowProcessError(true);
-            }
             return item;
           });
           setMenunames(updatedMenunames);
           setLoading(false);
         })
-        .catch((error) => {
+        .catch((e) => {
+          const errorResponse = e.response?.data?.detail;
+          if (errorResponse) {
+            setErrorPlace(errorResponse.place);
+            setErrorReason(errorResponse.reason);
+            setShowProcessError(true);
+          }
           setLoading(false);
-          setShowError(true);
-          document.getElementById(
-            'toast-message',
-          ).innerHTML = `${error} : 処理が失敗しました`;
         });
     };
     if (query.length > 0) put();
@@ -224,8 +221,7 @@ function ExplorePrepare({
     setProcessName(`${query}...`);
     await axios
       .put(url)
-      .then((response) => {
-        console.log(response);
+      .then(() => {
         const updatedMenunames = menunames.map((item) => {
           if (
             item.query === uriQuery ||
@@ -235,25 +231,20 @@ function ExplorePrepare({
             // eslint-disable-next-line no-param-reassign
             item.done = true;
           }
-          if (response.data.place !== '正常終了') {
-            setErrorPlace(response.data.place);
-            setErrorReason(response.data.reason);
-            setShowProcessError(true);
-          }
           return item;
         });
         setMenunames(updatedMenunames);
       })
-      .catch(() => {
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
         result = false;
-        document.getElementById(
-          'toast-message',
-        ).innerHTML = `${query}が失敗しました`;
+        setLoading(false);
       });
-    if (!result) {
-      setLoading(false);
-      setShowError(true);
-    }
     return result;
   };
 
@@ -449,7 +440,7 @@ function ExplorePrepare({
           <div
             style={{
               backgroundColor: 'black',
-              width: '1000px',
+              width: '70vw',
               height: '100%',
             }}
           >
@@ -529,15 +520,22 @@ function ExplorePrepare({
             />
             <Button
               onClick={async () => {
-                try {
-                  handleClose();
-                  setProcessName('小惑星データ更新中...');
-                  setLoading(true);
-                  await axios.put(`${uri}getMPCORB_and_mpc2edb`);
-                  setLoading(false);
-                } catch {
-                  showProcessError(true);
-                }
+                handleClose();
+                await axios
+                  .put(`${uri}getMPCORB_and_mpc2edb`)
+                  .then(() => {
+                    setProcessName('小惑星データ更新中...');
+                    setLoading(true);
+                  })
+                  .catch((e) => {
+                    const errorResponse = e.response?.data?.detail;
+                    if (errorResponse) {
+                      setErrorPlace(errorResponse.place);
+                      setErrorReason(errorResponse.reason);
+                      setShowProcessError(true);
+                    }
+                  });
+                setLoading(false);
               }}
             >
               小惑星データ更新

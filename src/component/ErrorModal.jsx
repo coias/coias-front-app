@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
 function ErrorModal({ show, setShow, errorPlace, errorReason }) {
-  const [log, setLog] = useState({});
+  const reactApiUri = process.env.REACT_APP_API_URI;
 
-  const downloadFIle = () => {
+  const downloadLogFIle = () => {
     axios
-      .get('http://localhost:8000/log')
-      .then((response) => {
-        setLog(response.data.result);
+      .get(`${reactApiUri}log`)
+      .then((response) => response.data.result)
+      .then((log) => {
+        const file = new Blob(
+          log.map((item) => `${item}\n`),
+          {
+            type: 'text/plain',
+          },
+        );
+        const element = document.createElement('a');
+        element.href = URL.createObjectURL(file);
+        element.download = 'log.txt';
+        document.body.appendChild(element); // Required for this to work in FireFox
+        element.click();
       })
       .catch(() => {
         console.log('エラーが発生しました');
       });
-    const file = new Blob(
-      log.map((item) => `${item}\n`),
-      {
-        type: 'text/plain',
-      },
-    );
-    const element = document.createElement('a');
-    element.href = URL.createObjectURL(file);
-    element.download = 'log.txt';
-    document.body.appendChild(element); // Required for this to work in FireFox
-    element.click();
   };
 
   const handleClose = () => {
@@ -38,7 +38,9 @@ function ErrorModal({ show, setShow, errorPlace, errorReason }) {
         <Modal.Title>エラーが発生しました</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {errorPlace}でエラーが発生しました。
+        {errorPlace?.length === 0
+          ? { errorPlace }
+          : `${errorPlace}でエラーが発生しました。`}
         <br />
         <br />
         {errorReason}
@@ -49,7 +51,7 @@ function ErrorModal({ show, setShow, errorPlace, errorReason }) {
         <Button
           variant="primary"
           onClick={() => {
-            downloadFIle();
+            downloadLogFIle();
           }}
         >
           Download log

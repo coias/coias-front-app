@@ -20,7 +20,7 @@ function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
                   <Form.Check
                     type="checkbox"
                     disabled={!disable}
-                    checked={pos.isSelected}
+                    checked={pos.isSelected ? pos.isSelected : false}
                     onChange={() => {
                       const newStarPos = JSON.parse(JSON.stringify(starPos));
                       newStarPos[pos.name].isSelected = !pos.isSelected;

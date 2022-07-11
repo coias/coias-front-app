@@ -53,8 +53,8 @@ function COIAS({
   const [selectedListState, setSelectedListState] = useState([]);
   const [isAutoSave, setIsAutoSave] = useState(true);
   const [showProcessError, setShowProcessError] = useState(false);
-  const [errorPlace, setErrorPlace] = useState();
-  const [errorReason, setErrorReason] = useState();
+  const [errorPlace, setErrorPlace] = useState('');
+  const [errorReason, setErrorReason] = useState('');
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -245,36 +245,39 @@ function COIAS({
       .map((item) => item.name.substring(1));
     await axios.put(`${reactApiUri}memo`, selectedStars);
 
-    const response = await axios.put(
-      `${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`,
-    );
-    if (response.data.place !== '正常終了') {
-      setErrorPlace(response.data.place);
-      setErrorReason(response.data.reason);
-      setShowProcessError(true);
-    }
-    const redisp = response.data.result;
+    await axios
+      .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`)
+      .then((response) => response.data.result)
+      .then((redisp) => {
+        // 選択を同期させるため、オブジェクトに変更
+        const toObject = {};
+        redisp.forEach((item) => {
+          let star = toObject[item[0]];
+          if (!star) {
+            toObject[item[0]] = {
+              name: item[0],
+              page: Array(fileNum).fill(null),
+              isSelected: false,
+            };
+            star = toObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+          };
+        });
 
-    // 選択を同期させるため、オブジェクトに変更
-    const toObject = {};
-    redisp.forEach((item) => {
-      let star = toObject[item[0]];
-      if (!star) {
-        toObject[item[0]] = {
-          name: item[0],
-          page: Array(fileNum).fill(null),
-          isSelected: false,
-        };
-        star = toObject[item[0]];
-      }
-      star.page[item[1]] = {
-        name: item[0],
-        x: parseFloat(item[2], 10),
-        y: parseFloat(item[3], 10),
-      };
-    });
-
-    setStarPos(toObject);
+        setStarPos(toObject);
+      })
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
+      });
 
     // rename
     await axios.put(`${reactApiUri}rename`);
@@ -369,7 +372,7 @@ function COIAS({
           </Col>
         </Row>
       </Container>
-      <LoadingButton loading={loading} />
+      <LoadingButton loading={loading} processName="処理中…" />
       <NewStarModal
         show={starModalShow}
         onExit={() => {
