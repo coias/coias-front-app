@@ -2,7 +2,7 @@ import { React } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-function LoadingButton({ loading }) {
+function LoadingButton({ loading, processName }) {
   return (
     <Button
       type="button"
@@ -25,13 +25,14 @@ function LoadingButton({ loading }) {
           height: '50px',
         }}
       />
-      <div id="current-process">処理中...</div>
+      <div id="current-process">{processName}</div>
     </Button>
   );
 }
 
 LoadingButton.propTypes = {
   loading: PropTypes.bool.isRequired,
+  processName: PropTypes.string.isRequired,
 };
 
 export default LoadingButton;

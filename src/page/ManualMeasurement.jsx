@@ -18,13 +18,12 @@ import {
 import AlertModal from '../component/AlertModal';
 import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
+import ErrorModal from '../component/ErrorModal';
 
 function ManualMeasurement({
   imageURLs,
   setImageURLs,
   intervalRef,
-  positionList,
-  setPositionList,
   setOriginalStarPos,
   start,
   setStart,
@@ -46,18 +45,22 @@ function ManualMeasurement({
   const [defaultZoomRate, setDefaultZoomRate] = useState(40);
   const [loading, setLoading] = useState(false);
   const [manualStarModalShow, setManualStarModalShow] = useState(false);
-  const [manualAlertModalShow, setManualAlertModalShow] = useState(false);
+  const [alertModalShow, setAlertModalShow] = useState(false);
   const [isZoomIn, setIsZoomIn] = useState(false);
   const [isAutoSave, setIsAutoSave] = useState(true);
   const [confirmationModalShow, setConfirmationModalShow] = useState(false);
   const [checkedState, setCheckedState] = useState([false]);
   const [isRedisp, setIsRedisp] = useState(false);
   const [fitsSize, setFitsSize] = useState({});
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState('');
+  const [errorReason, setErrorReason] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
+  const [positionList, setPositionList] = useState([[]]);
 
   const navigate = useNavigate();
   const handleNavigate = () => {
-    navigate('/Report', { state: { isManual: true } });
+    navigate('/Report');
   };
   const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
@@ -128,7 +131,7 @@ function ManualMeasurement({
             if (!star) {
               toObject[item[0]] = {
                 name: item[0],
-                page: Array(5).fill(null),
+                page: Array(imageURLs.length).fill(null),
                 isSelected: false,
                 isKnown: false,
               };
@@ -147,7 +150,7 @@ function ManualMeasurement({
 
       // TODO : 動的なエラーハンドリング
       if (toObject['awk:']) {
-        setManualAlertModalShow(true);
+        setAlertModalShow(true);
       } else {
         const res1 = await axios.get(`${reactApiUri}unknown_disp`);
         const unknownDisp = await res1.data.result;
@@ -294,7 +297,6 @@ function ManualMeasurement({
       .put(`${reactApiUri}AstsearchR_after_manual`)
       .then((res) => {
         const rereDisp = res.data.reredisp.split('\n');
-
         // 選択を同期させるため、オブジェクトに変更
         rereDisp.forEach((items) => {
           const item = items.split(' ');
@@ -315,8 +317,13 @@ function ManualMeasurement({
           };
         });
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
       });
 
     setOriginalStarPos(starPos);
@@ -395,7 +402,11 @@ function ManualMeasurement({
           </Col>
           <Col sm={2} md={2}>
             {isRedisp ? (
-              <StarsList disable={isRedisp} isManual />
+              <StarsList
+                disable={isRedisp}
+                isManual
+                setSelectedListState={() => {}}
+              />
             ) : (
               <ManualToolBar
                 positionList={positionList}
@@ -439,7 +450,10 @@ function ManualMeasurement({
         onHide={() => {
           setConfirmationModalShow(false);
         }}
-        onExit={() => setIsZoomIn(false)}
+        onExit={() => {
+          setIsZoomIn(false);
+          document.getElementById('wrapper-coias').focus();
+        }}
         onEntered={() => setIsZoomIn(true)}
         removePositionByIndex={removePositionByIndex}
         setManualStarModalShow={setManualStarModalShow}
@@ -458,13 +472,19 @@ function ManualMeasurement({
       />
 
       <AlertModal
-        alertModalShow={manualAlertModalShow}
+        alertModalShow={alertModalShow}
         onClickOk={() => {
           navigate('/COIAS');
-          setManualAlertModalShow(false);
+          setAlertModalShow(false);
         }}
         alertMessage="再描画を行ってください"
         alertButtonMessage="探索/再描画に戻る"
+      />
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
       />
     </div>
   );
@@ -476,9 +496,6 @@ ManualMeasurement.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
-  positionList: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object))
-    .isRequired,
-  setPositionList: PropTypes.func.isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   start: PropTypes.bool.isRequired,

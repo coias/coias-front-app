@@ -11,6 +11,7 @@ import LoadingButton from '../component/LoadingButton';
 import StarsList from '../component/StarsList';
 import NewStarModal from '../component/NewStarModal';
 import AlertModal from '../component/AlertModal';
+import ErrorModal from '../component/ErrorModal';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
@@ -54,12 +55,15 @@ function COIAS({
   const [isAutoSave, setIsAutoSave] = useState(true);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [COIASAlertModalshow, setCOIASAlertModalshow] = useState(false);
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState('');
+  const [errorReason, setErrorReason] = useState('');
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate('/Report', { state: { isManual: false } });
+    navigate('/Report');
   };
 
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -251,33 +255,39 @@ function COIAS({
       .map((item) => item.name.substring(1));
     await axios.put(`${reactApiUri}memo`, selectedStars);
 
-    const response = await axios.put(
-      `${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`,
-    );
-    const redisp = await response.data[0].result;
+    await axios
+      .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`)
+      .then((response) => {
+        const redisp = response.data;
+        // 選択を同期させるため、オブジェクトに変更
+        const toObject = {};
+        redisp.forEach((item) => {
+          let star = toObject[item[0]];
+          if (!star) {
+            toObject[item[0]] = {
+              name: item[0],
+              page: Array(fileNum).fill(null),
+              isSelected: false,
+            };
+            star = toObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+          };
+        });
 
-    // 選択を同期させるため、オブジェクトに変更
-    const toObject = {};
-    redisp.forEach((item) => {
-      let star = toObject[item[0]];
-      if (!star) {
-        toObject[item[0]] = {
-          name: item[0],
-          page: Array(fileNum).fill(null),
-          isSelected: memoList.find(
-            (memoName) => memoName === item[0].replace('H', ''),
-          ),
-        };
-        star = toObject[item[0]];
-      }
-      star.page[item[1]] = {
-        name: item[0],
-        x: parseFloat(item[2], 10),
-        y: parseFloat(item[3], 10),
-      };
-    });
-
-    setStarPos(toObject);
+        setStarPos(toObject);
+      })
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
+      });
 
     // rename
     await axios.put(`${reactApiUri}rename`);
@@ -295,13 +305,11 @@ function COIAS({
   };
 
   const writeMemo = async (newStarPos) => {
-    setIsSaveLoading(true);
     // memo.txtへの出力
     const selectedStars = Object.values(newStarPos)
       .filter((p) => p.isSelected)
       .map((e) => e.name.replace('H', ''));
     await axios.put(`${reactApiUri}memo`, selectedStars);
-    setIsSaveLoading(false);
   };
 
   return (
@@ -331,7 +339,7 @@ function COIAS({
         fileNum={fileNum}
         isAutoSave={isAutoSave}
         setIsAutoSave={setIsAutoSave}
-        isSaveLoading={isSaveLoading}
+        setOriginalStarPos={setOriginalStarPos}
       />
       <Container fluid>
         <Row>
@@ -359,7 +367,7 @@ function COIAS({
               setStarPos={setStarPos}
               isHide={isHide}
               setStarModalShow={starModalShow}
-              setDisable={setDisable}
+              disable={disable}
               setSelectedListState={setSelectedListState}
               writeMemo={isAutoSave ? writeMemo : () => {}}
             />
@@ -374,7 +382,7 @@ function COIAS({
           </Col>
         </Row>
       </Container>
-      <LoadingButton loading={loading} />
+      <LoadingButton loading={loading} processName="処理中…" />
       <NewStarModal
         show={starModalShow}
         onExit={() => {
@@ -389,6 +397,12 @@ function COIAS({
           navigate('/ExplorePrepare');
           setCOIASAlertModalshow(false);
         }}
+      />
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
       />
     </div>
   );

@@ -40,6 +40,7 @@ function PlayMenu({
   isAutoSave,
   loading,
   handleNavigate,
+  setOriginalStarPos,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -47,7 +48,7 @@ function PlayMenu({
   const [settingModalShow, setSettingModalShow] = useState(false);
   const [helpModalShow, setHelpModalShow] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
-  const { setStarPos } = useContext(StarPositionContext);
+  const { starPos, setStarPos } = useContext(StarPositionContext);
 
   const onClickNext = () => {
     if (currentPage === 4) setCurrentPage(0);
@@ -225,6 +226,7 @@ function PlayMenu({
                       if (disable) {
                         setStarPos(originalStarPos);
                       } else {
+                        document.getElementById('wrapper-coias').focus();
                         handleClick();
                       }
                       setDisable(!disable);
@@ -249,11 +251,13 @@ function PlayMenu({
               <Button
                 variant="success"
                 onClick={() => {
+                  if (disable) {
+                    setOriginalStarPos(starPos);
+                    setStarModalShow(true);
+                  } else {
+                    setStarPos(originalStarPos);
+                  }
                   setDisable(!disable);
-                  // eslint-disable-next-line no-unused-expressions
-                  disable
-                    ? setStarModalShow(true)
-                    : setStarPos(originalStarPos);
                 }}
                 size="md"
               >
@@ -299,6 +303,7 @@ PlayMenu.propTypes = {
   handleNavigate: PropTypes.func,
   isAutoSave: PropTypes.bool.isRequired,
   loading: PropTypes.bool,
+  setOriginalStarPos: PropTypes.func,
 };
 
 PlayMenu.defaultProps = {
@@ -311,6 +316,7 @@ PlayMenu.defaultProps = {
   handleClick: () => {},
   loading: false,
   handleNavigate: () => {},
+  setOriginalStarPos: () => {},
 };
 
 export default PlayMenu;

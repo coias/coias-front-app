@@ -3,13 +3,13 @@ import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 function AlertModal({
-  manualAlertModalShow,
+  alertModalShow,
   onClickOk,
   alertMessage,
   alertButtonMessage,
 }) {
   return (
-    <Modal show={manualAlertModalShow} size="sm" backdrop="static">
+    <Modal show={alertModalShow} size="sm" backdrop="static">
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">アラート</Modal.Title>
       </Modal.Header>
@@ -26,7 +26,7 @@ function AlertModal({
 export default AlertModal;
 
 AlertModal.propTypes = {
-  manualAlertModalShow: PropTypes.bool.isRequired,
+  alertModalShow: PropTypes.bool.isRequired,
   onClickOk: PropTypes.func.isRequired,
   alertMessage: PropTypes.string.isRequired,
   alertButtonMessage: PropTypes.string.isRequired,

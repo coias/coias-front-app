@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
+import ErrorModal from '../component/ErrorModal';
 // import ExcuteButton from '../component/ExcuteButton';
 
 // eslint-disable-next-line no-use-before-define
@@ -53,6 +54,10 @@ function ExplorePrepare({
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
   const [errorContent, setErrorContent] = useState('');
+  const [processName, setProcessName] = useState('');
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState('');
+  const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
 
   const handleSelect = (e) => setVal(e.target.value);
@@ -144,8 +149,8 @@ function ExplorePrepare({
 
     const postFiles = async () => {
       handleClose();
-      document.getElementById('current-process').innerHTML =
-        'アップロード中...';
+      setProcessName('アップロード中...');
+
       setLoading(true);
       await axios.delete(`${uri}deletefiles`);
       await axios
@@ -155,9 +160,9 @@ function ExplorePrepare({
           setLoading(false);
         })
         .catch(() => {
-          document.getElementById('toast-message').innerHTML =
-            'ファイルアップロードが失敗しました';
-          setShowError(true);
+          setShowProcessError(true);
+          setErrorPlace('ファイルアップロード');
+          setErrorReason('ファイルアップロードに失敗しました');
           setLoading(false);
         });
     };
@@ -170,10 +175,9 @@ function ExplorePrepare({
   };
 
   const onProcess = (query) => {
-    document.getElementById('current-process').innerHTML = '処理中...';
+    setProcessName('処理中...');
     const put = async () => {
       setLoading(true);
-
       await axios
         .put(uri + query)
         .then(() => {
@@ -191,12 +195,14 @@ function ExplorePrepare({
           setMenunames(updatedMenunames);
           setLoading(false);
         })
-        .catch((error) => {
+        .catch((e) => {
+          const errorResponse = e.response?.data?.detail;
+          if (errorResponse) {
+            setErrorPlace(errorResponse.place);
+            setErrorReason(errorResponse.reason);
+            setShowProcessError(true);
+          }
           setLoading(false);
-          setShowError(true);
-          document.getElementById(
-            'toast-message',
-          ).innerHTML = `${error} : 処理が失敗しました`;
         });
     };
     if (query.length > 0) put();
@@ -212,7 +218,7 @@ function ExplorePrepare({
   const onProcessExecute = async (url, query) => {
     let result = true;
     const uriQuery = url.split('/')[3];
-    document.getElementById('current-process').innerHTML = `${query}...`;
+    setProcessName(`${query}...`);
     await axios
       .put(url)
       .then(() => {
@@ -229,16 +235,16 @@ function ExplorePrepare({
         });
         setMenunames(updatedMenunames);
       })
-      .catch(() => {
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
         result = false;
-        document.getElementById(
-          'toast-message',
-        ).innerHTML = `${query}が失敗しました`;
+        setLoading(false);
       });
-    if (!result) {
-      setLoading(false);
-      setShowError(true);
-    }
     return result;
   };
 
@@ -434,7 +440,7 @@ function ExplorePrepare({
           <div
             style={{
               backgroundColor: 'black',
-              width: '1000px',
+              width: '70vw',
               height: '100%',
             }}
           >
@@ -447,7 +453,7 @@ function ExplorePrepare({
         </Col>
       </Row>
 
-      <LoadingButton loading={loading} />
+      <LoadingButton loading={loading} processName={processName} />
 
       <AppToast
         show={showError}
@@ -512,7 +518,33 @@ function ExplorePrepare({
               onChange={handleSelect}
               checked={val === 'manual'}
             />
+            <Button
+              onClick={async () => {
+                handleClose();
+                await axios
+                  .put(`${uri}getMPCORB_and_mpc2edb`)
+                  .then(() => {
+                    setProcessName('小惑星データ更新中...');
+                    setLoading(true);
+                  })
+                  .catch((e) => {
+                    const errorResponse = e.response?.data?.detail;
+                    if (errorResponse) {
+                      setErrorPlace(errorResponse.place);
+                      setErrorReason(errorResponse.reason);
+                      setShowProcessError(true);
+                    }
+                  });
+                setLoading(false);
+              }}
+            >
+              小惑星データ更新
+            </Button>
+            <Form.Control.Feedback type="invalid">
+              ファイルを選択してください。
+            </Form.Control.Feedback>
           </Modal.Body>
+
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Close
@@ -523,6 +555,12 @@ function ExplorePrepare({
           </Modal.Footer>
         </Form>
       </Modal>
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
+      />
     </div>
   );
 }
