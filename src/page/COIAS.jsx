@@ -247,8 +247,8 @@ function COIAS({
 
     await axios
       .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`)
-      .then((response) => response.data.result)
-      .then((redisp) => {
+      .then((response) => {
+        const redisp = response.data;
         // 選択を同期させるため、オブジェクトに変更
         const toObject = {};
         redisp.forEach((item) => {
