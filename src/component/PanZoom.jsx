@@ -121,11 +121,11 @@ function PanZoom({
 
   const calcRectangle = () => {
     let rectSize;
-    if (IMAGE_WIDTH / zoomValue >= 400) {
+    if (IMAGE_WIDTH / zoomValue >= 800) {
       rectSize = 40;
-    } else if (IMAGE_WIDTH / zoomValue < 400) {
-      rectSize = IMAGE_WIDTH / zoomValue / 10;
-    } else if (IMAGE_WIDTH / zoomValue < 50) {
+    } else if (IMAGE_WIDTH / zoomValue < 800) {
+      rectSize = IMAGE_WIDTH / zoomValue / 20;
+    } else if (IMAGE_WIDTH / zoomValue < 100) {
       rectSize = 5;
     }
     return rectSize;
