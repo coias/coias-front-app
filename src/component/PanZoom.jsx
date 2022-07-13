@@ -124,7 +124,7 @@ function PanZoom({
     if (IMAGE_WIDTH / zoomValue >= 400) {
       rectSize = 40;
     } else if (IMAGE_WIDTH / zoomValue < 400) {
-      rectSize = IMAGE_WIDTH / zoomValue / 10;
+      rectSize = IMAGE_WIDTH / zoomValue / 15;
     } else if (IMAGE_WIDTH / zoomValue < 50) {
       rectSize = 5;
     }
@@ -175,15 +175,15 @@ function PanZoom({
 
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       const RECT_SIZE = calcRectangle();
-      console.log(
-        '画像サイズ : ',
-        IMAGE_WIDTH,
-        '/',
-        zoomValue,
-        '=',
-        IMAGE_WIDTH / zoomValue,
-      );
-      console.log('四角のサイズ : ', RECT_SIZE);
+      // console.log(
+      //   '画像サイズ : ',
+      //   IMAGE_WIDTH,
+      //   '/',
+      //   zoomValue,
+      //   '=',
+      //   IMAGE_WIDTH / zoomValue,
+      // );
+      // console.log('四角のサイズ : ', RECT_SIZE);
 
       Object.keys(starPos)
         .map((key) => starPos[key])
@@ -386,22 +386,53 @@ function PanZoom({
     );
   };
 
-  // useEffect(() => {
-  //   // scroll
-  //   const div = document.getElementById('container');
-  //   const pastScrollTop = div.scrollTop;
-  //   const pastScrollLeft = div.scrollLeft;
-  //   div.scrollTop = 1000000;
-  //   div.scrollLeft = 1000000;
-  //   const MAX_SCROLLTOP = div.scrollTop;
-  //   const MAX_SCROLLLEFT = div.scrollLeft;
-  //   console.log('pas Top', pastScrollTop);
-  //   console.log('pas Left', pastScrollLeft);
-  //   console.log('max Top', MAX_SCROLLTOP);
-  //   console.log('max Left', MAX_SCROLLLEFT);
-  //   div.scrollTop = 0;
-  //   div.scrollLeft = 0;
-  // }, [zoomValue]);
+  const [maxTop, setMaxTop] = useState(0);
+  const [maxLeft, setMaxLeft] = useState(0);
+
+  useEffect(() => {
+    // scroll
+    const div = document.getElementById('container');
+    const pastScrollTop = div.scrollTop;
+    const pastScrollLeft = div.scrollLeft;
+    div.scrollTop = 1000000;
+    div.scrollLeft = 1000000;
+    const MAX_SCROLLTOP = div.scrollTop;
+    const MAX_SCROLLLEFT = div.scrollLeft;
+    setMaxTop(MAX_SCROLLTOP);
+    setMaxLeft(MAX_SCROLLLEFT);
+
+    let topDiff;
+    let leftDiff;
+    let judge;
+
+    if (MAX_SCROLLTOP - maxTop < 0) {
+      topDiff = (maxTop - MAX_SCROLLTOP) / 2;
+      judge = 'zoomOut';
+    } else {
+      topDiff = (MAX_SCROLLTOP - maxTop) / 2;
+      judge = 'zoomIn';
+    }
+    if (MAX_SCROLLLEFT - maxLeft < 0) {
+      leftDiff = (maxLeft - MAX_SCROLLLEFT) / 2;
+      judge = 'zoomOut';
+    } else {
+      leftDiff = (MAX_SCROLLLEFT - maxLeft) / 2;
+      judge = 'zoomIn';
+    }
+
+    div.scrollTop = 0;
+    div.scrollLeft = 0;
+
+    if (judge === 'zoomIn') {
+      div.scrollTop = pastScrollTop + topDiff;
+      div.scrollLeft = pastScrollLeft + leftDiff;
+    } else {
+      div.scrollTop = pastScrollTop - topDiff;
+      div.scrollLeft = pastScrollLeft - leftDiff;
+    }
+    console.log(div.scrollTop);
+    console.log(div.scrollLeft);
+  }, [zoomValue]);
 
   const zoom = (e) => {
     const data = e.target.id;
