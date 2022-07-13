@@ -84,6 +84,7 @@ function PanZoom({
   }
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
+  const wrapperRef = useRef(null);
   const { currentPage } = useContext(PageContext);
 
   const { currentMousePos, setCurrentMousePos } =
@@ -140,7 +141,6 @@ function PanZoom({
   const drawImage = async () => {
     if (
       context &&
-      Object.keys(starPos).length > 0 &&
       window.images.length !== 0 &&
       window.imageLoadComplete &&
       imageURLs.length > 0
@@ -175,15 +175,6 @@ function PanZoom({
 
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       const RECT_SIZE = calcRectangle();
-      console.log(
-        '画像サイズ : ',
-        IMAGE_WIDTH,
-        '/',
-        zoomValue,
-        '=',
-        IMAGE_WIDTH / zoomValue,
-      );
-      console.log('四角のサイズ : ', RECT_SIZE);
 
       Object.keys(starPos)
         .map((key) => starPos[key])
@@ -386,23 +377,6 @@ function PanZoom({
     );
   };
 
-  // useEffect(() => {
-  //   // scroll
-  //   const div = document.getElementById('container');
-  //   const pastScrollTop = div.scrollTop;
-  //   const pastScrollLeft = div.scrollLeft;
-  //   div.scrollTop = 1000000;
-  //   div.scrollLeft = 1000000;
-  //   const MAX_SCROLLTOP = div.scrollTop;
-  //   const MAX_SCROLLLEFT = div.scrollLeft;
-  //   console.log('pas Top', pastScrollTop);
-  //   console.log('pas Left', pastScrollLeft);
-  //   console.log('max Top', MAX_SCROLLTOP);
-  //   console.log('max Left', MAX_SCROLLLEFT);
-  //   div.scrollTop = 0;
-  //   div.scrollLeft = 0;
-  // }, [zoomValue]);
-
   const zoom = (e) => {
     const data = e.target.id;
     switch (data) {
@@ -476,7 +450,7 @@ function PanZoom({
           height: '100%',
           paddingLeft: 0,
           position: 'relative',
-          overflow: 'nonw',
+          overflow: 'none',
         }}
       >
         <MousePosition isZoomIn={isZoomIn} />
@@ -485,7 +459,35 @@ function PanZoom({
             <Button
               variant={item.done ? 'primary' : 'secondary'}
               id={item.id}
-              onClick={(e) => zoom(e)}
+              key={item.id}
+              onClick={(e) => {
+                const scrollRate = {
+                  x:
+                    1 +
+                    wrapperRef.current.scrollLeft /
+                      (wrapperRef.current.scrollWidth -
+                        wrapperRef.current.clientWidth),
+                  y:
+                    wrapperRef.current.scrollTop /
+                    (wrapperRef.current.scrollHeight -
+                      wrapperRef.current.clientHeight),
+                };
+
+                const center = {
+                  x: (wrapperRef.current.clientWidth / 2) * 1.3,
+                  y: (wrapperRef.current.clientHeight / 2) * 1.3,
+                };
+
+                console.log(center);
+
+                console.log(
+                  center.x * scrollRate.x,
+                  center.y +
+                    (canvasRef.current.clientHeight * 1.8 - center.y * 2) *
+                      scrollRate.y,
+                );
+                zoom(e);
+              }}
             >
               {`×${item.id}`}
             </Button>
@@ -500,6 +502,7 @@ function PanZoom({
             position: 'relative',
             overflow: 'none',
           }}
+          ref={wrapperRef}
           onKeyDown={keyInvalid}
           id="container"
         >

@@ -53,8 +53,8 @@ function ManualMeasurement({
   const [isRedisp, setIsRedisp] = useState(false);
   const [fitsSize, setFitsSize] = useState({});
   const [showProcessError, setShowProcessError] = useState(false);
-  const [errorPlace, setErrorPlace] = useState();
-  const [errorReason, setErrorReason] = useState();
+  const [errorPlace, setErrorPlace] = useState('');
+  const [errorReason, setErrorReason] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
   const [positionList, setPositionList] = useState([[]]);
 
@@ -131,7 +131,7 @@ function ManualMeasurement({
             if (!star) {
               toObject[item[0]] = {
                 name: item[0],
-                page: Array(5).fill(null),
+                page: Array(imageURLs.length).fill(null),
                 isSelected: false,
                 isKnown: false,
               };
@@ -297,12 +297,6 @@ function ManualMeasurement({
       .put(`${reactApiUri}AstsearchR_after_manual`)
       .then((res) => {
         const rereDisp = res.data.reredisp.split('\n');
-        if (res.data.place !== '正常終了') {
-          setErrorPlace(res.data.place);
-          setErrorReason(res.data.reason);
-          setShowProcessError(true);
-        }
-
         // 選択を同期させるため、オブジェクトに変更
         rereDisp.forEach((items) => {
           const item = items.split(' ');
@@ -323,8 +317,13 @@ function ManualMeasurement({
           };
         });
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
       });
 
     setOriginalStarPos(starPos);
@@ -403,7 +402,11 @@ function ManualMeasurement({
           </Col>
           <Col sm={2} md={2}>
             {isRedisp ? (
-              <StarsList disable={isRedisp} isManual />
+              <StarsList
+                disable={isRedisp}
+                isManual
+                setSelectedListState={() => {}}
+              />
             ) : (
               <ManualToolBar
                 positionList={positionList}

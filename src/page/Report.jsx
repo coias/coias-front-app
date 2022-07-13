@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Col, Row, Form, Button } from 'react-bootstrap';
 import LoadingButton from '../component/LoadingButton';
 import AlertModal from '../component/AlertModal';
+import ErrorModal from '../component/ErrorModal';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -14,6 +15,9 @@ function Report() {
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showProcessError, setShowProcessError] = useState(false);
+  const [errorPlace, setErrorPlace] = useState('');
+  const [errorReason, setErrorReason] = useState('');
 
   const makeSendMpc = async () => {
     const header = [
@@ -64,10 +68,13 @@ function Report() {
         setLoading(false);
       })
       .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
         setLoading(false);
-        setShowError(true);
-        setErrorMessage('send_mpcが空です');
-        console.error(e);
       });
   };
 
@@ -89,10 +96,9 @@ function Report() {
         document.body.appendChild(element); // Required for this to work in FireFox
         element.click();
       })
-      .catch((e) => {
+      .catch(() => {
         setLoading(false);
         setShowError(true);
-        console.error(e);
         setErrorMessage('final_all.txtがありません');
       });
   };
@@ -162,8 +168,19 @@ function Report() {
             <Button
               variant="primary"
               onClick={() => {
+                getMpc();
+              }}
+            >
+              レポート作成をやり直す
+            </Button>
+          </Row>
+          <Row>
+            <Button
+              variant="primary"
+              onClick={() => {
                 downloadFIle();
               }}
+              className="mt-3"
             >
               Downlaod send_mpc
             </Button>
@@ -181,12 +198,20 @@ function Report() {
           </Row>
         </Col>
       </Row>
-      <LoadingButton loading={loading} />
+      <LoadingButton loading={loading} processName="レポートデータ取得中…" />
       <AlertModal
         alertModalShow={showError}
-        onClickOk={() => {}}
+        onClickOk={() => {
+          setShowError(false);
+        }}
         alertMessage={errorMessage}
         alertButtonMessage="はい"
+      />
+      <ErrorModal
+        show={showProcessError}
+        setShow={setShowProcessError}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
       />
     </div>
   );

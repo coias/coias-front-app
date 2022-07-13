@@ -31,20 +31,28 @@ function ManualToolBar({
   const removePositionListByCheckState = () => {
     document.getElementById('wrapper-coias').focus();
 
-    const filteredList = positionList.filter(
-      (elementPosition, index) => !checkedState[index],
-    );
-    setPositionList(filteredList);
-    onClickFinishButton(filteredList);
-    setActiveKey(filteredList.length - 1);
-    setCheckedState(checkedState.filter((element) => !element));
+    const isAllRemove = !checkedState.some((element) => element === false);
+
+    if (isAllRemove) {
+      setPositionList([[]]);
+      onClickFinishButton([[]]);
+      setActiveKey(0);
+      setCheckedState([false]);
+    } else {
+      const filteredList = positionList.filter(
+        (elementPosition, index) => !checkedState[index],
+      );
+      setPositionList(filteredList);
+      onClickFinishButton(filteredList);
+      setActiveKey(filteredList.length - 1);
+      setCheckedState(checkedState.filter((element) => !element));
+    }
   };
 
   const handleOnChange = (position) => {
     const updatedCheckedState = checkedState.map((item, index) =>
       index === position ? !item : item,
     );
-
     setCheckedState(updatedCheckedState);
   };
 
