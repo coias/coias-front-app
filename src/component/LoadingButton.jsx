@@ -32,7 +32,7 @@ function LoadingButton({ loading, processName }) {
 
 LoadingButton.propTypes = {
   loading: PropTypes.bool.isRequired,
-  processName: PropTypes.bool.isRequired,
+  processName: PropTypes.string.isRequired,
 };
 
 export default LoadingButton;

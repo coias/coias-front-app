@@ -84,6 +84,7 @@ function PanZoom({
   }
   const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
+  const wrapperRef = useRef(null);
   const { currentPage } = useContext(PageContext);
 
   const { currentMousePos, setCurrentMousePos } =
@@ -121,11 +122,11 @@ function PanZoom({
 
   const calcRectangle = () => {
     let rectSize;
-    if (IMAGE_WIDTH / zoomValue >= 400) {
+    if (IMAGE_WIDTH / zoomValue >= 800) {
       rectSize = 40;
-    } else if (IMAGE_WIDTH / zoomValue < 400) {
-      rectSize = IMAGE_WIDTH / zoomValue / 15;
-    } else if (IMAGE_WIDTH / zoomValue < 50) {
+    } else if (IMAGE_WIDTH / zoomValue < 800) {
+      rectSize = IMAGE_WIDTH / zoomValue / 20;
+    } else if (IMAGE_WIDTH / zoomValue < 100) {
       rectSize = 5;
     }
     return rectSize;
@@ -140,7 +141,6 @@ function PanZoom({
   const drawImage = async () => {
     if (
       context &&
-      Object.keys(starPos).length > 0 &&
       window.images.length !== 0 &&
       window.imageLoadComplete &&
       imageURLs.length > 0
@@ -507,7 +507,7 @@ function PanZoom({
           height: '100%',
           paddingLeft: 0,
           position: 'relative',
-          overflow: 'nonw',
+          overflow: 'none',
         }}
       >
         <MousePosition isZoomIn={isZoomIn} />
@@ -516,7 +516,35 @@ function PanZoom({
             <Button
               variant={item.done ? 'primary' : 'secondary'}
               id={item.id}
-              onClick={(e) => zoom(e)}
+              key={item.id}
+              onClick={(e) => {
+                const scrollRate = {
+                  x:
+                    1 +
+                    wrapperRef.current.scrollLeft /
+                      (wrapperRef.current.scrollWidth -
+                        wrapperRef.current.clientWidth),
+                  y:
+                    wrapperRef.current.scrollTop /
+                    (wrapperRef.current.scrollHeight -
+                      wrapperRef.current.clientHeight),
+                };
+
+                const center = {
+                  x: (wrapperRef.current.clientWidth / 2) * 1.3,
+                  y: (wrapperRef.current.clientHeight / 2) * 1.3,
+                };
+
+                console.log(center);
+
+                console.log(
+                  center.x * scrollRate.x,
+                  center.y +
+                    (canvasRef.current.clientHeight * 1.8 - center.y * 2) *
+                      scrollRate.y,
+                );
+                zoom(e);
+              }}
             >
               {`×${item.id}`}
             </Button>
@@ -531,6 +559,7 @@ function PanZoom({
             position: 'relative',
             overflow: 'none',
           }}
+          ref={wrapperRef}
           onKeyDown={keyInvalid}
           id="container"
         >
