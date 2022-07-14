@@ -11,6 +11,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
     '変更を加えない場合は次へを押してください',
   );
   const [tmpName, setTmpName] = useState('1');
+  const [value, setValue] = useState('');
 
   // initialization
   useEffect(() => {
@@ -55,9 +56,11 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
             <Form.Label>先頭の新天体番号を指定する(最大６桁)</Form.Label>
             <Form.Control
               placeholder="H000005の場合 '5' を入力"
+              value={value}
               disabled={disable}
               onChange={(e) => {
                 setTmpName(e.target.value);
+                setValue(e.target.value);
               }}
               maxLength={6}
               onKeyDown={keyPress}
@@ -80,14 +83,24 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
             <Form.Check
               onChange={() => {
                 setDisable(!disable);
-                setNewName('1');
+                setValue('');
+                if (value === '') {
+                  setTmpName('1');
+                }
               }}
               type="checkbox"
               label="変更する"
             />
             <Button
               type="submit"
-              onClick={() => (!disable ? setNewName(tmpName) : '1')}
+              onClick={() => {
+                if (!disable) {
+                  setNewName(tmpName);
+                } else {
+                  setNewName('1');
+                }
+                setValue('');
+              }}
             >
               次へ
             </Button>
