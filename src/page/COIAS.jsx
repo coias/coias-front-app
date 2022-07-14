@@ -53,11 +53,12 @@ function COIAS({
   const [memoList, setMemoList] = useState([]);
   const [selectedListState, setSelectedListState] = useState([]);
   const [isAutoSave, setIsAutoSave] = useState(true);
-  const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [COIASAlertModalshow, setCOIASAlertModalshow] = useState(false);
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertButtonMessage, setAlertButtonMessage] = useState('');
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -81,10 +82,10 @@ function COIAS({
       setLoading(true);
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
-      /* dataListが空の時の処理 モーダルでエラーを表示（前の画面に） */
-      console.log(dataList);
       if (dataList.length === 0) {
-        console.log('エラー');
+        setCOIASAlertModalshow(true);
+        setAlertMessage('ビニングマスクを行ってください');
+        setAlertButtonMessage('探索準備に戻る');
       }
 
       setFileNum(dataList.length / 2);
@@ -112,7 +113,9 @@ function COIAS({
       await axios
         .get(`${reactApiUri}memo`)
         .then((res) => setMemoList(res.data.memo))
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          console.error(e);
+        });
     };
 
     getImages();
@@ -125,30 +128,35 @@ function COIAS({
     const getDisp = async () => {
       setLoading(true);
 
-      const res1 = await axios.get(`${reactApiUri}unknown_disp`);
-      const unknownDisp = await res1.data.result;
       const toObject = {};
 
-      // 選択を同期させるため、オブジェクトに変更
-      unknownDisp.forEach((item) => {
-        let star = toObject[item[0]];
-        if (!star) {
-          toObject[item[0]] = {
-            name: item[0],
-            page: Array(fileNum).fill(null),
-            isSelected: memoList.find(
-              (memoName) => memoName === item[0].replace('H', ''),
-            ),
-            isKnown: false,
-          };
-          star = toObject[item[0]];
-        }
-        star.page[item[1]] = {
-          name: item[0],
-          x: parseFloat(item[2], 10),
-          y: parseFloat(item[3], 10),
-        };
+      const res1 = await axios.get(`${reactApiUri}unknown_disp`).catch(() => {
+        setCOIASAlertModalshow(true);
+        setAlertMessage('自動検出を行ってください');
+        setAlertButtonMessage('探索準備に戻る');
       });
+      if (res1 !== undefined) {
+        const knownDisp = await res1.data.result;
+        knownDisp.forEach((item) => {
+          let star = toObject[item[0]];
+          if (!star) {
+            toObject[item[0]] = {
+              name: item[0],
+              page: Array(fileNum).fill(null),
+              isSelected: memoList.find(
+                (memoName) => memoName === item[0].replace('H', ''),
+              ),
+              isKnown: false,
+            };
+            star = toObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+          };
+        });
+      }
 
       const res2 = await axios
         .get(`${reactApiUri}karifugo_disp`)
@@ -393,10 +401,12 @@ function COIAS({
 
       <AlertModal
         alertModalShow={COIASAlertModalshow}
-        onClick={() => {
-          navigate('/ExplorePrepare');
+        onClickOk={() => {
+          navigate('/');
           setCOIASAlertModalshow(false);
         }}
+        alertMessage={alertMessage}
+        alertButtonMessage={alertButtonMessage}
       />
       <ErrorModal
         show={showProcessError}

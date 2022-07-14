@@ -11,7 +11,7 @@ function AlertModal({
   return (
     <Modal show={alertModalShow} size="sm" backdrop="static">
       <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">アラート</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">エラー</Modal.Title>
       </Modal.Header>
       <Modal.Body>{alertMessage}</Modal.Body>
       <Modal.Footer className="d-flex justify-content-end">

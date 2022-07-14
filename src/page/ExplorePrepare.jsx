@@ -20,6 +20,7 @@ import { AiOutlineArrowRight } from 'react-icons/ai';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
 import ErrorModal from '../component/ErrorModal';
+import AlertModal from '../component/AlertModal';
 // import ExcuteButton from '../component/ExcuteButton';
 
 // eslint-disable-next-line no-use-before-define
@@ -59,6 +60,10 @@ function ExplorePrepare({
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
+  const [fileAlertModalshow, setFileAlertModalshow] = useState(false);
+  const [fileNum, setFileNum] = useState(0);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertButtonMessage, setAlertButtonMessage] = useState('');
 
   const handleSelect = (e) => setVal(e.target.value);
 
@@ -75,6 +80,17 @@ function ExplorePrepare({
     } else {
       setValid(true);
       setDisabled(true);
+    }
+  };
+
+  const fileContentCheck = async () => {
+    const reactApiUri = process.env.REACT_APP_API_URI;
+    const response = await axios.put(`${reactApiUri}copy`);
+    const dataList = response.data.result.sort();
+    if (fileNum !== dataList.length / 2) {
+      setAlertMessage('ファイルの中身が異なる可能性があります');
+      setAlertButtonMessage('アップロードに戻る');
+      setFileAlertModalshow(true);
     }
   };
 
@@ -111,6 +127,7 @@ function ExplorePrepare({
     const data = new FormData();
     const filesForProps = [];
     setErrorFile([]);
+    setFileNum(files.length);
 
     let file;
     let tmp;
@@ -190,6 +207,9 @@ function ExplorePrepare({
               // eslint-disable-next-line no-param-reassign
               item.done = true;
             }
+            if (query.startsWith('startsearch2R?binning=')) {
+              fileContentCheck();
+            }
             return item;
           });
           setMenunames(updatedMenunames);
@@ -234,8 +254,12 @@ function ExplorePrepare({
           return item;
         });
         setMenunames(updatedMenunames);
+        if (uriQuery.startsWith('startsearch2R?binning=')) {
+          fileContentCheck();
+        }
       })
       .catch((e) => {
+        console.log(e);
         const errorResponse = e.response?.data?.detail;
         if (errorResponse) {
           setErrorPlace(errorResponse.place);
@@ -262,7 +286,7 @@ function ExplorePrepare({
     if (!result) {
       return;
     }
-    // ビニングマスク（size: 2 or 4）自動の時は2で固定
+    // ビニングマスク（size: 2 or 4)
     result = await onProcessExecute(
       `${uri}startsearch2R?binning=${size}`,
       `ビニングマスク（${size === 2 ? '2x2' : '4x4'}）`,
@@ -555,6 +579,16 @@ function ExplorePrepare({
           </Modal.Footer>
         </Form>
       </Modal>
+      <AlertModal
+        alertModalShow={fileAlertModalshow}
+        onClickOk={() => {
+          /* TODO : Window以外で実装が理想 */
+          window.location.reload();
+          setFileAlertModalshow(false);
+        }}
+        alertMessage={alertMessage}
+        alertButtonMessage={alertButtonMessage}
+      />
       <ErrorModal
         show={showProcessError}
         setShow={setShowProcessError}

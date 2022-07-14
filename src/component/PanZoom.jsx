@@ -18,6 +18,7 @@ PanZoom.defaultProps = {
   brightnessVal: 150,
   contrastVal: 150,
   positionList: [],
+  disable: false,
   setManualStarModalShow: () => {},
   isZoomIn: false,
   setIsZoomIn: () => {},
@@ -27,7 +28,6 @@ PanZoom.defaultProps = {
   setConfirmationModalShow: () => {},
   writeMemo: () => {},
   setConfirmMessage: () => {},
-  setSelectedListState: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -39,7 +39,7 @@ PanZoom.propTypes = {
   isManual: PropTypes.bool,
   positionList: PropTypes.arrayOf(PropTypes.array),
   isHide: PropTypes.bool.isRequired,
-  disable: PropTypes.bool.isRequired,
+  disable: PropTypes.bool,
   setManualStarModalShow: PropTypes.func,
   isZoomIn: PropTypes.bool,
   setIsZoomIn: PropTypes.func,
@@ -49,7 +49,6 @@ PanZoom.propTypes = {
   setConfirmationModalShow: PropTypes.func,
   writeMemo: PropTypes.func,
   setConfirmMessage: PropTypes.func,
-  setSelectedListState: PropTypes.func,
 };
 
 function PanZoom({
@@ -70,7 +69,6 @@ function PanZoom({
   setConfirmationModalShow,
   writeMemo,
   setConfirmMessage,
-  setSelectedListState,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -96,11 +94,11 @@ function PanZoom({
   const [loaded, setLoaded] = useState(0);
   const [scaleButton, setScaleButton] = useState([
     { id: 1, done: false },
-    { id: 1.25, done: false },
-    { id: 1.5, done: true },
-    { id: 2, done: false },
-    { id: 3, done: false },
-    { id: 6, done: false },
+    { id: 10, done: false },
+    { id: 25, done: true },
+    { id: 50, done: false },
+    { id: 100, done: false },
+    { id: 200, done: false },
   ]);
 
   function relativeCoords(event) {
@@ -272,7 +270,7 @@ function PanZoom({
     if (
       isManual ||
       document.getElementById('selectButton').dataset.active !== 'true' ||
-      !disable
+      disable
     ) {
       return;
     }
@@ -287,18 +285,13 @@ function PanZoom({
     const newStarPos = JSON.parse(JSON.stringify(starPos));
     Object.keys(newStarPos)
       .map((key) => newStarPos[key])
-      .forEach((item, index) => {
+      .forEach((item) => {
         if (!item.name.startsWith('H')) return null;
         const position = item.page[currentPage];
         if (position && testHit(position.x, position.y)) {
           newStarPos[item.name].isSelected = !item.isSelected;
-          // document.getElementById(item.name).checked =
-          //   newStarPos[item.name].isSelected;
-          setSelectedListState((prevList) => {
-            const prevListCopy = prevList.concat();
-            prevListCopy[index] = !prevListCopy[index];
-            return prevListCopy;
-          });
+          document.getElementById(item.name).checked =
+            newStarPos[item.name].isSelected;
         }
         return null;
       });
@@ -371,25 +364,25 @@ function PanZoom({
         setZoomValue(1);
         updateScaleButton(1);
         break;
-      case '1.25':
+      case '10':
         setZoomValue(1.25);
-        updateScaleButton(1.25);
+        updateScaleButton(10);
         break;
-      case '1.5':
+      case '25':
         setZoomValue(1.5);
-        updateScaleButton(1.5);
+        updateScaleButton(25);
         break;
-      case '2':
+      case '50':
         setZoomValue(2);
-        updateScaleButton(2);
+        updateScaleButton(50);
         break;
-      case '3':
+      case '100':
         setZoomValue(3);
-        updateScaleButton(3);
+        updateScaleButton(100);
         break;
-      case '6':
+      case '200':
         setZoomValue(6);
-        updateScaleButton(6);
+        updateScaleButton(200);
         break;
       default:
         break;
@@ -414,7 +407,6 @@ function PanZoom({
             <Button
               variant={item.done ? 'primary' : 'secondary'}
               id={item.id}
-              key={item.id}
               onClick={(e) => zoom(e)}
             >
               {`×${item.id}`}
@@ -428,7 +420,6 @@ function PanZoom({
             width: '100%',
             height: 'calc(100% - 40px)',
             position: 'relative',
-            overflow: 'none',
           }}
           onKeyDown={keyInvalid}
         >
