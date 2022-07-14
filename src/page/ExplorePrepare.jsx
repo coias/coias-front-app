@@ -63,6 +63,7 @@ function ExplorePrepare({
   const handleSelect = (e) => setVal(e.target.value);
 
   const handleClose = () => {
+    setValid(true);
     setMenunames(menunames);
     setShow(false);
   };

@@ -20,7 +20,6 @@ import HelpModal from './HelpModal';
 
 function PlayMenu({
   imageNames,
-  setImageURLs,
   intervalRef,
   setDefaultZoomRate,
   defaultZoomRate,
@@ -189,7 +188,6 @@ function PlayMenu({
               show={settingModalShow}
               onHide={() => {
                 setSettingModalShow(false);
-                setImageURLs(JSON.parse(JSON.stringify(imageNames)));
               }}
               title="表示設定"
               imageURLs={imageNames}
@@ -197,6 +195,7 @@ function PlayMenu({
               defaultZoomRate={defaultZoomRate}
               setIsAutoSave={setIsAutoSave}
               isAutoSave={isAutoSave}
+              z
             />
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
               <BiHelpCircle size={30} />
@@ -205,11 +204,11 @@ function PlayMenu({
               show={helpModalShow}
               onHide={() => {
                 setHelpModalShow(false);
-                setImageURLs(JSON.parse(JSON.stringify(imageNames)));
               }}
               title="ヘルプ"
               imageURLs={imageNames}
             />
+            {console.log(disable)}
           </ButtonGroup>
 
           {isManual ? (
@@ -281,7 +280,6 @@ function PlayMenu({
 
 PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
-  setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.number).isRequired,
   setDefaultZoomRate: PropTypes.func,
   defaultZoomRate: PropTypes.number,

@@ -10,6 +10,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
   const [alertMessage, setAlertMessage] = useState(
     '変更を加えない場合は次へを押してください',
   );
+  const [tmpName, setTmpName] = useState('1');
 
   // initialization
   useEffect(() => {
@@ -56,7 +57,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
               placeholder="H000005の場合 '5' を入力"
               disabled={disable}
               onChange={(e) => {
-                setNewName(e.target.value);
+                setTmpName(e.target.value);
               }}
               maxLength={6}
               onKeyDown={keyPress}
@@ -83,7 +84,12 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
               type="checkbox"
               label="変更する"
             />
-            <Button type="submit">次へ</Button>
+            <Button
+              type="submit"
+              onClick={() => (!disable ? setNewName(tmpName) : '1')}
+            >
+              次へ
+            </Button>
           </Form.Group>
         </Form>
       </Modal.Body>
