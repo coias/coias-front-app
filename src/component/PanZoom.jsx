@@ -18,6 +18,7 @@ PanZoom.defaultProps = {
   brightnessVal: 150,
   contrastVal: 150,
   positionList: [],
+  disable: false,
   setManualStarModalShow: () => {},
   isZoomIn: false,
   setIsZoomIn: () => {},
@@ -27,7 +28,6 @@ PanZoom.defaultProps = {
   setConfirmationModalShow: () => {},
   writeMemo: () => {},
   setConfirmMessage: () => {},
-  setSelectedListState: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -39,7 +39,7 @@ PanZoom.propTypes = {
   isManual: PropTypes.bool,
   positionList: PropTypes.arrayOf(PropTypes.array),
   isHide: PropTypes.bool.isRequired,
-  disable: PropTypes.bool.isRequired,
+  disable: PropTypes.bool,
   setManualStarModalShow: PropTypes.func,
   isZoomIn: PropTypes.bool,
   setIsZoomIn: PropTypes.func,
@@ -49,7 +49,7 @@ PanZoom.propTypes = {
   setConfirmationModalShow: PropTypes.func,
   writeMemo: PropTypes.func,
   setConfirmMessage: PropTypes.func,
-  setSelectedListState: PropTypes.func,
+  // setSelectedListState: PropTypes.func,
   // eslint-disable-next-line react/require-default-props
   // setCanvasScale: PropTypes.func,
 };
@@ -72,7 +72,7 @@ function PanZoom({
   setConfirmationModalShow,
   writeMemo,
   setConfirmMessage,
-  setSelectedListState,
+  // setSelectedListState,
   // setCanvasScale,
 }) {
   if (window.hitIndex === undefined) {
@@ -295,7 +295,7 @@ function PanZoom({
     if (
       isManual ||
       document.getElementById('selectButton').dataset.active !== 'true' ||
-      !disable
+      disable
     ) {
       return;
     }
@@ -310,18 +310,13 @@ function PanZoom({
     const newStarPos = JSON.parse(JSON.stringify(starPos));
     Object.keys(newStarPos)
       .map((key) => newStarPos[key])
-      .forEach((item, index) => {
+      .forEach((item) => {
         if (!item.name.startsWith('H')) return null;
         const position = item.page[currentPage];
         if (position && testHit(position.x, position.y)) {
           newStarPos[item.name].isSelected = !item.isSelected;
-          // document.getElementById(item.name).checked =
-          //   newStarPos[item.name].isSelected;
-          setSelectedListState((prevList) => {
-            const prevListCopy = prevList.concat();
-            prevListCopy[index] = !prevListCopy[index];
-            return prevListCopy;
-          });
+          document.getElementById(item.name).checked =
+            newStarPos[item.name].isSelected;
         }
         return null;
       });
@@ -557,7 +552,6 @@ function PanZoom({
             width: '100%',
             height: 'calc(100% - 40px)',
             position: 'relative',
-            overflow: 'none',
           }}
           ref={wrapperRef}
           onKeyDown={keyInvalid}
