@@ -286,7 +286,7 @@ function ExplorePrepare({
     if (!result) {
       return;
     }
-    // ビニングマスク（size: 2 or 4)
+    // ビニングマスク（size: 2)
     result = await onProcessExecute(
       `${uri}startsearch2R?binning=${size}`,
       `ビニングマスク（${size === 2 ? '2x2' : '4x4'}）`,
@@ -348,20 +348,16 @@ function ExplorePrepare({
             </Col>
             {val === 'auto' ? (
               <Col style={{ margin: 'auto 0' }}>
-                <DropdownButton
-                  as={ButtonGroup}
+                <Button
+                  style={{ whiteSpace: 'nowrap' }}
                   key="Success"
                   id="dropdown-variants-Success"
                   variant={menunames[6].done ? 'success' : 'primary'}
                   title={menunames[6].name}
+                  onClick={() => onProcessAuto(2)}
                 >
-                  <Dropdown.Item eventKey="1" onClick={() => onProcessAuto(2)}>
-                    2×2
-                  </Dropdown.Item>
-                  <Dropdown.Item eventKey="2" onClick={() => onProcessAuto(4)}>
-                    4×4
-                  </Dropdown.Item>
-                </DropdownButton>
+                  {menunames[6].name}
+                </Button>
               </Col>
             ) : (
               <>
