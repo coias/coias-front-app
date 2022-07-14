@@ -274,7 +274,7 @@ function COIAS({
         setStarPos(toObject);
       })
       .catch((e) => {
-        const errorResponse = e.response?.data?.detail;
+        const errorResponse = e.response?.data?.detail?.place;
         if (errorResponse) {
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
