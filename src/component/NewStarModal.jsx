@@ -79,6 +79,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
             <Form.Check
               onChange={() => {
                 setDisable(!disable);
+                setNewName('1');
               }}
               type="checkbox"
               label="変更する"
