@@ -306,8 +306,6 @@ function PanZoom({
         const position = item.page[currentPage];
         if (position && testHit(position.x, position.y)) {
           newStarPos[item.name].isSelected = !item.isSelected;
-          // document.getElementById(item.name).checked =
-          //   newStarPos[item.name].isSelected;
           setSelectedListState((prevList) => {
             const prevListCopy = prevList.concat();
             prevListCopy[index] = !prevListCopy[index];

@@ -35,6 +35,12 @@ function Report() {
   };
 
   const downloadFIle = () => {
+    if (sendMpcBody.length === 0) {
+      setErrorPlace('sendMpcのダウンロード');
+      setErrorReason('sendMpc.txtが空です');
+      setShowProcessError(true);
+      return;
+    }
     const element = document.createElement('a');
     const file = new Blob(
       sendMpc.map((item) => `${item}\n`),
@@ -69,7 +75,7 @@ function Report() {
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
-        if (errorResponse) {
+        if (errorResponse.place) {
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
           setShowProcessError(true);
@@ -102,6 +108,7 @@ function Report() {
         setErrorMessage('final_all.txtがありません');
       });
   };
+
   // 初回のみのAPIの読み込み
   useEffect(() => {
     getMpc();

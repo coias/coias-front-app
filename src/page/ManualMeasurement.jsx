@@ -318,8 +318,8 @@ function ManualMeasurement({
         });
       })
       .catch((e) => {
-        const errorResponse = e.response?.data?.detail?.place;
-        if (errorResponse) {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse.place) {
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
           setShowProcessError(true);
@@ -485,6 +485,10 @@ function ManualMeasurement({
         setShow={setShowProcessError}
         errorPlace={errorPlace}
         errorReason={errorReason}
+        onExit={() => {
+          setIsRedisp(!isRedisp);
+          setStarPos(originalStarPos);
+        }}
       />
     </div>
   );
