@@ -197,7 +197,7 @@ function ExplorePrepare({
         })
         .catch((e) => {
           const errorResponse = e.response?.data?.detail;
-          if (errorResponse) {
+          if (errorResponse.place) {
             setErrorPlace(errorResponse.place);
             setErrorReason(errorResponse.reason);
             setShowProcessError(true);
@@ -237,7 +237,7 @@ function ExplorePrepare({
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
-        if (errorResponse) {
+        if (errorResponse.place) {
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
           setShowProcessError(true);
@@ -529,7 +529,7 @@ function ExplorePrepare({
                   })
                   .catch((e) => {
                     const errorResponse = e.response?.data?.detail;
-                    if (errorResponse) {
+                    if (errorResponse.place) {
                       setErrorPlace(errorResponse.place);
                       setErrorReason(errorResponse.reason);
                       setShowProcessError(true);

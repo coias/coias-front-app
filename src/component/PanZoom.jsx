@@ -315,8 +315,6 @@ function PanZoom({
         const position = item.page[currentPage];
         if (position && testHit(position.x, position.y)) {
           newStarPos[item.name].isSelected = !item.isSelected;
-          // document.getElementById(item.name).checked =
-          //   newStarPos[item.name].isSelected;
           setSelectedListState((prevList) => {
             const prevListCopy = prevList.concat();
             prevListCopy[index] = !prevListCopy[index];
@@ -518,31 +516,6 @@ function PanZoom({
               id={item.id}
               key={item.id}
               onClick={(e) => {
-                const scrollRate = {
-                  x:
-                    1 +
-                    wrapperRef.current.scrollLeft /
-                      (wrapperRef.current.scrollWidth -
-                        wrapperRef.current.clientWidth),
-                  y:
-                    wrapperRef.current.scrollTop /
-                    (wrapperRef.current.scrollHeight -
-                      wrapperRef.current.clientHeight),
-                };
-
-                const center = {
-                  x: (wrapperRef.current.clientWidth / 2) * 1.3,
-                  y: (wrapperRef.current.clientHeight / 2) * 1.3,
-                };
-
-                console.log(center);
-
-                console.log(
-                  center.x * scrollRate.x,
-                  center.y +
-                    (canvasRef.current.clientHeight * 1.8 - center.y * 2) *
-                      scrollRate.y,
-                );
                 zoom(e);
               }}
             >
