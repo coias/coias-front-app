@@ -11,14 +11,11 @@ import { PageContext, StarPositionContext } from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
 import PlayMenu from '../component/PlayMenu';
 import ManualStarModal from '../component/ManualStarModal';
-import {
-  convertFits2PngCoords,
-  convertPng2FitsCoords,
-} from '../utils/CONSTANTS';
 import AlertModal from '../component/AlertModal';
 import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
 import ErrorModal from '../component/ErrorModal';
+import useEventListener from '../hooks/useEventListener';
 
 function ManualMeasurement({
   imageURLs,
@@ -51,12 +48,21 @@ function ManualMeasurement({
   const [confirmationModalShow, setConfirmationModalShow] = useState(false);
   const [checkedState, setCheckedState] = useState([false]);
   const [isRedisp, setIsRedisp] = useState(false);
-  const [fitsSize, setFitsSize] = useState({});
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
   const [positionList, setPositionList] = useState([[]]);
+  const [scaleArray, setScaleArray] = useState([
+    { id: 1, done: true },
+    { id: 1.25, done: false },
+    { id: 1.5, done: false },
+    { id: 2, done: false },
+    { id: 3, done: false },
+    { id: 6, done: false },
+    { id: 10, done: false },
+    { id: 20, done: false },
+  ]);
 
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -100,16 +106,7 @@ function ManualMeasurement({
       });
       setImageURLs(toObjectArray);
     };
-    const getFitsSize = async () => {
-      await axios
-        .get(`${reactApiUri}fits_size`)
-        .then((res) => res.data.result)
-        .then((data) => {
-          setFitsSize({ x: data[0], y: data[1] });
-        })
-        .catch((e) => console.error(e));
-    };
-    getFitsSize();
+
     getImages();
   }, []);
 
@@ -173,31 +170,14 @@ function ManualMeasurement({
           starsList.forEach((star, index) => {
             const starInfo = star.split(' ');
             const prevStarName = starsList[index - 1]?.split(' ')[0];
-            const center = convertFits2PngCoords(
-              [Number(starInfo[2]), Number(starInfo[3])],
-              fitsSize,
-            );
-            const A = convertFits2PngCoords(
-              [Number(starInfo[4]), Number(starInfo[5])],
-              fitsSize,
-            );
-            const B = convertFits2PngCoords(
-              [Number(starInfo[6]), Number(starInfo[7])],
-              fitsSize,
-            );
-            const C = convertFits2PngCoords(
-              [Number(starInfo[8]), Number(starInfo[9])],
-              fitsSize,
-            );
-
             const value = {
               page: Number(starInfo[1]),
-              x: center.x,
-              y: center.y,
-              center,
-              actualA: A,
-              actualB: B,
-              actualC: C,
+              x: Number(starInfo[2]),
+              y: Number(starInfo[3]),
+              center: { x: Number(starInfo[2]), y: Number(starInfo[3]) },
+              actualA: { x: starInfo[4], y: starInfo[5] },
+              actualB: { x: starInfo[6], y: starInfo[7] },
+              actualC: { x: starInfo[8], y: starInfo[9] },
             };
             if (starInfo[0] !== prevStarName) {
               toPositionList.push([]);
@@ -208,6 +188,7 @@ function ManualMeasurement({
               value,
             );
           });
+
           setPositionList(toPositionList);
           setCheckedState(Array(toPositionList.length).fill(false));
         })
@@ -243,30 +224,11 @@ function ManualMeasurement({
     });
 
     setCurrentPage(0);
-    document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
   const onClickFinishButton = async (filteredList = []) => {
     const targetList = filteredList.length === 0 ? positionList : filteredList;
-
-    const result = targetList.flatMap((list, i) =>
-      list.flatMap((pos) => {
-        const convertedCenter = convertPng2FitsCoords(pos.center, fitsSize);
-        const convertedA = convertPng2FitsCoords(pos.actualA, fitsSize);
-        const convertedB = convertPng2FitsCoords(pos.actualB, fitsSize);
-        const convertedC = convertPng2FitsCoords(pos.actualC, fitsSize);
-
-        return `${'000000'.slice((leadStarNumber + i).toString().length - 6)}${
-          leadStarNumber + i
-        } ${pos.page} ${convertedCenter.x} ${convertedCenter.y} ${
-          convertedA.x
-        } ${convertedA.y} ${convertedB.x} ${convertedB.y} ${convertedC.x} ${
-          convertedC.y
-        }`;
-      }),
-    );
-
-    await axios.put(`${reactApiUri}memo_manual`, result);
+    await axios.put(`${reactApiUri}memo_manual`, targetList);
   };
 
   const removePositionByIndex = (targetListIndex, targetElementIndex) => {
@@ -280,12 +242,6 @@ function ManualMeasurement({
         return position;
       }),
     );
-  };
-
-  const keyPress = (e) => {
-    if (e.keyCode === 83) setStart(!start);
-    if (e.keyCode === 39) setNext(!next);
-    if (e.keyCode === 37) setBack(!back);
   };
 
   const handleClick = async () => {
@@ -331,14 +287,40 @@ function ManualMeasurement({
     setLoading(false);
   };
 
+  useEventListener('keydown', (e) => {
+    e.preventDefault();
+    if (e.key === 's') {
+      setStart(!start);
+    } else if (e.key === 'ArrowRight') {
+      setNext(!next);
+    } else if (e.key === 'ArrowLeft') {
+      setBack(!back);
+    } else if (e.key === 'ArrowUp') {
+      setScaleArray((prevArray) => {
+        const currentIndex = prevArray.findIndex((item) => item.done);
+        const arrayCopy = prevArray.concat();
+        if (currentIndex < prevArray.length - 1) {
+          arrayCopy[currentIndex].done = false;
+          arrayCopy[currentIndex + 1].done = true;
+        }
+        return arrayCopy;
+      });
+    } else if (e.key === 'ArrowDown') {
+      setScaleArray((prevArray) => {
+        const currentIndex = prevArray.findIndex((item) => item.done);
+        const arrayCopy = prevArray.concat();
+        if (currentIndex > 0) {
+          arrayCopy[currentIndex].done = false;
+          arrayCopy[currentIndex - 1].done = true;
+        }
+        return arrayCopy;
+      });
+    }
+  });
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div
-      className="coias-view-main"
-      id="wrapper-coias"
-      onKeyDown={keyPress}
-      tabIndex={-1}
-    >
+    <div className="coias-view-main" id="wrapper-coias">
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
@@ -395,9 +377,9 @@ function ManualMeasurement({
               confirmationModalShow={confirmationModalShow}
               setConfirmationModalShow={setConfirmationModalShow}
               setOriginalStarPos={setOriginalStarPos}
-              fitsSize={fitsSize}
               disable={isRedisp}
               setConfirmMessage={setConfirmMessage}
+              scaleArray={scaleArray}
             />
           </Col>
           <Col sm={2} md={2}>
@@ -452,7 +434,6 @@ function ManualMeasurement({
         }}
         onExit={() => {
           setIsZoomIn(false);
-          document.getElementById('wrapper-coias').focus();
         }}
         onEntered={() => setIsZoomIn(true)}
         removePositionByIndex={removePositionByIndex}

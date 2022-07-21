@@ -35,7 +35,7 @@ function Report() {
   };
 
   const downloadFIle = () => {
-    if (sendMpcBody.length === 0) {
+    if (sendMpcBody[0] === '') {
       setErrorPlace('sendMpcのダウンロード');
       setErrorReason('sendMpc.txtが空です');
       setShowProcessError(true);

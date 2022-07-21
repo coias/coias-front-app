@@ -1,16 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
-import { StarPositionContext, PageContext } from '../component/context';
+import {
+  StarPositionContext,
+  PageContext,
+  MousePositionContext,
+} from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
 import LoadingButton from '../component/LoadingButton';
 import StarsList from '../component/StarsList';
 import NewStarModal from '../component/NewStarModal';
 import ErrorModal from '../component/ErrorModal';
+import useEventListener from '../hooks/useEventListener';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
@@ -55,13 +60,26 @@ function COIAS({
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
+  const wrapperRef = useRef(null);
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
+  const { currentMousePos } = useContext(MousePositionContext);
   const navigate = useNavigate();
   const handleClick = () => {
     navigate('/Report');
   };
+
+  const [scaleArray, setScaleArray] = useState([
+    { id: 1, done: true },
+    { id: 1.25, done: false },
+    { id: 1.5, done: false },
+    { id: 2, done: false },
+    { id: 3, done: false },
+    { id: 6, done: false },
+    { id: 10, done: false },
+    { id: 20, done: false },
+  ]);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -233,7 +251,6 @@ function COIAS({
     });
 
     setCurrentPage(0);
-    document.getElementById('wrapper-coias').focus();
   }, [imageURLs, memoList, isReload]);
 
   // 探索終了ボタンが押された時の処理
@@ -286,12 +303,6 @@ function COIAS({
     await axios.put(`${reactApiUri}rename`);
   };
 
-  const keyPress = (e) => {
-    if (e.keyCode === 83) setStart(!start);
-    if (e.keyCode === 39) setNext(!next);
-    if (e.keyCode === 37) setBack(!back);
-  };
-
   const onStarModalExit = () => {
     setDisable(false);
     setStarModalShow(false);
@@ -305,14 +316,44 @@ function COIAS({
     await axios.put(`${reactApiUri}memo`, selectedStars);
   };
 
+  useEventListener('keydown', (e) => {
+    e.preventDefault();
+    if (e.key === 's') {
+      setStart(!start);
+    } else if (e.key === 'ArrowRight') {
+      setNext(!next);
+    } else if (e.key === 'ArrowLeft') {
+      setBack(!back);
+    } else if (e.key === 'ArrowUp') {
+      const currentIndex = scaleArray.findIndex((item) => item.done);
+      const arrayCopy = scaleArray.concat();
+      if (currentIndex < arrayCopy.length - 1) {
+        arrayCopy[currentIndex].done = false;
+        arrayCopy[currentIndex + 1].done = true;
+        wrapperRef.current.scrollTo(
+          currentMousePos.x / 8,
+          currentMousePos.y / 8,
+        );
+      }
+      setScaleArray(arrayCopy);
+    } else if (e.key === 'ArrowDown') {
+      const currentIndex = scaleArray.findIndex((item) => item.done);
+      const arrayCopy = scaleArray.concat();
+      if (currentIndex > 0) {
+        arrayCopy[currentIndex].done = false;
+        arrayCopy[currentIndex - 1].done = true;
+        wrapperRef.current.scrollTo(
+          currentMousePos.x / 8,
+          currentMousePos.y / 8,
+        );
+      }
+      setScaleArray(arrayCopy);
+    }
+  });
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div
-      className="coias-view-main"
-      onKeyDown={keyPress}
-      tabIndex={-1}
-      id="wrapper-coias"
-    >
+    <div className="coias-view-main" id="wrapper-coias">
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
@@ -363,6 +404,8 @@ function COIAS({
               disable={disable}
               setSelectedListState={setSelectedListState}
               writeMemo={isAutoSave ? writeMemo : () => {}}
+              scaleArray={scaleArray}
+              wrapperRef={wrapperRef}
             />
           </Col>
           <Col md={1} sm={1}>
