@@ -51,12 +51,12 @@ function PlayMenu({
   const { starPos, setStarPos } = useContext(StarPositionContext);
 
   const onClickNext = () => {
-    if (currentPage === 4) setCurrentPage(0);
+    if (currentPage === imageNames.length - 1) setCurrentPage(0);
     else setCurrentPage(currentPage + 1);
   };
 
   const onClickBack = () => {
-    if (currentPage === 0) setCurrentPage(4);
+    if (currentPage === 0) setCurrentPage(imageNames.length - 1);
     else setCurrentPage(currentPage - 1);
   };
 
@@ -68,7 +68,7 @@ function PlayMenu({
     // eslint-disable-next-line no-param-reassign
     intervalRef.current = setInterval(() => {
       setCurrentPage((c) => {
-        if (c === 4) return 0;
+        if (c === imageNames.length - 1) return 0;
         return c + 1;
       });
     }, sec);
