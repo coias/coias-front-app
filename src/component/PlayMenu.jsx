@@ -67,7 +67,7 @@ function PlayMenu({
     // eslint-disable-next-line no-param-reassign
     intervalRef.current = setInterval(() => {
       setCurrentPage((c) => {
-        if (c === imageNames.length - 1) return 0;
+        if (c === imageNames.length) return 0;
         return c + 1;
       });
     }, sec);
