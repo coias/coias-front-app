@@ -56,7 +56,7 @@ function PlayMenu({
   };
 
   const onClickBack = () => {
-    if (currentPage === imageNames.length - 1) setCurrentPage(4);
+    if (currentPage === 0) setCurrentPage(imageNames.length - 1);
     else setCurrentPage(currentPage - 1);
   };
 
