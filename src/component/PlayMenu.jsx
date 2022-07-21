@@ -35,7 +35,6 @@ function PlayMenu({
   setStarModalShow,
   originalStarPos,
   handleClick,
-  fileNum,
   setIsAutoSave,
   isAutoSave,
   loading,
@@ -153,8 +152,8 @@ function PlayMenu({
             </Nav.Item>
           </Nav>
         </Col>
-        <Col md={9} className="d-flex justify-content-between">
-          <ButtonGroup>
+        <Col md={9} className="d-flex">
+          <ButtonGroup className="flex-grow-1">
             {imageNames
               .filter((img) => img.visible)
               .map((name, index) => (
@@ -173,16 +172,15 @@ function PlayMenu({
                     setCurrentPage(index);
                     setRadioValue(e.currentTarget.value);
                   }}
-                  className="d-flex align-items-center"
+                  bsStyle="default"
+                  style={{ fontWeight: 'bold', textAlign: 'center' }}
                 >
-                  {fileNum < 8 ? name.name : index + 1}
+                  {index + 1}
                 </ToggleButton>
               ))}
-            <Button
-              variant="light"
-              onClick={() => setSettingModalShow(true)}
-              className="mx-3"
-            >
+          </ButtonGroup>
+          <ButtonGroup className="mx-5">
+            <Button variant="light" onClick={() => setSettingModalShow(true)}>
               <AiFillSetting size={30} />
             </Button>
             <SettingModal
@@ -245,7 +243,7 @@ function PlayMenu({
               )}
             </div>
           ) : (
-            <div>
+            <div className="align-self-center">
               <Button
                 variant="success"
                 onClick={() => {
@@ -296,7 +294,6 @@ PlayMenu.propTypes = {
   setStarModalShow: PropTypes.func,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   handleClick: PropTypes.func,
-  fileNum: PropTypes.number.isRequired,
   setIsAutoSave: PropTypes.func.isRequired,
   handleNavigate: PropTypes.func,
   isAutoSave: PropTypes.bool.isRequired,
