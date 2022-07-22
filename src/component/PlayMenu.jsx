@@ -112,7 +112,7 @@ function PlayMenu({
                 variant="light"
                 onClick={() => {
                   if (!play) {
-                    onClickBlinkStart();
+                    onClickBlinkStart(imageNames);
                   } else {
                     onClickBlinkStop();
                   }
