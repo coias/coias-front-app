@@ -59,19 +59,24 @@ function PlayMenu({
     else setCurrentPage(currentPage - 1);
   };
 
-  const onClickBlinkStart = useCallback(() => {
-    setPlay(true);
-    if (intervalRef.current !== null) {
-      return;
-    }
-    // eslint-disable-next-line no-param-reassign
-    intervalRef.current = setInterval(() => {
-      setCurrentPage((c) => {
-        if (c === imageNames.length) return 0;
-        return c + 1;
-      });
-    }, sec);
-  }, [sec]);
+  const onClickBlinkStart = useCallback(
+    (numberOfImages) => {
+      setPlay(true);
+      if (intervalRef.current !== null) {
+        return;
+      }
+      // eslint-disable-next-line no-param-reassign
+      intervalRef.current = setInterval(() => {
+        setCurrentPage((c) => {
+          if (c === numberOfImages - 1) {
+            return 0;
+          }
+          return c + 1;
+        });
+      }, sec);
+    },
+    [sec],
+  );
 
   const onClickBlinkStop = useCallback(() => {
     setPlay(false);
@@ -84,7 +89,7 @@ function PlayMenu({
   }, []);
 
   useEffect(() => {
-    if (start) onClickBlinkStart();
+    if (start) onClickBlinkStart(imageNames.length);
     if (!start) onClickBlinkStop();
     if (next) {
       onClickNext();
