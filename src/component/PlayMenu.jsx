@@ -60,15 +60,16 @@ function PlayMenu({
   };
 
   const onClickBlinkStart = useCallback(
-    (numberOfImages) => {
+    (imageURLs) => {
       setPlay(true);
       if (intervalRef.current !== null) {
         return;
       }
       // eslint-disable-next-line no-param-reassign
       intervalRef.current = setInterval(() => {
+        // eslint-disable-next-line consistent-return
         setCurrentPage((c) => {
-          if (c === numberOfImages - 1) {
+          if (c === imageURLs.length - 1) {
             return 0;
           }
           return c + 1;
@@ -89,7 +90,7 @@ function PlayMenu({
   }, []);
 
   useEffect(() => {
-    if (start) onClickBlinkStart(imageNames.length);
+    if (start) onClickBlinkStart(imageNames);
     if (!start) onClickBlinkStop();
     if (next) {
       onClickNext();
@@ -180,7 +181,7 @@ function PlayMenu({
                   bsStyle="default"
                   style={{ fontWeight: 'bold', textAlign: 'center' }}
                 >
-                  {index + 1}
+                  {name.name.substr(0, 1)}
                 </ToggleButton>
               ))}
           </ButtonGroup>
