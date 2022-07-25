@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Row, Col, Container } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -55,14 +55,47 @@ function ManualMeasurement({
   const [positionList, setPositionList] = useState([[]]);
   const [scaleArray, setScaleArray] = useState([
     { id: 1, done: true },
-    { id: 1.25, done: false },
     { id: 1.5, done: false },
     { id: 2, done: false },
+    { id: 2.5, done: false },
     { id: 3, done: false },
+    { id: 3.5, done: false },
+    { id: 4, done: false },
+    { id: 4.5, done: false },
+    { id: 5, done: false },
+    { id: 5.5, done: false },
     { id: 6, done: false },
+    { id: 6.5, done: false },
+    { id: 7, done: false },
+    { id: 7.5, done: false },
+    { id: 8, done: false },
+    { id: 8.5, done: false },
+    { id: 9, done: false },
+    { id: 9.5, done: false },
     { id: 10, done: false },
+    { id: 10.5, done: false },
+    { id: 11, done: false },
+    { id: 11.5, done: false },
+    { id: 12, done: false },
+    { id: 12.5, done: false },
+    { id: 13, done: false },
+    { id: 13.5, done: false },
+    { id: 14, done: false },
+    { id: 14.5, done: false },
+    { id: 15, done: false },
+    { id: 15.5, done: false },
+    { id: 16, done: false },
+    { id: 16.5, done: false },
+    { id: 17, done: false },
+    { id: 17.5, done: false },
+    { id: 18, done: false },
+    { id: 18.5, done: false },
+    { id: 19, done: false },
+    { id: 19.5, done: false },
     { id: 20, done: false },
   ]);
+
+  const wrapperRef = useRef(null);
 
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -171,6 +204,7 @@ function ManualMeasurement({
             const starInfo = star.split(' ');
             const prevStarName = starsList[index - 1]?.split(' ')[0];
             const value = {
+              name: Number(starInfo[0]),
               page: Number(starInfo[1]),
               x: Number(starInfo[2]),
               y: Number(starInfo[3]),
@@ -260,7 +294,7 @@ function ManualMeasurement({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
-              page: Array(5).fill(null),
+              page: Array(imageURLs.length).fill(null),
               isSelected: false,
               isKnown: false,
             };
@@ -289,6 +323,7 @@ function ManualMeasurement({
 
   useEventListener('keydown', (e) => {
     e.preventDefault();
+
     if (e.key === 's') {
       setStart(!start);
     } else if (e.key === 'ArrowRight') {
@@ -296,25 +331,24 @@ function ManualMeasurement({
     } else if (e.key === 'ArrowLeft') {
       setBack(!back);
     } else if (e.key === 'ArrowUp') {
-      setScaleArray((prevArray) => {
-        const currentIndex = prevArray.findIndex((item) => item.done);
-        const arrayCopy = prevArray.concat();
-        if (currentIndex < prevArray.length - 1) {
-          arrayCopy[currentIndex].done = false;
-          arrayCopy[currentIndex + 1].done = true;
-        }
-        return arrayCopy;
-      });
+      const currentIndex = scaleArray.findIndex((item) => item.done);
+      const arrayCopy = scaleArray.concat();
+      if (currentIndex < arrayCopy.length - 1) {
+        arrayCopy[currentIndex].done = false;
+        arrayCopy[currentIndex + 1].done = true;
+
+        wrapperRef.current.scrollBy(130, 130);
+      }
+      setScaleArray(arrayCopy);
     } else if (e.key === 'ArrowDown') {
-      setScaleArray((prevArray) => {
-        const currentIndex = prevArray.findIndex((item) => item.done);
-        const arrayCopy = prevArray.concat();
-        if (currentIndex > 0) {
-          arrayCopy[currentIndex].done = false;
-          arrayCopy[currentIndex - 1].done = true;
-        }
-        return arrayCopy;
-      });
+      const currentIndex = scaleArray.findIndex((item) => item.done);
+      const arrayCopy = scaleArray.concat();
+      if (currentIndex > 0) {
+        arrayCopy[currentIndex].done = false;
+        arrayCopy[currentIndex - 1].done = true;
+        wrapperRef.current.scrollBy(-130, -130);
+      }
+      setScaleArray(arrayCopy);
     }
   });
 
@@ -380,6 +414,7 @@ function ManualMeasurement({
               disable={isRedisp}
               setConfirmMessage={setConfirmMessage}
               scaleArray={scaleArray}
+              wrapperRef={wrapperRef}
             />
           </Col>
           <Col sm={2} md={2}>

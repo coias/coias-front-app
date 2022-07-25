@@ -180,12 +180,10 @@ function PanZoom({
         .map((key) => starPos[key])
         .forEach((pos) => {
           if (pos.page[currentPage]) {
-            // rectangle setting
             const position = pos.page[currentPage];
             const x = position.x - RECT_SIZE / 2;
             const y = img.naturalHeight - position.y - RECT_SIZE / 2;
             context.lineWidth = RECT_SIZE * 0.075;
-            // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.strokeRect(x, y, RECT_SIZE, RECT_SIZE);
