@@ -181,7 +181,9 @@ function PlayMenu({
                   bsStyle="default"
                   style={{ fontWeight: 'bold', textAlign: 'center' }}
                 >
-                  {name.name.substr(0, 1)}
+                  {name.name.substr(0, 1) === '0'
+                    ? name.name.substr(1, 1)
+                    : name.name.substr(0, 2)}
                 </ToggleButton>
               ))}
           </ButtonGroup>

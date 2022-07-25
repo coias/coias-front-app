@@ -428,8 +428,6 @@ function PanZoom({
       div.scrollTop = pastScrollTop - topDiff;
       div.scrollLeft = pastScrollLeft - leftDiff;
     }
-    console.log(div.scrollTop);
-    console.log(div.scrollLeft);
   }, [zoomValue]);
 
   const zoom = (e) => {
