@@ -204,7 +204,7 @@ function ManualMeasurement({
             const starInfo = star.split(' ');
             const prevStarName = starsList[index - 1]?.split(' ')[0];
             const value = {
-              name: Number(starInfo[0]),
+              name: starInfo[0],
               page: Number(starInfo[1]),
               x: Number(starInfo[2]),
               y: Number(starInfo[3]),
@@ -323,7 +323,12 @@ function ManualMeasurement({
 
   useEventListener('keydown', (e) => {
     e.preventDefault();
+    const scrollYRate =
+      wrapperRef.current.scrollTop / wrapperRef.current.scrollHeight;
 
+    const scrollXRate =
+      wrapperRef.current.scrollLeft / wrapperRef.current.scrollWidth;
+    console.log(scrollYRate, scrollXRate);
     if (e.key === 's') {
       setStart(!start);
     } else if (e.key === 'ArrowRight') {
