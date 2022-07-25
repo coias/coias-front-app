@@ -89,8 +89,8 @@ function PanZoom({
     window.images = [];
     window.imageLoadComplete = false;
   }
-  const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
+  const ZPCanvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
 
   const { currentMousePos, setCurrentMousePos } =

@@ -346,11 +346,13 @@ function COIAS({
   useEventListener('keydown', (e) => {
     e.preventDefault();
     const scrollYRate =
-      wrapperRef.current.scrollTop / wrapperRef.current.scrollHeight;
+      wrapperRef.current.scrollTop /
+      (wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight);
 
     const scrollXRate =
-      wrapperRef.current.scrollLeft / wrapperRef.current.scrollWidth;
-    console.log(scrollYRate, scrollXRate);
+      wrapperRef.current.scrollLeft /
+      (wrapperRef.current.scrollWidth - wrapperRef.current.clientWidth);
+
     if (e.key === 's') {
       setStart(!start);
     } else if (e.key === 'ArrowRight') {
@@ -363,8 +365,7 @@ function COIAS({
       if (currentIndex < arrayCopy.length - 1) {
         arrayCopy[currentIndex].done = false;
         arrayCopy[currentIndex + 1].done = true;
-
-        wrapperRef.current.scrollBy(130, 130);
+        wrapperRef.current.scrollBy(400 * scrollXRate, 400 * scrollYRate);
       }
       setScaleArray(arrayCopy);
     } else if (e.key === 'ArrowDown') {
@@ -373,7 +374,7 @@ function COIAS({
       if (currentIndex > 0) {
         arrayCopy[currentIndex].done = false;
         arrayCopy[currentIndex - 1].done = true;
-        wrapperRef.current.scrollBy(-130, -130);
+        wrapperRef.current.scrollBy(-400 * scrollXRate, -400 * scrollYRate);
       }
       setScaleArray(arrayCopy);
     }
