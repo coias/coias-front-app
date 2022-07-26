@@ -3,7 +3,7 @@ import { BiCurrentLocation } from 'react-icons/bi';
 import PropTypes from 'prop-types';
 import { MousePositionContext } from './context';
 
-function MousePosition({ isZoomIn }) {
+function MousePosition({ isZoomIn, IMAGE_SIZE }) {
   const { currentMousePos } = useContext(MousePositionContext);
   const [prevMousePos, setPrevMousePos] = useState({ x: 0, y: 0 });
 
@@ -12,6 +12,20 @@ function MousePosition({ isZoomIn }) {
       setPrevMousePos(currentMousePos);
     }
   }, [currentMousePos]);
+
+  const calcCanvasSize = () => {
+    let zoomRate;
+    if (IMAGE_SIZE > 5100) {
+      zoomRate = 2;
+    } else if (IMAGE_SIZE > 2100) {
+      zoomRate = 4;
+    } else {
+      zoomRate = 6;
+    }
+    return `${Math.floor(prevMousePos.x / zoomRate)},${Math.floor(
+      prevMousePos.y / zoomRate,
+    )}`;
+  };
 
   return (
     <div
@@ -28,7 +42,7 @@ function MousePosition({ isZoomIn }) {
       }}
     >
       <BiCurrentLocation size={24} />
-      {`${Math.floor(prevMousePos.x / 6)},${Math.floor(prevMousePos.y / 6)}`}
+      {calcCanvasSize(IMAGE_SIZE)}
     </div>
   );
 }
@@ -37,4 +51,5 @@ export default MousePosition;
 
 MousePosition.propTypes = {
   isZoomIn: PropTypes.bool.isRequired,
+  IMAGE_SIZE: PropTypes.number.isRequired,
 };

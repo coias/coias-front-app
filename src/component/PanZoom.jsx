@@ -371,7 +371,7 @@ function PanZoom({
           overflow: 'none',
         }}
       >
-        <MousePosition isZoomIn={isZoomIn} />
+        <MousePosition isZoomIn={isZoomIn} IMAGE_SIZE={IMAGE_WIDTH} />
         <div
           className="wrapper"
           style={{
