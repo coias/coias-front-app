@@ -35,7 +35,6 @@ function PlayMenu({
   setStarModalShow,
   originalStarPos,
   handleClick,
-  fileNum,
   setIsAutoSave,
   isAutoSave,
   loading,
@@ -51,28 +50,34 @@ function PlayMenu({
   const { starPos, setStarPos } = useContext(StarPositionContext);
 
   const onClickNext = () => {
-    if (currentPage === 4) setCurrentPage(0);
+    if (currentPage === imageNames.length - 1) setCurrentPage(0);
     else setCurrentPage(currentPage + 1);
   };
 
   const onClickBack = () => {
-    if (currentPage === 0) setCurrentPage(4);
+    if (currentPage === 0) setCurrentPage(imageNames.length - 1);
     else setCurrentPage(currentPage - 1);
   };
 
-  const onClickBlinkStart = useCallback(() => {
-    setPlay(true);
-    if (intervalRef.current !== null) {
-      return;
-    }
-    // eslint-disable-next-line no-param-reassign
-    intervalRef.current = setInterval(() => {
-      setCurrentPage((c) => {
-        if (c === 4) return 0;
-        return c + 1;
-      });
-    }, sec);
-  }, [sec]);
+  const onClickBlinkStart = useCallback(
+    (imageURLs) => {
+      setPlay(true);
+      if (intervalRef.current !== null) {
+        return;
+      }
+      // eslint-disable-next-line no-param-reassign
+      intervalRef.current = setInterval(() => {
+        // eslint-disable-next-line consistent-return
+        setCurrentPage((c) => {
+          if (c === imageURLs.length - 1) {
+            return 0;
+          }
+          return c + 1;
+        });
+      }, sec);
+    },
+    [sec],
+  );
 
   const onClickBlinkStop = useCallback(() => {
     setPlay(false);
@@ -85,7 +90,7 @@ function PlayMenu({
   }, []);
 
   useEffect(() => {
-    if (start) onClickBlinkStart();
+    if (start) onClickBlinkStart(imageNames);
     if (!start) onClickBlinkStop();
     if (next) {
       onClickNext();
@@ -153,8 +158,8 @@ function PlayMenu({
             </Nav.Item>
           </Nav>
         </Col>
-        <Col md={9} className="d-flex justify-content-between">
-          <ButtonGroup>
+        <Col md={9} className="d-flex">
+          <ButtonGroup className="flex-grow-1">
             {imageNames
               .filter((img) => img.visible)
               .map((name, index) => (
@@ -173,16 +178,15 @@ function PlayMenu({
                     setCurrentPage(index);
                     setRadioValue(e.currentTarget.value);
                   }}
-                  className="d-flex align-items-center"
+                  bsStyle="default"
+                  style={{ fontWeight: 'bold', textAlign: 'center' }}
                 >
-                  {fileNum < 8 ? name.name : index + 1}
+                  {name.name.substr(0, 1)}
                 </ToggleButton>
               ))}
-            <Button
-              variant="light"
-              onClick={() => setSettingModalShow(true)}
-              className="mx-3"
-            >
+          </ButtonGroup>
+          <ButtonGroup className="mx-5">
+            <Button variant="light" onClick={() => setSettingModalShow(true)}>
               <AiFillSetting size={30} />
             </Button>
             <SettingModal
@@ -211,8 +215,6 @@ function PlayMenu({
               imageURLs={imageNames}
             />
           </ButtonGroup>
-
-          {/* オートセーブ時のローディングisSaveLoading && <Spinner animation="border" size="lg" /> */}
 
           {isManual ? (
             <div>
@@ -247,7 +249,7 @@ function PlayMenu({
               )}
             </div>
           ) : (
-            <div>
+            <div className="align-self-center">
               <Button
                 variant="success"
                 onClick={() => {
@@ -298,7 +300,6 @@ PlayMenu.propTypes = {
   setStarModalShow: PropTypes.func,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   handleClick: PropTypes.func,
-  fileNum: PropTypes.number.isRequired,
   setIsAutoSave: PropTypes.func.isRequired,
   handleNavigate: PropTypes.func,
   isAutoSave: PropTypes.bool.isRequired,

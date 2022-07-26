@@ -270,6 +270,9 @@ function COIAS({
         // 選択を同期させるため、オブジェクトに変更
         const toObject = {};
         redisp.forEach((item) => {
+          if (item.length === 0) {
+            return;
+          }
           let star = toObject[item[0]];
           if (!star) {
             toObject[item[0]] = {
@@ -290,7 +293,7 @@ function COIAS({
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
-        if (errorResponse) {
+        if (errorResponse.place) {
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
           setShowProcessError(true);
@@ -390,7 +393,7 @@ function COIAS({
           </Col>
         </Row>
       </Container>
-      <LoadingButton loading={loading} processName="処理中…" />
+      <LoadingButton loading={loading} processName="探索データ取得中…" />
       <NewStarModal
         show={starModalShow}
         onExit={() => {

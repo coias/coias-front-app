@@ -137,6 +137,11 @@ function ExplorePrepare({
 
     const errorFileNames = [];
 
+    if (files.length < 3)
+      errorFileNames.push(
+        'ファイルが足りません。3つ以上選択してください。',
+      );
+
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < files.length; i++) {
       file = files[i];
@@ -217,7 +222,7 @@ function ExplorePrepare({
         })
         .catch((e) => {
           const errorResponse = e.response?.data?.detail;
-          if (errorResponse) {
+          if (errorResponse.place) {
             setErrorPlace(errorResponse.place);
             setErrorReason(errorResponse.reason);
             setShowProcessError(true);
@@ -261,7 +266,7 @@ function ExplorePrepare({
       .catch((e) => {
         console.log(e);
         const errorResponse = e.response?.data?.detail;
-        if (errorResponse) {
+        if (errorResponse.place) {
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
           setShowProcessError(true);
@@ -549,7 +554,7 @@ function ExplorePrepare({
                   })
                   .catch((e) => {
                     const errorResponse = e.response?.data?.detail;
-                    if (errorResponse) {
+                    if (errorResponse.place) {
                       setErrorPlace(errorResponse.place);
                       setErrorReason(errorResponse.reason);
                       setShowProcessError(true);
