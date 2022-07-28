@@ -228,7 +228,6 @@ function PlayMenu({
                       if (disable) {
                         setStarPos(originalStarPos);
                       } else {
-                        document.getElementById('wrapper-coias').focus();
                         handleClick();
                       }
                       setDisable(!disable);

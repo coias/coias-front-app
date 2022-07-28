@@ -29,8 +29,6 @@ function ManualToolBar({
   };
 
   const removePositionListByCheckState = () => {
-    document.getElementById('wrapper-coias').focus();
-
     const isAllRemove = !checkedState.some((element) => element === false);
 
     if (isAllRemove) {
@@ -96,11 +94,7 @@ function ManualToolBar({
                   onClick={() => onClickAccordion(index)}
                   className="w-100"
                 >
-                  <Accordion.Header
-                    onClick={() =>
-                      document.getElementById('wrapper-coias').focus()
-                    }
-                  >
+                  <Accordion.Header>
                     {`#H${'000000'.slice(
                       (leadStarNumber + index).toString().length - 6,
                     )}${leadStarNumber + index}`}

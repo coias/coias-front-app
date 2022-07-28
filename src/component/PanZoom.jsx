@@ -1,7 +1,13 @@
 // eslint-disable-next-line object-curly-newline
-import React, { useRef, useEffect, useContext, useState } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useContext,
+  useState,
+  useCallback,
+} from 'react';
 // eslint-disable-next-line object-curly-newline
-import { Col, Button } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import {
   PageContext,
@@ -50,8 +56,8 @@ PanZoom.propTypes = {
   writeMemo: PropTypes.func,
   setConfirmMessage: PropTypes.func,
   setSelectedListState: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
-  // setCanvasScale: PropTypes.func,
+  scaleArray: PropTypes.arrayOf(PropTypes.object).isRequired,
+  wrapperRef: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 function PanZoom({
@@ -73,7 +79,8 @@ function PanZoom({
   writeMemo,
   setConfirmMessage,
   setSelectedListState,
-  // setCanvasScale,
+  scaleArray,
+  wrapperRef,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -82,9 +89,8 @@ function PanZoom({
     window.images = [];
     window.imageLoadComplete = false;
   }
-  const ZPCanvasRef = useRef(null);
   const canvasRef = useRef(null);
-  const wrapperRef = useRef(null);
+  const ZPCanvasRef = useRef(null);
   const { currentPage } = useContext(PageContext);
 
   const { currentMousePos, setCurrentMousePos } =
@@ -93,19 +99,8 @@ function PanZoom({
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [context, setContext] = useState();
   const { starPos, setStarPos } = useContext(StarPositionContext);
-  const [zoomValue, setZoomValue] = useState(1.5);
   const [loaded, setLoaded] = useState(0);
   const [scaleValue, setScaleValue] = useState(0);
-  const [scaleButton, setScaleButton] = useState([
-    { id: 1, done: false },
-    { id: 1.25, done: false },
-    { id: 1.5, done: true },
-    { id: 2, done: false },
-    { id: 3, done: false },
-    { id: 6, done: false },
-    { id: 10, done: false },
-    { id: 20, done: false },
-  ]);
 
   const dataSetOfImageSize = [5100, 2100, 1050];
 
@@ -121,6 +116,7 @@ function PanZoom({
   }
 
   const calcRectangle = () => {
+    const zoomValue = scaleArray.find((obj) => obj.done).id;
     let rectSize;
     if (IMAGE_WIDTH / zoomValue >= 800) {
       rectSize = 40;
@@ -131,6 +127,11 @@ function PanZoom({
     }
     return rectSize;
   };
+
+  const getZoomValue = useCallback(
+    () => scaleArray.find((obj) => obj.done).id,
+    [scaleArray],
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -162,7 +163,6 @@ function PanZoom({
         if (img.naturalHeight > dataSetOfImageSize[1]) {
           context.scale(2, 2);
           setScaleValue(2);
-          // setCanvasScale(2);
         } else if (img.naturalHeight > dataSetOfImageSize[2]) {
           context.scale(4, 4);
           setScaleValue(4);
@@ -175,26 +175,15 @@ function PanZoom({
 
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       const RECT_SIZE = calcRectangle();
-      // console.log(
-      //   '画像サイズ : ',
-      //   IMAGE_WIDTH,
-      //   '/',
-      //   zoomValue,
-      //   '=',
-      //   IMAGE_WIDTH / zoomValue,
-      // );
-      // console.log('四角のサイズ : ', RECT_SIZE);
 
       Object.keys(starPos)
         .map((key) => starPos[key])
         .forEach((pos) => {
           if (pos.page[currentPage]) {
-            // rectangle setting
             const position = pos.page[currentPage];
             const x = position.x - RECT_SIZE / 2;
             const y = img.naturalHeight - position.y - RECT_SIZE / 2;
             context.lineWidth = RECT_SIZE * 0.075;
-            // set stroke style depends on pos[4]
             context.strokeStyle = pos.isSelected ? 'red' : 'black';
             context.strokeStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.strokeRect(x, y, RECT_SIZE, RECT_SIZE);
@@ -265,7 +254,7 @@ function PanZoom({
     activeKey,
     confirmationModalShow,
     disable,
-    zoomValue,
+    scaleArray,
     loaded,
   ]);
 
@@ -358,140 +347,14 @@ function PanZoom({
     }
   }
 
-  const keyInvalid = (e) => {
-    const code = e.keyCode;
-    // eslint-disable-next-line default-case
-    switch (code) {
-      case 37: // ←
-      case 39: // →
-        e.preventDefault();
-    }
-  };
-
-  const updateScaleButton = (id) => {
-    setScaleButton((prevScaleButton) =>
-      prevScaleButton.map((items) =>
-        items.id === id
-          ? {
-              id: items.id,
-              done: true,
-            }
-          : {
-              id: items.id,
-              done: false,
-            },
-      ),
-    );
-  };
-
-  const [maxTop, setMaxTop] = useState(0);
-  const [maxLeft, setMaxLeft] = useState(0);
-
-  useEffect(() => {
-    // scroll
-    const div = document.getElementById('container');
-    const pastScrollTop = div.scrollTop;
-    const pastScrollLeft = div.scrollLeft;
-    div.scrollTop = 1000000;
-    div.scrollLeft = 1000000;
-    const MAX_SCROLLTOP = div.scrollTop;
-    const MAX_SCROLLLEFT = div.scrollLeft;
-    setMaxTop(MAX_SCROLLTOP);
-    setMaxLeft(MAX_SCROLLLEFT);
-
-    let topDiff;
-    let leftDiff;
-    let judge;
-
-    if (MAX_SCROLLTOP - maxTop < 0) {
-      topDiff = (maxTop - MAX_SCROLLTOP) / 2;
-      judge = 'zoomOut';
-    } else {
-      topDiff = (MAX_SCROLLTOP - maxTop) / 2;
-      judge = 'zoomIn';
-    }
-    if (MAX_SCROLLLEFT - maxLeft < 0) {
-      leftDiff = (maxLeft - MAX_SCROLLLEFT) / 2;
-      judge = 'zoomOut';
-    } else {
-      leftDiff = (MAX_SCROLLLEFT - maxLeft) / 2;
-      judge = 'zoomIn';
-    }
-
-    div.scrollTop = 0;
-    div.scrollLeft = 0;
-
-    if (judge === 'zoomIn') {
-      div.scrollTop = pastScrollTop + topDiff;
-      div.scrollLeft = pastScrollLeft + leftDiff;
-    } else {
-      div.scrollTop = pastScrollTop - topDiff;
-      div.scrollLeft = pastScrollLeft - leftDiff;
-    }
-    console.log(div.scrollTop);
-    console.log(div.scrollLeft);
-  }, [zoomValue]);
-
-  const zoom = (e) => {
-    const data = e.target.id;
-    switch (data) {
-      case '1':
-        setZoomValue(1);
-        updateScaleButton(1);
-        break;
-      case '1.25':
-        setZoomValue(1.25);
-        updateScaleButton(1.25);
-        break;
-      case '1.5':
-        setZoomValue(1.5);
-        updateScaleButton(1.5);
-        break;
-      case '2':
-        setZoomValue(2);
-        updateScaleButton(2);
-        break;
-      case '3':
-        setZoomValue(3);
-        updateScaleButton(3);
-        break;
-      case '6':
-        setZoomValue(6);
-        updateScaleButton(6);
-        break;
-      case '10':
-        setZoomValue(10);
-        updateScaleButton(10);
-        break;
-      case '20':
-        setZoomValue(20);
-        updateScaleButton(20);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const calcCanvasWidth = () => {
+  const calcCanvasSize = (IMAGE_SIZE) => {
     let canvasSize;
-    if (IMAGE_WIDTH > dataSetOfImageSize[1]) {
-      canvasSize = IMAGE_WIDTH * 2;
-    } else if (IMAGE_WIDTH > dataSetOfImageSize[2]) {
-      canvasSize = IMAGE_WIDTH * 4;
+    if (IMAGE_SIZE > dataSetOfImageSize[1]) {
+      canvasSize = IMAGE_SIZE * 2;
+    } else if (IMAGE_SIZE > dataSetOfImageSize[2]) {
+      canvasSize = IMAGE_SIZE * 4;
     } else {
-      canvasSize = IMAGE_WIDTH * 6;
-    }
-    return canvasSize;
-  };
-
-  const calcCanvasHeight = () => {
-    let canvasSize;
-    if (IMAGE_HEIGHT > dataSetOfImageSize[1]) {
-      canvasSize = IMAGE_HEIGHT * 2;
-    } else if (IMAGE_HEIGHT > dataSetOfImageSize[2]) {
-      canvasSize = IMAGE_HEIGHT * 4;
-    } else {
-      canvasSize = IMAGE_HEIGHT * 6;
+      canvasSize = IMAGE_SIZE * 6;
     }
     return canvasSize;
   };
@@ -508,22 +371,11 @@ function PanZoom({
           overflow: 'none',
         }}
       >
-        <MousePosition isZoomIn={isZoomIn} />
-        <div>
-          {scaleButton.map((item) => (
-            <Button
-              variant={item.done ? 'primary' : 'secondary'}
-              id={item.id}
-              key={item.id}
-              onClick={(e) => {
-                zoom(e);
-              }}
-            >
-              {`×${item.id}`}
-            </Button>
-          ))}
-        </div>
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <MousePosition
+          isZoomIn={isZoomIn}
+          IMAGE_WIDTH={IMAGE_WIDTH}
+          IMAGE_HEIGHT={IMAGE_HEIGHT}
+        />
         <div
           className="wrapper"
           style={{
@@ -533,15 +385,14 @@ function PanZoom({
             overflow: 'none',
           }}
           ref={wrapperRef}
-          onKeyDown={keyInvalid}
           id="container"
         >
           <div ref={ZPCanvasRef}>
             <canvas
               id="canvas"
               ref={canvasRef}
-              width={`${calcCanvasWidth()}px`}
-              height={`${calcCanvasHeight()}px`}
+              width={`${calcCanvasSize(IMAGE_WIDTH)}px`}
+              height={`${calcCanvasSize(IMAGE_HEIGHT)}px`}
               onClick={() => {
                 if (isManual) {
                   saveEventPosition();
@@ -554,10 +405,9 @@ function PanZoom({
                   brightnessVal - 50
                 }%)`,
                 transformOrigin: '0 0',
-                transform: `scale(${zoomValue})`,
+                transform: `scale(${getZoomValue()})`,
                 maxWidth: '100%',
                 maxHeight: '100%',
-                objectFit: 'contain',
                 imageRendering: 'pixelated',
               }}
             />
