@@ -64,12 +64,14 @@ function ExplorePrepare({
   const [fileNum, setFileNum] = useState(0);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
+  const [parametars, setParametars] = useState(['4', '6', '2000']);
 
   const handleSelect = (e) => setVal(e.target.value);
 
   const handleClose = () => {
     setMenunames(menunames);
     setShow(false);
+    console.log(parametars);
   };
   const handleShow = () => setShow(true);
   const handleChange = (e) => {
@@ -138,9 +140,7 @@ function ExplorePrepare({
     const errorFileNames = [];
 
     if (files.length < 3)
-      errorFileNames.push(
-        'ファイルが足りません。3つ以上選択してください。',
-      );
+      errorFileNames.push('ファイルが足りません。3つ以上選択してください。');
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < files.length; i++) {
@@ -286,6 +286,17 @@ function ExplorePrepare({
   const onProcessAuto = async (size) => {
     // 事前処理
     setLoading(true);
+    // パラメータの初期化
+    setParametars(
+      parametars.map(() => {
+        parametars[0] = '4';
+        parametars[1] = '6';
+        parametars[2] = '2000';
+        return parametars;
+      }),
+    );
+    console.log(parametars);
+
     let result = true;
     result = await onProcessExecute(`${uri}preprocess`, '事前処理');
     if (!result) {
@@ -565,6 +576,50 @@ function ExplorePrepare({
             >
               小惑星データ更新
             </Button>
+            {val === 'auto' ? null : (
+              <Row style={{ whiteSpace: 'nowrap' }}>
+                <h3 className="px-0 mt-2">パラメータの詳細設定</h3>
+                <InputGroup className="my-2">
+                  <InputGroup.Text>検出光源必要数</InputGroup.Text>
+                  <Form.Control
+                    placeholder="デフォルト値は4です"
+                    onChange={(e) => {
+                      setParametars(
+                        parametars.map((parametar, index) =>
+                          index === 0 ? e.target.value : parametar,
+                        ),
+                      );
+                    }}
+                  />
+                </InputGroup>
+                <InputGroup className="my-2">
+                  <InputGroup.Text>自動測光半径</InputGroup.Text>
+                  <Form.Control
+                    placeholder="デフォルト値は6です"
+                    onChange={(e) => {
+                      setParametars(
+                        parametars.map((parametar, index) =>
+                          index === 1 ? e.target.value : parametar,
+                        ),
+                      );
+                    }}
+                  />
+                </InputGroup>
+                <InputGroup className="my-2">
+                  <InputGroup.Text>平均光源数</InputGroup.Text>
+                  <Form.Control
+                    placeholder="デフォルト値は2000です"
+                    onChange={(e) => {
+                      setParametars(
+                        parametars.map((parametar, index) =>
+                          index === 2 ? e.target.value : parametar,
+                        ),
+                      );
+                    }}
+                  />
+                </InputGroup>
+              </Row>
+            )}
             <Form.Control.Feedback type="invalid">
               ファイルを選択してください。
             </Form.Control.Feedback>
