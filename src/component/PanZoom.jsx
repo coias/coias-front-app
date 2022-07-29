@@ -195,7 +195,7 @@ function PanZoom({
 
             if (isHide) {
               context.strokeStyle = 'rgba(0, 0, 0, 0)';
-            } else if (position.name !== pos.newName) {
+            } else if (pos.newName && position.name !== pos.newName) {
               context.strokeStyle = 'yellow';
             } else if (pos.isSelected) {
               context.strokeStyle = 'red';
@@ -209,14 +209,18 @@ function PanZoom({
             context.lineWidth = RECT_SIZE * 0.075;
             context.font = `${RECT_SIZE * 0.5}px serif`;
             context.strokeText(
-              position.name === pos.newName ? pos.name : pos.newName,
+              pos.newName && position.name !== pos.newName
+                ? pos.newName
+                : pos.name,
               x - RECT_SIZE / 10,
               y - RECT_SIZE / 10,
             );
             context.fillStyle = 'red';
             context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
-              position.name === pos.newName ? pos.name : pos.newName,
+              pos.newName && position.name !== pos.newName
+                ? pos.newName
+                : pos.name,
               x - RECT_SIZE / 10,
               y - RECT_SIZE / 10,
             );
