@@ -64,7 +64,7 @@ function ManualMeasurement({
   };
   const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
-  const { currentPage, setCurrentPage } = useContext(PageContext);
+  const { currentPage } = useContext(PageContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -242,7 +242,7 @@ function ManualMeasurement({
       return [masked, nomasked];
     });
 
-    setCurrentPage(0);
+    // setCurrentPage(0);
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 

@@ -20,7 +20,7 @@ import HelpModal from './HelpModal';
 
 function PlayMenu({
   imageNames,
-  setImageURLs,
+  // setImageURLs,
   intervalRef,
   setDefaultZoomRate,
   defaultZoomRate,
@@ -48,36 +48,68 @@ function PlayMenu({
   const [helpModalShow, setHelpModalShow] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
   const { starPos, setStarPos } = useContext(StarPositionContext);
+  const [index, setIndex] = useState(0);
+  // const [subImages, setSubImages] = useState([]);
 
   const onClickNext = () => {
-    if (currentPage === imageNames.length - 1) setCurrentPage(0);
-    else setCurrentPage(currentPage + 1);
+    const array = imageNames
+      .filter((item) => item.visible)
+      .map((image) =>
+        parseInt(
+          image.name.substr(0, 1) === '0'
+            ? image.name.substr(1, 1) - 1
+            : image.name.substr(0, 2) - 1,
+          10,
+        ),
+      );
+    const preindex = index;
+    if (currentPage === array[array.length - 1]) {
+      setIndex(0);
+      setCurrentPage(array[0]);
+    } else {
+      setIndex(preindex + 1);
+      setCurrentPage(array[preindex + 1]);
+    }
   };
 
   const onClickBack = () => {
     if (currentPage === 0) setCurrentPage(imageNames.length - 1);
     else setCurrentPage(currentPage - 1);
+
+    const array = imageNames
+      .filter((item) => item.visible)
+      .map((image) =>
+        parseInt(
+          image.name.substr(0, 1) === '0'
+            ? image.name.substr(1, 1) - 1
+            : image.name.substr(0, 2) - 1,
+          10,
+        ),
+      );
+    const preindex = index;
+    if (preindex === 0) {
+      setIndex(array.length - 1);
+      setCurrentPage(array[array.length - 1]);
+    } else {
+      setIndex(preindex - 1);
+      setCurrentPage(array[preindex - 1]);
+    }
   };
 
-  const onClickBlinkStart = useCallback(
-    (imageURLs) => {
-      setPlay(true);
-      if (intervalRef.current !== null) {
-        return;
-      }
-      // eslint-disable-next-line no-param-reassign
-      intervalRef.current = setInterval(() => {
-        // eslint-disable-next-line consistent-return
-        setCurrentPage((c) => {
-          if (c === imageURLs.length - 1) {
-            return 0;
-          }
-          return c + 1;
-        });
-      }, sec);
-    },
-    [sec],
-  );
+  const onClickBlinkStart = useCallback(() => {
+    setPlay(true);
+    if (intervalRef.current !== null) {
+      return;
+    }
+    // eslint-disable-next-line no-param-reassign
+    intervalRef.current = setInterval(() => {
+      // eslint-disable-next-line consistent-return
+      setCurrentPage((c) => {
+        if (c === imageNames.length - 1) return 0;
+        return c + 1;
+      });
+    }, sec);
+  }, [sec]);
 
   const onClickBlinkStop = useCallback(() => {
     setPlay(false);
@@ -90,7 +122,7 @@ function PlayMenu({
   }, []);
 
   useEffect(() => {
-    if (start) onClickBlinkStart(imageNames);
+    if (start) onClickBlinkStart();
     if (!start) onClickBlinkStop();
     if (next) {
       onClickNext();
@@ -102,8 +134,25 @@ function PlayMenu({
     }
   }, [start, next, back]);
 
+  const setValid = () => {
+    const array = imageNames
+      .filter((item) => item.visible)
+      .map(
+        (image) =>
+          parseInt(
+            image.name.substr(0, 1) === '0'
+              ? image.name.substr(1, 1)
+              : image.name.substr(0, 2),
+            10,
+          ) - 1,
+      );
+    console.log(array);
+    return array;
+  };
+
   return (
     <Navbar bg="light" expand="lg">
+      {/* {console.log(currentPage)} */}
       <Container fluid>
         <Col md={3}>
           <Nav>
@@ -162,23 +211,61 @@ function PlayMenu({
           <ButtonGroup className="flex-grow-1">
             {imageNames
               .filter((img) => img.visible)
-              .map((name, index) => (
+              .map((name) => (
                 <ToggleButton
-                  id={`radio-${index}`}
+                  id={`radio-${
+                    parseInt(
+                      name.name.substr(0, 1) === '0'
+                        ? name.name.substr(1, 1)
+                        : name.name.substr(0, 2),
+                      10,
+                    ) - 1
+                  }`}
                   type="radio"
                   variant="outline-secondary"
                   name="radio"
                   value={name.name}
                   key={name.name}
                   checked={
-                    (radioValue === name.name && currentPage === index) ||
-                    currentPage === index
+                    (radioValue === name.name &&
+                      currentPage ===
+                        parseInt(
+                          name.name.substr(0, 1) === '0'
+                            ? name.name.substr(1, 1)
+                            : name.name.substr(0, 2),
+                          10,
+                        ) -
+                          1) ||
+                    currentPage ===
+                      parseInt(
+                        name.name.substr(0, 1) === '0'
+                          ? name.name.substr(1, 1)
+                          : name.name.substr(0, 2),
+                        10,
+                      ) -
+                        1
                   }
                   onChange={(e) => {
-                    setCurrentPage(index);
+                    setCurrentPage(
+                      parseInt(
+                        name.name.substr(0, 1) === '0'
+                          ? name.name.substr(1, 1)
+                          : name.name.substr(0, 2),
+                        10,
+                      ) - 1,
+                    );
+                    console.log(
+                      'onChange',
+                      parseInt(
+                        name.name.substr(0, 1) === '0'
+                          ? name.name.substr(1, 1)
+                          : name.name.substr(0, 2),
+                        10,
+                      ) - 1,
+                    );
                     setRadioValue(e.currentTarget.value);
                   }}
-                  bsStyle="default"
+                  bsstyle="default"
                   style={{ fontWeight: 'bold', textAlign: 'center' }}
                 >
                   {name.name.substr(0, 1) === '0'
@@ -195,7 +282,10 @@ function PlayMenu({
               show={settingModalShow}
               onHide={() => {
                 setSettingModalShow(false);
-                setImageURLs(JSON.parse(JSON.stringify(imageNames)));
+                // setImageURLs(JSON.parse(JSON.stringify(imageNames)));
+                const array = setValid();
+                setCurrentPage(array[0]);
+                setIndex(0);
               }}
               title="表示設定"
               imageURLs={imageNames}
@@ -211,7 +301,6 @@ function PlayMenu({
               show={helpModalShow}
               onHide={() => {
                 setHelpModalShow(false);
-                setImageURLs(JSON.parse(JSON.stringify(imageNames)));
               }}
               title="ヘルプ"
               imageURLs={imageNames}
@@ -287,7 +376,7 @@ function PlayMenu({
 
 PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
-  setImageURLs: PropTypes.func.isRequired,
+  // setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.number).isRequired,
   setDefaultZoomRate: PropTypes.func,
   defaultZoomRate: PropTypes.number,

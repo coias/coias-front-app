@@ -16,6 +16,8 @@ import ErrorModal from '../component/ErrorModal';
 COIAS.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
+  subImageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setSubImageURLs: PropTypes.func.isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
@@ -30,6 +32,8 @@ COIAS.propTypes = {
 function COIAS({
   imageURLs,
   setImageURLs,
+  subImageURLs,
+  setSubImageURLs,
   originalStarPos,
   setOriginalStarPos,
   intervalRef,
@@ -55,6 +59,7 @@ function COIAS({
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
+  const [validImages, setValidImages] = useState([]);
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -97,6 +102,7 @@ function COIAS({
         o.nomasked = false;
       });
       setImageURLs(toObjectArray);
+      setSubImageURLs(toObjectArray);
       setLoading(false);
     };
     const getMemo = async () => {
@@ -231,8 +237,8 @@ function COIAS({
 
       return [masked, nomasked];
     });
-
-    setCurrentPage(0);
+    if (validImages.length !== 0) setCurrentPage(validImages[0]);
+    else setCurrentPage(0);
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, memoList, isReload]);
 
@@ -316,6 +322,9 @@ function COIAS({
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
+        validImages={validImages}
+        setValidImages={setValidImages}
+        subImageURLs={subImageURLs}
         intervalRef={intervalRef}
         start={start}
         next={next}

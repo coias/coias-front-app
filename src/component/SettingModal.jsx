@@ -6,6 +6,7 @@ function SettingModal({
   show,
   onHide,
   imageURLs,
+  // subImageURLs,
   setDefaultZoomRate,
   defaultZoomRate,
   setIsAutoSave,
@@ -26,8 +27,8 @@ function SettingModal({
         <h4>表示する画像の設定を行ってください。</h4>
         <Row>
           <Col sm={8}>画像</Col>
-          <Col style={{ textAlign: 'center' }}>表示/非表示</Col>
-          <Col style={{ textAlign: 'center' }}>マスク有無</Col>
+          <Col style={{ textAlign: 'center' }}>画像表示</Col>
+          <Col style={{ textAlign: 'center' }}>マスクなし</Col>
         </Row>
         <hr />
         {imageURLs.map((img) => (
@@ -128,6 +129,7 @@ SettingModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  // subImageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setDefaultZoomRate: PropTypes.func.isRequired,
   defaultZoomRate: PropTypes.number.isRequired,
   setIsAutoSave: PropTypes.func.isRequired,

@@ -175,15 +175,6 @@ function PanZoom({
 
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       const RECT_SIZE = calcRectangle();
-      // console.log(
-      //   '画像サイズ : ',
-      //   IMAGE_WIDTH,
-      //   '/',
-      //   zoomValue,
-      //   '=',
-      //   IMAGE_WIDTH / zoomValue,
-      // );
-      // console.log('四角のサイズ : ', RECT_SIZE);
 
       Object.keys(starPos)
         .map((key) => starPos[key])

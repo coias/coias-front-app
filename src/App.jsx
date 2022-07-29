@@ -51,6 +51,7 @@ function App() {
   ]);
 
   const [imageURLs, setImageURLs] = useState([]);
+  const [subImageURLs, setSubImageURLs] = useState([]);
   const [originalStarPos, setOriginalStarPos] = useState({});
   const [leadStarNumber, setLeadStarNumber] = useState(0);
   const pageValue = useMemo(
@@ -108,6 +109,8 @@ function App() {
                       intervalRef={intervalRef}
                       imageURLs={imageURLs}
                       setImageURLs={setImageURLs}
+                      subImageURLs={subImageURLs}
+                      setSubImageURLs={setSubImageURLs}
                       originalStarPos={originalStarPos}
                       setOriginalStarPos={setOriginalStarPos}
                       start={start}
