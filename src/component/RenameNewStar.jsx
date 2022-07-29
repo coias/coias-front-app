@@ -4,19 +4,18 @@ import React, { useRef, useState, useContext } from 'react';
 import { Modal, Button, Form, Col, Row } from 'react-bootstrap';
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
 import PropTypes from 'prop-types';
-import useEventListener from '../hooks/useEventListener';
 import { StarPositionContext } from './context';
 
 function RenameNewStarModal({
   show,
   onExit,
   onClickRenameButton,
-  dispStars,
   oldStarName,
   isAlreadyChanged,
 }) {
   const [display, setDisplay] = useState(false);
   const [search, setSearch] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const searchWrapperRef = useRef(null);
   const handleClickOutside = (event) => {
     const { current: wrap } = searchWrapperRef;
@@ -24,8 +23,6 @@ function RenameNewStarModal({
       setDisplay(false);
     }
   };
-
-  useEventListener('mousedown', handleClickOutside);
 
   const updateSearchName = (selectedName) => {
     setSearch(selectedName);
@@ -40,6 +37,7 @@ function RenameNewStarModal({
       onExit={() => {
         onExit();
         updateSearchName('');
+        setErrorMessage('');
       }}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
@@ -57,8 +55,15 @@ function RenameNewStarModal({
             e.preventDefault();
             if (isAlreadyChanged) {
               onClickRenameButton(oldStarName);
-            } else {
+            } else if (
+              !isAlreadyChanged &&
+              Object.values(starPos).some(
+                (starContent) => starContent.name === search,
+              )
+            ) {
               onClickRenameButton(search);
+            } else {
+              setErrorMessage('他の天体と名前が一致しません');
             }
           }}
         >
@@ -84,9 +89,13 @@ function RenameNewStarModal({
                 <Form.Control
                   id="auto"
                   required
-                  onClick={() => setDisplay(!display)}
+                  onClick={() => {
+                    setDisplay(!display);
+                    setErrorMessage('');
+                  }}
                   placeholder="Type to search"
                   onChange={(event) => setSearch(event.target.value)}
+                  onBlur={handleClickOutside}
                   maxLength={7}
                   onKeyDown={(e) => {
                     e.stopPropagation();
@@ -98,6 +107,9 @@ function RenameNewStarModal({
                   autoComplete="off"
                   size="lg"
                 />
+                {errorMessage !== '' && (
+                  <p style={{ color: 'red' }}>{errorMessage}</p>
+                )}
                 {display && (
                   <div
                     style={{
@@ -106,7 +118,13 @@ function RenameNewStarModal({
                     }}
                     className="search_suggestions"
                   >
-                    {Object.values(dispStars)
+                    {Object.values(starPos)
+                      .filter(
+                        (star) =>
+                          star.name
+                            .toLowerCase()
+                            .indexOf(oldStarName.toLowerCase()) === -1,
+                      )
                       .filter(
                         (star) =>
                           star.name
@@ -157,7 +175,6 @@ RenameNewStarModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onExit: PropTypes.func.isRequired,
   onClickRenameButton: PropTypes.func.isRequired,
-  dispStars: PropTypes.objectOf(PropTypes.object).isRequired,
   oldStarName: PropTypes.string.isRequired,
   isAlreadyChanged: PropTypes.bool.isRequired,
 };

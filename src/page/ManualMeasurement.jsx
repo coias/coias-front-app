@@ -96,7 +96,6 @@ function ManualMeasurement({
     { id: 20, done: false },
   ]);
   const [renameNewStarModalShow, setRenameNewStarModalShow] = useState(false);
-  const [dispStars, setDispStars] = useState({});
   const [oldStarName, setOldStarName] = useState('');
 
   const wrapperRef = useRef(null);
@@ -144,35 +143,6 @@ function ManualMeasurement({
       setImageURLs(toObjectArray);
     };
 
-    const getDisp = async () => {
-      setLoading(true);
-
-      const res1 = await axios.get(`${reactApiUri}unknown_disp`);
-      const unknownDisp = await res1.data.result;
-      const toObject = {};
-
-      // 選択を同期させるため、オブジェクトに変更
-      unknownDisp.forEach((item) => {
-        let star = toObject[item[0]];
-        if (!star) {
-          toObject[item[0]] = {
-            name: item[0],
-            page: Array(imageURLs.length).fill(null),
-            isSelected: false,
-            isKnown: false,
-          };
-          star = toObject[item[0]];
-        }
-        star.page[item[1]] = {
-          name: item[0],
-          x: parseFloat(item[2], 10),
-          y: parseFloat(item[3], 10),
-        };
-      });
-
-      setDispStars(toObject);
-    };
-    getDisp();
     getImages();
   }, []);
 
@@ -550,7 +520,6 @@ function ManualMeasurement({
       />
       <RenameNewStarModal
         show={renameNewStarModalShow}
-        dispStars={dispStars}
         onExit={() => {
           setRenameNewStarModalShow(false);
         }}
