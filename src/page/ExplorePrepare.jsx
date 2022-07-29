@@ -71,7 +71,6 @@ function ExplorePrepare({
   const handleClose = () => {
     setMenunames(menunames);
     setShow(false);
-    console.log(parametars);
   };
   const handleShow = () => setShow(true);
   const handleChange = (e) => {
@@ -207,7 +206,9 @@ function ExplorePrepare({
             if (
               item.query === query ||
               (query.startsWith('startsearch2R?binning=') &&
-                item.query.startsWith('startsearch2R?binning='))
+                item.query.startsWith('startsearch2R?binning=')) ||
+              (query.startsWith('astsearch_new') &&
+                item.query.startsWith('astsearch_new'))
             ) {
               // eslint-disable-next-line no-param-reassign
               item.done = true;
@@ -286,16 +287,6 @@ function ExplorePrepare({
   const onProcessAuto = async (size) => {
     // 事前処理
     setLoading(true);
-    // パラメータの初期化
-    setParametars(
-      parametars.map(() => {
-        parametars[0] = '4';
-        parametars[1] = '6';
-        parametars[2] = '2000';
-        return parametars;
-      }),
-    );
-    console.log(parametars);
 
     let result = true;
     result = await onProcessExecute(`${uri}preprocess`, '事前処理');
@@ -400,13 +391,17 @@ function ExplorePrepare({
                   >
                     <Dropdown.Item
                       eventKey="1"
-                      onClick={() => onProcess(`${menunames[2].query}2`)}
+                      onClick={() =>
+                        onProcess(`${menunames[2].query}2&sn=${parametars[2]}`)
+                      }
                     >
                       2×2
                     </Dropdown.Item>
                     <Dropdown.Item
                       eventKey="2"
-                      onClick={() => onProcess(`${menunames[2].query}4`)}
+                      onClick={() =>
+                        onProcess(`${menunames[2].query}4&sn=${parametars[2]}`)
+                      }
                     >
                       4×4
                     </Dropdown.Item>
@@ -450,7 +445,9 @@ function ExplorePrepare({
                     id={menunames[5].query}
                     style={{ whiteSpace: 'nowrap' }}
                     onClick={() => {
-                      onProcess(menunames[5].query);
+                      onProcess(
+                        `${menunames[5].query}?nd=${parametars[0]}&ar=${parametars[1]}`,
+                      );
                     }}
                     variant={menunames[5].done ? 'success' : 'primary'}
                   >
@@ -579,45 +576,101 @@ function ExplorePrepare({
             {val === 'auto' ? null : (
               <Row style={{ whiteSpace: 'nowrap' }}>
                 <h3 className="px-0 mt-2">パラメータの詳細設定</h3>
+                <Col className="pe-0">
+                  <InputGroup className="my-2">
+                    <InputGroup.Text
+                      style={{
+                        backgroundColor: 'white',
+                        padding: '6px',
+                      }}
+                    >
+                      検出光源必要数
+                    </InputGroup.Text>
+                    <Form.Control
+                      className="form-control-sm"
+                      placeholder="初期値は4"
+                      onChange={(e) => {
+                        setParametars(
+                          parametars.map((parametar, index) =>
+                            index === 0 ? e.target.value : parametar,
+                          ),
+                        );
+                        if (e.target.value.match(/[^0-9]/gm)) {
+                          setAlertMessage('数字を入力してください');
+                          setDisabled(true);
+                        } else {
+                          setAlertMessage('');
+                          setDisabled(false);
+                        }
+                      }}
+                    />
+                  </InputGroup>
+                </Col>
+                <Col className="ps-2">
+                  <InputGroup className="my-2">
+                    <InputGroup.Text
+                      style={{
+                        backgroundColor: 'white',
+                        padding: '6px',
+                      }}
+                    >
+                      自動測光半径
+                    </InputGroup.Text>
+                    <Form.Control
+                      className="form-control-sm"
+                      placeholder="初期値は6"
+                      onChange={(e) => {
+                        setParametars(
+                          parametars.map((parametar, index) =>
+                            index === 1 ? e.target.value : parametar,
+                          ),
+                        );
+                        if (e.target.value.match(/[^0-9]/gm)) {
+                          setAlertMessage('数字を入力してください');
+                          setDisabled(true);
+                        } else {
+                          setAlertMessage('');
+                          setDisabled(false);
+                        }
+                      }}
+                    />
+                  </InputGroup>
+                </Col>
                 <InputGroup className="my-2">
-                  <InputGroup.Text>検出光源必要数</InputGroup.Text>
-                  <Form.Control
-                    placeholder="デフォルト値は4です"
-                    onChange={(e) => {
-                      setParametars(
-                        parametars.map((parametar, index) =>
-                          index === 0 ? e.target.value : parametar,
-                        ),
-                      );
+                  <InputGroup.Text
+                    style={{
+                      backgroundColor: 'white',
                     }}
-                  />
-                </InputGroup>
-                <InputGroup className="my-2">
-                  <InputGroup.Text>自動測光半径</InputGroup.Text>
+                  >
+                    平均光源数
+                  </InputGroup.Text>
                   <Form.Control
-                    placeholder="デフォルト値は6です"
-                    onChange={(e) => {
-                      setParametars(
-                        parametars.map((parametar, index) =>
-                          index === 1 ? e.target.value : parametar,
-                        ),
-                      );
-                    }}
-                  />
-                </InputGroup>
-                <InputGroup className="my-2">
-                  <InputGroup.Text>平均光源数</InputGroup.Text>
-                  <Form.Control
-                    placeholder="デフォルト値は2000です"
+                    className="form-control-sm"
+                    placeholder="初期値は2000"
                     onChange={(e) => {
                       setParametars(
                         parametars.map((parametar, index) =>
                           index === 2 ? e.target.value : parametar,
                         ),
                       );
+                      if (e.target.value.match(/[^0-9]/gm)) {
+                        setAlertMessage('数字を入力してください');
+                        setDisabled(true);
+                      } else {
+                        setAlertMessage('');
+                        setDisabled(false);
+                      }
                     }}
                   />
                 </InputGroup>
+                <p
+                  style={{
+                    color: 'red',
+                    margin: 0,
+                  }}
+                >
+                  {alertMessage}
+                </p>
               </Row>
             )}
             <Form.Control.Feedback type="invalid">
