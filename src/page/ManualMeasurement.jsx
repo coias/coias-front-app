@@ -16,6 +16,7 @@ import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
 import ErrorModal from '../component/ErrorModal';
 import useEventListener from '../hooks/useEventListener';
+import RenameNewStarModal from '../component/RenameNewStar';
 
 function ManualMeasurement({
   imageURLs,
@@ -94,6 +95,9 @@ function ManualMeasurement({
     { id: 19.5, done: false },
     { id: 20, done: false },
   ]);
+  const [renameNewStarModalShow, setRenameNewStarModalShow] = useState(false);
+  const [dispStars, setDispStars] = useState({});
+  const [oldStarName, setOldStarName] = useState('');
 
   const wrapperRef = useRef(null);
 
@@ -140,6 +144,35 @@ function ManualMeasurement({
       setImageURLs(toObjectArray);
     };
 
+    const getDisp = async () => {
+      setLoading(true);
+
+      const res1 = await axios.get(`${reactApiUri}unknown_disp`);
+      const unknownDisp = await res1.data.result;
+      const toObject = {};
+
+      // 選択を同期させるため、オブジェクトに変更
+      unknownDisp.forEach((item) => {
+        let star = toObject[item[0]];
+        if (!star) {
+          toObject[item[0]] = {
+            name: item[0],
+            page: Array(imageURLs.length).fill(null),
+            isSelected: false,
+            isKnown: false,
+          };
+          star = toObject[item[0]];
+        }
+        star.page[item[1]] = {
+          name: item[0],
+          x: parseFloat(item[2], 10),
+          y: parseFloat(item[3], 10),
+        };
+      });
+
+      setDispStars(toObject);
+    };
+    getDisp();
     getImages();
   }, []);
 
@@ -161,6 +194,7 @@ function ManualMeasurement({
             if (!star) {
               toObject[item[0]] = {
                 name: item[0],
+                newName: item[0],
                 page: Array(imageURLs.length).fill(null),
                 isSelected: false,
                 isKnown: false,
@@ -294,6 +328,7 @@ function ManualMeasurement({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
+              newName: item[0],
               page: Array(imageURLs.length).fill(null),
               isSelected: false,
               isKnown: false,
@@ -416,11 +451,12 @@ function ManualMeasurement({
               activeKey={activeKey}
               confirmationModalShow={confirmationModalShow}
               setConfirmationModalShow={setConfirmationModalShow}
-              setOriginalStarPos={setOriginalStarPos}
               disable={isRedisp}
               setConfirmMessage={setConfirmMessage}
               scaleArray={scaleArray}
               wrapperRef={wrapperRef}
+              setRenameNewStarModalShow={setRenameNewStarModalShow}
+              setOldStarName={setOldStarName}
             />
           </Col>
           <Col sm={2} md={2}>
@@ -511,6 +547,28 @@ function ManualMeasurement({
           setIsRedisp(!isRedisp);
           setStarPos(originalStarPos);
         }}
+      />
+      <RenameNewStarModal
+        show={renameNewStarModalShow}
+        dispStars={dispStars}
+        onExit={() => {
+          setRenameNewStarModalShow(false);
+        }}
+        onClickRenameButton={async (newStarName) => {
+          setRenameNewStarModalShow(false);
+          const objectCopy = { ...starPos };
+          objectCopy[oldStarName].newName = newStarName;
+          const strArray = [];
+          Object.values(objectCopy).forEach((value) =>
+            strArray.push([value.name, value.newName]),
+          );
+          await axios.put(`${reactApiUri}manual_name_modify_list`, strArray);
+          setStarPos(objectCopy);
+        }}
+        oldStarName={oldStarName}
+        isAlreadyChanged={
+          starPos[oldStarName]?.name !== starPos[oldStarName]?.newName
+        }
       />
     </div>
   );

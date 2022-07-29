@@ -218,3 +218,10 @@ footer {
   left: 20px;
   background-color: white !important;
 }
+
+.search_suggestions {
+  .active,
+  div:hover {
+    background-color: gray;
+  }
+}
