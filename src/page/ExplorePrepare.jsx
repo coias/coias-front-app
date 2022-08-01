@@ -121,9 +121,7 @@ function ExplorePrepare({
     const errorFileNames = [];
 
     if (files.length < 3)
-      errorFileNames.push(
-        'ファイルが足りません。3つ以上選択してください。',
-      );
+      errorFileNames.push('ファイルが足りません。3つ以上選択してください。');
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < files.length; i++) {
@@ -310,13 +308,23 @@ function ExplorePrepare({
         height: '100%',
       }}
     >
-      <div style={{ marginTop: 20, marginBottom: 20 }}>
-        <Row xs="auto">
-          <Col>
-            <h4>探索準備 : </h4>
-          </Col>
+      <Row>
+        <Col md={2}>
           <Row>
-            <Col style={{ margin: 'auto 0' }}>
+            <h4>探索準備</h4>
+          </Row>
+          <Row>
+            <h4>選択ファイル</h4>
+          </Row>
+        </Col>
+        {/* style=
+      {{
+        height: 'calc(100% - 96px)',
+      }}
+      */}
+        <Col md={10}>
+          <Row>
+            <Col style={{ padding: 0 }}>
               <Button
                 variant={menunames[0].done ? 'success' : 'primary'}
                 style={{ whiteSpace: 'nowrap' }}
@@ -328,7 +336,7 @@ function ExplorePrepare({
               </Button>
             </Col>
             {val === 'auto' ? (
-              <Col style={{ margin: 'auto 0' }}>
+              <Col md={10} style={{ margin: 'auto 0' }}>
                 <DropdownButton
                   as={ButtonGroup}
                   key="Success"
@@ -346,7 +354,7 @@ function ExplorePrepare({
               </Col>
             ) : (
               <>
-                <Col style={{ padding: 0, paddingLeft: 20 }}>
+                <Col md={10} style={{ padding: 0, paddingLeft: 20 }}>
                   <Button
                     id={menunames[1].query}
                     style={{ whiteSpace: 'nowrap' }}
@@ -429,44 +437,30 @@ function ExplorePrepare({
               </>
             )}
           </Row>
-        </Row>
-      </div>
-
-      <Row
-        xs="auto"
-        style={{
-          height: 'calc(100% - 96px)',
-        }}
-      >
-        <Col>
-          <h4>選択ファイル:</h4>
-        </Col>
-        <Col>
-          <div
-            style={{
-              backgroundColor: 'black',
-              width: '70vw',
-              height: '100%',
-            }}
-          >
-            <ul style={{ listStyleType: 'none', color: 'white' }}>
-              {fileNames.map((arr) => (
-                <li key={arr}>{arr}</li>
-              ))}
-            </ul>
-          </div>
+          <Row>
+            <div
+              style={{
+                backgroundColor: 'black',
+                width: '70vw',
+                height: '100%',
+              }}
+            >
+              <ul style={{ listStyleType: 'none', color: 'white' }}>
+                {fileNames.map((arr) => (
+                  <li key={arr}>{arr}</li>
+                ))}
+              </ul>
+            </div>
+          </Row>
         </Col>
       </Row>
-
       <LoadingButton loading={loading} processName={processName} />
-
       <AppToast
         show={showError}
         title="エラー"
         content={errorContent}
         closeCallback={() => setShowError(false)}
       />
-
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>ファイルを選択してください</Modal.Title>
