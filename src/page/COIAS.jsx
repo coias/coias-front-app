@@ -60,6 +60,7 @@ function COIAS({
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [validImages, setValidImages] = useState([]);
+  const [setting, setSetting] = useState(false);
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -342,6 +343,7 @@ function COIAS({
         isAutoSave={isAutoSave}
         setIsAutoSave={setIsAutoSave}
         setOriginalStarPos={setOriginalStarPos}
+        setSetting={setSetting}
       />
       <Container fluid>
         <Row>
@@ -372,6 +374,8 @@ function COIAS({
               disable={disable}
               setSelectedListState={setSelectedListState}
               writeMemo={isAutoSave ? writeMemo : () => {}}
+              setting={setting}
+              setSetting={setSetting}
             />
           </Col>
           <Col md={1} sm={1}>

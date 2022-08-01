@@ -6,7 +6,6 @@ function SettingModal({
   show,
   onHide,
   imageURLs,
-  // subImageURLs,
   setDefaultZoomRate,
   defaultZoomRate,
   setIsAutoSave,

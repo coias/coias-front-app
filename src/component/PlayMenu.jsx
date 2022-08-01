@@ -40,6 +40,7 @@ function PlayMenu({
   loading,
   handleNavigate,
   setOriginalStarPos,
+  setSetting,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -96,20 +97,36 @@ function PlayMenu({
     }
   };
 
-  const onClickBlinkStart = useCallback(() => {
-    setPlay(true);
-    if (intervalRef.current !== null) {
-      return;
-    }
-    // eslint-disable-next-line no-param-reassign
-    intervalRef.current = setInterval(() => {
-      // eslint-disable-next-line consistent-return
-      setCurrentPage((c) => {
-        if (c === imageNames.length - 1) return 0;
-        return c + 1;
-      });
-    }, sec);
-  }, [sec]);
+  const onClickBlinkStart = useCallback(
+    (tmpImage) => {
+      setPlay(true);
+      const array = tmpImage
+        .filter((item) => item.visible)
+        .map((image) =>
+          parseInt(
+            image.name.substr(0, 1) === '0'
+              ? image.name.substr(1, 1) - 1
+              : image.name.substr(0, 2) - 1,
+            10,
+          ),
+        );
+      let tmpIndex = 0;
+      if (intervalRef.current !== null) {
+        return;
+      }
+      // eslint-disable-next-line no-param-reassign
+      intervalRef.current = setInterval(() => {
+        if (tmpIndex === array.length - 1) {
+          tmpIndex = 0;
+          setCurrentPage(array[0]);
+        } else {
+          tmpIndex += 1;
+          setCurrentPage(array[tmpIndex]);
+        }
+      }, sec);
+    },
+    [sec],
+  );
 
   const onClickBlinkStop = useCallback(() => {
     setPlay(false);
@@ -122,7 +139,7 @@ function PlayMenu({
   }, []);
 
   useEffect(() => {
-    if (start) onClickBlinkStart();
+    if (start) onClickBlinkStart(imageNames);
     if (!start) onClickBlinkStop();
     if (next) {
       onClickNext();
@@ -146,13 +163,11 @@ function PlayMenu({
             10,
           ) - 1,
       );
-    console.log(array);
     return array;
   };
 
   return (
     <Navbar bg="light" expand="lg">
-      {/* {console.log(currentPage)} */}
       <Container fluid>
         <Col md={3}>
           <Nav>
@@ -161,7 +176,7 @@ function PlayMenu({
                 variant="light"
                 onClick={() => {
                   if (!play) {
-                    onClickBlinkStart();
+                    onClickBlinkStart(imageNames);
                   } else {
                     onClickBlinkStop();
                   }
@@ -254,15 +269,6 @@ function PlayMenu({
                         10,
                       ) - 1,
                     );
-                    console.log(
-                      'onChange',
-                      parseInt(
-                        name.name.substr(0, 1) === '0'
-                          ? name.name.substr(1, 1)
-                          : name.name.substr(0, 2),
-                        10,
-                      ) - 1,
-                    );
                     setRadioValue(e.currentTarget.value);
                   }}
                   bsstyle="default"
@@ -283,6 +289,7 @@ function PlayMenu({
               onHide={() => {
                 setSettingModalShow(false);
                 // setImageURLs(JSON.parse(JSON.stringify(imageNames)));
+                setSetting(true);
                 const array = setValid();
                 setCurrentPage(array[0]);
                 setIndex(0);
@@ -396,6 +403,7 @@ PlayMenu.propTypes = {
   isAutoSave: PropTypes.bool.isRequired,
   loading: PropTypes.bool,
   setOriginalStarPos: PropTypes.func,
+  setSetting: PropTypes.func.isRequired,
 };
 
 PlayMenu.defaultProps = {

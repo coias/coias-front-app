@@ -50,8 +50,8 @@ PanZoom.propTypes = {
   writeMemo: PropTypes.func,
   setConfirmMessage: PropTypes.func,
   setSelectedListState: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
-  // setCanvasScale: PropTypes.func,
+  setting: PropTypes.bool.isRequired,
+  setSetting: PropTypes.func.isRequired,
 };
 
 function PanZoom({
@@ -73,7 +73,8 @@ function PanZoom({
   writeMemo,
   setConfirmMessage,
   setSelectedListState,
-  // setCanvasScale,
+  setting,
+  setSetting,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -148,6 +149,8 @@ function PanZoom({
       const img = imageURLs[currentPage].nomasked
         ? window.images[currentPage][1]
         : window.images[currentPage][0];
+
+      setSetting(false);
 
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
@@ -258,6 +261,7 @@ function PanZoom({
     disable,
     zoomValue,
     loaded,
+    setting,
   ]);
 
   useEventListener('mousemove', relativeCoords, canvasRef.current);
