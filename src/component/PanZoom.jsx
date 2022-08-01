@@ -150,7 +150,7 @@ function PanZoom({
         ? window.images[currentPage][1]
         : window.images[currentPage][0];
 
-      setSetting(false);
+      if (setting) setSetting(false);
 
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);

@@ -71,6 +71,7 @@ function App() {
   const [start, setStart] = useState(false);
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
+  const [setting, setSetting] = useState(false);
 
   return (
     <BrowserRouter style={{ position: 'relative' }}>
@@ -119,6 +120,8 @@ function App() {
                       setNext={setNext}
                       back={back}
                       setBack={setBack}
+                      setting={setting}
+                      setSetting={setSetting}
                     />
                   }
                 />
@@ -139,6 +142,8 @@ function App() {
                       setBack={setBack}
                       leadStarNumber={leadStarNumber}
                       setLeadStarNumber={setLeadStarNumber}
+                      setting={setting}
+                      setSetting={setSetting}
                     />
                   }
                 />

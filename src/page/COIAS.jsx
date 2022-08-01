@@ -27,6 +27,8 @@ COIAS.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
+  setting: PropTypes.bool.isRequired,
+  setSetting: PropTypes.func.isRequired,
 };
 
 function COIAS({
@@ -43,6 +45,8 @@ function COIAS({
   setNext,
   back,
   setBack,
+  setting,
+  setSetting,
 }) {
   const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
@@ -60,7 +64,6 @@ function COIAS({
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [validImages, setValidImages] = useState([]);
-  const [setting, setSetting] = useState(false);
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
