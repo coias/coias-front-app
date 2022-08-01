@@ -19,14 +19,17 @@ function Header() {
           </Col>
           <Col>
             <Row>
-              <div className="p-0 m-0" style={{ color: '#28297E' }}>
+              <div
+                className="p-0 m-0"
+                style={{ color: '#28297E', fontSize: '15px' }}
+              >
                 Come On! Impacting ASteroid
               </div>
             </Row>
             <Row>
               <div
                 className="p-0 m-0"
-                style={{ color: '#28297E', fontSize: '30px' }}
+                style={{ color: '#28297E', fontSize: '25px' }}
               >
                 COIAS
               </div>
@@ -46,37 +49,53 @@ function Header() {
             style={{
               textDecoration: 'none',
               color: 'white',
-              marginLeft: 13,
+              marginLeft: 100,
+              textAlign: 'center',
             }}
           >
-            <h3>探索準備</h3>
+            <h3 style={{ fontSize: '22px' }}>探索準備</h3>
           </NavLink>
           <NavLink
             to="/COIAS"
             className={(navData) =>
               navData.isActive ? 'active' : 'not-active'
             }
-            style={{ textDecoration: 'none', color: 'white', marginLeft: 35 }}
+            style={{
+              textDecoration: 'none',
+              color: 'white',
+              marginLeft: 80,
+              textAlign: 'center',
+            }}
           >
-            <h3>探索/再描画</h3>
+            <h3 style={{ fontSize: '22px' }}>探索/再描画</h3>
           </NavLink>
           <NavLink
             to="/ManualMeasurement"
             className={(navData) =>
               navData.isActive ? 'active' : 'not-active'
             }
-            style={{ textDecoration: 'none', color: 'white', marginLeft: 35 }}
+            style={{
+              textDecoration: 'none',
+              color: 'white',
+              marginLeft: 80,
+              textAlign: 'center',
+            }}
           >
-            <h3>手動測定</h3>
+            <h3 style={{ fontSize: '22px' }}>手動測定</h3>
           </NavLink>
           <NavLink
             to="/Report"
             className={(navData) =>
               navData.isActive ? 'active' : 'not-active'
             }
-            style={{ textDecoration: 'none', color: 'white', marginLeft: 35 }}
+            style={{
+              textDecoration: 'none',
+              color: 'white',
+              marginLeft: 80,
+              textAlign: 'center',
+            }}
           >
-            <h3>レポート</h3>
+            <h3 style={{ fontSize: '22px' }}>レポート</h3>
           </NavLink>
         </Nav>
       </Navbar.Collapse>
