@@ -59,25 +59,22 @@ function PlayMenu({
     else setCurrentPage(currentPage - 1);
   };
 
-  const onClickBlinkStart = useCallback(
-    (imageURLs) => {
-      setPlay(true);
-      if (intervalRef.current !== null) {
-        return;
-      }
-      // eslint-disable-next-line no-param-reassign
-      intervalRef.current = setInterval(() => {
-        // eslint-disable-next-line consistent-return
-        setCurrentPage((c) => {
-          if (c === imageURLs.length - 1) {
-            return 0;
-          }
-          return c + 1;
-        });
-      }, sec);
-    },
-    [sec],
-  );
+  const onClickBlinkStart = useCallback(() => {
+    setPlay(true);
+    if (intervalRef.current !== null) {
+      return;
+    }
+    // eslint-disable-next-line no-param-reassign
+    intervalRef.current = setInterval(() => {
+      // eslint-disable-next-line consistent-return
+      setCurrentPage((c) => {
+        if (c === imageNames.length - 1) {
+          return 0;
+        }
+        return c + 1;
+      });
+    }, sec);
+  }, [sec]);
 
   const onClickBlinkStop = useCallback(() => {
     setPlay(false);
@@ -90,7 +87,7 @@ function PlayMenu({
   }, []);
 
   useEffect(() => {
-    if (start) onClickBlinkStart(imageNames);
+    if (start) onClickBlinkStart();
     if (!start) onClickBlinkStop();
     if (next) {
       onClickNext();
@@ -178,7 +175,7 @@ function PlayMenu({
                     setCurrentPage(index);
                     setRadioValue(e.currentTarget.value);
                   }}
-                  bsStyle="default"
+                  bsstyle="default"
                   style={{ fontWeight: 'bold', textAlign: 'center' }}
                 >
                   {name.name.substr(0, 1)}
