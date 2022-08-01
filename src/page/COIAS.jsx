@@ -17,6 +17,8 @@ import useEventListener from '../hooks/useEventListener';
 COIAS.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setImageURLs: PropTypes.func.isRequired,
+  subImageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setSubImageURLs: PropTypes.func.isRequired,
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
@@ -26,11 +28,15 @@ COIAS.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
+  setting: PropTypes.bool.isRequired,
+  setSetting: PropTypes.func.isRequired,
 };
 
 function COIAS({
   imageURLs,
   setImageURLs,
+  subImageURLs,
+  setSubImageURLs,
   originalStarPos,
   setOriginalStarPos,
   intervalRef,
@@ -40,6 +46,8 @@ function COIAS({
   setNext,
   back,
   setBack,
+  setting,
+  setSetting,
 }) {
   const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
@@ -57,6 +65,7 @@ function COIAS({
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const wrapperRef = useRef(null);
+  const [validImages, setValidImages] = useState([]);
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
@@ -142,6 +151,7 @@ function COIAS({
         o.nomasked = false;
       });
       setImageURLs(toObjectArray);
+      setSubImageURLs(toObjectArray);
       setLoading(false);
     };
     const getMemo = async () => {
@@ -276,8 +286,9 @@ function COIAS({
 
       return [masked, nomasked];
     });
-
-    setCurrentPage(0);
+    if (validImages.length !== 0) setCurrentPage(validImages[0]);
+    else setCurrentPage(0);
+    document.getElementById('wrapper-coias').focus();
   }, [imageURLs, memoList, isReload]);
 
   // 探索終了ボタンが押された時の処理
@@ -386,6 +397,9 @@ function COIAS({
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
+        validImages={validImages}
+        setValidImages={setValidImages}
+        subImageURLs={subImageURLs}
         intervalRef={intervalRef}
         start={start}
         next={next}
@@ -403,6 +417,7 @@ function COIAS({
         isAutoSave={isAutoSave}
         setIsAutoSave={setIsAutoSave}
         setOriginalStarPos={setOriginalStarPos}
+        setSetting={setSetting}
       />
       <Container fluid>
         <Row>
@@ -435,6 +450,8 @@ function COIAS({
               writeMemo={isAutoSave ? writeMemo : () => {}}
               scaleArray={scaleArray}
               wrapperRef={wrapperRef}
+              setting={setting}
+              setSetting={setSetting}
             />
           </Col>
           <Col md={1} sm={1}>

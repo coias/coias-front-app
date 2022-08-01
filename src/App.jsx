@@ -51,6 +51,7 @@ function App() {
   ]);
 
   const [imageURLs, setImageURLs] = useState([]);
+  const [subImageURLs, setSubImageURLs] = useState([]);
   const [originalStarPos, setOriginalStarPos] = useState({});
   const [leadStarNumber, setLeadStarNumber] = useState(0);
   const pageValue = useMemo(
@@ -70,6 +71,7 @@ function App() {
   const [start, setStart] = useState(false);
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
+  const [setting, setSetting] = useState(false);
 
   return (
     <BrowserRouter style={{ position: 'relative' }}>
@@ -108,6 +110,8 @@ function App() {
                       intervalRef={intervalRef}
                       imageURLs={imageURLs}
                       setImageURLs={setImageURLs}
+                      subImageURLs={subImageURLs}
+                      setSubImageURLs={setSubImageURLs}
                       originalStarPos={originalStarPos}
                       setOriginalStarPos={setOriginalStarPos}
                       start={start}
@@ -116,6 +120,8 @@ function App() {
                       setNext={setNext}
                       back={back}
                       setBack={setBack}
+                      setting={setting}
+                      setSetting={setSetting}
                     />
                   }
                 />
@@ -136,6 +142,8 @@ function App() {
                       setBack={setBack}
                       leadStarNumber={leadStarNumber}
                       setLeadStarNumber={setLeadStarNumber}
+                      setting={setting}
+                      setSetting={setSetting}
                     />
                   }
                 />

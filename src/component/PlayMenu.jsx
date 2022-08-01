@@ -20,7 +20,7 @@ import HelpModal from './HelpModal';
 
 function PlayMenu({
   imageNames,
-  setImageURLs,
+  // setImageURLs,
   intervalRef,
   setDefaultZoomRate,
   defaultZoomRate,
@@ -40,6 +40,7 @@ function PlayMenu({
   loading,
   handleNavigate,
   setOriginalStarPos,
+  setSetting,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -48,33 +49,84 @@ function PlayMenu({
   const [helpModalShow, setHelpModalShow] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
   const { starPos, setStarPos } = useContext(StarPositionContext);
+  const [index, setIndex] = useState(0);
+  // const [subImages, setSubImages] = useState([]);
 
   const onClickNext = () => {
-    if (currentPage === imageNames.length - 1) setCurrentPage(0);
-    else setCurrentPage(currentPage + 1);
+    const array = imageNames
+      .filter((item) => item.visible)
+      .map((image) =>
+        parseInt(
+          image.name.substr(0, 1) === '0'
+            ? image.name.substr(1, 1) - 1
+            : image.name.substr(0, 2) - 1,
+          10,
+        ),
+      );
+    const preindex = index;
+    if (currentPage === array[array.length - 1]) {
+      setIndex(0);
+      setCurrentPage(array[0]);
+    } else {
+      setIndex(preindex + 1);
+      setCurrentPage(array[preindex + 1]);
+    }
   };
 
   const onClickBack = () => {
     if (currentPage === 0) setCurrentPage(imageNames.length - 1);
     else setCurrentPage(currentPage - 1);
+
+    const array = imageNames
+      .filter((item) => item.visible)
+      .map((image) =>
+        parseInt(
+          image.name.substr(0, 1) === '0'
+            ? image.name.substr(1, 1) - 1
+            : image.name.substr(0, 2) - 1,
+          10,
+        ),
+      );
+    const preindex = index;
+    if (preindex === 0) {
+      setIndex(array.length - 1);
+      setCurrentPage(array[array.length - 1]);
+    } else {
+      setIndex(preindex - 1);
+      setCurrentPage(array[preindex - 1]);
+    }
   };
 
-  const onClickBlinkStart = useCallback(() => {
-    setPlay(true);
-    if (intervalRef.current !== null) {
-      return;
-    }
-    // eslint-disable-next-line no-param-reassign
-    intervalRef.current = setInterval(() => {
-      // eslint-disable-next-line consistent-return
-      setCurrentPage((c) => {
-        if (c === imageNames.length - 1) {
-          return 0;
+  const onClickBlinkStart = useCallback(
+    (tmpImage) => {
+      setPlay(true);
+      const array = tmpImage
+        .filter((item) => item.visible)
+        .map((image) =>
+          parseInt(
+            image.name.substr(0, 1) === '0'
+              ? image.name.substr(1, 1) - 1
+              : image.name.substr(0, 2) - 1,
+            10,
+          ),
+        );
+      let tmpIndex = 0;
+      if (intervalRef.current !== null) {
+        return;
+      }
+      // eslint-disable-next-line no-param-reassign
+      intervalRef.current = setInterval(() => {
+        if (tmpIndex === array.length - 1) {
+          tmpIndex = 0;
+          setCurrentPage(array[0]);
+        } else {
+          tmpIndex += 1;
+          setCurrentPage(array[tmpIndex]);
         }
-        return c + 1;
-      });
-    }, sec);
-  }, [sec]);
+      }, sec);
+    },
+    [sec],
+  );
 
   const onClickBlinkStop = useCallback(() => {
     setPlay(false);
@@ -87,7 +139,7 @@ function PlayMenu({
   }, []);
 
   useEffect(() => {
-    if (start) onClickBlinkStart();
+    if (start) onClickBlinkStart(imageNames);
     if (!start) onClickBlinkStop();
     if (next) {
       onClickNext();
@@ -99,6 +151,21 @@ function PlayMenu({
     }
   }, [start, next, back]);
 
+  const setValid = () => {
+    const array = imageNames
+      .filter((item) => item.visible)
+      .map(
+        (image) =>
+          parseInt(
+            image.name.substr(0, 1) === '0'
+              ? image.name.substr(1, 1)
+              : image.name.substr(0, 2),
+            10,
+          ) - 1,
+      );
+    return array;
+  };
+
   return (
     <Navbar bg="light" expand="lg">
       <Container fluid>
@@ -109,7 +176,7 @@ function PlayMenu({
                 variant="light"
                 onClick={() => {
                   if (!play) {
-                    onClickBlinkStart();
+                    onClickBlinkStart(imageNames);
                   } else {
                     onClickBlinkStop();
                   }
@@ -159,26 +226,57 @@ function PlayMenu({
           <ButtonGroup className="flex-grow-1">
             {imageNames
               .filter((img) => img.visible)
-              .map((name, index) => (
+              .map((name) => (
                 <ToggleButton
-                  id={`radio-${index}`}
+                  id={`radio-${
+                    parseInt(
+                      name.name.substr(0, 1) === '0'
+                        ? name.name.substr(1, 1)
+                        : name.name.substr(0, 2),
+                      10,
+                    ) - 1
+                  }`}
                   type="radio"
                   variant="outline-secondary"
                   name="radio"
                   value={name.name}
                   key={name.name}
                   checked={
-                    (radioValue === name.name && currentPage === index) ||
-                    currentPage === index
+                    (radioValue === name.name &&
+                      currentPage ===
+                        parseInt(
+                          name.name.substr(0, 1) === '0'
+                            ? name.name.substr(1, 1)
+                            : name.name.substr(0, 2),
+                          10,
+                        ) -
+                          1) ||
+                    currentPage ===
+                      parseInt(
+                        name.name.substr(0, 1) === '0'
+                          ? name.name.substr(1, 1)
+                          : name.name.substr(0, 2),
+                        10,
+                      ) -
+                        1
                   }
                   onChange={(e) => {
-                    setCurrentPage(index);
+                    setCurrentPage(
+                      parseInt(
+                        name.name.substr(0, 1) === '0'
+                          ? name.name.substr(1, 1)
+                          : name.name.substr(0, 2),
+                        10,
+                      ) - 1,
+                    );
                     setRadioValue(e.currentTarget.value);
                   }}
                   bsstyle="default"
                   style={{ fontWeight: 'bold', textAlign: 'center' }}
                 >
-                  {name.name.substr(0, 1)}
+                  {name.name.substr(0, 1) === '0'
+                    ? name.name.substr(1, 1)
+                    : name.name.substr(0, 2)}
                 </ToggleButton>
               ))}
           </ButtonGroup>
@@ -190,7 +288,11 @@ function PlayMenu({
               show={settingModalShow}
               onHide={() => {
                 setSettingModalShow(false);
-                setImageURLs(JSON.parse(JSON.stringify(imageNames)));
+                // setImageURLs(JSON.parse(JSON.stringify(imageNames)));
+                setSetting(true);
+                const array = setValid();
+                setCurrentPage(array[0]);
+                setIndex(0);
               }}
               title="表示設定"
               imageURLs={imageNames}
@@ -206,7 +308,6 @@ function PlayMenu({
               show={helpModalShow}
               onHide={() => {
                 setHelpModalShow(false);
-                setImageURLs(JSON.parse(JSON.stringify(imageNames)));
               }}
               title="ヘルプ"
               imageURLs={imageNames}
@@ -281,7 +382,7 @@ function PlayMenu({
 
 PlayMenu.propTypes = {
   imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
-  setImageURLs: PropTypes.func.isRequired,
+  // setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.number).isRequired,
   setDefaultZoomRate: PropTypes.func,
   defaultZoomRate: PropTypes.number,
@@ -301,6 +402,7 @@ PlayMenu.propTypes = {
   isAutoSave: PropTypes.bool.isRequired,
   loading: PropTypes.bool,
   setOriginalStarPos: PropTypes.func,
+  setSetting: PropTypes.func.isRequired,
 };
 
 PlayMenu.defaultProps = {

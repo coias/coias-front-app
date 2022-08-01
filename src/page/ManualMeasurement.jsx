@@ -32,6 +32,8 @@ function ManualMeasurement({
   leadStarNumber,
   setLeadStarNumber,
   originalStarPos,
+  setting,
+  setSetting,
 }) {
   const [show, setShow] = useState(false);
   const [isSelect, setIsSelect] = useState(true);
@@ -106,7 +108,7 @@ function ManualMeasurement({
   };
   const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
-  const { currentPage, setCurrentPage } = useContext(PageContext);
+  const { currentPage } = useContext(PageContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -261,7 +263,8 @@ function ManualMeasurement({
       return [masked, nomasked];
     });
 
-    setCurrentPage(0);
+    // setCurrentPage(0);
+    document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
   const onClickFinishButton = async (filteredList = []) => {
@@ -388,6 +391,8 @@ function ManualMeasurement({
         originalStarPos={originalStarPos}
         loading={loading}
         handleNavigate={handleNavigate}
+        setting={setting}
+        setSetting={setSetting}
       />
       <Container fluid>
         <Row className="m-0 p-0">
@@ -427,6 +432,8 @@ function ManualMeasurement({
               wrapperRef={wrapperRef}
               setRenameNewStarModalShow={setRenameNewStarModalShow}
               setOldStarName={setOldStarName}
+              setting={setting}
+              setSetting={setSetting}
             />
           </Col>
           <Col sm={2} md={2}>
@@ -559,4 +566,6 @@ ManualMeasurement.propTypes = {
   setBack: PropTypes.func.isRequired,
   leadStarNumber: PropTypes.number.isRequired,
   setLeadStarNumber: PropTypes.func.isRequired,
+  setting: PropTypes.bool.isRequired,
+  setSetting: PropTypes.func.isRequired,
 };

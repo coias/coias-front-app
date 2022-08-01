@@ -63,6 +63,8 @@ PanZoom.propTypes = {
   wrapperRef: PropTypes.objectOf(PropTypes.object).isRequired,
   setRenameNewStarModalShow: PropTypes.func,
   setOldStarName: PropTypes.func,
+  setting: PropTypes.bool.isRequired,
+  setSetting: PropTypes.func.isRequired,
 };
 
 function PanZoom({
@@ -88,6 +90,8 @@ function PanZoom({
   wrapperRef,
   setRenameNewStarModalShow,
   setOldStarName,
+  setting,
+  setSetting,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -157,6 +161,8 @@ function PanZoom({
       const img = imageURLs[currentPage].nomasked
         ? window.images[currentPage][1]
         : window.images[currentPage][0];
+
+      if (setting) setSetting(false);
 
       setImageHeight(img.naturalHeight);
       setImageWidth(img.naturalWidth);
@@ -280,6 +286,7 @@ function PanZoom({
     disable,
     scaleArray,
     loaded,
+    setting,
   ]);
 
   useEventListener('mousemove', relativeCoords, canvasRef.current);
