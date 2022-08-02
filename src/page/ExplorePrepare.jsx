@@ -304,27 +304,22 @@ function ExplorePrepare({
   return (
     <div
       style={{
-        padding: '20px',
+        padding: '40px',
         height: '100%',
       }}
     >
       <Row>
         <Col md={2}>
-          <Row>
+          <Row style={{ marginBottom: '40px' }}>
             <h4>探索準備</h4>
           </Row>
-          <Row>
+          <Row style={{ marginBottom: '40px' }}>
             <h4>選択ファイル</h4>
           </Row>
         </Col>
-        {/* style=
-      {{
-        height: 'calc(100% - 96px)',
-      }}
-      */}
         <Col md={10}>
-          <Row>
-            <Col style={{ padding: 0 }}>
+          <Row xs="auto" style={{ marginBottom: '40px' }}>
+            <Col style={{ margin: 'auto 0' }}>
               <Button
                 variant={menunames[0].done ? 'success' : 'primary'}
                 style={{ whiteSpace: 'nowrap' }}
@@ -336,7 +331,7 @@ function ExplorePrepare({
               </Button>
             </Col>
             {val === 'auto' ? (
-              <Col md={10} style={{ margin: 'auto 0' }}>
+              <Col style={{ margin: 'auto 0' }}>
                 <DropdownButton
                   as={ButtonGroup}
                   key="Success"
@@ -354,7 +349,7 @@ function ExplorePrepare({
               </Col>
             ) : (
               <>
-                <Col md={10} style={{ padding: 0, paddingLeft: 20 }}>
+                <Col style={{ paddingRight: 0 }}>
                   <Button
                     id={menunames[1].query}
                     style={{ whiteSpace: 'nowrap' }}
@@ -438,19 +433,21 @@ function ExplorePrepare({
             )}
           </Row>
           <Row>
-            <div
-              style={{
-                backgroundColor: 'black',
-                width: '70vw',
-                height: '100%',
-              }}
-            >
-              <ul style={{ listStyleType: 'none', color: 'white' }}>
-                {fileNames.map((arr) => (
-                  <li key={arr}>{arr}</li>
-                ))}
-              </ul>
-            </div>
+            <Col style={{ margin: 'auto 0' }}>
+              <div
+                style={{
+                  backgroundColor: 'black',
+                  width: '70vw',
+                  height: '100%',
+                }}
+              >
+                <ul style={{ listStyleType: 'none', color: 'white' }}>
+                  {fileNames.map((arr) => (
+                    <li key={arr}>{arr}</li>
+                  ))}
+                </ul>
+              </div>
+            </Col>
           </Row>
         </Col>
       </Row>

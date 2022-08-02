@@ -5,7 +5,11 @@ import { NavLink } from 'react-router-dom';
 function Header() {
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <Navbar className="color-nav" variant="dark">
+    <Navbar
+      className="color-nav"
+      variant="dark"
+      style={{ padding: 0, paddingTop: '5px' }}
+    >
       <Navbar.Brand className="px-3">
         <Row>
           <Col>
@@ -40,12 +44,13 @@ function Header() {
 
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="me-auto">
+        {/* <Nav className="me-auto"> */}
+        <Nav className=".mt-2">
           <NavLink
             to="/"
-            className={(navData) =>
-              navData.isActive ? 'active' : 'not-active'
-            }
+            // className={(navData) =>
+            //   navData.isActive ? 'active' : 'not-active'
+            // }
             style={{
               textDecoration: 'none',
               color: 'white',
@@ -53,7 +58,18 @@ function Header() {
               textAlign: 'center',
             }}
           >
-            <h3 style={{ fontSize: '22px' }}>探索準備</h3>
+            <h3
+              className={(navData) =>
+                navData.isActive ? 'active' : 'not-active'
+              }
+              style={{
+                fontSize: '22px',
+                margin: 0,
+                marginTop: '20px',
+              }}
+            >
+              探索準備
+            </h3>
           </NavLink>
           <NavLink
             to="/COIAS"
@@ -67,7 +83,12 @@ function Header() {
               textAlign: 'center',
             }}
           >
-            <h3 style={{ fontSize: '22px' }}>探索/再描画</h3>
+            <h3
+              // className="active-test"
+              style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}
+            >
+              探索/再描画
+            </h3>
           </NavLink>
           <NavLink
             to="/ManualMeasurement"
@@ -81,7 +102,9 @@ function Header() {
               textAlign: 'center',
             }}
           >
-            <h3 style={{ fontSize: '22px' }}>手動測定</h3>
+            <h3 style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}>
+              手動測定
+            </h3>
           </NavLink>
           <NavLink
             to="/Report"
@@ -95,7 +118,9 @@ function Header() {
               textAlign: 'center',
             }}
           >
-            <h3 style={{ fontSize: '22px' }}>レポート</h3>
+            <h3 style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}>
+              レポート
+            </h3>
           </NavLink>
         </Nav>
       </Navbar.Collapse>

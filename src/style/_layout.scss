@@ -76,9 +76,36 @@ canvas {
 }
 
 .active {
+  padding-bottom: 20px;
   color: #fff !important;
-  border-bottom: 3px solid white;
+  border-bottom: 4px solid white;
 }
+
+// .active::after {
+//   position: absolute;
+//   bottom: -30px;
+//   left: 50%;
+//   display: block;
+//   width: 90px;
+//   height: 4px;
+//   visibility: visible;
+//   content: '';
+//   background-color: black;
+//   transform: translate(-50%);
+// }
+
+// h3::after {
+//   position: absolute;
+//   bottom: -30px;
+//   left: 50%;
+//   display: block;
+//   width: 80px;
+//   height: 5px;
+//   visibility: visible;
+//   content: '';
+//   background-color: white;
+//   transform: translate(-50%);
+// }
 
 .not-active:hover {
   color: white !important;
