@@ -10,8 +10,10 @@ function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
   const [dispLimit, setDispLimit] = useState(100);
 
   useEffect(() => {
-    console.log(starPos);
-  }, []);
+    if (dispLimit !== 100) {
+      setDispLimit(100);
+    }
+  }, [currentPage]);
 
   return (
     <Form className="star-list">
