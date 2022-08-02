@@ -3,7 +3,7 @@
  *
  */
 import axios from 'axios';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Button,
   Row,
@@ -65,6 +65,17 @@ function ExplorePrepare({
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const [parametars, setParametars] = useState(['4', '6', '2000']);
+  const [checkSend, setCheckSend] = useState(['true', 'true', 'true', 'true']);
+
+  useEffect(() => {
+    if (!checkSend.includes(true)) {
+      setDisabled(false);
+      setAlertMessage('');
+    } else {
+      setDisabled(true);
+      setAlertMessage('数字を入力してください');
+    }
+  }, [checkSend]);
 
   const handleSelect = (e) => setVal(e.target.value);
 
@@ -77,9 +88,15 @@ function ExplorePrepare({
     // ファイル変更時
     if (e.target.value !== '') {
       setValid(false);
+      setCheckSend(
+        checkSend.map((judge, index) => (index === 0 ? false : judge)),
+      );
       setDisabled(false);
     } else {
       setValid(true);
+      setCheckSend(
+        checkSend.map((judge, index) => (index === 0 ? true : judge)),
+      );
       setDisabled(true);
     }
   };
@@ -94,6 +111,18 @@ function ExplorePrepare({
       setFileAlertModalshow(true);
     }
   };
+
+  /* const judgement = () => {
+    if (!checkSend.includes(true)) {
+      setDisabled(false);
+      console.log('表示したい');
+      console.log(checkSend);
+    } else {
+      setDisabled(true);
+      console.log('表示したくない');
+      console.log(checkSend);
+    }
+  }; */
 
   const updateMenunames = () => {
     setMenunames((prevMenunames) =>
@@ -596,11 +625,17 @@ function ExplorePrepare({
                           ),
                         );
                         if (e.target.value.match(/[^0-9]/gm)) {
-                          setAlertMessage('数字を入力してください');
-                          setDisabled(true);
+                          setCheckSend(
+                            checkSend.map((judge, index) =>
+                              index === 1 ? true : judge,
+                            ),
+                          );
                         } else {
-                          setAlertMessage('');
-                          setDisabled(false);
+                          setCheckSend(
+                            checkSend.map((judge, index) =>
+                              index === 1 ? false : judge,
+                            ),
+                          );
                         }
                       }}
                     />
@@ -626,11 +661,17 @@ function ExplorePrepare({
                           ),
                         );
                         if (e.target.value.match(/[^0-9]/gm)) {
-                          setAlertMessage('数字を入力してください');
-                          setDisabled(true);
+                          setCheckSend(
+                            checkSend.map((judge, index) =>
+                              index === 2 ? true : judge,
+                            ),
+                          );
                         } else {
-                          setAlertMessage('');
-                          setDisabled(false);
+                          setCheckSend(
+                            checkSend.map((judge, index) =>
+                              index === 2 ? false : judge,
+                            ),
+                          );
                         }
                       }}
                     />
@@ -654,11 +695,17 @@ function ExplorePrepare({
                         ),
                       );
                       if (e.target.value.match(/[^0-9]/gm)) {
-                        setAlertMessage('数字を入力してください');
-                        setDisabled(true);
+                        setCheckSend(
+                          checkSend.map((judge, index) =>
+                            index === 3 ? true : judge,
+                          ),
+                        );
                       } else {
-                        setAlertMessage('');
-                        setDisabled(false);
+                        setCheckSend(
+                          checkSend.map((judge, index) =>
+                            index === 3 ? false : judge,
+                          ),
+                        );
                       }
                     }}
                   />
