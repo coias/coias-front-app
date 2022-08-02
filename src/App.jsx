@@ -53,6 +53,7 @@ function App() {
   const [imageURLs, setImageURLs] = useState([]);
   const [originalStarPos, setOriginalStarPos] = useState({});
   const [leadStarNumber, setLeadStarNumber] = useState(0);
+  const MAIN_COLOR = '#28297E';
   const pageValue = useMemo(
     () => ({ currentPage, setCurrentPage }),
     [currentPage],
@@ -116,6 +117,7 @@ function App() {
                       setNext={setNext}
                       back={back}
                       setBack={setBack}
+                      MAIN_COLOR={MAIN_COLOR}
                     />
                   }
                 />

@@ -9,6 +9,7 @@ import {
   Form,
   Spinner,
 } from 'react-bootstrap';
+import { IconContext } from 'react-icons';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle } from 'react-icons/bi';
@@ -40,6 +41,7 @@ function PlayMenu({
   loading,
   handleNavigate,
   setOriginalStarPos,
+  MAIN_COLOR,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -118,7 +120,12 @@ function PlayMenu({
                   }
                 }}
               >
-                {play ? <FaStop size={30} /> : <FaPlay size={30} />}
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{ color: MAIN_COLOR }}
+                >
+                  {play ? <FaStop size={30} /> : <FaPlay size={30} />}
+                </IconContext.Provider>
               </Button>
             </Nav.Item>
             <Nav.Item className="text-center d-flex m-1">
@@ -128,7 +135,12 @@ function PlayMenu({
                   onClickBack();
                 }}
               >
-                <FaStepBackward size={30} />
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{ color: MAIN_COLOR }}
+                >
+                  <FaStepBackward size={30} />
+                </IconContext.Provider>
               </Button>
             </Nav.Item>
             <Nav.Item className="text-center d-flex m-0">
@@ -138,7 +150,12 @@ function PlayMenu({
                   onClickNext();
                 }}
               >
-                <FaStepForward size={30} />
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{ color: MAIN_COLOR }}
+                >
+                  <FaStepForward size={30} />
+                </IconContext.Provider>
               </Button>
             </Nav.Item>
             <Nav.Item className="d-flex">
@@ -166,7 +183,7 @@ function PlayMenu({
                 <ToggleButton
                   id={`radio-${index}`}
                   type="radio"
-                  variant="outline-secondary"
+                  variant="outline-primary"
                   name="radio"
                   value={name.name}
                   key={name.name}
@@ -179,7 +196,10 @@ function PlayMenu({
                     setRadioValue(e.currentTarget.value);
                   }}
                   bsStyle="default"
-                  style={{ fontWeight: 'bold', textAlign: 'center' }}
+                  style={{
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
                 >
                   {name.name.substr(0, 1)}
                 </ToggleButton>
@@ -187,7 +207,12 @@ function PlayMenu({
           </ButtonGroup>
           <ButtonGroup className="mx-5">
             <Button variant="light" onClick={() => setSettingModalShow(true)}>
-              <AiFillSetting size={30} />
+              <IconContext.Provider
+                // eslint-disable-next-line react/jsx-no-constructed-context-values
+                value={{ color: MAIN_COLOR }}
+              >
+                <AiFillSetting size={30} />
+              </IconContext.Provider>
             </Button>
             <SettingModal
               show={settingModalShow}
@@ -203,7 +228,12 @@ function PlayMenu({
               isAutoSave={isAutoSave}
             />
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
-              <BiHelpCircle size={30} />
+              <IconContext.Provider
+                // eslint-disable-next-line react/jsx-no-constructed-context-values
+                value={{ color: MAIN_COLOR }}
+              >
+                <BiHelpCircle size={30} />
+              </IconContext.Provider>
             </Button>
             <HelpModal
               show={helpModalShow}
@@ -304,6 +334,7 @@ PlayMenu.propTypes = {
   isAutoSave: PropTypes.bool.isRequired,
   loading: PropTypes.bool,
   setOriginalStarPos: PropTypes.func,
+  MAIN_COLOR: PropTypes.string.isRequired,
 };
 
 PlayMenu.defaultProps = {

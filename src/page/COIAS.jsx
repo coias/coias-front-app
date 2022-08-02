@@ -26,6 +26,7 @@ COIAS.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
+  MAIN_COLOR: PropTypes.string.isRequired,
 };
 
 function COIAS({
@@ -40,6 +41,7 @@ function COIAS({
   setNext,
   back,
   setBack,
+  MAIN_COLOR,
 }) {
   const [isSelect, setIsSelect] = useState(true);
   const [isReload, setIsReload] = useState(false);
@@ -403,6 +405,7 @@ function COIAS({
         isAutoSave={isAutoSave}
         setIsAutoSave={setIsAutoSave}
         setOriginalStarPos={setOriginalStarPos}
+        MAIN_COLOR={MAIN_COLOR}
       />
       <Container fluid>
         <Row>
@@ -417,6 +420,7 @@ function COIAS({
             setIsReload={setIsReload}
             isHide={isHide}
             setIsHide={setIsHide}
+            MAIN_COLOR={MAIN_COLOR}
           />
           <Col md={10}>
             <PanZoom

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+// import { IconContext } from 'react-icons';
 import { Button, Col } from 'react-bootstrap';
 import { FaMousePointer } from 'react-icons/fa';
 import { AiOutlineReload } from 'react-icons/ai';
@@ -20,6 +21,7 @@ COIASToolBar.propTypes = {
   setContrastVal: PropTypes.func.isRequired,
   isHide: PropTypes.bool.isRequired,
   setIsHide: PropTypes.func.isRequired,
+  // MAIN_COLOR: PropTypes.string.isRequired,
 };
 
 function COIASToolBar({
@@ -33,6 +35,7 @@ function COIASToolBar({
   setContrastVal,
   isHide,
   setIsHide,
+  // MAIN_COLOR,
 }) {
   const { setStarPos } = useContext(StarPositionContext);
   return (

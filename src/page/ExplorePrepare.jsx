@@ -16,7 +16,7 @@ import {
   InputGroup,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { AiOutlineArrowRight } from 'react-icons/ai';
+import { HiOutlineArrowSmRight } from 'react-icons/hi';
 import LoadingButton from '../component/LoadingButton';
 import AppToast from '../component/AppToast';
 import ErrorModal from '../component/ErrorModal';
@@ -362,7 +362,7 @@ function ExplorePrepare({
                   </Button>
                 </Col>
                 <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <AiOutlineArrowRight size={24} />
+                  <HiOutlineArrowSmRight size={28} />
                 </Col>
                 <Col style={{ padding: 0 }}>
                   <DropdownButton
@@ -385,7 +385,7 @@ function ExplorePrepare({
                   </DropdownButton>
                 </Col>
                 <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <AiOutlineArrowRight size={24} />
+                  <HiOutlineArrowSmRight size={28} />
                 </Col>
                 <Col style={{ padding: 0 }}>
                   <Button
@@ -400,7 +400,7 @@ function ExplorePrepare({
                   </Button>
                 </Col>
                 <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <AiOutlineArrowRight size={24} />
+                  <HiOutlineArrowSmRight size={28} />
                 </Col>
                 <Col style={{ padding: 0 }}>
                   <Button
@@ -415,7 +415,7 @@ function ExplorePrepare({
                   </Button>
                 </Col>
                 <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <AiOutlineArrowRight size={24} />
+                  <HiOutlineArrowSmRight size={28} />
                 </Col>
                 <Col style={{ padding: 0 }}>
                   <Button
@@ -438,7 +438,9 @@ function ExplorePrepare({
                 style={{
                   backgroundColor: 'black',
                   width: '70vw',
-                  height: '100%',
+                  height: '500px',
+                  border: '3px solid #282A7F',
+                  borderRadius: '4px',
                 }}
               >
                 <ul style={{ listStyleType: 'none', color: 'white' }}>
