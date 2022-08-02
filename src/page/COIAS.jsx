@@ -181,6 +181,7 @@ function COIAS({
         if (!star) {
           toObject[item[0]] = {
             name: item[0],
+            newName: item[0],
             page: Array(fileNum).fill(null),
             isSelected: memoList.find(
               (memoName) => memoName === item[0].replace('H', ''),
@@ -209,6 +210,7 @@ function COIAS({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
+              newName: item[0],
               page: Array(fileNum).fill(null),
               isSelected: memoList.find(
                 (memoName) => memoName === item[0].replace('H', ''),
@@ -231,6 +233,7 @@ function COIAS({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
+              newName: item[0],
               page: Array(fileNum).fill(null),
               isSelected: memoList.find(
                 (memoName) => memoName === item[0].replace('H', ''),
@@ -286,9 +289,11 @@ function COIAS({
 
       return [masked, nomasked];
     });
-    if (validImages.length !== 0) setCurrentPage(validImages[0]);
-    else setCurrentPage(0);
-    document.getElementById('wrapper-coias').focus();
+    if (validImages.length !== 0) {
+      setCurrentPage(validImages[0]);
+    } else {
+      setCurrentPage(0);
+    }
   }, [imageURLs, memoList, isReload]);
 
   // 探索終了ボタンが押された時の処理

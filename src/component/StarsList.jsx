@@ -1,11 +1,17 @@
-import React, { useContext } from 'react';
-import { Form } from 'react-bootstrap';
+import React, { useContext, useState, useEffect } from 'react';
+import { Button, Form } from 'react-bootstrap';
+import { MdOutlineExpandMore } from 'react-icons/md';
 import PropTypes from 'prop-types';
 import { PageContext, StarPositionContext } from './context';
 
 function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
   const { currentPage } = useContext(PageContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
+  const [dispLimit, setDispLimit] = useState(100);
+
+  useEffect(() => {
+    console.log(starPos);
+  }, []);
 
   return (
     <Form className="star-list">
@@ -13,46 +19,58 @@ function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
         .sort()
         .map((key) => starPos[key])
         .map((pos, index) => {
-          if (pos.page[currentPage]) {
-            if (!pos.isKnown && !isManual) {
+          if (index < dispLimit) {
+            if (pos.page[currentPage]) {
+              if (!pos.isKnown && !isManual) {
+                return (
+                  <div className="mb-3" key={pos.name}>
+                    <Form.Check
+                      type="checkbox"
+                      disabled={!disable}
+                      checked={pos.isSelected ? pos.isSelected : false}
+                      onChange={() => {
+                        const newStarPos = JSON.parse(JSON.stringify(starPos));
+                        newStarPos[pos.name].isSelected = !pos.isSelected;
+                        setSelectedListState((prevList) => {
+                          const prevListCopy = prevList.concat();
+                          prevListCopy[index] = !prevListCopy[index];
+                          return prevListCopy;
+                        });
+                        writeMemo(newStarPos);
+                        setStarPos(newStarPos);
+                      }}
+                      inline
+                      id={pos.name}
+                      label={pos.name}
+                    />
+                  </div>
+                );
+              }
               return (
                 <div className="mb-3" key={pos.name}>
                   <Form.Check
+                    disabled
                     type="checkbox"
-                    disabled={!disable}
-                    checked={pos.isSelected ? pos.isSelected : false}
-                    onChange={() => {
-                      const newStarPos = JSON.parse(JSON.stringify(starPos));
-                      newStarPos[pos.name].isSelected = !pos.isSelected;
-                      setSelectedListState((prevList) => {
-                        const prevListCopy = prevList.concat();
-                        prevListCopy[index] = !prevListCopy[index];
-                        return prevListCopy;
-                      });
-                      writeMemo(newStarPos);
-                      setStarPos(newStarPos);
-                    }}
-                    inline
                     id={pos.name}
-                    label={pos.name}
+                    label={pos.name === pos.newName ? pos.name : pos.newName}
+                    checked={false}
                   />
                 </div>
               );
             }
-            return (
-              <div className="mb-3" key={pos.name}>
-                <Form.Check
-                  disabled
-                  type="checkbox"
-                  id={pos.name}
-                  label={pos.name === pos.newName ? pos.name : pos.newName}
-                  checked={false}
-                />
-              </div>
-            );
           }
           return null;
         })}
+      {dispLimit < Object.keys(starPos).length && dispLimit === 100 && (
+        <Button
+          onClick={() => {
+            setDispLimit(Object.keys(starPos).length);
+          }}
+        >
+          <MdOutlineExpandMore size={20} />
+          more
+        </Button>
+      )}
     </Form>
   );
 }

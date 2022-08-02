@@ -50,7 +50,6 @@ function PlayMenu({
   const [radioValue, setRadioValue] = useState('1');
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const [index, setIndex] = useState(0);
-  // const [subImages, setSubImages] = useState([]);
 
   const onClickNext = () => {
     const array = imageNames
