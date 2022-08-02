@@ -64,16 +64,16 @@ function ExplorePrepare({
   const [fileNum, setFileNum] = useState(0);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
-  const [parametars, setParametars] = useState(['4', '6', '2000']);
-  const [checkSend, setCheckSend] = useState(['true', 'true', 'true', 'true']);
+  const [parameters, setParameters] = useState(['4', '6', '2000']);
+  const [checkSend, setCheckSend] = useState([true, true, true, true]);
 
   useEffect(() => {
-    if (!checkSend.includes(true)) {
+    if (!checkSend.includes(false)) {
       setDisabled(false);
       setAlertMessage('');
     } else {
       setDisabled(true);
-      setAlertMessage('数字を入力してください');
+      setAlertMessage('数字を入力してください。');
     }
   }, [checkSend]);
 
@@ -89,13 +89,13 @@ function ExplorePrepare({
     if (e.target.value !== '') {
       setValid(false);
       setCheckSend(
-        checkSend.map((judge, index) => (index === 0 ? false : judge)),
+        checkSend.map((judge, index) => (index === 0 ? true : judge)),
       );
       setDisabled(false);
     } else {
       setValid(true);
       setCheckSend(
-        checkSend.map((judge, index) => (index === 0 ? true : judge)),
+        checkSend.map((judge, index) => (index === 0 ? false : judge)),
       );
       setDisabled(true);
     }
@@ -106,23 +106,11 @@ function ExplorePrepare({
     const response = await axios.put(`${reactApiUri}copy`);
     const dataList = response.data.result.sort();
     if (fileNum !== dataList.length / 2) {
-      setAlertMessage('ファイルの中身が異なる可能性があります');
+      setAlertMessage('ファイルの中身が異なる可能性があります。');
       setAlertButtonMessage('アップロードに戻る');
       setFileAlertModalshow(true);
     }
   };
-
-  /* const judgement = () => {
-    if (!checkSend.includes(true)) {
-      setDisabled(false);
-      console.log('表示したい');
-      console.log(checkSend);
-    } else {
-      setDisabled(true);
-      console.log('表示したくない');
-      console.log(checkSend);
-    }
-  }; */
 
   const updateMenunames = () => {
     setMenunames((prevMenunames) =>
@@ -182,12 +170,12 @@ function ExplorePrepare({
         const b = file.name.split(`-`);
         const isSame = tmp === `${b[3]}${b[4]}`;
         if (!isSame) {
-          errorFileNames.push(`${file.name}は観測領域が異なります`);
+          errorFileNames.push(`${file.name}は観測領域が異なります。`);
         }
       }
 
       if (!isMatch) {
-        errorFileNames.push(`${file.name}のファイル名の形式が違います`);
+        errorFileNames.push(`${file.name}のファイル名の形式が違います。`);
       }
 
       data.append('files', file, file.name);
@@ -310,10 +298,10 @@ function ExplorePrepare({
   /**
    * 全自動処理。
    *
-   * @param {ビニングマスクのサイズ} size
+   * @param {ビニングマスクのサイズ} 2×2で固定
    * @returns
    */
-  const onProcessAuto = async (size) => {
+  const onProcessAuto = async () => {
     // 事前処理
     setLoading(true);
 
@@ -324,8 +312,8 @@ function ExplorePrepare({
     }
     // ビニングマスク（size: 2)
     result = await onProcessExecute(
-      `${uri}startsearch2R?binning=${size}`,
-      `ビニングマスク（${size === 2 ? '2x2' : '4x4'}）`,
+      `${uri}startsearch2R?binning=2`,
+      `ビニングマスク（'2x2'）`,
     );
     if (!result) {
       return;
@@ -390,7 +378,7 @@ function ExplorePrepare({
                   id="dropdown-variants-Success"
                   variant={menunames[6].done ? 'success' : 'primary'}
                   title={menunames[6].name}
-                  onClick={() => onProcessAuto(2)}
+                  onClick={() => onProcessAuto()}
                 >
                   {menunames[6].name}
                 </Button>
@@ -421,7 +409,7 @@ function ExplorePrepare({
                     <Dropdown.Item
                       eventKey="1"
                       onClick={() =>
-                        onProcess(`${menunames[2].query}2&sn=${parametars[2]}`)
+                        onProcess(`${menunames[2].query}2&sn=${parameters[2]}`)
                       }
                     >
                       2×2
@@ -429,7 +417,7 @@ function ExplorePrepare({
                     <Dropdown.Item
                       eventKey="2"
                       onClick={() =>
-                        onProcess(`${menunames[2].query}4&sn=${parametars[2]}`)
+                        onProcess(`${menunames[2].query}4&sn=${parameters[2]}`)
                       }
                     >
                       4×4
@@ -475,7 +463,7 @@ function ExplorePrepare({
                     style={{ whiteSpace: 'nowrap' }}
                     onClick={() => {
                       onProcess(
-                        `${menunames[5].query}?nd=${parametars[0]}&ar=${parametars[1]}`,
+                        `${menunames[5].query}?nd=${parameters[0]}&ar=${parameters[1]}`,
                       );
                     }}
                     variant={menunames[5].done ? 'success' : 'primary'}
@@ -550,8 +538,9 @@ function ExplorePrepare({
                 {errorFiles.map((element) => (
                   <p
                     style={{
-                      color: element.startsWith('') && 'red',
+                      color: 'red',
                     }}
+                    className="mt-2 mb-1"
                   >
                     {element}
                   </p>
@@ -619,21 +608,21 @@ function ExplorePrepare({
                       className="form-control-sm"
                       placeholder="初期値は4"
                       onChange={(e) => {
-                        setParametars(
-                          parametars.map((parametar, index) =>
+                        setParameters(
+                          parameters.map((parametar, index) =>
                             index === 0 ? e.target.value : parametar,
                           ),
                         );
                         if (e.target.value.match(/[^0-9]/gm)) {
                           setCheckSend(
                             checkSend.map((judge, index) =>
-                              index === 1 ? true : judge,
+                              index === 1 ? false : judge,
                             ),
                           );
                         } else {
                           setCheckSend(
                             checkSend.map((judge, index) =>
-                              index === 1 ? false : judge,
+                              index === 1 ? true : judge,
                             ),
                           );
                         }
@@ -655,21 +644,21 @@ function ExplorePrepare({
                       className="form-control-sm"
                       placeholder="初期値は6"
                       onChange={(e) => {
-                        setParametars(
-                          parametars.map((parametar, index) =>
+                        setParameters(
+                          parameters.map((parametar, index) =>
                             index === 1 ? e.target.value : parametar,
                           ),
                         );
                         if (e.target.value.match(/[^0-9]/gm)) {
                           setCheckSend(
                             checkSend.map((judge, index) =>
-                              index === 2 ? true : judge,
+                              index === 2 ? false : judge,
                             ),
                           );
                         } else {
                           setCheckSend(
                             checkSend.map((judge, index) =>
-                              index === 2 ? false : judge,
+                              index === 2 ? true : judge,
                             ),
                           );
                         }
@@ -689,21 +678,21 @@ function ExplorePrepare({
                     className="form-control-sm"
                     placeholder="初期値は2000"
                     onChange={(e) => {
-                      setParametars(
-                        parametars.map((parametar, index) =>
+                      setParameters(
+                        parameters.map((parametar, index) =>
                           index === 2 ? e.target.value : parametar,
                         ),
                       );
                       if (e.target.value.match(/[^0-9]/gm)) {
                         setCheckSend(
                           checkSend.map((judge, index) =>
-                            index === 3 ? true : judge,
+                            index === 3 ? false : judge,
                           ),
                         );
                       } else {
                         setCheckSend(
                           checkSend.map((judge, index) =>
-                            index === 3 ? false : judge,
+                            index === 3 ? true : judge,
                           ),
                         );
                       }
@@ -713,8 +702,8 @@ function ExplorePrepare({
                 <p
                   style={{
                     color: 'red',
-                    margin: 0,
                   }}
+                  className="mt-1 mb-0"
                 >
                   {alertMessage}
                 </p>
