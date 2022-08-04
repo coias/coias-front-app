@@ -24,7 +24,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(0);
   const [fileNames, setFileNames] = useState(['Please input files']);
   const intervalRef = useRef(null);
-  const [val, setVal] = useState('auto');
+  const [isAuto, setIsAuto] = useState(true);
   const [menunames, setMenunames] = useState([
     { id: 1, name: 'ファイル', query: '', done: false },
     { id: 2, name: '事前処理', query: 'preprocess', done: false },
@@ -101,8 +101,8 @@ function App() {
                       setFileNames={setFileNames}
                       menunames={menunames}
                       setMenunames={setMenunames}
-                      val={val}
-                      setVal={setVal}
+                      isAuto={isAuto}
+                      setIsAuto={setIsAuto}
                     />
                   }
                 />

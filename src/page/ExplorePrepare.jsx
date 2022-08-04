@@ -29,8 +29,8 @@ ExplorePrepare.propTypes = {
   setFileNames: PropTypes.func.isRequired,
   menunames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setMenunames: PropTypes.func.isRequired,
-  val: PropTypes.string.isRequired,
-  setVal: PropTypes.func.isRequired,
+  isAuto: PropTypes.bool.isRequired,
+  setIsAuto: PropTypes.func.isRequired,
 };
 
 /**
@@ -43,8 +43,8 @@ function ExplorePrepare({
   setFileNames,
   menunames,
   setMenunames,
-  val,
-  setVal,
+  isAuto,
+  setIsAuto,
 }) {
   const uri = process.env.REACT_APP_API_URI;
   const [loading, setLoading] = useState(false);
@@ -71,13 +71,16 @@ function ExplorePrepare({
     if (!checkSend.includes(false)) {
       setDisabled(false);
       setAlertMessage('');
+    } else if (checkSend[0] === false && !checkSend.includes(false, 1)) {
+      setDisabled(true);
+      setAlertMessage('');
     } else {
       setDisabled(true);
       setAlertMessage('数字を入力してください。');
     }
   }, [checkSend]);
 
-  const handleSelect = (e) => setVal(e.target.value);
+  const handleSelect = (e) => setIsAuto(e.target.value === 'auto');
 
   const handleClose = () => {
     setMenunames(menunames);
@@ -267,9 +270,11 @@ function ExplorePrepare({
       .then(() => {
         const updatedMenunames = menunames.map((item) => {
           if (
-            item.query === uriQuery ||
-            (uriQuery.startsWith('startsearch2R?binning=') &&
-              item.query.startsWith('startsearch2R?binning='))
+            item.query === query ||
+            (query.startsWith('startsearch2R?binning=') &&
+              item.query.startsWith('startsearch2R?binning=')) ||
+            (query.startsWith('astsearch_new') &&
+              item.query.startsWith('astsearch_new'))
           ) {
             // eslint-disable-next-line no-param-reassign
             item.done = true;
@@ -312,7 +317,7 @@ function ExplorePrepare({
     }
     // ビニングマスク（size: 2)
     result = await onProcessExecute(
-      `${uri}startsearch2R?binning=2`,
+      `${uri}startsearch2R?binning=2&sn=${parameters[2]}`,
       `ビニングマスク（'2x2'）`,
     );
     if (!result) {
@@ -336,7 +341,10 @@ function ExplorePrepare({
     }
 
     // 自動検出
-    await onProcessExecute(`${uri}astsearch_new`, '自動検出');
+    await onProcessExecute(
+      `${uri}astsearch_new?nd=${parameters[0]}&ar=${parameters[1]}`,
+      '自動検出',
+    );
 
     const items = [...menunames];
     const item = { ...items[6] };
@@ -370,7 +378,7 @@ function ExplorePrepare({
                 ファイル
               </Button>
             </Col>
-            {val === 'auto' ? (
+            {isAuto ? (
               <Col style={{ margin: 'auto 0' }}>
                 <Button
                   style={{ whiteSpace: 'nowrap' }}
@@ -556,7 +564,7 @@ function ExplorePrepare({
               id="auto"
               value="auto"
               onChange={handleSelect}
-              checked={val === 'auto'}
+              checked={isAuto}
             />
             <Form.Check
               className="mt-3"
@@ -567,7 +575,7 @@ function ExplorePrepare({
               id="manual"
               value="manual"
               onChange={handleSelect}
-              checked={val === 'manual'}
+              checked={!isAuto}
             />
             <Button
               onClick={async () => {
@@ -591,124 +599,122 @@ function ExplorePrepare({
             >
               小惑星データ更新
             </Button>
-            {val === 'auto' ? null : (
-              <Row style={{ whiteSpace: 'nowrap' }}>
-                <h3 className="px-0 mt-2">パラメータの詳細設定</h3>
-                <Col className="pe-0">
-                  <InputGroup className="my-2">
-                    <InputGroup.Text
-                      style={{
-                        backgroundColor: 'white',
-                        padding: '6px',
-                      }}
-                    >
-                      検出光源必要数
-                    </InputGroup.Text>
-                    <Form.Control
-                      className="form-control-sm"
-                      placeholder="初期値は4"
-                      onChange={(e) => {
-                        setParameters(
-                          parameters.map((parametar, index) =>
-                            index === 0 ? e.target.value : parametar,
-                          ),
-                        );
-                        if (e.target.value.match(/[^0-9]/gm)) {
-                          setCheckSend(
-                            checkSend.map((judge, index) =>
-                              index === 1 ? false : judge,
-                            ),
-                          );
-                        } else {
-                          setCheckSend(
-                            checkSend.map((judge, index) =>
-                              index === 1 ? true : judge,
-                            ),
-                          );
-                        }
-                      }}
-                    />
-                  </InputGroup>
-                </Col>
-                <Col className="ps-2">
-                  <InputGroup className="my-2">
-                    <InputGroup.Text
-                      style={{
-                        backgroundColor: 'white',
-                        padding: '6px',
-                      }}
-                    >
-                      自動測光半径
-                    </InputGroup.Text>
-                    <Form.Control
-                      className="form-control-sm"
-                      placeholder="初期値は6"
-                      onChange={(e) => {
-                        setParameters(
-                          parameters.map((parametar, index) =>
-                            index === 1 ? e.target.value : parametar,
-                          ),
-                        );
-                        if (e.target.value.match(/[^0-9]/gm)) {
-                          setCheckSend(
-                            checkSend.map((judge, index) =>
-                              index === 2 ? false : judge,
-                            ),
-                          );
-                        } else {
-                          setCheckSend(
-                            checkSend.map((judge, index) =>
-                              index === 2 ? true : judge,
-                            ),
-                          );
-                        }
-                      }}
-                    />
-                  </InputGroup>
-                </Col>
+            <Row style={{ whiteSpace: 'nowrap' }}>
+              <h3 className="px-0 mt-2">パラメータの詳細設定</h3>
+              <Col className="pe-0">
                 <InputGroup className="my-2">
                   <InputGroup.Text
                     style={{
                       backgroundColor: 'white',
+                      padding: '6px',
                     }}
                   >
-                    平均光源数
+                    検出光源必要数
                   </InputGroup.Text>
                   <Form.Control
                     className="form-control-sm"
-                    placeholder="初期値は2000"
+                    placeholder="初期値は4"
                     onChange={(e) => {
                       setParameters(
                         parameters.map((parametar, index) =>
-                          index === 2 ? e.target.value : parametar,
+                          index === 0 ? e.target.value : parametar,
                         ),
                       );
                       if (e.target.value.match(/[^0-9]/gm)) {
                         setCheckSend(
                           checkSend.map((judge, index) =>
-                            index === 3 ? false : judge,
+                            index === 1 ? false : judge,
                           ),
                         );
                       } else {
                         setCheckSend(
                           checkSend.map((judge, index) =>
-                            index === 3 ? true : judge,
+                            index === 1 ? true : judge,
                           ),
                         );
                       }
                     }}
                   />
                 </InputGroup>
-                <p
+              </Col>
+              <Col className="ps-2">
+                <InputGroup className="my-2">
+                  <InputGroup.Text
+                    style={{
+                      backgroundColor: 'white',
+                      padding: '6px',
+                    }}
+                  >
+                    自動測光半径
+                  </InputGroup.Text>
+                  <Form.Control
+                    className="form-control-sm"
+                    placeholder="初期値は6"
+                    onChange={(e) => {
+                      setParameters(
+                        parameters.map((parametar, index) =>
+                          index === 1 ? e.target.value : parametar,
+                        ),
+                      );
+                      if (e.target.value.match(/[^0-9]/gm)) {
+                        setCheckSend(
+                          checkSend.map((judge, index) =>
+                            index === 2 ? false : judge,
+                          ),
+                        );
+                      } else {
+                        setCheckSend(
+                          checkSend.map((judge, index) =>
+                            index === 2 ? true : judge,
+                          ),
+                        );
+                      }
+                    }}
+                  />
+                </InputGroup>
+              </Col>
+              <InputGroup className="my-2">
+                <InputGroup.Text
                   style={{
-                    color: 'red',
+                    backgroundColor: 'white',
                   }}
-                  className="mt-1 mb-0"
                 >
-                  {alertMessage}
-                </p>
-              </Row>
-            )}
+                  平均光源数
+                </InputGroup.Text>
+                <Form.Control
+                  className="form-control-sm"
+                  placeholder="初期値は2000"
+                  onChange={(e) => {
+                    setParameters(
+                      parameters.map((parametar, index) =>
+                        index === 2 ? e.target.value : parametar,
+                      ),
+                    );
+                    if (e.target.value.match(/[^0-9]/gm)) {
+                      setCheckSend(
+                        checkSend.map((judge, index) =>
+                          index === 3 ? false : judge,
+                        ),
+                      );
+                    } else {
+                      setCheckSend(
+                        checkSend.map((judge, index) =>
+                          index === 3 ? true : judge,
+                        ),
+                      );
+                    }
+                  }}
+                />
+              </InputGroup>
+              <p
+                style={{
+                  color: 'red',
+                }}
+                className="mt-1 mb-0"
+              >
+                {alertMessage}
+              </p>
+            </Row>
             <Form.Control.Feedback type="invalid">
               ファイルを選択してください。
             </Form.Control.Feedback>
