@@ -1,8 +1,26 @@
-import React from 'react';
-import { Navbar, Nav, Row, Col } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+import React, { useContext, useState, useCallback } from 'react';
+import { Navbar, Nav, Row, Col, Button } from 'react-bootstrap';
+import { NavLink, useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import ConfirmationModal from './ConfirmationModal';
+import { ModeStatusContext } from './context';
 
-function Header() {
+function Header({ setMenunames }) {
+  const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate('/');
+  };
+  const [show, setShow] = useState(false);
+  const checkIsStatusUpdated = useCallback(
+    () =>
+      !Object.keys(modeStatus).some((key) => {
+        console.log(modeStatus[key]);
+        return modeStatus[key];
+      }),
+    [modeStatus],
+  );
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <Navbar
@@ -44,24 +62,20 @@ function Header() {
 
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
-        {/* <Nav className="me-auto"> */}
         <Nav className=".mt-2">
           <NavLink
             to="/"
-            // className={(navData) =>
-            //   navData.isActive ? 'active' : 'not-active'
-            // }
+            className={(navData) =>
+              navData.isActive ? 'active' : 'not-active'
+            }
             style={{
               textDecoration: 'none',
               color: 'white',
-              marginLeft: 100,
+              marginLeft: 50,
               textAlign: 'center',
             }}
           >
             <h3
-              className={(navData) =>
-                navData.isActive ? 'active' : 'not-active'
-              }
               style={{
                 fontSize: '22px',
                 margin: 0,
@@ -81,12 +95,11 @@ function Header() {
               color: 'white',
               marginLeft: 80,
               textAlign: 'center',
+              opacity: modeStatus.COIAS ? 1 : 0.3,
             }}
+            onClick={modeStatus.COIAS ? () => {} : (e) => e.preventDefault()}
           >
-            <h3
-              // className="active-test"
-              style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}
-            >
+            <h3 style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}>
               探索/再描画
             </h3>
           </NavLink>
@@ -99,8 +112,9 @@ function Header() {
               textDecoration: 'none',
               color: 'white',
               marginLeft: 80,
-              textAlign: 'center',
+              opacity: modeStatus.Manual ? 1 : 0.3,
             }}
+            onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
           >
             <h3 style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}>
               手動測定
@@ -115,8 +129,9 @@ function Header() {
               textDecoration: 'none',
               color: 'white',
               marginLeft: 80,
-              textAlign: 'center',
+              opacity: modeStatus.Report ? 1 : 0.3,
             }}
+            onClick={modeStatus.Report ? () => {} : (e) => e.preventDefault()}
           >
             <h3 style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}>
               レポート
@@ -124,8 +139,50 @@ function Header() {
           </NavLink>
         </Nav>
       </Navbar.Collapse>
+      <Button
+        onClick={() => {
+          setShow(true);
+        }}
+        variant="light"
+        style={{
+          marginRight: 30,
+          color: 'white',
+          background: 'none',
+          padding: '7px 25px',
+        }}
+        disabled={checkIsStatusUpdated()}
+      >
+        Clear
+      </Button>
+      <ConfirmationModal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+        onClickYes={() => {
+          setModeStatus({
+            COIAS: false,
+            Manual: false,
+            Report: false,
+          });
+          handleNavigate();
+          setShow(false);
+          setMenunames((prevMenunames) =>
+            prevMenunames.map((items) => {
+              const objCopy = { ...items };
+              objCopy.done = false;
+              return objCopy;
+            }),
+          );
+        }}
+        confirmMessage="状態を全てクリアしますか？"
+      />
     </Navbar>
   );
 }
 
 export default Header;
+
+Header.propTypes = {
+  setMenunames: PropTypes.func.isRequired,
+};

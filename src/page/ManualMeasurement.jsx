@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Row, Col, Container } from 'react-bootstrap';
 import axios from 'axios';
 
-import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import ManualToolBar from '../component/ManualToolBar';
 import PanZoom from '../component/PanZoom';
 import { PageContext, StarPositionContext } from '../component/context';
@@ -98,9 +98,6 @@ function ManualMeasurement({
   const wrapperRef = useRef(null);
 
   const navigate = useNavigate();
-  const handleNavigate = () => {
-    navigate('/Report');
-  };
   const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage, setCurrentPage } = useContext(PageContext);
@@ -382,7 +379,6 @@ function ManualMeasurement({
         handleClick={handleClick}
         originalStarPos={originalStarPos}
         loading={loading}
-        handleNavigate={handleNavigate}
       />
       <Container fluid>
         <Row className="m-0 p-0">

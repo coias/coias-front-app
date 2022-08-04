@@ -39,7 +39,6 @@ function PlayMenu({
   setIsAutoSave,
   isAutoSave,
   loading,
-  handleNavigate,
   setOriginalStarPos,
   MAIN_COLOR,
 }) {
@@ -251,30 +250,20 @@ function PlayMenu({
               {loading ? (
                 <Spinner size="md" animation="border" />
               ) : (
-                <>
-                  <Button
-                    variant="success"
-                    onClick={() => {
-                      if (disable) {
-                        setStarPos(originalStarPos);
-                      } else {
-                        handleClick();
-                      }
-                      setDisable(!disable);
-                    }}
-                    size="md"
-                  >
-                    {disable ? 'やり直す' : '再描画'}
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="md"
-                    disabled={!disable}
-                    onClick={() => handleNavigate()}
-                  >
-                    手動測定終了
-                  </Button>
-                </>
+                <Button
+                  variant="success"
+                  onClick={() => {
+                    if (disable) {
+                      setStarPos(originalStarPos);
+                    } else {
+                      handleClick();
+                    }
+                    setDisable(!disable);
+                  }}
+                  size="md"
+                >
+                  {disable ? 'やり直す' : '再描画'}
+                </Button>
               )}
             </div>
           ) : (
@@ -293,16 +282,6 @@ function PlayMenu({
                 size="md"
               >
                 {disable ? '再描画' : 'やり直す'}
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  handleClick();
-                }}
-                disabled={disable}
-                size="md"
-              >
-                探索終了
               </Button>
             </div>
           )}
@@ -330,7 +309,6 @@ PlayMenu.propTypes = {
   originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
   handleClick: PropTypes.func,
   setIsAutoSave: PropTypes.func.isRequired,
-  handleNavigate: PropTypes.func,
   isAutoSave: PropTypes.bool.isRequired,
   loading: PropTypes.bool,
   setOriginalStarPos: PropTypes.func,
@@ -346,7 +324,6 @@ PlayMenu.defaultProps = {
   setStarModalShow: () => {},
   handleClick: () => {},
   loading: false,
-  handleNavigate: () => {},
   setOriginalStarPos: () => {},
 };
 

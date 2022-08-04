@@ -2,10 +2,13 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 import PanZoom from '../component/PanZoom';
 import PlayMenu from '../component/PlayMenu';
-import { StarPositionContext, PageContext } from '../component/context';
+import {
+  StarPositionContext,
+  PageContext,
+  ModeStatusContext,
+} from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
 import LoadingButton from '../component/LoadingButton';
 import StarsList from '../component/StarsList';
@@ -62,11 +65,7 @@ function COIAS({
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
-
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/Report');
-  };
+  const { setModeStatus } = useContext(ModeStatusContext);
 
   const [scaleArray, setScaleArray] = useState([
     { id: 1, done: true },
@@ -318,6 +317,12 @@ function COIAS({
         });
 
         setStarPos(toObject);
+        setModeStatus((prevModeStatus) => {
+          const modeStatusCopy = { ...prevModeStatus };
+          modeStatusCopy.Manual = true;
+          modeStatusCopy.Report = true;
+          return modeStatusCopy;
+        });
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -399,7 +404,6 @@ function COIAS({
         setDisable={setDisable}
         setStarModalShow={setStarModalShow}
         originalStarPos={originalStarPos}
-        handleClick={handleClick}
         setStarPos={setStarPos}
         fileNum={fileNum}
         isAutoSave={isAutoSave}

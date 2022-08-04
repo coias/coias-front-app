@@ -3,7 +3,7 @@
  *
  */
 import axios from 'axios';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import {
   Button,
   Row,
@@ -18,9 +18,8 @@ import {
 import PropTypes from 'prop-types';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
 import LoadingButton from '../component/LoadingButton';
-import AppToast from '../component/AppToast';
 import ErrorModal from '../component/ErrorModal';
-// import ExcuteButton from '../component/ExcuteButton';
+import { ModeStatusContext } from '../component/context';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
@@ -47,18 +46,22 @@ function ExplorePrepare({
 }) {
   const uri = process.env.REACT_APP_API_URI;
   const [loading, setLoading] = useState(false);
-  const [showError, setShowError] = useState(false);
 
   const fileInput = useRef();
   const [show, setShow] = useState(false);
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
-  const [errorContent, setErrorContent] = useState('');
   const [processName, setProcessName] = useState('');
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
+  const { setModeStatus } = useContext(ModeStatusContext);
+
+  const checkIsAllProcessDone = (updatedMenunames) =>
+    !updatedMenunames
+      .filter((content) => content.id !== 1 && content.id !== 7)
+      .find((menu) => !menu.done);
 
   const handleSelect = (e) => setVal(e.target.value);
 
@@ -145,7 +148,6 @@ function ExplorePrepare({
 
       data.append('files', file, file.name);
       filesForProps.push(file.name);
-      setErrorContent(``);
     }
 
     setErrorFile(errorFileNames);
@@ -194,6 +196,11 @@ function ExplorePrepare({
               item.done = true;
             }
             return item;
+          });
+          setModeStatus((prevModeStatus) => {
+            const modeStatusCopy = { ...prevModeStatus };
+            modeStatusCopy.COIAS = checkIsAllProcessDone(updatedMenunames);
+            return modeStatusCopy;
           });
           setMenunames(updatedMenunames);
           setLoading(false);
@@ -454,12 +461,7 @@ function ExplorePrepare({
         </Col>
       </Row>
       <LoadingButton loading={loading} processName={processName} />
-      <AppToast
-        show={showError}
-        title="エラー"
-        content={errorContent}
-        closeCallback={() => setShowError(false)}
-      />
+
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>ファイルを選択してください</Modal.Title>

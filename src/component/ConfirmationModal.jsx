@@ -32,7 +32,11 @@ function ConfirmationModal({
         <Modal.Title id="contained-modal-title-vcenter">確認</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {positionList[activeKey] && <p>{generateConfirmMessage()}</p>}
+        {positionList[activeKey] ? (
+          <p>{generateConfirmMessage()}</p>
+        ) : (
+          <p>{confirmMessage}</p>
+        )}
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between">
         <Button onClick={onHide}>いいえ</Button>
@@ -49,10 +53,17 @@ export default ConfirmationModal;
 ConfirmationModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
-  onExit: PropTypes.func.isRequired,
+  onExit: PropTypes.func,
   onClickYes: PropTypes.func.isRequired,
-  positionList: PropTypes.arrayOf(PropTypes.array).isRequired,
-  activeKey: PropTypes.number.isRequired,
-  leadStarNumber: PropTypes.number.isRequired,
   confirmMessage: PropTypes.string.isRequired,
+  positionList: PropTypes.arrayOf(PropTypes.array),
+  activeKey: PropTypes.number,
+  leadStarNumber: PropTypes.number,
+};
+
+ConfirmationModal.defaultProps = {
+  positionList: [],
+  activeKey: 0,
+  leadStarNumber: 0,
+  onExit: () => {},
 };
