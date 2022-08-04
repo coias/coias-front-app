@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Row, Col, Container } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -11,14 +11,12 @@ import { PageContext, StarPositionContext } from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
 import PlayMenu from '../component/PlayMenu';
 import ManualStarModal from '../component/ManualStarModal';
-import {
-  convertFits2PngCoords,
-  convertPng2FitsCoords,
-} from '../utils/CONSTANTS';
 import AlertModal from '../component/AlertModal';
 import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
 import ErrorModal from '../component/ErrorModal';
+import useEventListener from '../hooks/useEventListener';
+import RenameNewStarModal from '../component/RenameNewStar';
 
 function ManualMeasurement({
   imageURLs,
@@ -34,6 +32,8 @@ function ManualMeasurement({
   leadStarNumber,
   setLeadStarNumber,
   originalStarPos,
+  setting,
+  setSetting,
 }) {
   const [show, setShow] = useState(false);
   const [isSelect, setIsSelect] = useState(true);
@@ -51,12 +51,56 @@ function ManualMeasurement({
   const [confirmationModalShow, setConfirmationModalShow] = useState(false);
   const [checkedState, setCheckedState] = useState([false]);
   const [isRedisp, setIsRedisp] = useState(false);
-  const [fitsSize, setFitsSize] = useState({});
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
   const [positionList, setPositionList] = useState([[]]);
+  const [scaleArray, setScaleArray] = useState([
+    { id: 1, done: true },
+    { id: 1.5, done: false },
+    { id: 2, done: false },
+    { id: 2.5, done: false },
+    { id: 3, done: false },
+    { id: 3.5, done: false },
+    { id: 4, done: false },
+    { id: 4.5, done: false },
+    { id: 5, done: false },
+    { id: 5.5, done: false },
+    { id: 6, done: false },
+    { id: 6.5, done: false },
+    { id: 7, done: false },
+    { id: 7.5, done: false },
+    { id: 8, done: false },
+    { id: 8.5, done: false },
+    { id: 9, done: false },
+    { id: 9.5, done: false },
+    { id: 10, done: false },
+    { id: 10.5, done: false },
+    { id: 11, done: false },
+    { id: 11.5, done: false },
+    { id: 12, done: false },
+    { id: 12.5, done: false },
+    { id: 13, done: false },
+    { id: 13.5, done: false },
+    { id: 14, done: false },
+    { id: 14.5, done: false },
+    { id: 15, done: false },
+    { id: 15.5, done: false },
+    { id: 16, done: false },
+    { id: 16.5, done: false },
+    { id: 17, done: false },
+    { id: 17.5, done: false },
+    { id: 18, done: false },
+    { id: 18.5, done: false },
+    { id: 19, done: false },
+    { id: 19.5, done: false },
+    { id: 20, done: false },
+  ]);
+  const [renameNewStarModalShow, setRenameNewStarModalShow] = useState(false);
+  const [oldStarName, setOldStarName] = useState('');
+
+  const wrapperRef = useRef(null);
 
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -64,7 +108,7 @@ function ManualMeasurement({
   };
   const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
-  const { currentPage, setCurrentPage } = useContext(PageContext);
+  const { currentPage } = useContext(PageContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -100,16 +144,7 @@ function ManualMeasurement({
       });
       setImageURLs(toObjectArray);
     };
-    const getFitsSize = async () => {
-      await axios
-        .get(`${reactApiUri}fits_size`)
-        .then((res) => res.data.result)
-        .then((data) => {
-          setFitsSize({ x: data[0], y: data[1] });
-        })
-        .catch((e) => console.error(e));
-    };
-    getFitsSize();
+
     getImages();
   }, []);
 
@@ -131,6 +166,7 @@ function ManualMeasurement({
             if (!star) {
               toObject[item[0]] = {
                 name: item[0],
+                newName: item[0],
                 page: Array(imageURLs.length).fill(null),
                 isSelected: false,
                 isKnown: false,
@@ -173,31 +209,15 @@ function ManualMeasurement({
           starsList.forEach((star, index) => {
             const starInfo = star.split(' ');
             const prevStarName = starsList[index - 1]?.split(' ')[0];
-            const center = convertFits2PngCoords(
-              [Number(starInfo[2]), Number(starInfo[3])],
-              fitsSize,
-            );
-            const A = convertFits2PngCoords(
-              [Number(starInfo[4]), Number(starInfo[5])],
-              fitsSize,
-            );
-            const B = convertFits2PngCoords(
-              [Number(starInfo[6]), Number(starInfo[7])],
-              fitsSize,
-            );
-            const C = convertFits2PngCoords(
-              [Number(starInfo[8]), Number(starInfo[9])],
-              fitsSize,
-            );
-
             const value = {
+              name: starInfo[0],
               page: Number(starInfo[1]),
-              x: center.x,
-              y: center.y,
-              center,
-              actualA: A,
-              actualB: B,
-              actualC: C,
+              x: Number(starInfo[2]),
+              y: Number(starInfo[3]),
+              center: { x: Number(starInfo[2]), y: Number(starInfo[3]) },
+              actualA: { x: starInfo[4], y: starInfo[5] },
+              actualB: { x: starInfo[6], y: starInfo[7] },
+              actualC: { x: starInfo[8], y: starInfo[9] },
             };
             if (starInfo[0] !== prevStarName) {
               toPositionList.push([]);
@@ -208,6 +228,7 @@ function ManualMeasurement({
               value,
             );
           });
+
           setPositionList(toPositionList);
           setCheckedState(Array(toPositionList.length).fill(false));
         })
@@ -242,31 +263,13 @@ function ManualMeasurement({
       return [masked, nomasked];
     });
 
-    setCurrentPage(0);
+    // setCurrentPage(0);
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
   const onClickFinishButton = async (filteredList = []) => {
     const targetList = filteredList.length === 0 ? positionList : filteredList;
-
-    const result = targetList.flatMap((list, i) =>
-      list.flatMap((pos) => {
-        const convertedCenter = convertPng2FitsCoords(pos.center, fitsSize);
-        const convertedA = convertPng2FitsCoords(pos.actualA, fitsSize);
-        const convertedB = convertPng2FitsCoords(pos.actualB, fitsSize);
-        const convertedC = convertPng2FitsCoords(pos.actualC, fitsSize);
-
-        return `${'000000'.slice((leadStarNumber + i).toString().length - 6)}${
-          leadStarNumber + i
-        } ${pos.page} ${convertedCenter.x} ${convertedCenter.y} ${
-          convertedA.x
-        } ${convertedA.y} ${convertedB.x} ${convertedB.y} ${convertedC.x} ${
-          convertedC.y
-        }`;
-      }),
-    );
-
-    await axios.put(`${reactApiUri}memo_manual`, result);
+    await axios.put(`${reactApiUri}memo_manual`, targetList);
   };
 
   const removePositionByIndex = (targetListIndex, targetElementIndex) => {
@@ -280,12 +283,6 @@ function ManualMeasurement({
         return position;
       }),
     );
-  };
-
-  const keyPress = (e) => {
-    if (e.keyCode === 83) setStart(!start);
-    if (e.keyCode === 39) setNext(!next);
-    if (e.keyCode === 37) setBack(!back);
   };
 
   const handleClick = async () => {
@@ -304,7 +301,8 @@ function ManualMeasurement({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
-              page: Array(5).fill(null),
+              newName: item[0],
+              page: Array(imageURLs.length).fill(null),
               isSelected: false,
               isKnown: false,
             };
@@ -331,14 +329,46 @@ function ManualMeasurement({
     setLoading(false);
   };
 
+  useEventListener('keydown', (e) => {
+    e.preventDefault();
+    const scrollYRate =
+      wrapperRef.current.scrollTop /
+      (wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight);
+
+    const scrollXRate =
+      wrapperRef.current.scrollLeft /
+      (wrapperRef.current.scrollWidth - wrapperRef.current.clientWidth);
+
+    if (e.key === 's') {
+      setStart(!start);
+    } else if (e.key === 'ArrowRight') {
+      setNext(!next);
+    } else if (e.key === 'ArrowLeft') {
+      setBack(!back);
+    } else if (e.key === 'ArrowUp') {
+      const currentIndex = scaleArray.findIndex((item) => item.done);
+      const arrayCopy = scaleArray.concat();
+      if (currentIndex < arrayCopy.length - 1) {
+        arrayCopy[currentIndex].done = false;
+        arrayCopy[currentIndex + 1].done = true;
+        wrapperRef.current.scrollBy(400 * scrollXRate, 400 * scrollYRate);
+      }
+      setScaleArray(arrayCopy);
+    } else if (e.key === 'ArrowDown') {
+      const currentIndex = scaleArray.findIndex((item) => item.done);
+      const arrayCopy = scaleArray.concat();
+      if (currentIndex > 0) {
+        arrayCopy[currentIndex].done = false;
+        arrayCopy[currentIndex - 1].done = true;
+        wrapperRef.current.scrollBy(-400 * scrollXRate, -400 * scrollYRate);
+      }
+      setScaleArray(arrayCopy);
+    }
+  });
+
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div
-      className="coias-view-main"
-      id="wrapper-coias"
-      onKeyDown={keyPress}
-      tabIndex={-1}
-    >
+    <div className="coias-view-main" id="wrapper-coias">
       <PlayMenu
         imageNames={imageURLs}
         setImageURLs={setImageURLs}
@@ -361,6 +391,8 @@ function ManualMeasurement({
         originalStarPos={originalStarPos}
         loading={loading}
         handleNavigate={handleNavigate}
+        setting={setting}
+        setSetting={setSetting}
       />
       <Container fluid>
         <Row className="m-0 p-0">
@@ -394,10 +426,14 @@ function ManualMeasurement({
               activeKey={activeKey}
               confirmationModalShow={confirmationModalShow}
               setConfirmationModalShow={setConfirmationModalShow}
-              setOriginalStarPos={setOriginalStarPos}
-              fitsSize={fitsSize}
               disable={isRedisp}
               setConfirmMessage={setConfirmMessage}
+              scaleArray={scaleArray}
+              wrapperRef={wrapperRef}
+              setRenameNewStarModalShow={setRenameNewStarModalShow}
+              setOldStarName={setOldStarName}
+              setting={setting}
+              setSetting={setSetting}
             />
           </Col>
           <Col sm={2} md={2}>
@@ -452,7 +488,6 @@ function ManualMeasurement({
         }}
         onExit={() => {
           setIsZoomIn(false);
-          document.getElementById('wrapper-coias').focus();
         }}
         onEntered={() => setIsZoomIn(true)}
         removePositionByIndex={removePositionByIndex}
@@ -490,6 +525,27 @@ function ManualMeasurement({
           setStarPos(originalStarPos);
         }}
       />
+      <RenameNewStarModal
+        show={renameNewStarModalShow}
+        onExit={() => {
+          setRenameNewStarModalShow(false);
+        }}
+        onClickRenameButton={async (newStarName) => {
+          setRenameNewStarModalShow(false);
+          const objectCopy = { ...starPos };
+          objectCopy[oldStarName].newName = newStarName;
+          const strArray = [];
+          Object.values(objectCopy).forEach((value) =>
+            strArray.push([value.name, value.newName]),
+          );
+          await axios.put(`${reactApiUri}manual_name_modify_list`, strArray);
+          setStarPos(objectCopy);
+        }}
+        oldStarName={oldStarName}
+        isAlreadyChanged={
+          starPos[oldStarName]?.name !== starPos[oldStarName]?.newName
+        }
+      />
     </div>
   );
 }
@@ -510,4 +566,6 @@ ManualMeasurement.propTypes = {
   setBack: PropTypes.func.isRequired,
   leadStarNumber: PropTypes.number.isRequired,
   setLeadStarNumber: PropTypes.func.isRequired,
+  setting: PropTypes.bool.isRequired,
+  setSetting: PropTypes.func.isRequired,
 };

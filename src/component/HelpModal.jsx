@@ -1,7 +1,8 @@
 import React from 'react';
 import { Modal, Button, Table } from 'react-bootstrap';
 
-import { FaHandPaper, FaMousePointer } from 'react-icons/fa';
+import { FaMousePointer } from 'react-icons/fa';
+import { BiHide } from 'react-icons/bi';
 import { AiOutlineReload } from 'react-icons/ai';
 import PropTypes from 'prop-types';
 
@@ -22,26 +23,6 @@ function HelpModal({ show, onHide }) {
           <tbody>
             <tr>
               <td>
-                <h4>Alt</h4>
-              </td>
-              <td>
-                <h4>
-                  Altキーを押しながらスクロール操作で、ズームイン・アウトできます
-                </h4>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <FaHandPaper size={30} />
-              </td>
-              <td>
-                <h4>
-                  画面をクリックしたまま、画像を動かすことが可能になります
-                </h4>
-              </td>
-            </tr>
-            <tr>
-              <td>
                 <FaMousePointer size={30} />
               </td>
               <td>
@@ -54,6 +35,14 @@ function HelpModal({ show, onHide }) {
               </td>
               <td>
                 <h4>全ての状態がリセットされます</h4>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <BiHide size={30} />
+              </td>
+              <td>
+                <h4>天体の枠、天体番号を非表示にします</h4>
               </td>
             </tr>
           </tbody>

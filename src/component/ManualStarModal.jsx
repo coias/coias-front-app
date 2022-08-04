@@ -133,6 +133,9 @@ function ManualStarModal({
 
         const value = {
           page: currentPage,
+          name: `${'000000'.slice(
+            (leadStarNumber + activeKey).toString().length - 6,
+          )}${leadStarNumber + activeKey}`,
           x: Math.floor(actualCenterCoordinate.x),
           y: Math.floor(actualCenterCoordinate.y),
           width,

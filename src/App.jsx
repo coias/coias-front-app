@@ -5,20 +5,20 @@
  * Report : レポートモード
  */
 
-import React, { useState, useMemo, useRef } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useMemo, useRef, useState } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import {
+  MousePositionContext,
+  PageContext,
+  StarPositionContext,
+} from './component/context';
 import Header from './component/Header';
-import ExplorePrepare from './page/ExplorePrepare';
 import COIAS from './page/COIAS';
+import ExplorePrepare from './page/ExplorePrepare';
 import ManualMeasurement from './page/ManualMeasurement';
 import Report from './page/Report';
 import './style/style.scss';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import {
-  PageContext,
-  MousePositionContext,
-  StarPositionContext,
-} from './component/context';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -56,6 +56,7 @@ function App() {
   ]);
 
   const [imageURLs, setImageURLs] = useState([]);
+  const [subImageURLs, setSubImageURLs] = useState([]);
   const [originalStarPos, setOriginalStarPos] = useState({});
   const [leadStarNumber, setLeadStarNumber] = useState(0);
   const pageValue = useMemo(
@@ -75,6 +76,7 @@ function App() {
   const [start, setStart] = useState(false);
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
+  const [setting, setSetting] = useState(false);
 
   return (
     <BrowserRouter style={{ position: 'relative' }}>
@@ -113,6 +115,8 @@ function App() {
                       intervalRef={intervalRef}
                       imageURLs={imageURLs}
                       setImageURLs={setImageURLs}
+                      subImageURLs={subImageURLs}
+                      setSubImageURLs={setSubImageURLs}
                       originalStarPos={originalStarPos}
                       setOriginalStarPos={setOriginalStarPos}
                       start={start}
@@ -121,6 +125,8 @@ function App() {
                       setNext={setNext}
                       back={back}
                       setBack={setBack}
+                      setting={setting}
+                      setSetting={setSetting}
                     />
                   }
                 />
@@ -141,6 +147,8 @@ function App() {
                       setBack={setBack}
                       leadStarNumber={leadStarNumber}
                       setLeadStarNumber={setLeadStarNumber}
+                      setting={setting}
+                      setSetting={setSetting}
                     />
                   }
                 />
