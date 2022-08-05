@@ -1,4 +1,4 @@
-import { React, useContext, useCallback } from 'react';
+import { React, useContext } from 'react';
 import { Button, Row, Col, Accordion, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +13,6 @@ function ManualToolBar({
   leadStarNumber,
   checkedState,
   setCheckedState,
-  onClickFinishButton,
 }) {
   const { currentPage } = useContext(PageContext);
 
@@ -28,36 +27,12 @@ function ManualToolBar({
     setActiveKey(positionList.length);
   };
 
-  const removePositionListByCheckState = () => {
-    const isAllRemove = !checkedState.some((element) => element === false);
-
-    if (isAllRemove) {
-      setPositionList([[]]);
-      onClickFinishButton([[]]);
-      setActiveKey(0);
-      setCheckedState([false]);
-    } else {
-      const filteredList = positionList.filter(
-        (elementPosition, index) => !checkedState[index],
-      );
-      setPositionList(filteredList);
-      onClickFinishButton(filteredList);
-      setActiveKey(filteredList.length - 1);
-      setCheckedState(checkedState.filter((element) => !element));
-    }
-  };
-
   const handleOnChange = (position) => {
     const updatedCheckedState = checkedState.map((item, index) =>
       index === position ? !item : item,
     );
     setCheckedState(updatedCheckedState);
   };
-
-  const isEditMode = useCallback(
-    () => checkedState.find((element) => element === true),
-    [checkedState],
-  );
 
   return (
     <div>
@@ -126,16 +101,6 @@ function ManualToolBar({
           </Accordion>
         </Row>
       </div>
-      {isEditMode() && (
-        <Button
-          variant="danger"
-          onClick={() => {
-            removePositionListByCheckState();
-          }}
-        >
-          削除する
-        </Button>
-      )}
     </div>
   );
 }
@@ -151,5 +116,4 @@ ManualToolBar.propTypes = {
   setActiveKey: PropTypes.func.isRequired,
   checkedState: PropTypes.arrayOf(PropTypes.bool).isRequired,
   setCheckedState: PropTypes.func.isRequired,
-  onClickFinishButton: PropTypes.func.isRequired,
 };

@@ -27,28 +27,28 @@ function App() {
   const intervalRef = useRef(null);
   const [val, setVal] = useState('auto');
   const [menunames, setMenunames] = useState([
-    { id: 1, name: 'ファイル', query: '', done: true },
+    { id: 1, name: 'ファイル', query: '', done: false },
     { id: 2, name: '事前処理', query: 'preprocess', done: false },
     {
       id: 3,
       name: 'ビニングマスク',
       query: 'startsearch2R?binning=',
-      done: true,
+      done: false,
     },
     {
       id: 4,
       name: '軌道取得（確定番号）',
       query: 'prempsearchC-before',
-      done: true,
+      done: false,
     },
     {
       id: 5,
       name: '軌道取得（仮符号）',
       query: 'prempsearchC-after',
-      done: true,
+      done: false,
     },
-    { id: 6, name: '自動検出', query: 'astsearch_new', done: true },
-    { id: 7, name: '全自動処理', query: 'AstsearchR?binning=', done: true },
+    { id: 6, name: '自動検出', query: 'astsearch_new', done: false },
+    { id: 7, name: '全自動処理', query: 'AstsearchR?binning=', done: false },
   ]);
 
   const [imageURLs, setImageURLs] = useState([]);
@@ -90,11 +90,11 @@ function App() {
         <main
           style={{
             position: 'absolute',
-            top: 86,
+            top: 75,
             bottom: 0,
             left: 0,
             right: 0,
-            overflow: 'scroll',
+            overflow: 'hidden',
             backgroundColor: '#F8F9FA',
           }}
         >

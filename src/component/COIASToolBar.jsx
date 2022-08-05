@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { IconContext } from 'react-icons';
-import { Button, Col } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { FaMousePointer } from 'react-icons/fa';
 import { AiOutlineReload } from 'react-icons/ai';
 import { BiHide } from 'react-icons/bi';
@@ -32,15 +32,7 @@ function COIASToolBar({
 }) {
   const { setStarPos } = useContext(StarPositionContext);
   return (
-    <Col
-      className="flex-column"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        height: '100%',
-        padding: 0,
-      }}
-    >
+    <div className="coias-tool-bar">
       <Button
         id="selectButton"
         data-active={isSelect}
@@ -99,7 +91,7 @@ function COIASToolBar({
           <BiHide size={30} />
         </IconContext.Provider>
       </Button>
-    </Col>
+    </div>
   );
 }
 

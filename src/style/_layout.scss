@@ -140,68 +140,71 @@ footer {
   }
 }
 
+.play-menu {
+  border-bottom: solid #707070 1px;
+}
+
 .coias-view-main {
   width: 100%;
   height: 100%;
-  padding: 0;
   margin: 0;
 
+  .col {
+    padding: 0;
+  }
+
+  .row {
+    height: 100%;
+    padding: 0;
+
+    .col {
+      height: 100%;
+    }
+
+    .manual-star-list-wrraper {
+      height: 100%;
+      border-left: solid #707070 1px;
+    }
+
+    .coias-star-list-wrraper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 13vw;
+      height: 100%;
+      border-left: solid #707070 1px;
+    }
+  }
+
   .container-fluid {
-    height: calc(100% - 102px);
+    width: 100%;
+    height: 85%;
+    padding: 0;
+    margin: 0;
 
     .row {
       height: 100%;
 
-      .col {
-        height: 100%;
-      }
-
-      // auto mode
-      .col-md-10 {
-        height: 100%;
-
-        .star-canvas-container {
-          height: calc(100% - 50px);
-
-          .col-sm-10 {
-            height: 100%;
-          }
-
-          .col-sm-12 {
-            height: 100%;
-          }
-
-          .col-sm-2 {
-            height: 100%;
-          }
-        }
-
-        .star-canvas-control {
-          height: 50px !important;
-          padding-top: 8px;
-        }
-      }
-
-      .col-md-1 {
-        height: 100%;
-      }
-
       // manual mode
-      .col-md-9 {
+      .coias-tool-bar {
+        display: flex;
+        flex-direction: column;
+        width: 40px;
+        padding: 0;
+        margin: 0 10px;
+        margin-right: 0 auto;
+      }
+
+      .manual-mode-control-view {
         height: 100%;
+
+        .main-canvas {
+          height: 100%;
+        }
 
         .wrapper {
           height: 100%;
         }
-
-        .star-canvas-control {
-          height: 50px !important;
-          padding-top: 8px;
-        }
-      }
-
-      .col-md-2 {
-        height: 100%;
       }
     }
   }
@@ -209,7 +212,7 @@ footer {
 
 // 星のリストのスクロールバーを常に表示する
 .star-list {
-  height: calc(100% - 84px);
+  height: 100%;
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
@@ -252,6 +255,7 @@ footer {
 
 .tool-btn {
   margin-top: 20px;
+  background-color: none;
 }
 
 .content-border {

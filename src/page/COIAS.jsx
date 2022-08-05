@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import PanZoom from '../component/PanZoom';
@@ -390,82 +390,100 @@ function COIAS({
   });
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className="coias-view-main" id="wrapper-coias">
-      <PlayMenu
-        imageNames={imageURLs}
-        setImageURLs={setImageURLs}
-        intervalRef={intervalRef}
-        start={start}
-        next={next}
-        setNext={setNext}
-        back={back}
-        setBack={setBack}
-        onClickFinishButton={onClickFinishButton}
-        disable={disable}
-        setDisable={setDisable}
-        setStarModalShow={setStarModalShow}
-        originalStarPos={originalStarPos}
-        setStarPos={setStarPos}
-        fileNum={fileNum}
-        isAutoSave={isAutoSave}
-        setIsAutoSave={setIsAutoSave}
-        setOriginalStarPos={setOriginalStarPos}
-        MAIN_COLOR={MAIN_COLOR}
-      />
-      <Container fluid>
-        <Row>
-          <COIASToolBar
-            className=""
-            isSelect={isSelect}
-            setIsSelect={setIsSelect}
-            brightnessVal={brightnessVal}
-            contrastVal={contrastVal}
-            setBrightnessVal={setBrightnessVal}
-            setContrastVal={setContrastVal}
-            isReload={isReload}
-            setIsReload={setIsReload}
-            isHide={isHide}
-            setIsHide={setIsHide}
+      <Row>
+        <Col>
+          <PlayMenu
+            imageNames={imageURLs}
+            setImageURLs={setImageURLs}
+            intervalRef={intervalRef}
+            start={start}
+            next={next}
+            setNext={setNext}
+            back={back}
+            setBack={setBack}
+            onClickFinishButton={onClickFinishButton}
+            disable={disable}
+            setDisable={setDisable}
+            setStarModalShow={setStarModalShow}
+            originalStarPos={originalStarPos}
+            setStarPos={setStarPos}
+            fileNum={fileNum}
+            isAutoSave={isAutoSave}
+            setIsAutoSave={setIsAutoSave}
+            setOriginalStarPos={setOriginalStarPos}
             MAIN_COLOR={MAIN_COLOR}
           />
-          <Col md={10}>
-            <PanZoom
-              imageURLs={imageURLs}
-              isReload={isReload}
-              brightnessVal={brightnessVal}
-              contrastVal={contrastVal}
-              onClickFinishButton={onClickFinishButton}
-              originalStarPos={originalStarPos}
-              starPos={starPos}
-              setStarPos={setStarPos}
-              isHide={isHide}
-              setStarModalShow={starModalShow}
-              disable={disable}
-              setSelectedListState={setSelectedListState}
-              writeMemo={isAutoSave ? writeMemo : () => {}}
-              scaleArray={scaleArray}
-              wrapperRef={wrapperRef}
-            />
-            <Row md={7} style={{ height: '10px' }}>
+          <Container fluid>
+            <Row className="m-0 p-0">
+              <COIASToolBar
+                isSelect={isSelect}
+                setIsSelect={setIsSelect}
+                brightnessVal={brightnessVal}
+                contrastVal={contrastVal}
+                setBrightnessVal={setBrightnessVal}
+                setContrastVal={setContrastVal}
+                isReload={isReload}
+                setIsReload={setIsReload}
+                isHide={isHide}
+                setIsHide={setIsHide}
+              />
               <Col>
-                <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
-              </Col>
-              <Col>
-                <ContrastBar val={contrastVal} set={setContrastVal} />
+                <PanZoom
+                  imageURLs={imageURLs}
+                  isReload={isReload}
+                  brightnessVal={brightnessVal}
+                  contrastVal={contrastVal}
+                  onClickFinishButton={onClickFinishButton}
+                  originalStarPos={originalStarPos}
+                  starPos={starPos}
+                  setStarPos={setStarPos}
+                  isHide={isHide}
+                  setStarModalShow={starModalShow}
+                  disable={disable}
+                  setSelectedListState={setSelectedListState}
+                  writeMemo={isAutoSave ? writeMemo : () => {}}
+                  scaleArray={scaleArray}
+                  wrapperRef={wrapperRef}
+                />
+                <Row md={7} style={{ height: '15vh' }}>
+                  <Col>
+                    <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
+                  </Col>
+                  <Col>
+                    <ContrastBar val={contrastVal} set={setContrastVal} />
+                  </Col>
+                </Row>
               </Col>
             </Row>
-          </Col>
-          <Col md={1} sm={1}>
-            <StarsList
-              disable={disable}
-              writeMemo={isAutoSave ? writeMemo : () => {}}
-              selectedListState={selectedListState}
-              setSelectedListState={setSelectedListState}
-            />
-          </Col>
-        </Row>
-      </Container>
+          </Container>
+        </Col>
+        <div className="coias-star-list-wrraper">
+          <StarsList
+            disable={disable}
+            writeMemo={isAutoSave ? writeMemo : () => {}}
+            selectedListState={selectedListState}
+            setSelectedListState={setSelectedListState}
+          />
+          <div className="align-self-center">
+            <Button
+              variant="success"
+              onClick={() => {
+                if (disable) {
+                  setOriginalStarPos(starPos);
+                  setStarModalShow(true);
+                } else {
+                  setStarPos(originalStarPos);
+                }
+                setDisable(!disable);
+              }}
+              size="md"
+            >
+              {disable ? '再描画' : 'やり直す'}
+            </Button>
+          </div>
+        </div>
+      </Row>
       <LoadingButton loading={loading} processName="探索データ取得中…" />
       <NewStarModal
         show={starModalShow}

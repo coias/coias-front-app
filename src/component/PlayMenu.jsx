@@ -7,7 +7,6 @@ import {
   ToggleButton,
   ButtonGroup,
   Form,
-  Spinner,
 } from 'react-bootstrap';
 import { IconContext } from 'react-icons';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
@@ -15,7 +14,7 @@ import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle } from 'react-icons/bi';
 import React, { useCallback, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { PageContext, StarPositionContext } from './context';
+import { PageContext } from './context';
 import SettingModal from './SettingModal';
 import HelpModal from './HelpModal';
 import btnColor from '../utils/CONSTANTS';
@@ -31,16 +30,8 @@ function PlayMenu({
   setNext,
   back,
   setBack,
-  isManual,
-  disable,
-  setDisable,
-  setStarModalShow,
-  originalStarPos,
-  handleClick,
   setIsAutoSave,
   isAutoSave,
-  loading,
-  setOriginalStarPos,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -48,7 +39,6 @@ function PlayMenu({
   const [settingModalShow, setSettingModalShow] = useState(false);
   const [helpModalShow, setHelpModalShow] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
-  const { starPos, setStarPos } = useContext(StarPositionContext);
 
   const onClickNext = () => {
     if (currentPage === imageNames.length - 1) setCurrentPage(0);
@@ -104,7 +94,7 @@ function PlayMenu({
   }, [start, next, back]);
 
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" expand="lg" className="play-menu">
       <Container fluid>
         <Col md={1}>
           <Nav>
@@ -244,47 +234,6 @@ function PlayMenu({
               imageURLs={imageNames}
             />
           </ButtonGroup>
-
-          {isManual ? (
-            <div>
-              {loading ? (
-                <Spinner size="md" animation="border" />
-              ) : (
-                <Button
-                  variant="success"
-                  onClick={() => {
-                    if (disable) {
-                      setStarPos(originalStarPos);
-                    } else {
-                      handleClick();
-                    }
-                    setDisable(!disable);
-                  }}
-                  size="md"
-                >
-                  {disable ? 'やり直す' : '再描画'}
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="align-self-center">
-              <Button
-                variant="success"
-                onClick={() => {
-                  if (disable) {
-                    setOriginalStarPos(starPos);
-                    setStarModalShow(true);
-                  } else {
-                    setStarPos(originalStarPos);
-                  }
-                  setDisable(!disable);
-                }}
-                size="md"
-              >
-                {disable ? '再描画' : 'やり直す'}
-              </Button>
-            </div>
-          )}
         </Col>
       </Container>
     </Navbar>
@@ -302,28 +251,13 @@ PlayMenu.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
-  isManual: PropTypes.bool,
-  disable: PropTypes.bool,
-  setDisable: PropTypes.func,
-  setStarModalShow: PropTypes.func,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
-  handleClick: PropTypes.func,
   setIsAutoSave: PropTypes.func.isRequired,
   isAutoSave: PropTypes.bool.isRequired,
-  loading: PropTypes.bool,
-  setOriginalStarPos: PropTypes.func,
 };
 
 PlayMenu.defaultProps = {
   setDefaultZoomRate: () => {},
   defaultZoomRate: 0,
-  isManual: false,
-  disable: true,
-  setDisable: () => {},
-  setStarModalShow: () => {},
-  handleClick: () => {},
-  loading: false,
-  setOriginalStarPos: () => {},
 };
 
 export default PlayMenu;
