@@ -6,16 +6,10 @@ function ContrastBar({ val, set }) {
   return (
     <div
       style={{
-        opacity: 0.5,
-        width: '35px',
-        height: '40%',
-        color: 'white',
-        backgroundColor: 'black',
-        borderRadius: '5px',
-        textAlign: 'center',
+        opacity: 0.7,
       }}
     >
-      <ImContrast size={30} />
+      <ImContrast size={23} />
       <input
         id="ex4"
         type="range"
@@ -26,7 +20,7 @@ function ContrastBar({ val, set }) {
         onChange={(e) => {
           set(Number(e.target.value));
         }}
-        data-slider-orientation="vertical"
+        style={{ marginLeft: '19px' }}
       />
     </div>
   );

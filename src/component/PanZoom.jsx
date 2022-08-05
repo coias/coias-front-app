@@ -380,7 +380,7 @@ function PanZoom({
           className="wrapper"
           style={{
             width: '100%',
-            height: 'calc(100% - 40px)',
+            height: '99%',
             position: 'relative',
             overflow: 'none',
           }}

@@ -6,13 +6,7 @@ function BrightnessBar({ val, set }) {
   return (
     <div
       style={{
-        opacity: 0.5,
-        width: '35px',
-        height: '40%',
-        color: 'white',
-        backgroundColor: 'black',
-        borderRadius: '5px',
-        textAlign: 'center',
+        opacity: 0.7,
       }}
     >
       <ImBrightnessContrast size={30} />
@@ -26,7 +20,7 @@ function BrightnessBar({ val, set }) {
         onChange={(e) => {
           set(Number(e.target.value));
         }}
-        data-slider-orientation="vertical"
+        style={{ marginLeft: '14px' }}
       />
     </div>
   );

@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 import { PageContext, StarPositionContext } from './context';
 import SettingModal from './SettingModal';
 import HelpModal from './HelpModal';
+import btnColor from '../utils/CONSTANTS';
 
 function PlayMenu({
   imageNames,
@@ -40,7 +41,6 @@ function PlayMenu({
   isAutoSave,
   loading,
   setOriginalStarPos,
-  MAIN_COLOR,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(0.01);
@@ -106,7 +106,7 @@ function PlayMenu({
   return (
     <Navbar bg="light" expand="lg">
       <Container fluid>
-        <Col md={3}>
+        <Col md={1}>
           <Nav>
             <Nav.Item className="text-center d-flex m-1">
               <Button
@@ -121,7 +121,7 @@ function PlayMenu({
               >
                 <IconContext.Provider
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
-                  value={{ color: MAIN_COLOR }}
+                  value={{ color: btnColor.defaulte }}
                 >
                   {play ? <FaStop size={30} /> : <FaPlay size={30} />}
                 </IconContext.Provider>
@@ -136,7 +136,7 @@ function PlayMenu({
               >
                 <IconContext.Provider
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
-                  value={{ color: MAIN_COLOR }}
+                  value={{ color: btnColor.defaulte }}
                 >
                   <FaStepBackward size={30} />
                 </IconContext.Provider>
@@ -151,7 +151,7 @@ function PlayMenu({
               >
                 <IconContext.Provider
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
-                  value={{ color: MAIN_COLOR }}
+                  value={{ color: btnColor.defaulte }}
                 >
                   <FaStepForward size={30} />
                 </IconContext.Provider>
@@ -182,7 +182,7 @@ function PlayMenu({
                 <ToggleButton
                   id={`radio-${index}`}
                   type="radio"
-                  variant="outline-primary"
+                  variant="outline-secondary"
                   name="radio"
                   value={name.name}
                   key={name.name}
@@ -208,7 +208,7 @@ function PlayMenu({
             <Button variant="light" onClick={() => setSettingModalShow(true)}>
               <IconContext.Provider
                 // eslint-disable-next-line react/jsx-no-constructed-context-values
-                value={{ color: MAIN_COLOR }}
+                value={{ color: btnColor.defaulte }}
               >
                 <AiFillSetting size={30} />
               </IconContext.Provider>
@@ -229,7 +229,7 @@ function PlayMenu({
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
               <IconContext.Provider
                 // eslint-disable-next-line react/jsx-no-constructed-context-values
-                value={{ color: MAIN_COLOR }}
+                value={{ color: btnColor.defaulte }}
               >
                 <BiHelpCircle size={30} />
               </IconContext.Provider>
@@ -312,7 +312,6 @@ PlayMenu.propTypes = {
   isAutoSave: PropTypes.bool.isRequired,
   loading: PropTypes.bool,
   setOriginalStarPos: PropTypes.func,
-  MAIN_COLOR: PropTypes.string.isRequired,
 };
 
 PlayMenu.defaultProps = {

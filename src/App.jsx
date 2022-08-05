@@ -70,9 +70,9 @@ function App() {
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
 
   const [modeStatus, setModeStatus] = useState({
-    COIAS: false,
-    Manual: false,
-    Report: false,
+    COIAS: true,
+    Manual: true,
+    Report: true,
   });
   const modeStatusValue = useMemo(
     () => ({ modeStatus, setModeStatus }),
@@ -95,6 +95,7 @@ function App() {
             left: 0,
             right: 0,
             overflow: 'scroll',
+            backgroundColor: '#F8F9FA',
           }}
         >
           <PageContext.Provider value={pageValue}>
