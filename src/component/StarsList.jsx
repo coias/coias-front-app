@@ -8,52 +8,64 @@ function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
   const { starPos, setStarPos } = useContext(StarPositionContext);
 
   return (
-    <Form className="star-list">
-      {Object.keys(starPos)
-        .sort()
-        .map((key) => starPos[key])
-        .map((pos, index) => {
-          if (pos.page[currentPage]) {
-            if (!pos.isKnown && !isManual) {
+    <>
+      <p
+        style={{
+          marginTop: '20px',
+          fontWeight: 'bold',
+          color: '#5C636A',
+          letterSpacing: '1px',
+        }}
+      >
+        天体一覧
+      </p>
+      <Form className="star-list">
+        {Object.keys(starPos)
+          .sort()
+          .map((key) => starPos[key])
+          .map((pos, index) => {
+            if (pos.page[currentPage]) {
+              if (!pos.isKnown && !isManual) {
+                return (
+                  <div className="mb-3" key={pos.name}>
+                    <Form.Check
+                      type="checkbox"
+                      disabled={!disable}
+                      checked={pos.isSelected ? pos.isSelected : false}
+                      onChange={() => {
+                        const newStarPos = JSON.parse(JSON.stringify(starPos));
+                        newStarPos[pos.name].isSelected = !pos.isSelected;
+                        setSelectedListState((prevList) => {
+                          const prevListCopy = prevList.concat();
+                          prevListCopy[index] = !prevListCopy[index];
+                          return prevListCopy;
+                        });
+                        writeMemo(newStarPos);
+                        setStarPos(newStarPos);
+                      }}
+                      inline
+                      id={pos.name}
+                      label={pos.name}
+                    />
+                  </div>
+                );
+              }
               return (
                 <div className="mb-3" key={pos.name}>
                   <Form.Check
+                    disabled
                     type="checkbox"
-                    disabled={!disable}
-                    checked={pos.isSelected ? pos.isSelected : false}
-                    onChange={() => {
-                      const newStarPos = JSON.parse(JSON.stringify(starPos));
-                      newStarPos[pos.name].isSelected = !pos.isSelected;
-                      setSelectedListState((prevList) => {
-                        const prevListCopy = prevList.concat();
-                        prevListCopy[index] = !prevListCopy[index];
-                        return prevListCopy;
-                      });
-                      writeMemo(newStarPos);
-                      setStarPos(newStarPos);
-                    }}
-                    inline
                     id={pos.name}
                     label={pos.name}
+                    checked={false}
                   />
                 </div>
               );
             }
-            return (
-              <div className="mb-3" key={pos.name}>
-                <Form.Check
-                  disabled
-                  type="checkbox"
-                  id={pos.name}
-                  label={pos.name}
-                  checked={false}
-                />
-              </div>
-            );
-          }
-          return null;
-        })}
-    </Form>
+            return null;
+          })}
+      </Form>
+    </>
   );
 }
 

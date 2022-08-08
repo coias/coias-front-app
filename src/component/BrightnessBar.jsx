@@ -4,11 +4,7 @@ import PropTypes from 'prop-types';
 
 function BrightnessBar({ val, set }) {
   return (
-    <div
-      style={{
-        opacity: 0.7,
-      }}
-    >
+    <div className="bright-contrast-bar">
       <ImBrightnessContrast size={30} />
       <input
         id="ex4"
@@ -20,7 +16,7 @@ function BrightnessBar({ val, set }) {
         onChange={(e) => {
           set(Number(e.target.value));
         }}
-        style={{ marginLeft: '14px' }}
+        style={{ marginTop: '10px' }}
       />
     </div>
   );

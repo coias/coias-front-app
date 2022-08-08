@@ -328,7 +328,7 @@ function ExplorePrepare({
           <Row xs="auto" style={{ marginBottom: '40px' }}>
             <Col style={{ margin: 'auto 0' }}>
               <Button
-                variant={menunames[0].done ? 'success' : 'primary'}
+                variant={menunames[0].done ? 'success' : 'secondary'}
                 style={{ whiteSpace: 'nowrap' }}
                 onClick={() => {
                   handleShow();
@@ -343,7 +343,7 @@ function ExplorePrepare({
                   as={ButtonGroup}
                   key="Success"
                   id="dropdown-variants-Success"
-                  variant={menunames[6].done ? 'success' : 'primary'}
+                  variant={menunames[6].done ? 'success' : 'secondary'}
                   title={menunames[6].name}
                 >
                   <Dropdown.Item eventKey="1" onClick={() => onProcessAuto(2)}>
@@ -363,7 +363,7 @@ function ExplorePrepare({
                     onClick={() => {
                       onProcess(menunames[1].query);
                     }}
-                    variant={menunames[1].done ? 'success' : 'primary'}
+                    variant={menunames[1].done ? 'success' : 'secondary'}
                   >
                     {menunames[1].name}
                   </Button>
@@ -374,7 +374,7 @@ function ExplorePrepare({
                 <Col style={{ padding: 0 }}>
                   <DropdownButton
                     as={ButtonGroup}
-                    variant={menunames[2].done ? 'success' : 'primary'}
+                    variant={menunames[2].done ? 'success' : 'secondary'}
                     title={menunames[2].name}
                   >
                     <Dropdown.Item
@@ -401,7 +401,7 @@ function ExplorePrepare({
                     onClick={() => {
                       onProcess(menunames[3].query);
                     }}
-                    variant={menunames[3].done ? 'success' : 'primary'}
+                    variant={menunames[3].done ? 'success' : 'secondary'}
                   >
                     {menunames[3].name}
                   </Button>
@@ -416,7 +416,7 @@ function ExplorePrepare({
                     onClick={() => {
                       onProcess(menunames[4].query);
                     }}
-                    variant={menunames[4].done ? 'success' : 'primary'}
+                    variant={menunames[4].done ? 'success' : 'secondary'}
                   >
                     {menunames[4].name}
                   </Button>
@@ -431,7 +431,7 @@ function ExplorePrepare({
                     onClick={() => {
                       onProcess(menunames[5].query);
                     }}
-                    variant={menunames[5].done ? 'success' : 'primary'}
+                    variant={menunames[5].done ? 'success' : 'secondary'}
                   >
                     {menunames[5].name}
                   </Button>

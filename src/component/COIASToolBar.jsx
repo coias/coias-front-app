@@ -7,6 +7,8 @@ import { BiHide } from 'react-icons/bi';
 import PropTypes from 'prop-types';
 import { StarPositionContext } from './context';
 import btnColor from '../utils/CONSTANTS';
+import ContrastBar from './ContrastBar';
+import BrightnessBar from './BrightnessBar';
 
 // eslint-disable-next-line no-use-before-define
 COIASToolBar.propTypes = {
@@ -18,6 +20,8 @@ COIASToolBar.propTypes = {
   setContrastVal: PropTypes.func.isRequired,
   isHide: PropTypes.bool.isRequired,
   setIsHide: PropTypes.func.isRequired,
+  contrastVal: PropTypes.number.isRequired,
+  brightnessVal: PropTypes.number.isRequired,
 };
 
 function COIASToolBar({
@@ -29,6 +33,8 @@ function COIASToolBar({
   setContrastVal,
   isHide,
   setIsHide,
+  contrastVal,
+  brightnessVal,
 }) {
   const { setStarPos } = useContext(StarPositionContext);
   return (
@@ -88,9 +94,11 @@ function COIASToolBar({
           // eslint-disable-next-line react/jsx-no-constructed-context-values
           value={{ color: isHide ? btnColor.selected : btnColor.defaulte }}
         >
-          <BiHide size={30} />
+          <BiHide size={30} style={{ marginBottom: '20px' }} />
         </IconContext.Provider>
       </Button>
+      <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
+      <ContrastBar val={contrastVal} set={setContrastVal} />
     </div>
   );
 }

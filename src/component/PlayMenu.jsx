@@ -100,6 +100,7 @@ function PlayMenu({
           <Nav>
             <Nav.Item className="text-center d-flex m-1">
               <Button
+                className="blink-button"
                 variant="light"
                 onClick={() => {
                   if (!play) {
@@ -113,11 +114,11 @@ function PlayMenu({
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
                   value={{ color: btnColor.defaulte }}
                 >
-                  {play ? <FaStop size={30} /> : <FaPlay size={30} />}
+                  {play ? <FaStop size={25} /> : <FaPlay size={25} />}
                 </IconContext.Provider>
               </Button>
             </Nav.Item>
-            <Nav.Item className="text-center d-flex m-1">
+            <Nav.Item className="text-center d-flex m-0">
               <Button
                 variant="light"
                 onClick={() => {
@@ -128,7 +129,7 @@ function PlayMenu({
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
                   value={{ color: btnColor.defaulte }}
                 >
-                  <FaStepBackward size={30} />
+                  <FaStepBackward size={25} />
                 </IconContext.Provider>
               </Button>
             </Nav.Item>
@@ -138,12 +139,13 @@ function PlayMenu({
                 onClick={() => {
                   onClickNext();
                 }}
+                style={{ marginLeft: '-10px' }}
               >
                 <IconContext.Provider
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
                   value={{ color: btnColor.defaulte }}
                 >
-                  <FaStepForward size={30} />
+                  <FaStepForward size={25} />
                 </IconContext.Provider>
               </Button>
             </Nav.Item>
@@ -160,7 +162,9 @@ function PlayMenu({
                 <option value="100">0.10</option>
                 <option value="500">0.50</option>
               </Form.Control>
-              <Form.Text style={{ margin: 'auto 0' }}>sec</Form.Text>
+              <Form.Text style={{ margin: 'auto 0', marginLeft: '5px' }}>
+                sec
+              </Form.Text>
             </Nav.Item>
           </Nav>
         </Col>
@@ -187,14 +191,17 @@ function PlayMenu({
                   bsStyle="default"
                   style={{
                     fontWeight: 'bold',
-                    textAlign: 'center',
+                    padding: '10px 30px',
                   }}
                 >
                   {name.name.substr(0, 1)}
                 </ToggleButton>
               ))}
           </ButtonGroup>
-          <ButtonGroup className="mx-5">
+          <ButtonGroup
+            className="justify-content-end"
+            style={{ marginLeft: '8rem', marginRight: '10px' }}
+          >
             <Button variant="light" onClick={() => setSettingModalShow(true)}>
               <IconContext.Provider
                 // eslint-disable-next-line react/jsx-no-constructed-context-values

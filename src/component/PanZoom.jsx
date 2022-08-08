@@ -365,7 +365,7 @@ function PanZoom({
         className="main-canvas"
         style={{
           width: '100%',
-          height: '100%',
+          height: '108%',
           paddingLeft: 0,
           position: 'relative',
           overflow: 'none',
@@ -380,7 +380,7 @@ function PanZoom({
           className="wrapper"
           style={{
             width: '100%',
-            height: '99%',
+            height: '100%',
             position: 'relative',
             overflow: 'none',
           }}

@@ -15,8 +15,6 @@ import StarsList from '../component/StarsList';
 import NewStarModal from '../component/NewStarModal';
 import ErrorModal from '../component/ErrorModal';
 import useEventListener from '../hooks/useEventListener';
-import ContrastBar from '../component/ContrastBar';
-import BrightnessBar from '../component/BrightnessBar';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
@@ -446,14 +444,6 @@ function COIAS({
                   scaleArray={scaleArray}
                   wrapperRef={wrapperRef}
                 />
-                <Row md={7} style={{ height: '15vh' }}>
-                  <Col>
-                    <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
-                  </Col>
-                  <Col>
-                    <ContrastBar val={contrastVal} set={setContrastVal} />
-                  </Col>
-                </Row>
               </Col>
             </Row>
           </Container>
@@ -465,7 +455,9 @@ function COIAS({
             selectedListState={selectedListState}
             setSelectedListState={setSelectedListState}
           />
-          <div className="align-self-center">
+          <div
+            className="align-self-center btn-fixed"
+          >
             <Button
               variant="success"
               onClick={() => {

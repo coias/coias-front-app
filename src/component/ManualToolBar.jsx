@@ -37,11 +37,10 @@ function ManualToolBar({
   return (
     <div>
       <Row className="m-3">
-        <Col
-          className="d-flex justify-content-between"
-          style={{ background: 'white', padding: 0 }}
-        >
-          <p style={{ margin: 'auto 0' }}>天体一覧</p>
+        <Col className="d-flex justify-content-between">
+          <p style={{ margin: 'auto 0', fontWeight: 'bold', color: '#5C636A' }}>
+            天体一覧
+          </p>
           <Button
             variant="success"
             onClick={() => {
@@ -52,14 +51,14 @@ function ManualToolBar({
           </Button>
         </Col>
       </Row>
-      <div className="manual-list">
+      <div className="manual-list m-1">
         <Row>
-          <Accordion activeKey={`${activeKey}`}>
+          <Accordion activeKey={`${activeKey}`} className="mt-1">
             {positionList.map((d, index) => (
-              <div className="d-flex" key={uuidv4()}>
+              <div className="d-flex m-2" key={uuidv4()}>
                 <Form.Check
                   key={uuidv4()}
-                  style={{ marginTop: '20px' }}
+                  style={{ marginTop: '13px', marginRight: '5px' }}
                   onChange={() => handleOnChange(index)}
                   checked={checkedState[index]}
                 />

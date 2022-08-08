@@ -4,11 +4,7 @@ import PropTypes from 'prop-types';
 
 function ContrastBar({ val, set }) {
   return (
-    <div
-      style={{
-        opacity: 0.7,
-      }}
-    >
+    <div className="bright-contrast-bar">
       <ImContrast size={23} />
       <input
         id="ex4"
@@ -20,7 +16,7 @@ function ContrastBar({ val, set }) {
         onChange={(e) => {
           set(Number(e.target.value));
         }}
-        style={{ marginLeft: '19px' }}
+        style={{ marginTop: '10px' }}
       />
     </div>
   );

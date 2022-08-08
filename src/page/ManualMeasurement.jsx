@@ -22,8 +22,6 @@ import StarsList from '../component/StarsList';
 import ConfirmationModal from '../component/ConfirmationModal';
 import ErrorModal from '../component/ErrorModal';
 import useEventListener from '../hooks/useEventListener';
-import BrightnessBar from '../component/BrightnessBar';
-import ContrastBar from '../component/ContrastBar';
 
 function ManualMeasurement({
   imageURLs,
@@ -450,14 +448,6 @@ function ManualMeasurement({
                   scaleArray={scaleArray}
                   wrapperRef={wrapperRef}
                 />
-                <Row md={7} style={{ height: '15vh' }}>
-                  <Col>
-                    <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
-                  </Col>
-                  <Col>
-                    <ContrastBar val={contrastVal} set={setContrastVal} />
-                  </Col>
-                </Row>
               </Col>
             </Row>
           </Container>
@@ -484,13 +474,14 @@ function ManualMeasurement({
               setCheckedState={setCheckedState}
             />
           )}
-          <div className="d-flex justify-content-end m-3">
+          <div className="d-flex justify-content-end m-3 manual-btn-fixed">
             {isEditMode() && (
               <Button
                 variant="danger"
                 onClick={() => {
                   removePositionListByCheckState();
                 }}
+                style={{ marginRight: '10px' }}
               >
                 削除する
               </Button>

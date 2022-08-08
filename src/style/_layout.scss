@@ -94,7 +94,7 @@ canvas {
 
 .active::before {
   position: absolute;
-  bottom: 0;
+  bottom: -2px;
   left: 50%;
   display: block;
   width: 70%;
@@ -191,8 +191,8 @@ footer {
         flex-direction: column;
         width: 40px;
         padding: 0;
-        margin: 0 10px;
-        margin-right: 0 auto;
+        margin: 0 auto;
+        margin: 10px;
       }
 
       .manual-mode-control-view {
@@ -212,11 +212,12 @@ footer {
 
 // 星のリストのスクロールバーを常に表示する
 .star-list {
-  height: 100%;
+  height: 80%;
+  margin: 0 20px 20px;
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
-    width: 10px;
+    width: 5px;
     height: 10px;
   }
 
@@ -229,10 +230,9 @@ footer {
 }
 
 #ex4 {
-  // appearance: slider-vertical; /* Chromium */
-  width: 60%;
-  height: 8px;
-  padding: 0 5px;
+  appearance: slider-vertical; /* Chromium */
+  width: 8px;
+  height: 87%;
 }
 
 .manual-list {
@@ -254,10 +254,32 @@ footer {
 }
 
 .tool-btn {
-  margin-top: 20px;
+  margin-top: 5px;
+  margin-left: -2px;
   background-color: none;
 }
 
-.content-border {
-  border: 2px solid red;
+.bright-contrast-bar {
+  width: 30px;
+  height: 40%;
+  margin-top: 30px;
+  margin-left: 11px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.blink-button {
+  margin-left: 10px;
+}
+
+.btn-fixed {
+  position: absolute;
+  right: 4%;
+  bottom: 20px;
+}
+
+.manual-btn-fixed {
+  position: absolute;
+  right: 0;
+  bottom: 20px;
 }
