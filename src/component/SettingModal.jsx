@@ -34,7 +34,7 @@ function SettingModal({
           <Row key={img.name} className="mb-5">
             <Col sm={8}>{img.name}</Col>
             <Col className="text-center">
-              <input
+              <Form.Check
                 type="checkbox"
                 defaultChecked={img.visible}
                 onChange={(e) => {
@@ -44,7 +44,7 @@ function SettingModal({
               />
             </Col>
             <Col style={{ textAlign: 'center' }}>
-              <input
+              <Form.Check
                 type="checkbox"
                 defaultChecked={img.nomasked}
                 onChange={(e) => {

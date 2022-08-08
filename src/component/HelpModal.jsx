@@ -4,6 +4,7 @@ import { Modal, Button, Table } from 'react-bootstrap';
 import { FaMousePointer } from 'react-icons/fa';
 import { BiHide } from 'react-icons/bi';
 import { AiOutlineReload } from 'react-icons/ai';
+import { RiArrowUpDownFill, RiArrowLeftRightFill } from 'react-icons/ri';
 import PropTypes from 'prop-types';
 
 function HelpModal({ show, onHide }) {
@@ -43,6 +44,22 @@ function HelpModal({ show, onHide }) {
               </td>
               <td>
                 <h4>天体の枠、天体番号を非表示にします</h4>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <RiArrowUpDownFill size={30} />
+              </td>
+              <td>
+                <h4>上下キーで拡大縮小をします</h4>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <RiArrowLeftRightFill size={30} />
+              </td>
+              <td>
+                <h4>左右キーでページを移動します</h4>
               </td>
             </tr>
           </tbody>

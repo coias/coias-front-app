@@ -11,17 +11,13 @@ import {
   DropdownButton,
   ButtonGroup,
   Dropdown,
-  Modal,
-  Form,
-  InputGroup,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import LoadingButton from '../component/LoadingButton';
-import AppToast from '../component/AppToast';
 import ErrorModal from '../component/ErrorModal';
+import FileUploadModal from '../component/FileUploadModal';
 import AlertModal from '../component/AlertModal';
-// import ExcuteButton from '../component/ExcuteButton';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
@@ -33,11 +29,6 @@ ExplorePrepare.propTypes = {
   setIsAuto: PropTypes.func.isRequired,
 };
 
-/**
- * 2022.03.24 y changed.
- * 全自動だけ段分け。
- *
- */
 function ExplorePrepare({
   fileNames,
   setFileNames,
@@ -48,13 +39,11 @@ function ExplorePrepare({
 }) {
   const uri = process.env.REACT_APP_API_URI;
   const [loading, setLoading] = useState(false);
-  const [showError, setShowError] = useState(false);
 
   const fileInput = useRef();
   const [show, setShow] = useState(false);
   const [valid, setValid] = useState(true);
   const [disabled, setDisabled] = useState(true);
-  const [errorContent, setErrorContent] = useState('');
   const [processName, setProcessName] = useState('');
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
@@ -138,11 +127,6 @@ function ExplorePrepare({
   };
 
   const handleSubmit = (e) => {
-    /* formを使用してファイルを送信
-     * 参考リンク
-     * https://ja.reactjs.org/docs/forms.html
-     * https://developer.mozilla.org/ja/docs/Web/API/FormData/Using_FormData_Objects
-     */
     e.preventDefault();
     const { files } = fileInput.current;
     const data = new FormData();
@@ -150,29 +134,30 @@ function ExplorePrepare({
     setErrorFile([]);
     setFileNum(files.length);
 
-    let file;
-    let tmp;
-
     const pattern =
-      /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/gm;
+      /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/;
+    console.log(files);
+    const firstFileAreaName = files[0].name
+      .split('-')
+      .filter((_, index) => index === 3 || index === 4)
+      .join('');
 
     const errorFileNames = [];
 
-    if (files.length < 3)
+    if (files.length < 3) {
       errorFileNames.push('ファイルが足りません。3つ以上選択してください。');
+    }
 
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < files.length; i++) {
-      file = files[i];
-      const result = file.name.match(pattern);
-      const isMatch = result && result.length === 1 && result[0] === file.name;
-      if (i === 0 && isMatch) {
-        const a = file.name.split(`-`);
-        tmp = `${a[3]}${a[4]}`;
-      } else if (i > 0 && isMatch) {
-        const b = file.name.split(`-`);
-        const isSame = tmp === `${b[3]}${b[4]}`;
-        if (!isSame) {
+    Object.values(files).forEach((file, i) => {
+      const isMatch = pattern.test(file.name);
+      if (i > 0 && isMatch) {
+        const isSameArea =
+          file.name
+            .split('-')
+            .filter((_, index) => index === 3 || index === 4)
+            .join('')
+            .indexOf(firstFileAreaName) > -1;
+        if (!isSameArea) {
           errorFileNames.push(`${file.name}は観測領域が異なります。`);
         }
       }
@@ -183,8 +168,7 @@ function ExplorePrepare({
 
       data.append('files', file, file.name);
       filesForProps.push(file.name);
-      setErrorContent(``);
-    }
+    });
 
     setErrorFile(errorFileNames);
 
@@ -513,223 +497,41 @@ function ExplorePrepare({
 
       <LoadingButton loading={loading} processName={processName} />
 
-      <AppToast
-        show={showError}
-        title="エラー"
-        content={errorContent}
-        closeCallback={() => setShowError(false)}
+      <FileUploadModal
+        show={show}
+        isAutoProcess={isAuto}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+        fileInput={fileInput}
+        handleChange={handleChange}
+        valid={valid}
+        errorFiles={errorFiles}
+        handleSelect={handleSelect}
+        disabled={disabled}
+        onClickStarUpdateButton={async () => {
+          handleClose();
+          await axios
+            .put(`${uri}getMPCORB_and_mpc2edb`)
+            .then(() => {
+              setProcessName('小惑星データ更新中...');
+              setLoading(true);
+            })
+            .catch((e) => {
+              const errorResponse = e.response?.data?.detail;
+              if (errorResponse.place) {
+                setErrorPlace(errorResponse.place);
+                setErrorReason(errorResponse.reason);
+                setShowProcessError(true);
+              }
+            });
+          setLoading(false);
+        }}
+        setParameters={setParameters}
+        parameters={parameters}
+        checkSend={checkSend}
+        setCheckSend={setCheckSend}
+        alertMessage={alertMessage}
       />
-
-      <Modal show={show} onHide={handleClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>ファイルを選択してください</Modal.Title>
-        </Modal.Header>
-        <Form onSubmit={handleSubmit}>
-          <Modal.Body className="mx-3">
-            アップロード後、画像処理をおこないます。
-            <br />
-            処理は時間がかかります。
-            <br />
-            画像処理は全自動処理と手動処理が選択できます。
-            <InputGroup hasValidation className="mt-3">
-              <Row>
-                <Form.Control
-                  type="file"
-                  ref={fileInput}
-                  onChange={handleChange}
-                  isInvalid={valid}
-                  multiple
-                  className="mx-2"
-                />
-              </Row>
-              <Row>
-                {errorFiles.map((element) => (
-                  <p
-                    style={{
-                      color: 'red',
-                    }}
-                    className="mt-2 mb-1"
-                  >
-                    {element}
-                  </p>
-                ))}
-              </Row>
-            </InputGroup>
-            <Form.Check
-              className="mt-3"
-              inline
-              type="radio"
-              label="全自動処理"
-              name="group1"
-              id="auto"
-              value="auto"
-              onChange={handleSelect}
-              checked={isAuto}
-            />
-            <Form.Check
-              className="mt-3"
-              inline
-              type="radio"
-              label="手動処理"
-              name="group1"
-              id="manual"
-              value="manual"
-              onChange={handleSelect}
-              checked={!isAuto}
-            />
-            <Button
-              onClick={async () => {
-                handleClose();
-                await axios
-                  .put(`${uri}getMPCORB_and_mpc2edb`)
-                  .then(() => {
-                    setProcessName('小惑星データ更新中...');
-                    setLoading(true);
-                  })
-                  .catch((e) => {
-                    const errorResponse = e.response?.data?.detail;
-                    if (errorResponse.place) {
-                      setErrorPlace(errorResponse.place);
-                      setErrorReason(errorResponse.reason);
-                      setShowProcessError(true);
-                    }
-                  });
-                setLoading(false);
-              }}
-            >
-              小惑星データ更新
-            </Button>
-            <Row style={{ whiteSpace: 'nowrap' }}>
-              <h3 className="px-0 mt-2">パラメータの詳細設定</h3>
-              <Col className="pe-0">
-                <InputGroup className="my-2">
-                  <InputGroup.Text
-                    style={{
-                      backgroundColor: 'white',
-                      padding: '6px',
-                    }}
-                  >
-                    検出光源必要数
-                  </InputGroup.Text>
-                  <Form.Control
-                    className="form-control-sm"
-                    placeholder="初期値は4"
-                    onChange={(e) => {
-                      setParameters(
-                        parameters.map((parametar, index) =>
-                          index === 0 ? e.target.value : parametar,
-                        ),
-                      );
-                      if (e.target.value.match(/[^0-9]/gm)) {
-                        setCheckSend(
-                          checkSend.map((judge, index) =>
-                            index === 1 ? false : judge,
-                          ),
-                        );
-                      } else {
-                        setCheckSend(
-                          checkSend.map((judge, index) =>
-                            index === 1 ? true : judge,
-                          ),
-                        );
-                      }
-                    }}
-                  />
-                </InputGroup>
-              </Col>
-              <Col className="ps-2">
-                <InputGroup className="my-2">
-                  <InputGroup.Text
-                    style={{
-                      backgroundColor: 'white',
-                      padding: '6px',
-                    }}
-                  >
-                    自動測光半径
-                  </InputGroup.Text>
-                  <Form.Control
-                    className="form-control-sm"
-                    placeholder="初期値は6"
-                    onChange={(e) => {
-                      setParameters(
-                        parameters.map((parametar, index) =>
-                          index === 1 ? e.target.value : parametar,
-                        ),
-                      );
-                      if (e.target.value.match(/[^0-9]/gm)) {
-                        setCheckSend(
-                          checkSend.map((judge, index) =>
-                            index === 2 ? false : judge,
-                          ),
-                        );
-                      } else {
-                        setCheckSend(
-                          checkSend.map((judge, index) =>
-                            index === 2 ? true : judge,
-                          ),
-                        );
-                      }
-                    }}
-                  />
-                </InputGroup>
-              </Col>
-              <InputGroup className="my-2">
-                <InputGroup.Text
-                  style={{
-                    backgroundColor: 'white',
-                  }}
-                >
-                  検出最低画像枚数
-                </InputGroup.Text>
-                <Form.Control
-                  className="form-control-sm"
-                  placeholder="初期値は2000"
-                  onChange={(e) => {
-                    setParameters(
-                      parameters.map((parametar, index) =>
-                        index === 2 ? e.target.value : parametar,
-                      ),
-                    );
-                    if (e.target.value.match(/[^0-9]/gm)) {
-                      setCheckSend(
-                        checkSend.map((judge, index) =>
-                          index === 3 ? false : judge,
-                        ),
-                      );
-                    } else {
-                      setCheckSend(
-                        checkSend.map((judge, index) =>
-                          index === 3 ? true : judge,
-                        ),
-                      );
-                    }
-                  }}
-                />
-              </InputGroup>
-              <p
-                style={{
-                  color: 'red',
-                }}
-                className="mt-1 mb-0"
-              >
-                {alertMessage}
-              </p>
-            </Row>
-            <Form.Control.Feedback type="invalid">
-              ファイルを選択してください。
-            </Form.Control.Feedback>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="primary" type="submit" disabled={disabled}>
-              send
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
       <AlertModal
         alertModalShow={fileAlertModalshow}
         onClickOk={() => {
