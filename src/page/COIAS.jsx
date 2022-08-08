@@ -420,7 +420,6 @@ function COIAS({
   });
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className="coias-view-main" id="wrapper-coias">
       <PlayMenu
         imageNames={imageURLs}

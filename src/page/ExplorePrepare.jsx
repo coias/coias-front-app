@@ -679,7 +679,7 @@ function ExplorePrepare({
                     backgroundColor: 'white',
                   }}
                 >
-                  平均光源数
+                  検出最低画像枚数
                 </InputGroup.Text>
                 <Form.Control
                   className="form-control-sm"

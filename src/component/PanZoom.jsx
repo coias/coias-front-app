@@ -316,7 +316,7 @@ function PanZoom({
     if (
       isManual ||
       document.getElementById('selectButton').dataset.active !== 'true' ||
-      disable
+      !disable
     ) {
       return;
     }
