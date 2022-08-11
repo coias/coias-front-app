@@ -90,11 +90,11 @@ function App() {
         <main
           style={{
             position: 'absolute',
-            top: 75,
+            top: 80,
             bottom: 0,
             left: 0,
             right: 0,
-            overflow: 'hidden',
+            overflow: 'scroll',
             backgroundColor: '#F8F9FA',
           }}
         >

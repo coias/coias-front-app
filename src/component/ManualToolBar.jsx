@@ -42,7 +42,6 @@ function ManualToolBar({
             天体一覧
           </p>
           <Button
-            variant="success"
             onClick={() => {
               onClickAddButton();
             }}

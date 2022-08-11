@@ -1,11 +1,23 @@
 import React from 'react';
 import { ImBrightnessContrast } from 'react-icons/im';
 import PropTypes from 'prop-types';
+import { IconContext } from 'react-icons';
+import CONSTANT from '../utils/CONSTANTS';
 
 function BrightnessBar({ val, set }) {
   return (
     <div className="bright-contrast-bar">
-      <ImBrightnessContrast size={30} />
+      <IconContext.Provider
+        // eslint-disable-next-line react/jsx-no-constructed-context-values
+        value={{
+          color: CONSTANT.defaultBtnColor,
+        }}
+      >
+        <ImBrightnessContrast
+          size={CONSTANT.iconSize}
+          style={{ margin: '0 auto 10px auto' }}
+        />
+      </IconContext.Provider>
       <input
         id="ex4"
         type="range"
@@ -16,7 +28,6 @@ function BrightnessBar({ val, set }) {
         onChange={(e) => {
           set(Number(e.target.value));
         }}
-        style={{ marginTop: '10px' }}
       />
     </div>
   );

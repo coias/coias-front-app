@@ -455,9 +455,7 @@ function COIAS({
             selectedListState={selectedListState}
             setSelectedListState={setSelectedListState}
           />
-          <div
-            className="align-self-center btn-fixed"
-          >
+          <div className="star-list-button">
             <Button
               variant="success"
               onClick={() => {
@@ -469,7 +467,7 @@ function COIAS({
                 }
                 setDisable(!disable);
               }}
-              size="md"
+              size="lg"
             >
               {disable ? '再描画' : 'やり直す'}
             </Button>

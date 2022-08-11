@@ -9,16 +9,18 @@ function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
 
   return (
     <>
-      <p
-        style={{
-          marginTop: '20px',
-          fontWeight: 'bold',
-          color: '#5C636A',
-          letterSpacing: '1px',
-        }}
-      >
-        天体一覧
-      </p>
+      <div className="star-list-title">
+        <p
+          style={{
+            marginTop: '20px',
+            fontWeight: 'bold',
+            color: '#5C636A',
+            letterSpacing: '1px',
+          }}
+        >
+          天体一覧
+        </p>
+      </div>
       <Form className="star-list">
         {Object.keys(starPos)
           .sort()

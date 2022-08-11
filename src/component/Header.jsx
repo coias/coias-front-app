@@ -13,22 +13,13 @@ function Header({ setMenunames }) {
   };
   const [show, setShow] = useState(false);
   const checkIsStatusUpdated = useCallback(
-    () =>
-      !Object.keys(modeStatus).some((key) => {
-        console.log(modeStatus[key]);
-        return modeStatus[key];
-      }),
+    () => !Object.keys(modeStatus).some((key) => modeStatus[key]),
     [modeStatus],
   );
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <Navbar
-      className="color-nav"
-      variant="dark"
-      style={{ padding: 0, paddingTop: '5px' }}
-    >
-      <Navbar.Brand className="px-3">
+    <Navbar className="color-nav" style={{ margin: 0, padding: 0 }}>
+      <Navbar.Brand>
         <Row>
           <Col>
             <img
@@ -62,28 +53,14 @@ function Header({ setMenunames }) {
 
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className=".mt-2">
+        <Nav>
           <NavLink
             to="/"
             className={(navData) =>
               navData.isActive ? 'active' : 'not-active'
             }
-            style={{
-              textDecoration: 'none',
-              color: 'white',
-              marginLeft: 50,
-              textAlign: 'center',
-            }}
           >
-            <h3
-              style={{
-                fontSize: '22px',
-                margin: 0,
-                marginTop: '20px',
-              }}
-            >
-              探索準備
-            </h3>
+            <h3>探索準備</h3>
           </NavLink>
           <NavLink
             to="/COIAS"
@@ -91,17 +68,11 @@ function Header({ setMenunames }) {
               navData.isActive ? 'active' : 'not-active'
             }
             style={{
-              textDecoration: 'none',
-              color: 'white',
-              marginLeft: 80,
-              textAlign: 'center',
               opacity: modeStatus.COIAS ? 1 : 0.3,
             }}
             onClick={modeStatus.COIAS ? () => {} : (e) => e.preventDefault()}
           >
-            <h3 style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}>
-              探索/再描画
-            </h3>
+            <h3>探索/再描画</h3>
           </NavLink>
           <NavLink
             to="/ManualMeasurement"
@@ -109,16 +80,11 @@ function Header({ setMenunames }) {
               navData.isActive ? 'active' : 'not-active'
             }
             style={{
-              textDecoration: 'none',
-              color: 'white',
-              marginLeft: 80,
               opacity: modeStatus.Manual ? 1 : 0.3,
             }}
             onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
           >
-            <h3 style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}>
-              手動測定
-            </h3>
+            <h3>手動測定</h3>
           </NavLink>
           <NavLink
             to="/Report"
@@ -126,16 +92,11 @@ function Header({ setMenunames }) {
               navData.isActive ? 'active' : 'not-active'
             }
             style={{
-              textDecoration: 'none',
-              color: 'white',
-              marginLeft: 80,
               opacity: modeStatus.Report ? 1 : 0.3,
             }}
             onClick={modeStatus.Report ? () => {} : (e) => e.preventDefault()}
           >
-            <h3 style={{ fontSize: '22px', margin: 0, marginTop: '20px' }}>
-              レポート
-            </h3>
+            <h3>レポート</h3>
           </NavLink>
         </Nav>
       </Navbar.Collapse>
@@ -144,15 +105,9 @@ function Header({ setMenunames }) {
           setShow(true);
         }}
         variant="light"
-        style={{
-          marginRight: 30,
-          color: 'white',
-          background: 'none',
-          padding: '7px 25px',
-        }}
         disabled={checkIsStatusUpdated()}
       >
-        Clear
+        探索終了
       </Button>
       <ConfirmationModal
         show={show}

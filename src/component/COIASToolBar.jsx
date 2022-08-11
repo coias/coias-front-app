@@ -6,7 +6,7 @@ import { AiOutlineReload } from 'react-icons/ai';
 import { BiHide } from 'react-icons/bi';
 import PropTypes from 'prop-types';
 import { StarPositionContext } from './context';
-import btnColor from '../utils/CONSTANTS';
+import CONSTANT from '../utils/CONSTANTS';
 import ContrastBar from './ContrastBar';
 import BrightnessBar from './BrightnessBar';
 
@@ -50,9 +50,13 @@ function COIASToolBar({
       >
         <IconContext.Provider
           // eslint-disable-next-line react/jsx-no-constructed-context-values
-          value={{ color: isSelect ? btnColor.selected : btnColor.defaulte }}
+          value={{
+            color: isSelect
+              ? CONSTANT.selectedBtnColor
+              : CONSTANT.defaultBtnColor,
+          }}
         >
-          <FaMousePointer size={30} />
+          <FaMousePointer size={CONSTANT.iconSize} />
         </IconContext.Provider>
       </Button>
       <Button
@@ -76,9 +80,9 @@ function COIASToolBar({
       >
         <IconContext.Provider
           // eslint-disable-next-line react/jsx-no-constructed-context-values
-          value={{ color: btnColor.defaulte }}
+          value={{ color: CONSTANT.defaultBtnColor }}
         >
-          <AiOutlineReload size={30} />
+          <AiOutlineReload size={CONSTANT.iconSize} />
         </IconContext.Provider>
       </Button>
       <Button
@@ -92,9 +96,13 @@ function COIASToolBar({
       >
         <IconContext.Provider
           // eslint-disable-next-line react/jsx-no-constructed-context-values
-          value={{ color: isHide ? btnColor.selected : btnColor.defaulte }}
+          value={{
+            color: isHide
+              ? CONSTANT.selectedBtnColor
+              : CONSTANT.defaultBtnColor,
+          }}
         >
-          <BiHide size={30} style={{ marginBottom: '20px' }} />
+          <BiHide size={CONSTANT.iconSize} style={{ marginBottom: '20px' }} />
         </IconContext.Provider>
       </Button>
       <BrightnessBar val={brightnessVal} set={setBrightnessVal} />

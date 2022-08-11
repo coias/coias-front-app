@@ -1,2 +1,3 @@
-exports.defaulte = '#5C636A';
-exports.selected = '#0B5ED7';
+exports.defaultBtnColor = '#5C636A';
+exports.selectedBtnColor = '#0B5ED7';
+exports.iconSize = 23;

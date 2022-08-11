@@ -474,7 +474,7 @@ function ManualMeasurement({
               setCheckedState={setCheckedState}
             />
           )}
-          <div className="d-flex justify-content-end m-3 manual-btn-fixed">
+          <div className="manual-btn-fixed">
             {isEditMode() && (
               <Button
                 variant="danger"
@@ -482,6 +482,7 @@ function ManualMeasurement({
                   removePositionListByCheckState();
                 }}
                 style={{ marginRight: '10px' }}
+                size="lg"
               >
                 削除する
               </Button>
@@ -499,7 +500,7 @@ function ManualMeasurement({
                   }
                   setIsRedisp(!isRedisp);
                 }}
-                size="md"
+                size="lg"
               >
                 {isRedisp ? 'やり直す' : '再描画'}
               </Button>

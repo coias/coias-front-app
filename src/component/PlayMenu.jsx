@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import { PageContext } from './context';
 import SettingModal from './SettingModal';
 import HelpModal from './HelpModal';
-import btnColor from '../utils/CONSTANTS';
+import CONSTANT from '../utils/CONSTANTS';
 
 function PlayMenu({
   imageNames,
@@ -94,7 +94,7 @@ function PlayMenu({
   }, [start, next, back]);
 
   return (
-    <Navbar bg="light" expand="lg" className="play-menu">
+    <Navbar bg="light" className="play-menu">
       <Container fluid>
         <Col md={1}>
           <Nav>
@@ -112,9 +112,13 @@ function PlayMenu({
               >
                 <IconContext.Provider
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
-                  value={{ color: btnColor.defaulte }}
+                  value={{ color: CONSTANT.defaultBtnColor }}
                 >
-                  {play ? <FaStop size={25} /> : <FaPlay size={25} />}
+                  {play ? (
+                    <FaStop size={CONSTANT.iconSize} />
+                  ) : (
+                    <FaPlay size={CONSTANT.iconSize} />
+                  )}
                 </IconContext.Provider>
               </Button>
             </Nav.Item>
@@ -127,9 +131,9 @@ function PlayMenu({
               >
                 <IconContext.Provider
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
-                  value={{ color: btnColor.defaulte }}
+                  value={{ color: CONSTANT.defaultBtnColor }}
                 >
-                  <FaStepBackward size={25} />
+                  <FaStepBackward size={CONSTANT.iconSize} />
                 </IconContext.Provider>
               </Button>
             </Nav.Item>
@@ -143,9 +147,9 @@ function PlayMenu({
               >
                 <IconContext.Provider
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
-                  value={{ color: btnColor.defaulte }}
+                  value={{ color: CONSTANT.defaultBtnColor }}
                 >
-                  <FaStepForward size={25} />
+                  <FaStepForward size={CONSTANT.iconSize} />
                 </IconContext.Provider>
               </Button>
             </Nav.Item>
@@ -169,19 +173,19 @@ function PlayMenu({
           </Nav>
         </Col>
         <Col md={9} className="d-flex">
-          <ButtonGroup className="flex-grow-1">
+          <ButtonGroup className="flex-grow-1" style={{ margin: 'auto 0' }}>
             {imageNames
               .filter((img) => img.visible)
-              .map((name, index) => (
+              .map((imageName, index) => (
                 <ToggleButton
                   id={`radio-${index}`}
                   type="radio"
                   variant="outline-secondary"
                   name="radio"
-                  value={name.name}
-                  key={name.name}
+                  value={imageName.name}
+                  key={imageName.name}
                   checked={
-                    (radioValue === name.name && currentPage === index) ||
+                    (radioValue === imageName.name && currentPage === index) ||
                     currentPage === index
                   }
                   onChange={(e) => {
@@ -189,12 +193,8 @@ function PlayMenu({
                     setRadioValue(e.currentTarget.value);
                   }}
                   bsStyle="default"
-                  style={{
-                    fontWeight: 'bold',
-                    padding: '10px 30px',
-                  }}
                 >
-                  {name.name.substr(0, 1)}
+                  {imageName.name.substr(0, 1)}
                 </ToggleButton>
               ))}
           </ButtonGroup>
@@ -205,9 +205,9 @@ function PlayMenu({
             <Button variant="light" onClick={() => setSettingModalShow(true)}>
               <IconContext.Provider
                 // eslint-disable-next-line react/jsx-no-constructed-context-values
-                value={{ color: btnColor.defaulte }}
+                value={{ color: CONSTANT.defaultBtnColor }}
               >
-                <AiFillSetting size={30} />
+                <AiFillSetting size={CONSTANT.iconSize} />
               </IconContext.Provider>
             </Button>
             <SettingModal
@@ -226,9 +226,9 @@ function PlayMenu({
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
               <IconContext.Provider
                 // eslint-disable-next-line react/jsx-no-constructed-context-values
-                value={{ color: btnColor.defaulte }}
+                value={{ color: CONSTANT.defaultBtnColor }}
               >
-                <BiHelpCircle size={30} />
+                <BiHelpCircle size={CONSTANT.iconSize} />
               </IconContext.Provider>
             </Button>
             <HelpModal
