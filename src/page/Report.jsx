@@ -124,7 +124,7 @@ function Report() {
         <Form.Group className="p-3 w-75">
           <Row xs="auto">
             <Col md={1}>
-              <h4>OBS :</h4>
+              <h4>OBS </h4>
             </Col>
             <Col md={10} style={{ marginLeft: '20px' }}>
               <Form.Control
@@ -139,7 +139,7 @@ function Report() {
         <Form.Group className="p-3 w-75">
           <Row xs="auto">
             <Col md={1}>
-              <h4>MEA :</h4>
+              <h4>MEA </h4>
             </Col>
             <Col md={10} style={{ marginLeft: '20px' }}>
               <Form.Control
@@ -154,11 +154,12 @@ function Report() {
       </Form>
       <Row xs="auto" className="mt-3">
         <Col>
-          <h4 style={{ marginLeft: '13px' }}>レポート :</h4>
+          <h4 style={{ marginLeft: '13px' }}>レポート </h4>
         </Col>
         <Col md={8}>
           <div
             style={{
+              marginLeft: '12px',
               backgroundColor: 'black',
               height: '63vh',
               overflow: 'scroll',

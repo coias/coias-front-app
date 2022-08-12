@@ -388,6 +388,7 @@ function ManualMeasurement({
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className="coias-view-main" id="wrapper-coias">
+      {console.log(isEditMode())}
       <Row>
         <Col>
           <PlayMenu
@@ -474,14 +475,19 @@ function ManualMeasurement({
               setCheckedState={setCheckedState}
             />
           )}
-          <div className="manual-btn-fixed">
+          <div
+            className={
+              isEditMode() ? 'manual-btn-fixed-delete' : 'manual-btn-fixed'
+            }
+            // style={{ marginRight: '10px' }}
+          >
             {isEditMode() && (
               <Button
                 variant="danger"
                 onClick={() => {
                   removePositionListByCheckState();
                 }}
-                style={{ marginRight: '10px' }}
+                style={{ marginRight: '90px' }}
                 size="lg"
               >
                 削除する
