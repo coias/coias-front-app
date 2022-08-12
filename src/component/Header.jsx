@@ -1,14 +1,25 @@
-import React from 'react';
-import { Navbar, Nav, Row, Col } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
-import { MdOutlineLockOpen, MdOutlineLock } from 'react-icons/md';
+import React, { useContext, useState, useCallback } from 'react';
+import { Navbar, Nav, Row, Col, Button } from 'react-bootstrap';
+import { NavLink, useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import ConfirmationModal from './ConfirmationModal';
+import { ModeStatusContext } from './context';
 
-function Header() {
-  const isLocked = true;
+function Header({ setMenunames }) {
+  const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate('/');
+  };
+  const [show, setShow] = useState(false);
+  const checkIsStatusUpdated = useCallback(
+    () => !Object.keys(modeStatus).some((key) => modeStatus[key]),
+    [modeStatus],
+  );
+
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    <Navbar bg="dark" variant="dark">
-      <Navbar.Brand className="px-3">
+    <Navbar className="color-nav" style={{ margin: 0, padding: 0 }}>
+      <Navbar.Brand>
         <Row>
           <Col>
             <img
@@ -20,75 +31,113 @@ function Header() {
             />
           </Col>
           <Col>
-            <div style={{ color: 'white' }}>
-              Come On!
-              <br />
-              Impacting Asteroid
-            </div>
+            <Row>
+              <div
+                className="p-0 m-0"
+                style={{ color: '#28297E', fontSize: '15px' }}
+              >
+                Come On! Impacting ASteroid
+              </div>
+            </Row>
+            <Row>
+              <div
+                className="p-0 m-0"
+                style={{ color: '#28297E', fontSize: '25px' }}
+              >
+                COIAS
+              </div>
+            </Row>
           </Col>
         </Row>
       </Navbar.Brand>
 
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="me-auto">
+        <Nav>
           <NavLink
             to="/"
             className={(navData) =>
               navData.isActive ? 'active' : 'not-active'
             }
-            style={{
-              textDecoration: 'none',
-              color: 'gray',
-            }}
           >
-            <h3 style={{ paddingLeft: 13 }}>探索準備</h3>
+            <h3>探索準備</h3>
           </NavLink>
           <NavLink
             to="/COIAS"
             className={(navData) =>
               navData.isActive ? 'active' : 'not-active'
             }
-            style={{ textDecoration: 'none', color: 'gray' }}
+            style={{
+              opacity: modeStatus.COIAS ? 1 : 0.3,
+            }}
+            onClick={modeStatus.COIAS ? () => {} : (e) => e.preventDefault()}
           >
-            <h3 style={{ paddingLeft: 35 }}>探索/再描画</h3>
+            <h3>探索/再描画</h3>
           </NavLink>
           <NavLink
             to="/ManualMeasurement"
             className={(navData) =>
               navData.isActive ? 'active' : 'not-active'
             }
-            style={{ textDecoration: 'none', color: 'gray' }}
+            style={{
+              opacity: modeStatus.Manual ? 1 : 0.3,
+            }}
+            onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
           >
-            <h3 style={{ paddingLeft: 35 }}>手動測定</h3>
+            <h3>手動測定</h3>
           </NavLink>
           <NavLink
             to="/Report"
             className={(navData) =>
               navData.isActive ? 'active' : 'not-active'
             }
-            style={{ textDecoration: 'none', color: 'gray' }}
-            onClick={(e) => e.preventDefault() /* do nothing. */}
+            style={{
+              opacity: modeStatus.Report ? 1 : 0.3,
+            }}
+            onClick={modeStatus.Report ? () => {} : (e) => e.preventDefault()}
           >
-            <div className="d-flex" style={{ paddingLeft: 35 }}>
-              <h3 style={{ position: 'absolute' }}>レポート</h3>
-              {isLocked ? (
-                <MdOutlineLock
-                  size={26}
-                  style={{ position: 'relative', top: -15, left: 100 }}
-                />
-              ) : (
-                <MdOutlineLockOpen
-                  size={26}
-                  style={{ position: 'relative', top: -15, left: 100 }}
-                />
-              )}
-            </div>
+            <h3>レポート</h3>
           </NavLink>
         </Nav>
       </Navbar.Collapse>
+      <Button
+        onClick={() => {
+          setShow(true);
+        }}
+        variant="light"
+        disabled={checkIsStatusUpdated()}
+      >
+        探索終了
+      </Button>
+      <ConfirmationModal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+        onClickYes={() => {
+          setModeStatus({
+            COIAS: false,
+            Manual: false,
+            Report: false,
+          });
+          handleNavigate();
+          setShow(false);
+          setMenunames((prevMenunames) =>
+            prevMenunames.map((items) => {
+              const objCopy = { ...items };
+              objCopy.done = false;
+              return objCopy;
+            }),
+          );
+        }}
+        confirmMessage="状態を全てクリアしますか？"
+      />
     </Navbar>
   );
 }
 
 export default Header;
+
+Header.propTypes = {
+  setMenunames: PropTypes.func.isRequired,
+};

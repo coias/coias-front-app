@@ -12,6 +12,7 @@ import {
   MousePositionContext,
   PageContext,
   StarPositionContext,
+  ModeStatusContext,
 } from './component/context';
 import Header from './component/Header';
 import COIAS from './page/COIAS';
@@ -73,6 +74,16 @@ function App() {
   const [starPos, setStarPos] = useState({});
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
 
+  const [modeStatus, setModeStatus] = useState({
+    COIAS: true,
+    Manual: true,
+    Report: true,
+  });
+  const modeStatusValue = useMemo(
+    () => ({ modeStatus, setModeStatus }),
+    [modeStatus],
+  );
+
   const [start, setStart] = useState(false);
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
@@ -80,87 +91,88 @@ function App() {
 
   return (
     <BrowserRouter style={{ position: 'relative' }}>
-      <Header />
-      <main
-        style={{
-          position: 'absolute',
-          top: 86,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          overflow: 'scroll',
-        }}
-      >
-        <PageContext.Provider value={pageValue}>
-          <MousePositionContext.Provider value={mouseValue}>
-            <StarPositionContext.Provider value={starValue}>
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <ExplorePrepare
-                      fileNames={fileNames}
-                      setFileNames={setFileNames}
-                      menunames={menunames}
-                      setMenunames={setMenunames}
-                      isAuto={isAuto}
-                      setIsAuto={setIsAuto}
-                    />
-                  }
-                />
-                <Route
-                  path="/COIAS"
-                  element={
-                    <COIAS
-                      intervalRef={intervalRef}
-                      imageURLs={imageURLs}
-                      setImageURLs={setImageURLs}
-                      subImageURLs={subImageURLs}
-                      setSubImageURLs={setSubImageURLs}
-                      originalStarPos={originalStarPos}
-                      setOriginalStarPos={setOriginalStarPos}
-                      start={start}
-                      setStart={setStart}
-                      next={next}
-                      setNext={setNext}
-                      back={back}
-                      setBack={setBack}
-                      setting={setting}
-                      setSetting={setSetting}
-                    />
-                  }
-                />
-                <Route
-                  path="/ManualMeasurement"
-                  element={
-                    <ManualMeasurement
-                      intervalRef={intervalRef}
-                      imageURLs={imageURLs}
-                      setImageURLs={setImageURLs}
-                      originalStarPos={originalStarPos}
-                      setOriginalStarPos={setOriginalStarPos}
-                      start={start}
-                      setStart={setStart}
-                      next={next}
-                      setNext={setNext}
-                      back={back}
-                      setBack={setBack}
-                      leadStarNumber={leadStarNumber}
-                      setLeadStarNumber={setLeadStarNumber}
-                      setting={setting}
-                      setSetting={setSetting}
-                    />
-                  }
-                />
-                <Route path="/Report" element={<Report />} />
-              </Routes>
-            </StarPositionContext.Provider>
-          </MousePositionContext.Provider>
-        </PageContext.Provider>
-      </main>
-      <footer>
-        <div style={{ display: 'none' }}>footer</div>
-      </footer>
+      <ModeStatusContext.Provider value={modeStatusValue}>
+        <Header setMenunames={setMenunames} />
+        <main
+          style={{
+            position: 'absolute',
+            top: 80,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            overflow: 'scroll',
+            backgroundColor: '#F8F9FA',
+          }}
+        >
+          <PageContext.Provider value={pageValue}>
+            <MousePositionContext.Provider value={mouseValue}>
+              <StarPositionContext.Provider value={starValue}>
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <ExplorePrepare
+                        fileNames={fileNames}
+                        setFileNames={setFileNames}
+                        menunames={menunames}
+                        setMenunames={setMenunames}
+                        isAuto={isAuto}
+                        setIsAuto={setIsAuto}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/COIAS"
+                    element={
+                      <COIAS
+                        intervalRef={intervalRef}
+                        imageURLs={imageURLs}
+                        setImageURLs={setImageURLs}
+                        subImageURLs={subImageURLs}
+                        setSubImageURLs={setSubImageURLs}
+                        originalStarPos={originalStarPos}
+                        setOriginalStarPos={setOriginalStarPos}
+                        start={start}
+                        setStart={setStart}
+                        next={next}
+                        setNext={setNext}
+                        back={back}
+                        setBack={setBack}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/ManualMeasurement"
+                    element={
+                      <ManualMeasurement
+                        intervalRef={intervalRef}
+                        imageURLs={imageURLs}
+                        setImageURLs={setImageURLs}
+                        originalStarPos={originalStarPos}
+                        setOriginalStarPos={setOriginalStarPos}
+                        start={start}
+                        setStart={setStart}
+                        next={next}
+                        setNext={setNext}
+                        back={back}
+                        setBack={setBack}
+                        leadStarNumber={leadStarNumber}
+                        setLeadStarNumber={setLeadStarNumber}
+                        setting={setting}
+                        setSetting={setSetting}
+                      />
+                    }
+                  />
+                  <Route path="/Report" element={<Report />} />
+                </Routes>
+              </StarPositionContext.Provider>
+            </MousePositionContext.Provider>
+          </PageContext.Provider>
+        </main>
+        <footer>
+          <div style={{ display: 'none' }}>footer</div>
+        </footer>
+      </ModeStatusContext.Provider>
     </BrowserRouter>
   );
 }

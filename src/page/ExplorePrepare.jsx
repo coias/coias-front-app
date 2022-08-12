@@ -3,7 +3,7 @@
  *
  */
 import axios from 'axios';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
   Button,
   Row,
@@ -13,11 +13,12 @@ import {
   Dropdown,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { AiOutlineArrowRight } from 'react-icons/ai';
+import { HiOutlineArrowSmRight } from 'react-icons/hi';
 import LoadingButton from '../component/LoadingButton';
 import ErrorModal from '../component/ErrorModal';
 import FileUploadModal from '../component/FileUploadModal';
 import AlertModal from '../component/AlertModal';
+import { ModeStatusContext } from '../component/context';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
@@ -68,6 +69,12 @@ function ExplorePrepare({
       setAlertMessage('数字を入力してください。');
     }
   }, [checkSend]);
+  const { setModeStatus } = useContext(ModeStatusContext);
+
+  const checkIsAllProcessDone = (updatedMenunames) =>
+    !updatedMenunames
+      .filter((content) => content.id !== 1 && content.id !== 7)
+      .find((menu) => !menu.done);
 
   const handleSelect = (e) => setIsAuto(e.target.value === 'auto');
 
@@ -222,6 +229,11 @@ function ExplorePrepare({
             }
             return item;
           });
+          setModeStatus((prevModeStatus) => {
+            const modeStatusCopy = { ...prevModeStatus };
+            modeStatusCopy.COIAS = checkIsAllProcessDone(updatedMenunames);
+            return modeStatusCopy;
+          });
           setMenunames(updatedMenunames);
           setLoading(false);
         })
@@ -341,19 +353,24 @@ function ExplorePrepare({
   return (
     <div
       style={{
-        padding: '20px',
+        padding: '40px',
         height: '100%',
       }}
     >
-      <div style={{ marginTop: 20, marginBottom: 20 }}>
-        <Row xs="auto">
-          <Col>
-            <h4>探索準備 : </h4>
-          </Col>
-          <Row>
+      <Row>
+        <Col md={2}>
+          <Row style={{ marginBottom: '40px' }}>
+            <h4>探索準備</h4>
+          </Row>
+          <Row style={{ marginBottom: '40px' }}>
+            <h4>選択ファイル</h4>
+          </Row>
+        </Col>
+        <Col md={10}>
+          <Row xs="auto" style={{ marginBottom: '40px' }}>
             <Col style={{ margin: 'auto 0' }}>
               <Button
-                variant={menunames[0].done ? 'success' : 'primary'}
+                variant={menunames[0].done ? 'success' : 'secondary'}
                 style={{ whiteSpace: 'nowrap' }}
                 onClick={() => {
                   handleShow();
@@ -368,7 +385,7 @@ function ExplorePrepare({
                   style={{ whiteSpace: 'nowrap' }}
                   key="Success"
                   id="dropdown-variants-Success"
-                  variant={menunames[6].done ? 'success' : 'primary'}
+                  variant={menunames[6].done ? 'success' : 'secondary'}
                   title={menunames[6].name}
                   onClick={() => onProcessAuto()}
                 >
@@ -377,25 +394,25 @@ function ExplorePrepare({
               </Col>
             ) : (
               <>
-                <Col style={{ padding: 0, paddingLeft: 20 }}>
+                <Col style={{ paddingRight: 0 }}>
                   <Button
                     id={menunames[1].query}
                     style={{ whiteSpace: 'nowrap' }}
                     onClick={() => {
                       onProcess(menunames[1].query);
                     }}
-                    variant={menunames[1].done ? 'success' : 'primary'}
+                    variant={menunames[1].done ? 'success' : 'secondary'}
                   >
                     {menunames[1].name}
                   </Button>
                 </Col>
                 <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <AiOutlineArrowRight size={24} />
+                  <HiOutlineArrowSmRight size={28} />
                 </Col>
                 <Col style={{ padding: 0 }}>
                   <DropdownButton
                     as={ButtonGroup}
-                    variant={menunames[2].done ? 'success' : 'primary'}
+                    variant={menunames[2].done ? 'success' : 'secondary'}
                     title={menunames[2].name}
                   >
                     <Dropdown.Item
@@ -417,7 +434,7 @@ function ExplorePrepare({
                   </DropdownButton>
                 </Col>
                 <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <AiOutlineArrowRight size={24} />
+                  <HiOutlineArrowSmRight size={28} />
                 </Col>
                 <Col style={{ padding: 0 }}>
                   <Button
@@ -426,13 +443,13 @@ function ExplorePrepare({
                     onClick={() => {
                       onProcess(menunames[3].query);
                     }}
-                    variant={menunames[3].done ? 'success' : 'primary'}
+                    variant={menunames[3].done ? 'success' : 'secondary'}
                   >
                     {menunames[3].name}
                   </Button>
                 </Col>
                 <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <AiOutlineArrowRight size={24} />
+                  <HiOutlineArrowSmRight size={28} />
                 </Col>
                 <Col style={{ padding: 0 }}>
                   <Button
@@ -441,13 +458,13 @@ function ExplorePrepare({
                     onClick={() => {
                       onProcess(menunames[4].query);
                     }}
-                    variant={menunames[4].done ? 'success' : 'primary'}
+                    variant={menunames[4].done ? 'success' : 'secondary'}
                   >
                     {menunames[4].name}
                   </Button>
                 </Col>
                 <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <AiOutlineArrowRight size={24} />
+                  <HiOutlineArrowSmRight size={28} />
                 </Col>
                 <Col style={{ padding: 0 }}>
                   <Button
@@ -458,7 +475,7 @@ function ExplorePrepare({
                         `${menunames[5].query}?nd=${parameters[0]}&ar=${parameters[1]}`,
                       );
                     }}
-                    variant={menunames[5].done ? 'success' : 'primary'}
+                    variant={menunames[5].done ? 'success' : 'secondary'}
                   >
                     {menunames[5].name}
                   </Button>
@@ -466,35 +483,27 @@ function ExplorePrepare({
               </>
             )}
           </Row>
-        </Row>
-      </div>
-
-      <Row
-        xs="auto"
-        style={{
-          height: 'calc(100% - 96px)',
-        }}
-      >
-        <Col>
-          <h4>選択ファイル:</h4>
-        </Col>
-        <Col>
-          <div
-            style={{
-              backgroundColor: 'black',
-              width: '70vw',
-              height: '100%',
-            }}
-          >
-            <ul style={{ listStyleType: 'none', color: 'white' }}>
-              {fileNames.map((arr) => (
-                <li key={arr}>{arr}</li>
-              ))}
-            </ul>
-          </div>
+          <Row>
+            <Col style={{ margin: 'auto 0' }}>
+              <div
+                style={{
+                  backgroundColor: 'black',
+                  width: '70vw',
+                  height: '500px',
+                  border: '3px solid #282A7F',
+                  borderRadius: '4px',
+                }}
+              >
+                <ul style={{ listStyleType: 'none', color: 'white' }}>
+                  {fileNames.map((arr) => (
+                    <li key={arr}>{arr}</li>
+                  ))}
+                </ul>
+              </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
-
       <LoadingButton loading={loading} processName={processName} />
 
       <FileUploadModal

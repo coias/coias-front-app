@@ -1,10 +1,16 @@
 /* eslint-disable no-param-reassign */
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Row, Col, Container } from 'react-bootstrap';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { Row, Col, Container, Button, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 
-import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import ManualToolBar from '../component/ManualToolBar';
 import PanZoom from '../component/PanZoom';
 import { PageContext, StarPositionContext } from '../component/context';
@@ -103,15 +109,41 @@ function ManualMeasurement({
   const wrapperRef = useRef(null);
 
   const navigate = useNavigate();
-  const handleNavigate = () => {
-    navigate('/Report');
-  };
   const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
+
+  const isEditMode = useCallback(
+    () => checkedState.find((element) => element === true),
+    [checkedState],
+  );
+
+  const onClickFinishButton = async (filteredList = []) => {
+    const targetList = filteredList.length === 0 ? positionList : filteredList;
+    await axios.put(`${reactApiUri}memo_manual`, targetList);
+  };
+
+  const removePositionListByCheckState = () => {
+    const isAllRemove = !checkedState.some((element) => element === false);
+
+    if (isAllRemove) {
+      setPositionList([[]]);
+      onClickFinishButton([[]]);
+      setActiveKey(0);
+      setCheckedState([false]);
+    } else {
+      const filteredList = positionList.filter(
+        (elementPosition, index) => !checkedState[index],
+      );
+      setPositionList(filteredList);
+      onClickFinishButton(filteredList);
+      setActiveKey(filteredList.length - 1);
+      setCheckedState(checkedState.filter((element) => !element));
+    }
+  };
 
   // 画面表示時、１回だけ処理(copyの実行、各画像のURL取得)
   // 画面表示時、１回だけ処理(redisp.txtの処理)
@@ -267,11 +299,6 @@ function ManualMeasurement({
     document.getElementById('wrapper-coias').focus();
   }, [imageURLs, isReload]);
 
-  const onClickFinishButton = async (filteredList = []) => {
-    const targetList = filteredList.length === 0 ? positionList : filteredList;
-    await axios.put(`${reactApiUri}memo_manual`, targetList);
-  };
-
   const removePositionByIndex = (targetListIndex, targetElementIndex) => {
     setPositionList(
       positionList.map((position, index) => {
@@ -369,60 +396,85 @@ function ManualMeasurement({
   return (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div className="coias-view-main" id="wrapper-coias">
-      <PlayMenu
-        imageNames={imageURLs}
-        setImageURLs={setImageURLs}
-        intervalRef={intervalRef}
-        setDefaultZoomRate={setDefaultZoomRate}
-        defaultZoomRate={defaultZoomRate}
-        start={start}
-        next={next}
-        setNext={setNext}
-        back={back}
-        setBack={setBack}
-        onClickFinishButton={onClickFinishButton}
-        isManual
-        setIsAutoSave={setIsAutoSave}
-        isAutoSave={isAutoSave}
-        fileNum={fileNum}
-        disable={isRedisp}
-        setDisable={setIsRedisp}
-        handleClick={handleClick}
-        originalStarPos={originalStarPos}
-        loading={loading}
-        handleNavigate={handleNavigate}
-        setting={setting}
-        setSetting={setSetting}
-      />
-      <Container fluid>
-        <Row className="m-0 p-0">
-          <COIASToolBar
-            isSelect={isSelect}
-            setIsSelect={setIsSelect}
-            brightnessVal={brightnessVal}
-            contrastVal={contrastVal}
-            setBrightnessVal={setBrightnessVal}
-            setContrastVal={setContrastVal}
-            isReload={isReload}
-            setIsReload={setIsReload}
-            isHide={isHide}
-            setIsHide={setIsHide}
+      <Row>
+        <Col>
+          <PlayMenu
+            imageNames={imageURLs}
+            setImageURLs={setImageURLs}
+            intervalRef={intervalRef}
+            setDefaultZoomRate={setDefaultZoomRate}
+            defaultZoomRate={defaultZoomRate}
+            start={start}
+            next={next}
+            setNext={setNext}
+            back={back}
+            setBack={setBack}
+            onClickFinishButton={onClickFinishButton}
+            setIsAutoSave={setIsAutoSave}
+            isAutoSave={isAutoSave}
+            fileNum={fileNum}
+            setDisable={setIsRedisp}
+            handleClick={handleClick}
+            originalStarPos={originalStarPos}
+            loading={loading}
           />
-          <Col sm={9} md={9}>
-            <PanZoom
-              imageURLs={imageURLs}
+          <Container fluid>
+            <Row className="m-0 p-0">
+              <COIASToolBar
+                isSelect={isSelect}
+                setIsSelect={setIsSelect}
+                brightnessVal={brightnessVal}
+                contrastVal={contrastVal}
+                setBrightnessVal={setBrightnessVal}
+                setContrastVal={setContrastVal}
+                isReload={isReload}
+                setIsReload={setIsReload}
+                isHide={isHide}
+                setIsHide={setIsHide}
+              />
+              <Col className="manual-mode-control-view">
+                <PanZoom
+                  imageURLs={imageURLs}
+                  isManual
+                  positionList={positionList}
+                  show={show}
+                  setShow={setShow}
+                  brightnessVal={brightnessVal}
+                  contrastVal={contrastVal}
+                  isReload={isReload}
+                  isHide={isHide}
+                  setManualStarModalShow={setManualStarModalShow}
+                  isZoomIn={isZoomIn}
+                  setIsZoomIn={setIsZoomIn}
+                  leadStarNumber={leadStarNumber}
+                  activeKey={activeKey}
+                  confirmationModalShow={confirmationModalShow}
+                  setConfirmationModalShow={setConfirmationModalShow}
+                  setOriginalStarPos={setOriginalStarPos}
+                  disable={isRedisp}
+                  setConfirmMessage={setConfirmMessage}
+                  scaleArray={scaleArray}
+                  wrapperRef={wrapperRef}
+                />
+              </Col>
+            </Row>
+          </Container>
+        </Col>
+
+        <div
+          className="manual-star-list-wrraper"
+          style={{ width: isRedisp ? '10vw' : '20vw' }}
+        >
+          {isRedisp ? (
+            <StarsList
+              disable={isRedisp}
               isManual
+              setSelectedListState={() => {}}
+            />
+          ) : (
+            <ManualToolBar
               positionList={positionList}
-              show={show}
-              setShow={setShow}
-              brightnessVal={brightnessVal}
-              contrastVal={contrastVal}
-              isReload={isReload}
-              isHide={isHide}
-              setManualStarModalShow={setManualStarModalShow}
-              isZoomIn={isZoomIn}
-              setIsZoomIn={setIsZoomIn}
-              leadStarNumber={leadStarNumber}
+              setPositionList={setPositionList}
               activeKey={activeKey}
               confirmationModalShow={confirmationModalShow}
               setConfirmationModalShow={setConfirmationModalShow}
@@ -434,30 +486,51 @@ function ManualMeasurement({
               setOldStarName={setOldStarName}
               setting={setting}
               setSetting={setSetting}
+              setActiveKey={setActiveKey}
+              leadStarNumber={leadStarNumber}
+              checkedState={checkedState}
+              setCheckedState={setCheckedState}
             />
-          </Col>
-          <Col sm={2} md={2}>
-            {isRedisp ? (
-              <StarsList
-                disable={isRedisp}
-                isManual
-                setSelectedListState={() => {}}
-              />
-            ) : (
-              <ManualToolBar
-                positionList={positionList}
-                setPositionList={setPositionList}
-                activeKey={activeKey}
-                setActiveKey={setActiveKey}
-                leadStarNumber={leadStarNumber}
-                checkedState={checkedState}
-                setCheckedState={setCheckedState}
-                onClickFinishButton={onClickFinishButton}
-              />
+          )}
+          <div
+            className={
+              isEditMode() ? 'manual-btn-fixed-delete' : 'manual-btn-fixed'
+            }
+            // style={{ marginRight: '10px' }}
+          >
+            {isEditMode() && (
+              <Button
+                variant="danger"
+                onClick={() => {
+                  removePositionListByCheckState();
+                }}
+                style={{ marginRight: '90px' }}
+                size="lg"
+              >
+                削除する
+              </Button>
             )}
-          </Col>
-        </Row>
-      </Container>
+            {loading ? (
+              <Spinner size="md" animation="border" />
+            ) : (
+              <Button
+                variant="success"
+                onClick={() => {
+                  if (isRedisp) {
+                    setStarPos(originalStarPos);
+                  } else {
+                    handleClick();
+                  }
+                  setIsRedisp(!isRedisp);
+                }}
+                size="lg"
+              >
+                {isRedisp ? 'やり直す' : '再描画'}
+              </Button>
+            )}
+          </div>
+        </div>
+      </Row>
 
       <ManualStarModal
         manualStarModalShow={manualStarModalShow}

@@ -7,16 +7,17 @@ import {
   ToggleButton,
   ButtonGroup,
   Form,
-  Spinner,
 } from 'react-bootstrap';
+import { IconContext } from 'react-icons';
 import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle } from 'react-icons/bi';
 import React, { useCallback, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { PageContext, StarPositionContext } from './context';
+import { PageContext } from './context';
 import SettingModal from './SettingModal';
 import HelpModal from './HelpModal';
+import CONSTANT from '../utils/CONSTANTS';
 
 function PlayMenu({
   imageNames,
@@ -29,17 +30,8 @@ function PlayMenu({
   setNext,
   back,
   setBack,
-  isManual,
-  disable,
-  setDisable,
-  setStarModalShow,
-  originalStarPos,
-  handleClick,
   setIsAutoSave,
   isAutoSave,
-  loading,
-  handleNavigate,
-  setOriginalStarPos,
   setSetting,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
@@ -48,7 +40,6 @@ function PlayMenu({
   const [settingModalShow, setSettingModalShow] = useState(false);
   const [helpModalShow, setHelpModalShow] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
-  const { starPos, setStarPos } = useContext(StarPositionContext);
   const [index, setIndex] = useState(0);
 
   const onClickNext = () => {
@@ -166,12 +157,13 @@ function PlayMenu({
   };
 
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" className="play-menu">
       <Container fluid>
-        <Col md={3}>
+        <Col md={1}>
           <Nav>
             <Nav.Item className="text-center d-flex m-1">
               <Button
+                className="blink-button"
                 variant="light"
                 onClick={() => {
                   if (!play) {
@@ -181,17 +173,31 @@ function PlayMenu({
                   }
                 }}
               >
-                {play ? <FaStop size={30} /> : <FaPlay size={30} />}
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{ color: CONSTANT.defaultBtnColor }}
+                >
+                  {play ? (
+                    <FaStop size={CONSTANT.iconSize} />
+                  ) : (
+                    <FaPlay size={CONSTANT.iconSize} />
+                  )}
+                </IconContext.Provider>
               </Button>
             </Nav.Item>
-            <Nav.Item className="text-center d-flex m-1">
+            <Nav.Item className="text-center d-flex m-0">
               <Button
                 variant="light"
                 onClick={() => {
                   onClickBack();
                 }}
               >
-                <FaStepBackward size={30} />
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{ color: CONSTANT.defaultBtnColor }}
+                >
+                  <FaStepBackward size={CONSTANT.iconSize} />
+                </IconContext.Provider>
               </Button>
             </Nav.Item>
             <Nav.Item className="text-center d-flex m-0">
@@ -200,8 +206,14 @@ function PlayMenu({
                 onClick={() => {
                   onClickNext();
                 }}
+                style={{ marginLeft: '-10px' }}
               >
-                <FaStepForward size={30} />
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{ color: CONSTANT.defaultBtnColor }}
+                >
+                  <FaStepForward size={CONSTANT.iconSize} />
+                </IconContext.Provider>
               </Button>
             </Nav.Item>
             <Nav.Item className="d-flex">
@@ -217,12 +229,14 @@ function PlayMenu({
                 <option value="100">0.10</option>
                 <option value="500">0.50</option>
               </Form.Control>
-              <Form.Text style={{ margin: 'auto 0' }}>sec</Form.Text>
+              <Form.Text style={{ margin: 'auto 0', marginLeft: '5px' }}>
+                sec
+              </Form.Text>
             </Nav.Item>
           </Nav>
         </Col>
         <Col md={9} className="d-flex">
-          <ButtonGroup className="flex-grow-1">
+          <ButtonGroup className="flex-grow-1" style={{ margin: 'auto 0' }}>
             {imageNames
               .filter((img) => img.visible)
               .map((name) => (
@@ -238,8 +252,6 @@ function PlayMenu({
                   type="radio"
                   variant="outline-secondary"
                   name="radio"
-                  value={name.name}
-                  key={name.name}
                   checked={
                     (radioValue === name.name &&
                       currentPage ===
@@ -279,9 +291,17 @@ function PlayMenu({
                 </ToggleButton>
               ))}
           </ButtonGroup>
-          <ButtonGroup className="mx-5">
+          <ButtonGroup
+            className="justify-content-end"
+            style={{ marginLeft: '8rem', marginRight: '10px' }}
+          >
             <Button variant="light" onClick={() => setSettingModalShow(true)}>
-              <AiFillSetting size={30} />
+              <IconContext.Provider
+                // eslint-disable-next-line react/jsx-no-constructed-context-values
+                value={{ color: CONSTANT.defaultBtnColor }}
+              >
+                <AiFillSetting size={CONSTANT.iconSize} />
+              </IconContext.Provider>
             </Button>
             <SettingModal
               show={settingModalShow}
@@ -301,7 +321,12 @@ function PlayMenu({
               isAutoSave={isAutoSave}
             />
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
-              <BiHelpCircle size={30} />
+              <IconContext.Provider
+                // eslint-disable-next-line react/jsx-no-constructed-context-values
+                value={{ color: CONSTANT.defaultBtnColor }}
+              >
+                <BiHelpCircle size={CONSTANT.iconSize} />
+              </IconContext.Provider>
             </Button>
             <HelpModal
               show={helpModalShow}
@@ -312,67 +337,6 @@ function PlayMenu({
               imageURLs={imageNames}
             />
           </ButtonGroup>
-
-          {isManual ? (
-            <div>
-              {loading ? (
-                <Spinner size="md" animation="border" />
-              ) : (
-                <>
-                  <Button
-                    variant="success"
-                    onClick={() => {
-                      if (disable) {
-                        setStarPos(originalStarPos);
-                      } else {
-                        handleClick();
-                      }
-                      setDisable(!disable);
-                    }}
-                    size="md"
-                  >
-                    {disable ? 'やり直す' : '再描画'}
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="md"
-                    disabled={!disable}
-                    onClick={() => handleNavigate()}
-                  >
-                    手動測定終了
-                  </Button>
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="align-self-center">
-              <Button
-                variant="success"
-                onClick={() => {
-                  if (disable) {
-                    setOriginalStarPos(starPos);
-                    setStarModalShow(true);
-                  } else {
-                    setStarPos(originalStarPos);
-                  }
-                  setDisable(!disable);
-                }}
-                size="md"
-              >
-                {disable ? '再描画' : 'やり直す'}
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  handleClick();
-                }}
-                disabled={disable}
-                size="md"
-              >
-                探索終了
-              </Button>
-            </div>
-          )}
         </Col>
       </Container>
     </Navbar>
@@ -390,31 +354,14 @@ PlayMenu.propTypes = {
   setNext: PropTypes.func.isRequired,
   back: PropTypes.bool.isRequired,
   setBack: PropTypes.func.isRequired,
-  isManual: PropTypes.bool,
-  disable: PropTypes.bool,
-  setDisable: PropTypes.func,
-  setStarModalShow: PropTypes.func,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
-  handleClick: PropTypes.func,
   setIsAutoSave: PropTypes.func.isRequired,
-  handleNavigate: PropTypes.func,
   isAutoSave: PropTypes.bool.isRequired,
-  loading: PropTypes.bool,
-  setOriginalStarPos: PropTypes.func,
   setSetting: PropTypes.func.isRequired,
 };
 
 PlayMenu.defaultProps = {
   setDefaultZoomRate: () => {},
   defaultZoomRate: 0,
-  isManual: false,
-  disable: true,
-  setDisable: () => {},
-  setStarModalShow: () => {},
-  handleClick: () => {},
-  loading: false,
-  handleNavigate: () => {},
-  setOriginalStarPos: () => {},
 };
 
 export default PlayMenu;

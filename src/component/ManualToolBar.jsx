@@ -1,4 +1,4 @@
-import { React, useContext, useCallback } from 'react';
+import { React, useContext } from 'react';
 import { Button, Row, Col, Accordion, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +13,6 @@ function ManualToolBar({
   leadStarNumber,
   checkedState,
   setCheckedState,
-  onClickFinishButton,
 }) {
   const { currentPage } = useContext(PageContext);
 
@@ -28,25 +27,6 @@ function ManualToolBar({
     setActiveKey(positionList.length);
   };
 
-  const removePositionListByCheckState = () => {
-    const isAllRemove = !checkedState.some((element) => element === false);
-
-    if (isAllRemove) {
-      setPositionList([[]]);
-      onClickFinishButton([[]]);
-      setActiveKey(0);
-      setCheckedState([false]);
-    } else {
-      const filteredList = positionList.filter(
-        (elementPosition, index) => !checkedState[index],
-      );
-      setPositionList(filteredList);
-      onClickFinishButton(filteredList);
-      setActiveKey(filteredList.length - 1);
-      setCheckedState(checkedState.filter((element) => !element));
-    }
-  };
-
   const handleOnChange = (position) => {
     const updatedCheckedState = checkedState.map((item, index) =>
       index === position ? !item : item,
@@ -54,21 +34,14 @@ function ManualToolBar({
     setCheckedState(updatedCheckedState);
   };
 
-  const isEditMode = useCallback(
-    () => checkedState.find((element) => element === true),
-    [checkedState],
-  );
-
   return (
     <div>
       <Row className="m-3">
-        <Col
-          className="d-flex justify-content-between"
-          style={{ background: 'white', padding: 0 }}
-        >
-          <p style={{ margin: 'auto 0' }}>天体一覧</p>
+        <Col className="d-flex justify-content-between">
+          <p style={{ margin: 'auto 0', fontWeight: 'bold', color: '#5C636A' }}>
+            天体一覧
+          </p>
           <Button
-            variant="success"
             onClick={() => {
               onClickAddButton();
             }}
@@ -77,14 +50,14 @@ function ManualToolBar({
           </Button>
         </Col>
       </Row>
-      <div className="manual-list">
+      <div className="manual-list m-1">
         <Row>
-          <Accordion activeKey={`${activeKey}`}>
+          <Accordion activeKey={`${activeKey}`} className="mt-1">
             {positionList.map((d, index) => (
-              <div className="d-flex" key={uuidv4()}>
+              <div className="d-flex m-2" key={uuidv4()}>
                 <Form.Check
                   key={uuidv4()}
-                  style={{ marginTop: '20px' }}
+                  style={{ marginTop: '13px', marginRight: '5px' }}
                   onChange={() => handleOnChange(index)}
                   checked={checkedState[index]}
                 />
@@ -126,16 +99,6 @@ function ManualToolBar({
           </Accordion>
         </Row>
       </div>
-      {isEditMode() && (
-        <Button
-          variant="danger"
-          onClick={() => {
-            removePositionListByCheckState();
-          }}
-        >
-          削除する
-        </Button>
-      )}
     </div>
   );
 }
@@ -151,5 +114,4 @@ ManualToolBar.propTypes = {
   setActiveKey: PropTypes.func.isRequired,
   checkedState: PropTypes.arrayOf(PropTypes.bool).isRequired,
   setCheckedState: PropTypes.func.isRequired,
-  onClickFinishButton: PropTypes.func.isRequired,
 };

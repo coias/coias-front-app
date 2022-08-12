@@ -28,17 +28,18 @@ function MousePosition({ isZoomIn, IMAGE_WIDTH, IMAGE_HEIGHT }) {
     <div
       style={{
         opacity: 0.5,
-        width: '200px',
-        height: '24px',
+        width: '150px',
+        height: '35px',
         color: 'white',
         backgroundColor: 'black',
         position: 'absolute',
         top: '0px',
-        right: '10px',
+        right: '15px',
         zIndex: 999,
+        padding: '6px',
       }}
     >
-      <BiCurrentLocation size={24} />
+      <BiCurrentLocation size={22} style={{ marginRight: '5px' }} />
       {`${Math.floor(prevMousePos.x / getZoomRate(IMAGE_WIDTH))},${Math.floor(
         prevMousePos.y / getZoomRate(IMAGE_HEIGHT),
       )}`}

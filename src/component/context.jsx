@@ -14,3 +14,12 @@ export const StarPositionContext = createContext({
   starPos: {},
   setStarPos: () => {},
 });
+
+export const ModeStatusContext = createContext({
+  modeStatus: {
+    COIAS: false,
+    Manual: false,
+    Report: false,
+  },
+  setModeStatus: () => {},
+});

@@ -124,9 +124,9 @@ function Report() {
         <Form.Group className="p-3 w-75">
           <Row xs="auto">
             <Col md={1}>
-              <h4>OBS:</h4>
+              <h4>OBS </h4>
             </Col>
-            <Col md={10}>
+            <Col md={10} style={{ marginLeft: '20px' }}>
               <Form.Control
                 placeholder="複数の場合は空白区切りで入力してください"
                 onChange={(e) => {
@@ -139,9 +139,9 @@ function Report() {
         <Form.Group className="p-3 w-75">
           <Row xs="auto">
             <Col md={1}>
-              <h4>MEA:</h4>
+              <h4>MEA </h4>
             </Col>
-            <Col md={10}>
+            <Col md={10} style={{ marginLeft: '20px' }}>
               <Form.Control
                 placeholder="複数の場合は空白区切りで入力してください"
                 onChange={(e) => {
@@ -152,15 +152,16 @@ function Report() {
           </Row>
         </Form.Group>
       </Form>
-      <Row xs="auto">
+      <Row xs="auto" className="mt-3">
         <Col>
-          <h4>レポート:</h4>
+          <h4 style={{ marginLeft: '13px' }}>レポート </h4>
         </Col>
         <Col md={8}>
           <div
             style={{
+              marginLeft: '12px',
               backgroundColor: 'black',
-              height: '70vh',
+              height: '63vh',
               overflow: 'scroll',
             }}
           >
@@ -170,39 +171,41 @@ function Report() {
             </ul>
           </div>
         </Col>
-        <Col className="flex-column justify-centent-end">
-          <Row>
-            <Button
-              variant="primary"
-              onClick={() => {
-                getMpc();
-              }}
-            >
-              レポート作成をやり直す
-            </Button>
-          </Row>
-          <Row>
-            <Button
-              variant="primary"
-              onClick={() => {
-                downloadFIle();
-              }}
-              className="mt-3"
-            >
-              Downlaod send_mpc
-            </Button>
-          </Row>
-          <Row>
-            <Button
-              variant="primary"
-              onClick={() => {
-                downloadFinalAllFIle();
-              }}
-              className="mt-3"
-            >
-              Downlaod final_all
-            </Button>
-          </Row>
+      </Row>
+      <Row className="d-flex ">
+        <Col>
+          <Button
+            variant="primary"
+            onClick={() => {
+              getMpc();
+            }}
+            className="mt-3"
+            style={{ marginLeft: '144px' }}
+          >
+            レポート作成をやり直す
+          </Button>
+        </Col>
+        <Col md={4} style={{ marginRight: '222px' }}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              downloadFIle();
+            }}
+            className="mt-3"
+          >
+            Downlaod send_mpc
+          </Button>
+
+          <Button
+            variant="primary"
+            onClick={() => {
+              downloadFinalAllFIle();
+            }}
+            className="mt-3"
+            style={{ marginLeft: '10px' }}
+          >
+            Downlaod final_all
+          </Button>
         </Col>
       </Row>
       <LoadingButton loading={loading} processName="レポートデータ取得中…" />

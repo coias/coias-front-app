@@ -4,6 +4,79 @@
 // Layout
 // =======================
 
+.btn {
+  box-shadow: none !important;
+}
+
+select {
+  box-shadow: none !important;
+}
+
+input {
+  box-shadow: none !important;
+}
+
+body {
+  font-family: Avenir !important;
+}
+
+// Header
+.color-nav {
+  padding: 0;
+  margin: 0;
+  background: linear-gradient(
+    120deg,
+    #ffd759 0%,
+    #ffd759 280px,
+    #28297e 280px,
+    #28297e 100%
+  );
+
+  .navbar-brand {
+    margin: 10px 20px 0;
+  }
+
+  a {
+    margin-left: 50px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+
+    h3 {
+      margin: 0;
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  }
+
+  .btn {
+    padding: 7px 25px;
+    margin-right: 30px;
+    font-size: 20px;
+    color: white;
+    background: none;
+  }
+}
+
+// Play menu buttons bar
+.play-menu {
+  border-bottom: solid #707070 1px;
+
+  .col-md-9 {
+    .flex-grow-1 {
+      margin: 0 auto;
+    }
+
+    .btn-group {
+      .btn-outline-secondary {
+        height: 35px;
+        margin: 0 auto;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
 canvas {
   border: 0;
   image-rendering: crisp-edges; /* Firefox用 */
@@ -62,7 +135,25 @@ canvas {
 }
 
 .active {
-  color: #fff !important;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.active:hover {
+  color: white !important;
+  cursor: pointer;
+}
+
+.active::before {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  display: block;
+  width: 70%;
+  height: 4px;
+  content: '';
+  background-color: white;
+  transform: translate(-50%);
 }
 
 .not-active:hover {
@@ -104,93 +195,135 @@ footer {
 .coias-view-main {
   width: 100%;
   height: 100%;
-  padding: 0;
   margin: 0;
 
-  .container-fluid {
-    height: calc(100% - 102px);
+  .col {
+    padding: 0;
+  }
 
-    .row {
+  .row {
+    height: 100%;
+    padding: 0;
+
+    .col {
       height: 100%;
+    }
 
-      .col {
+    .container-fluid {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+
+      .row {
         height: 100%;
-      }
 
-      // auto mode
-      .col-md-10 {
-        height: 100%;
+        // tool buttons
+        .coias-tool-bar {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          width: 40px;
+          padding: 0;
+          margin-left: 10px;
 
-        .star-canvas-container {
-          height: calc(100% - 50px);
-
-          .col-sm-10 {
-            height: 100%;
+          .tool-btn {
+            width: 100%;
+            margin-top: 10px;
+            margin-left: -3px;
           }
 
-          .col-sm-12 {
-            height: 100%;
-          }
+          .bright-contrast-bar {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 40%;
+            margin-top: 30px;
+            text-align: center;
 
-          .col-sm-2 {
-            height: 100%;
+            #ex4 {
+              appearance: slider-vertical; /* Chromium */
+              height: 87%;
+            }
           }
         }
 
-        .star-canvas-control {
-          height: 50px !important;
-          padding-top: 8px;
-        }
-      }
-
-      .col-md-1 {
-        height: 100%;
-      }
-
-      // manual mode
-      .col-md-9 {
-        height: 100%;
-
-        .wrapper {
+        .manual-mode-control-view {
           height: 100%;
+
+          .main-canvas {
+            height: 100%;
+          }
+
+          .wrapper {
+            height: 100%;
+          }
+        }
+      }
+    }
+
+    .manual-star-list-wrraper {
+      height: 100%;
+      border-left: solid #707070 1px;
+
+      .manual-btn-fixed {
+        display: flex;
+        justify-content: end;
+        width: 100%;
+        margin-top: 30px;
+        margin-right: 10px;
+      }
+
+      .manual-btn-fixed-delete {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 30px;
+      }
+    }
+
+    .coias-star-list-wrraper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 13vw;
+      height: 100%;
+      border-left: solid #707070 1px;
+
+      .star-list-title {
+        width: 100%;
+      }
+
+      // 星のリストのスクロールバーを常に表示する
+      .star-list {
+        width: 100%;
+        height: 80%;
+        padding: 0;
+        margin: 0;
+        overflow-y: scroll;
+
+        &::-webkit-scrollbar {
+          width: 5px;
+          height: 10px;
         }
 
-        .star-canvas-control {
-          height: 50px !important;
-          padding-top: 8px;
+        &::-webkit-scrollbar-thumb {
+          background-color: gray;
+          border-radius: 0.25rem;
+
+          --bg-opacity: 1;
         }
       }
 
-      .col-md-2 {
-        height: 100%;
+      .star-list-button {
+        display: flex;
+        justify-content: end;
+        width: 100%;
+        margin-top: 30px;
+        margin-right: 10px;
       }
     }
   }
-}
-
-// 星のリストのスクロールバーを常に表示する
-.star-list {
-  height: calc(100% - 84px);
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: gray;
-    border-radius: 0.25rem;
-
-    --bg-opacity: 1;
-  }
-}
-
-#ex4 {
-  appearance: slider-vertical; /* Chromium */
-  width: 8px;
-  height: 87%;
-  padding: 0 5px;
 }
 
 .manual-list {
@@ -211,12 +344,8 @@ footer {
   }
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-.app_toast {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background-color: white !important;
+.blink-button {
+  margin-left: 10px;
 }
 
 .search_suggestions {

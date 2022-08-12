@@ -1,12 +1,14 @@
 import React, { useContext } from 'react';
-import { Button, Col } from 'react-bootstrap';
+import { IconContext } from 'react-icons';
+import { Button } from 'react-bootstrap';
 import { FaMousePointer } from 'react-icons/fa';
 import { AiOutlineReload } from 'react-icons/ai';
 import { BiHide } from 'react-icons/bi';
 import PropTypes from 'prop-types';
+import { StarPositionContext } from './context';
+import CONSTANT from '../utils/CONSTANTS';
 import ContrastBar from './ContrastBar';
 import BrightnessBar from './BrightnessBar';
-import { StarPositionContext } from './context';
 
 // eslint-disable-next-line no-use-before-define
 COIASToolBar.propTypes = {
@@ -14,12 +16,12 @@ COIASToolBar.propTypes = {
   setIsSelect: PropTypes.func.isRequired,
   isReload: PropTypes.bool.isRequired,
   setIsReload: PropTypes.func.isRequired,
-  brightnessVal: PropTypes.number.isRequired,
-  contrastVal: PropTypes.number.isRequired,
   setBrightnessVal: PropTypes.func.isRequired,
   setContrastVal: PropTypes.func.isRequired,
   isHide: PropTypes.bool.isRequired,
   setIsHide: PropTypes.func.isRequired,
+  contrastVal: PropTypes.number.isRequired,
+  brightnessVal: PropTypes.number.isRequired,
 };
 
 function COIASToolBar({
@@ -27,33 +29,35 @@ function COIASToolBar({
   setIsSelect,
   isReload,
   setIsReload,
-  brightnessVal,
-  contrastVal,
   setBrightnessVal,
   setContrastVal,
   isHide,
   setIsHide,
+  contrastVal,
+  brightnessVal,
 }) {
   const { setStarPos } = useContext(StarPositionContext);
   return (
-    <Col
-      className="flex-column"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        height: '100%',
-        padding: 0,
-      }}
-    >
+    <div className="coias-tool-bar">
       <Button
         id="selectButton"
         data-active={isSelect}
-        variant={isSelect ? 'danger' : 'light'}
+        variant="light"
         onClick={() => {
           setIsSelect(!isSelect);
         }}
+        className="tool-btn"
       >
-        <FaMousePointer size={30} />
+        <IconContext.Provider
+          // eslint-disable-next-line react/jsx-no-constructed-context-values
+          value={{
+            color: isSelect
+              ? CONSTANT.selectedBtnColor
+              : CONSTANT.defaultBtnColor,
+          }}
+        >
+          <FaMousePointer size={CONSTANT.iconSize} />
+        </IconContext.Provider>
       </Button>
       <Button
         id="reloadButton"
@@ -72,22 +76,38 @@ function COIASToolBar({
             return newStarPos;
           });
         }}
+        className="tool-btn"
       >
-        <AiOutlineReload size={30} />
+        <IconContext.Provider
+          // eslint-disable-next-line react/jsx-no-constructed-context-values
+          value={{ color: CONSTANT.defaultBtnColor }}
+        >
+          <AiOutlineReload size={CONSTANT.iconSize} />
+        </IconContext.Provider>
       </Button>
       <Button
         id="hideButton"
         data-active={isHide}
-        variant={isHide ? 'danger' : 'light'}
+        variant="light"
         onClick={() => {
           setIsHide(!isHide);
         }}
+        className="tool-btn"
       >
-        <BiHide size={30} />
+        <IconContext.Provider
+          // eslint-disable-next-line react/jsx-no-constructed-context-values
+          value={{
+            color: isHide
+              ? CONSTANT.selectedBtnColor
+              : CONSTANT.defaultBtnColor,
+          }}
+        >
+          <BiHide size={CONSTANT.iconSize} style={{ marginBottom: '20px' }} />
+        </IconContext.Provider>
       </Button>
       <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
       <ContrastBar val={contrastVal} set={setContrastVal} />
-    </Col>
+    </div>
   );
 }
 

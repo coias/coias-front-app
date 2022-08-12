@@ -1,16 +1,20 @@
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import AlertModal from '../component/AlertModal';
+import PanZoom from '../component/PanZoom';
+import PlayMenu from '../component/PlayMenu';
+import {
+  StarPositionContext,
+  PageContext,
+  ModeStatusContext,
+} from '../component/context';
 import COIASToolBar from '../component/COIASToolBar';
-import { PageContext, StarPositionContext } from '../component/context';
 import ErrorModal from '../component/ErrorModal';
 import LoadingButton from '../component/LoadingButton';
 import NewStarModal from '../component/NewStarModal';
-import PanZoom from '../component/PanZoom';
-import PlayMenu from '../component/PlayMenu';
 import StarsList from '../component/StarsList';
 import useEventListener from '../hooks/useEventListener';
 
@@ -70,14 +74,11 @@ function COIAS({
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const wrapperRef = useRef(null);
   const [validImages, setValidImages] = useState([]);
+  const navigate = useNavigate();
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
-
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/Report');
-  };
+  const { setModeStatus } = useContext(ModeStatusContext);
 
   const [scaleArray, setScaleArray] = useState([
     { id: 1, done: true },
@@ -355,6 +356,12 @@ function COIAS({
         });
 
         setStarPos(toObject);
+        setModeStatus((prevModeStatus) => {
+          const modeStatusCopy = { ...prevModeStatus };
+          modeStatusCopy.Manual = true;
+          modeStatusCopy.Report = true;
+          return modeStatusCopy;
+        });
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -421,76 +428,96 @@ function COIAS({
 
   return (
     <div className="coias-view-main" id="wrapper-coias">
-      <PlayMenu
-        imageNames={imageURLs}
-        setImageURLs={setImageURLs}
-        validImages={validImages}
-        setValidImages={setValidImages}
-        subImageURLs={subImageURLs}
-        intervalRef={intervalRef}
-        start={start}
-        next={next}
-        setNext={setNext}
-        back={back}
-        setBack={setBack}
-        onClickFinishButton={onClickFinishButton}
-        disable={disable}
-        setDisable={setDisable}
-        setStarModalShow={setStarModalShow}
-        originalStarPos={originalStarPos}
-        handleClick={handleClick}
-        setStarPos={setStarPos}
-        fileNum={fileNum}
-        isAutoSave={isAutoSave}
-        setIsAutoSave={setIsAutoSave}
-        setOriginalStarPos={setOriginalStarPos}
-        setSetting={setSetting}
-      />
-      <Container fluid>
-        <Row>
-          <COIASToolBar
-            isSelect={isSelect}
-            setIsSelect={setIsSelect}
-            brightnessVal={brightnessVal}
-            contrastVal={contrastVal}
-            setBrightnessVal={setBrightnessVal}
-            setContrastVal={setContrastVal}
-            isReload={isReload}
-            setIsReload={setIsReload}
-            isHide={isHide}
-            setIsHide={setIsHide}
+      <Row>
+        <Col>
+          <PlayMenu
+            imageNames={imageURLs}
+            setImageURLs={setImageURLs}
+            intervalRef={intervalRef}
+            start={start}
+            next={next}
+            setNext={setNext}
+            back={back}
+            setBack={setBack}
+            onClickFinishButton={onClickFinishButton}
+            disable={disable}
+            setDisable={setDisable}
+            setStarModalShow={setStarModalShow}
+            originalStarPos={originalStarPos}
+            setStarPos={setStarPos}
+            fileNum={fileNum}
+            isAutoSave={isAutoSave}
+            setIsAutoSave={setIsAutoSave}
+            setOriginalStarPos={setOriginalStarPos}
+            validImages={validImages}
+            setValidImages={setValidImages}
+            subImageURLs={subImageURLs}
+            setSetting={setSetting}
           />
-          <Col md={10}>
-            <PanZoom
-              imageURLs={imageURLs}
-              isReload={isReload}
-              brightnessVal={brightnessVal}
-              contrastVal={contrastVal}
-              onClickFinishButton={onClickFinishButton}
-              originalStarPos={originalStarPos}
-              starPos={starPos}
-              setStarPos={setStarPos}
-              isHide={isHide}
-              setStarModalShow={starModalShow}
-              disable={disable}
-              setSelectedListState={setSelectedListState}
-              writeMemo={isAutoSave ? writeMemo : () => {}}
-              scaleArray={scaleArray}
-              wrapperRef={wrapperRef}
-              setting={setting}
-              setSetting={setSetting}
-            />
-          </Col>
-          <Col md={1} sm={1}>
-            <StarsList
-              disable={disable}
-              writeMemo={isAutoSave ? writeMemo : () => {}}
-              selectedListState={selectedListState}
-              setSelectedListState={setSelectedListState}
-            />
-          </Col>
-        </Row>
-      </Container>
+          <Container fluid>
+            <Row className="m-0 p-0">
+              <COIASToolBar
+                isSelect={isSelect}
+                setIsSelect={setIsSelect}
+                brightnessVal={brightnessVal}
+                contrastVal={contrastVal}
+                setBrightnessVal={setBrightnessVal}
+                setContrastVal={setContrastVal}
+                isReload={isReload}
+                setIsReload={setIsReload}
+                isHide={isHide}
+                setIsHide={setIsHide}
+              />
+              <Col>
+                <PanZoom
+                  imageURLs={imageURLs}
+                  isReload={isReload}
+                  brightnessVal={brightnessVal}
+                  contrastVal={contrastVal}
+                  onClickFinishButton={onClickFinishButton}
+                  originalStarPos={originalStarPos}
+                  starPos={starPos}
+                  setStarPos={setStarPos}
+                  isHide={isHide}
+                  setStarModalShow={starModalShow}
+                  disable={disable}
+                  setSelectedListState={setSelectedListState}
+                  writeMemo={isAutoSave ? writeMemo : () => {}}
+                  scaleArray={scaleArray}
+                  wrapperRef={wrapperRef}
+                  setting={setting}
+                  setSetting={setSetting}
+                />
+              </Col>
+            </Row>
+          </Container>
+        </Col>
+        <div className="coias-star-list-wrraper">
+          <StarsList
+            disable={disable}
+            writeMemo={isAutoSave ? writeMemo : () => {}}
+            selectedListState={selectedListState}
+            setSelectedListState={setSelectedListState}
+          />
+          <div className="star-list-button">
+            <Button
+              variant="success"
+              onClick={() => {
+                if (disable) {
+                  setOriginalStarPos(starPos);
+                  setStarModalShow(true);
+                } else {
+                  setStarPos(originalStarPos);
+                }
+                setDisable(!disable);
+              }}
+              size="lg"
+            >
+              {disable ? '再描画' : 'やり直す'}
+            </Button>
+          </div>
+        </div>
+      </Row>
       <LoadingButton loading={loading} processName="探索データ取得中…" />
       <NewStarModal
         show={starModalShow}
