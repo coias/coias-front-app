@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Row, Modal, Form, InputGroup, Col } from 'react-bootstrap';
+import { Button, Row, Modal, Form, InputGroup } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line no-use-before-define
@@ -15,8 +15,6 @@ FileUploadModal.propTypes = {
   onClickStarUpdateButton: PropTypes.func.isRequired,
   isAutoProcess: PropTypes.bool.isRequired,
   disabled: PropTypes.bool.isRequired,
-  setParameters: PropTypes.func.isRequired,
-  setCheckSend: PropTypes.func.isRequired,
   alertMessage: PropTypes.string.isRequired,
 };
 
@@ -32,8 +30,6 @@ function FileUploadModal({
   handleSelect,
   onClickStarUpdateButton,
   disabled,
-  setParameters,
-  setCheckSend,
   alertMessage,
 }) {
   return (
@@ -95,117 +91,6 @@ function FileUploadModal({
           />
           <Button onClick={onClickStarUpdateButton}>小惑星データ更新</Button>
           <Row style={{ whiteSpace: 'nowrap' }}>
-            <p style={{ fontSize: 20 }} className="px-0 mt-2">
-              パラメータの詳細設定
-            </p>
-            <Col className="pe-0">
-              <InputGroup className="my-2">
-                <InputGroup.Text
-                  style={{
-                    backgroundColor: 'white',
-                    padding: '6px',
-                  }}
-                >
-                  最低検出画像枚数
-                </InputGroup.Text>
-                <Form.Control
-                  className="form-control-sm"
-                  placeholder="初期値は4"
-                  onChange={(e) => {
-                    // eslint-disable-next-line no-restricted-globals
-                    if (isNaN(e.target.value)) {
-                      setCheckSend((prevCheckSend) =>
-                        prevCheckSend.map((judge, index) =>
-                          index === 1 ? false : judge,
-                        ),
-                      );
-                    } else {
-                      setParameters((prevParams) =>
-                        prevParams.map((parametar, index) =>
-                          index === 1 ? e.target.value : parametar,
-                        ),
-                      );
-                      setCheckSend((prevCheckSend) =>
-                        prevCheckSend.map((judge, index) =>
-                          index === 1 ? true : judge,
-                        ),
-                      );
-                    }
-                  }}
-                />
-              </InputGroup>
-            </Col>
-            <Col className="ps-2">
-              <InputGroup className="my-2">
-                <InputGroup.Text
-                  style={{
-                    backgroundColor: 'white',
-                    padding: '6px',
-                  }}
-                >
-                  自動測光半径
-                </InputGroup.Text>
-                <Form.Control
-                  className="form-control-sm"
-                  placeholder="初期値は6"
-                  onChange={(e) => {
-                    // eslint-disable-next-line no-restricted-globals
-                    if (isNaN(e.target.value)) {
-                      setCheckSend((prevCheckSend) =>
-                        prevCheckSend.map((judge, index) =>
-                          index === 2 ? false : judge,
-                        ),
-                      );
-                    } else {
-                      setParameters((prevParams) =>
-                        prevParams.map((parametar, index) =>
-                          index === 2 ? e.target.value : parametar,
-                        ),
-                      );
-                      setCheckSend((prevCheckSend) =>
-                        prevCheckSend.map((judge, index) =>
-                          index === 2 ? true : judge,
-                        ),
-                      );
-                    }
-                  }}
-                />
-              </InputGroup>
-            </Col>
-            <InputGroup className="my-2">
-              <InputGroup.Text
-                style={{
-                  backgroundColor: 'white',
-                }}
-              >
-                検出光源数
-              </InputGroup.Text>
-              <Form.Control
-                className="form-control-sm"
-                placeholder="初期値は2000"
-                onChange={(e) => {
-                  // eslint-disable-next-line no-restricted-globals
-                  if (isNaN(e.target.value)) {
-                    setCheckSend((prevCheckSend) =>
-                      prevCheckSend.map((judge, index) =>
-                        index === 3 ? false : judge,
-                      ),
-                    );
-                  } else {
-                    setParameters((prevParams) =>
-                      prevParams.map((parametar, index) =>
-                        index === 3 ? e.target.value : parametar,
-                      ),
-                    );
-                    setCheckSend((prevCheckSend) =>
-                      prevCheckSend.map((judge, index) =>
-                        index === 3 ? true : judge,
-                      ),
-                    );
-                  }
-                }}
-              />
-            </InputGroup>
             <p
               style={{
                 color: 'red',

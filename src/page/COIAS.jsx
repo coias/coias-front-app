@@ -176,6 +176,11 @@ function COIAS({
 
     getImages();
     getMemo();
+    setModeStatus({
+      COIAS: true,
+      Manual: false,
+      Report: false,
+    });
   }, []);
 
   useEffect(() => {
@@ -432,7 +437,6 @@ function COIAS({
         <Col>
           <PlayMenu
             imageNames={imageURLs}
-            setImageURLs={setImageURLs}
             intervalRef={intervalRef}
             start={start}
             next={next}

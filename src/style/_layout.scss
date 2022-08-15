@@ -77,6 +77,21 @@ body {
   }
 }
 
+.params-input-group {
+  margin: 5px 0;
+  .col {
+    margin: auto 0;
+
+    p {
+      margin: auto 0;
+    }
+  }
+}
+
+.error-message {
+  color: red;
+}
+
 canvas {
   border: 0;
   image-rendering: crisp-edges; /* Firefox用 */

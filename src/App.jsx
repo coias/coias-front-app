@@ -75,9 +75,9 @@ function App() {
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
 
   const [modeStatus, setModeStatus] = useState({
-    COIAS: true,
-    Manual: true,
-    Report: true,
+    COIAS: false,
+    Manual: false,
+    Report: false,
   });
   const modeStatusValue = useMemo(
     () => ({ modeStatus, setModeStatus }),

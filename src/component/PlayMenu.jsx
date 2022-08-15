@@ -21,7 +21,6 @@ import CONSTANT from '../utils/CONSTANTS';
 
 function PlayMenu({
   imageNames,
-  // setImageURLs,
   intervalRef,
   setDefaultZoomRate,
   defaultZoomRate,
