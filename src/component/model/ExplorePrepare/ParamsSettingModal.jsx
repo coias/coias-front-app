@@ -52,10 +52,10 @@ function ParamsSettingModal({
             const isChangedArray = Object.values(parameters).map(
               (parameter, index) => parameter !== event.target[index].value,
             );
-            if (isChangedArray[0] || isChangedArray[1]) {
+            if (isChangedArray[2]) {
               setMenunames((prevMenunames) =>
                 prevMenunames.map((items) =>
-                  items.name === '自動検出'
+                  items.name === 'ビニングマスク' || items.name === '自動検出'
                     ? {
                         id: items.id,
                         name: items.name,
@@ -70,10 +70,10 @@ function ParamsSettingModal({
                 Manual: false,
                 Report: false,
               });
-            } else if (isChangedArray[2]) {
+            } else if (isChangedArray[0] || isChangedArray[1]) {
               setMenunames((prevMenunames) =>
                 prevMenunames.map((items) =>
-                  items.name === 'ビニングマスク' || items.name === '自動検出'
+                  items.name === '自動検出'
                     ? {
                         id: items.id,
                         name: items.name,

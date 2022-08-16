@@ -61,7 +61,6 @@ function ExplorePrepare({
     ar: '6',
     sn: '500',
   });
-  const [checkSend, setCheckSend] = useState([true, true, true, true]);
   const [paramsSettingModalShow, setParamsSettingModalShow] = useState(false);
 
   const { setModeStatus } = useContext(ModeStatusContext);
@@ -82,15 +81,9 @@ function ExplorePrepare({
     // ファイル変更時
     if (e.target.value !== '') {
       setValid(false);
-      setCheckSend(
-        checkSend.map((judge, index) => (index === 0 ? true : judge)),
-      );
       setDisabled(false);
     } else {
       setValid(true);
-      setCheckSend(
-        checkSend.map((judge, index) => (index === 0 ? false : judge)),
-      );
       setDisabled(true);
     }
   };
@@ -549,8 +542,6 @@ function ExplorePrepare({
         }}
         setParameters={setParameters}
         parameters={parameters}
-        checkSend={checkSend}
-        setCheckSend={setCheckSend}
         alertMessage={alertMessage}
       />
       <ParamsSettingModal
