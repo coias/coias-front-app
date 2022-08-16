@@ -30,7 +30,7 @@ function Header({ setMenunames }) {
               className="d-inline-block align-top"
             />
           </Col>
-          <Col>
+          <Col className="color-nav-title">
             <Row>
               <div
                 className="p-0 m-0"
