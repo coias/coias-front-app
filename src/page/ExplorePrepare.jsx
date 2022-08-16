@@ -54,7 +54,6 @@ function ExplorePrepare({
   const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
   const [fileAlertModalshow, setFileAlertModalshow] = useState(false);
-  const [fileNum, setFileNum] = useState(0);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const [parameters, setParameters] = useState({
@@ -100,7 +99,7 @@ function ExplorePrepare({
     const reactApiUri = process.env.REACT_APP_API_URI;
     const response = await axios.put(`${reactApiUri}copy`);
     const dataList = response.data.result.sort();
-    if (fileNum !== dataList.length / 2) {
+    if (fileNames.length !== dataList.length / 2) {
       setAlertMessage('ファイルの中身が異なる可能性があります。');
       setAlertButtonMessage('アップロードに戻る');
       setFileAlertModalshow(true);
@@ -147,7 +146,6 @@ function ExplorePrepare({
     const data = new FormData();
     const filesForProps = [];
     setErrorFile([]);
-    setFileNum(files.length);
 
     const pattern =
       /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/;
@@ -273,10 +271,10 @@ function ExplorePrepare({
       .then(() => {
         const updatedMenunames = menunames.map((item) => {
           if (
-            item.query === query ||
-            (query.startsWith('startsearch2R?binning=') &&
+            item.query === uriQuery ||
+            (uriQuery.startsWith('startsearch2R?binning=') &&
               item.query.startsWith('startsearch2R?binning=')) ||
-            (query.startsWith('astsearch_new') &&
+            (uriQuery.startsWith('astsearch_new') &&
               item.query.startsWith('astsearch_new'))
           ) {
             // eslint-disable-next-line no-param-reassign
@@ -288,6 +286,11 @@ function ExplorePrepare({
         if (uriQuery.startsWith('startsearch2R?binning=')) {
           fileContentCheck();
         }
+        setModeStatus((prevModeStatus) => {
+          const modeStatusCopy = { ...prevModeStatus };
+          modeStatusCopy.COIAS = checkIsAllProcessDone(updatedMenunames);
+          return modeStatusCopy;
+        });
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -556,6 +559,7 @@ function ExplorePrepare({
         setParameters={setParameters}
         parameters={parameters}
         setMenunames={setMenunames}
+        inputFileLength={fileNames.length}
       />
       <AlertModal
         alertModalShow={fileAlertModalshow}

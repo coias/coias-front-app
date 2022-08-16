@@ -11,6 +11,7 @@ ParamsSettingModal.propTypes = {
   parameters: PropTypes.objectOf(PropTypes.string).isRequired,
   setParameters: PropTypes.func.isRequired,
   setMenunames: PropTypes.func.isRequired,
+  inputFileLength: PropTypes.number.isRequired,
 };
 
 function ParamsSettingModal({
@@ -19,6 +20,7 @@ function ParamsSettingModal({
   parameters,
   setParameters,
   setMenunames,
+  inputFileLength,
 }) {
   const [validated, setValidated] = useState(false);
   const { setModeStatus } = useContext(ModeStatusContext);
@@ -105,13 +107,16 @@ function ParamsSettingModal({
                 <Form.Group>
                   <Form.Control
                     required
+                    type="number"
+                    min={1}
+                    max={inputFileLength}
                     defaultValue={parameters.nd}
                     className="params-input"
                     placeholder="初期値は4"
                     pattern="\d+"
                   />
                   <Form.Control.Feedback type="invalid">
-                    数字を入力してください
+                    画像枚数以下の整数を入力してください
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
@@ -124,13 +129,15 @@ function ParamsSettingModal({
                 <Form.Group>
                   <Form.Control
                     required
+                    type="number"
                     defaultValue={parameters.ar}
                     className="params-input"
                     placeholder="初期値は6"
-                    pattern="\d+"
+                    pattern="^([1-9][0-9]*)$"
+                    maxLength={2}
                   />
                   <Form.Control.Feedback type="invalid">
-                    数字を入力してください
+                    1以上の整数を入力してください
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
@@ -143,13 +150,15 @@ function ParamsSettingModal({
                 <Form.Group>
                   <Form.Control
                     required
+                    type="number"
                     defaultValue={parameters.sn}
                     className="params-input"
                     placeholder="初期値は500"
-                    pattern="\d+"
+                    pattern="^([1-9][0-9]*)$"
+                    maxLength={4}
                   />
                   <Form.Control.Feedback type="invalid">
-                    数字を入力してください
+                    1以上の整数を入力してください
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>

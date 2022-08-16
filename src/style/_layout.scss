@@ -209,7 +209,7 @@ footer {
 
 .coias-view-main {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 63px);
   margin: 0;
 
   .col {
@@ -278,7 +278,7 @@ footer {
     }
 
     .manual-star-list-wrraper {
-      height: 100%;
+      height: calc(100% + 63px);
       border-left: solid #707070 1px;
 
       .manual-btn-fixed {
@@ -302,7 +302,7 @@ footer {
       flex-direction: column;
       align-items: center;
       width: 13vw;
-      height: 100%;
+      height: calc(100% + 63px);
       border-left: solid #707070 1px;
 
       .star-list-title {
