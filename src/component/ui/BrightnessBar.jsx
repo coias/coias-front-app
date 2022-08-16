@@ -1,8 +1,8 @@
-import React from 'react';
-import { ImBrightnessContrast } from 'react-icons/im';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { IconContext } from 'react-icons';
-import CONSTANT from '../utils/CONSTANTS';
+import { ImBrightnessContrast } from 'react-icons/im';
+import CONSTANT from '../../utils/CONSTANTS';
 
 function BrightnessBar({ val, set }) {
   return (

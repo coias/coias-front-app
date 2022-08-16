@@ -3,22 +3,22 @@
  *
  */
 import axios from 'axios';
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Button,
-  Row,
-  Col,
-  DropdownButton,
   ButtonGroup,
+  Col,
   Dropdown,
+  DropdownButton,
+  Row,
 } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
-import LoadingButton from '../component/LoadingButton';
-import ErrorModal from '../component/ErrorModal';
-import FileUploadModal from '../component/FileUploadModal';
-import AlertModal from '../component/AlertModal';
-import { ModeStatusContext } from '../component/context';
+import { ModeStatusContext } from '../component/functional/context';
+import AlertModal from '../component/general/AlertModal';
+import ErrorModal from '../component/general/ErrorModal';
+import LoadingButton from '../component/general/LoadingButton';
+import FileUploadModal from '../component/model/ExplorePrepare/FileUploadModal';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {

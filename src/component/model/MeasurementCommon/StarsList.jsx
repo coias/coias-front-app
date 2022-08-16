@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { MdOutlineExpandMore } from 'react-icons/md';
-import PropTypes from 'prop-types';
-import { PageContext, StarPositionContext } from './context';
+import { PageContext, StarPositionContext } from '../../functional/context';
 
 function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
   const { currentPage } = useContext(PageContext);

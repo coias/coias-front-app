@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+import axios from 'axios';
+import PropTypes from 'prop-types';
 import React, {
   useCallback,
   useContext,
@@ -6,23 +8,23 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Row, Col, Container, Button, Spinner } from 'react-bootstrap';
-import axios from 'axios';
-
+import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import ManualToolBar from '../component/ManualToolBar';
-import PanZoom from '../component/PanZoom';
-import { PageContext, StarPositionContext } from '../component/context';
-import COIASToolBar from '../component/COIASToolBar';
-import PlayMenu from '../component/PlayMenu';
-import ManualStarModal from '../component/ManualStarModal';
-import AlertModal from '../component/AlertModal';
-import StarsList from '../component/StarsList';
-import ConfirmationModal from '../component/ConfirmationModal';
-import ErrorModal from '../component/ErrorModal';
+import {
+  PageContext,
+  StarPositionContext,
+} from '../component/functional/context';
+import AlertModal from '../component/general/AlertModal';
+import ErrorModal from '../component/general/ErrorModal';
+import ManualStarModal from '../component/model/ManualMeasurement/ManualStarModal';
+import ManualToolBar from '../component/model/ManualMeasurement/ManualToolBar';
+import RenameNewStarModal from '../component/model/ManualMeasurement/RenameNewStar';
+import COIASToolBar from '../component/model/MeasurementCommon/COIASToolBar';
+import PanZoom from '../component/model/MeasurementCommon/PanZoom';
+import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
+import StarsList from '../component/model/MeasurementCommon/StarsList';
+import ConfirmationModal from '../component/ui/ConfirmationModal';
 import useEventListener from '../hooks/useEventListener';
-import RenameNewStarModal from '../component/RenameNewStar';
 
 function ManualMeasurement({
   imageURLs,

@@ -1,10 +1,9 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import React, { useRef, useState, useContext } from 'react';
-
-import { Modal, Button, Form, Col, Row } from 'react-bootstrap';
-import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
 import PropTypes from 'prop-types';
-import { StarPositionContext } from './context';
+import React, { useContext, useRef, useState } from 'react';
+import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
+import { StarPositionContext } from '../../functional/context';
 
 function RenameNewStarModal({
   show,

@@ -1,23 +1,16 @@
+import PropTypes from 'prop-types';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
-  Navbar,
-  Nav,
-  Container,
-  Col,
-  Button,
-  ToggleButton,
-  ButtonGroup,
-  Form,
+  Button, ButtonGroup, Col, Container, Form, Nav, Navbar, ToggleButton
 } from 'react-bootstrap';
 import { IconContext } from 'react-icons';
-import { FaPlay, FaStop, FaStepForward, FaStepBackward } from 'react-icons/fa';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle } from 'react-icons/bi';
-import React, { useCallback, useContext, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { PageContext } from './context';
-import SettingModal from './SettingModal';
-import HelpModal from './HelpModal';
-import CONSTANT from '../utils/CONSTANTS';
+import { FaPlay, FaStepBackward, FaStepForward, FaStop } from 'react-icons/fa';
+import CONSTANT from '../../../utils/CONSTANTS';
+import { PageContext } from '../../functional/context';
+import HelpModal from '../../ui/HelpModal';
+import SettingModal from '../../ui/SettingModal';
 
 function PlayMenu({
   imageNames,

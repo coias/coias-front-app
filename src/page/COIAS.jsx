@@ -1,21 +1,21 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import AlertModal from '../component/AlertModal';
-import PanZoom from '../component/PanZoom';
-import PlayMenu from '../component/PlayMenu';
 import {
-  StarPositionContext,
-  PageContext,
   ModeStatusContext,
-} from '../component/context';
-import COIASToolBar from '../component/COIASToolBar';
-import ErrorModal from '../component/ErrorModal';
-import LoadingButton from '../component/LoadingButton';
-import NewStarModal from '../component/NewStarModal';
-import StarsList from '../component/StarsList';
+  PageContext,
+  StarPositionContext,
+} from '../component/functional/context';
+import AlertModal from '../component/general/AlertModal';
+import ErrorModal from '../component/general/ErrorModal';
+import LoadingButton from '../component/general/LoadingButton';
+import NewStarModal from '../component/model/COIAS/NewStarModal';
+import COIASToolBar from '../component/model/MeasurementCommon/COIASToolBar';
+import PanZoom from '../component/model/MeasurementCommon/PanZoom';
+import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
+import StarsList from '../component/model/MeasurementCommon/StarsList';
 import useEventListener from '../hooks/useEventListener';
 
 // eslint-disable-next-line no-use-before-define

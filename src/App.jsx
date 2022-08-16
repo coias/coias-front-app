@@ -9,12 +9,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useMemo, useRef, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
+  ModeStatusContext,
   MousePositionContext,
   PageContext,
   StarPositionContext,
-  ModeStatusContext,
-} from './component/context';
-import Header from './component/Header';
+} from './component/functional/context';
+import Header from './component/ui/Header';
 import COIAS from './page/COIAS';
 import ExplorePrepare from './page/ExplorePrepare';
 import ManualMeasurement from './page/ManualMeasurement';

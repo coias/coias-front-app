@@ -1,7 +1,7 @@
+import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
 import { BiCurrentLocation } from 'react-icons/bi';
-import PropTypes from 'prop-types';
-import { MousePositionContext } from './context';
+import { MousePositionContext } from '../functional/context';
 
 function MousePosition({ isZoomIn, IMAGE_WIDTH, IMAGE_HEIGHT }) {
   const { currentMousePos } = useContext(MousePositionContext);

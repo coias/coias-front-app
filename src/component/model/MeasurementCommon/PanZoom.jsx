@@ -1,22 +1,22 @@
 // eslint-disable-next-line object-curly-newline
+import PropTypes from 'prop-types';
 import React, {
-  useRef,
-  useEffect,
-  useContext,
-  useState,
   useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 // eslint-disable-next-line object-curly-newline
 import { Col } from 'react-bootstrap';
-import PropTypes from 'prop-types';
+import useEventListener from '../../../hooks/useEventListener';
 import {
-  PageContext,
   MousePositionContext,
+  PageContext,
   StarPositionContext,
-} from './context';
-import MousePosition from './MousePosition';
-import useEventListener from '../hooks/useEventListener';
-import AlertModal from './AlertModal';
+} from '../../functional/context';
+import AlertModal from '../../general/AlertModal';
+import MousePosition from '../../ui/MousePosition';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {

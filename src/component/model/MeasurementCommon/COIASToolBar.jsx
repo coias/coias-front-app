@@ -1,14 +1,14 @@
+import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import { IconContext } from 'react-icons';
 import { Button } from 'react-bootstrap';
-import { FaMousePointer } from 'react-icons/fa';
+import { IconContext } from 'react-icons';
 import { AiOutlineReload } from 'react-icons/ai';
 import { BiHide } from 'react-icons/bi';
-import PropTypes from 'prop-types';
-import { StarPositionContext } from './context';
-import CONSTANT from '../utils/CONSTANTS';
-import ContrastBar from './ContrastBar';
-import BrightnessBar from './BrightnessBar';
+import { FaMousePointer } from 'react-icons/fa';
+import CONSTANT from '../../../utils/CONSTANTS';
+import { StarPositionContext } from '../../functional/context';
+import BrightnessBar from '../../ui/BrightnessBar';
+import ContrastBar from '../COIAS/ContrastBar';
 
 // eslint-disable-next-line no-use-before-define
 COIASToolBar.propTypes = {

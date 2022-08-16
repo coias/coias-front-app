@@ -1,9 +1,9 @@
-import { React, useContext } from 'react';
-import { Button, Row, Col, Accordion, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { v4 as uuidv4 } from 'uuid';
+import { React, useContext } from 'react';
+import { Accordion, Button, Col, Form, Row } from 'react-bootstrap';
 import { BiAddToQueue } from 'react-icons/bi';
-import { PageContext } from './context';
+import { v4 as uuidv4 } from 'uuid';
+import { PageContext } from '../../functional/context';
 
 function ManualToolBar({
   positionList,

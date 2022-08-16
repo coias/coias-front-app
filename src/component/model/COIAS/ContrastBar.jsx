@@ -1,8 +1,8 @@
-import React from 'react';
-import { ImContrast } from 'react-icons/im';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { IconContext } from 'react-icons';
-import CONSTANT from '../utils/CONSTANTS';
+import { ImContrast } from 'react-icons/im';
+import CONSTANT from '../../../utils/CONSTANTS';
 
 function ContrastBar({ val, set }) {
   return (

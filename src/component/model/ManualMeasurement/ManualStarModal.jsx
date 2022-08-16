@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { MousePositionContext, PageContext } from './context';
-import useEventListener from '../hooks/useEventListener';
-import AlertModal from './AlertModal';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Button, Modal } from 'react-bootstrap';
+import useEventListener from '../../../hooks/useEventListener';
+import { MousePositionContext, PageContext } from '../../functional/context';
+import AlertModal from '../../general/AlertModal';
 
 function ManualStarModal({
   manualStarModalShow,

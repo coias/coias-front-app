@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Col, Row, Form, Button } from 'react-bootstrap';
-import LoadingButton from '../component/LoadingButton';
-import AlertModal from '../component/AlertModal';
-import ErrorModal from '../component/ErrorModal';
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Form, Row } from 'react-bootstrap';
+import AlertModal from '../component/general/AlertModal';
+import ErrorModal from '../component/general/ErrorModal';
+import LoadingButton from '../component/general/LoadingButton';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
