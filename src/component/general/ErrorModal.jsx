@@ -39,7 +39,7 @@ function ErrorModal({ show, setShow, errorPlace, errorReason, onExit }) {
       </Modal.Header>
       <Modal.Body>
         {errorPlace?.length === 0
-          ? { errorPlace }
+          ? `${errorPlace}`
           : `${errorPlace}でエラーが発生しました。`}
         <br />
         <br />

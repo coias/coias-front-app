@@ -14,7 +14,6 @@ import SettingModal from '../../ui/SettingModal';
 
 function PlayMenu({
   imageNames,
-  // setImageURLs,
   intervalRef,
   setDefaultZoomRate,
   defaultZoomRate,
@@ -152,7 +151,7 @@ function PlayMenu({
   return (
     <Navbar bg="light" className="play-menu">
       <Container fluid>
-        <Col md={1}>
+        <Col md={3}>
           <Nav>
             <Nav.Item className="text-center d-flex m-1">
               <Button
@@ -228,7 +227,7 @@ function PlayMenu({
             </Nav.Item>
           </Nav>
         </Col>
-        <Col md={9} className="d-flex">
+        <Col md={7} className="d-flex">
           <ButtonGroup className="flex-grow-1" style={{ margin: 'auto 0' }}>
             {imageNames
               .filter((img) => img.visible)

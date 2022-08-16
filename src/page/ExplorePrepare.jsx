@@ -4,7 +4,7 @@
  */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import {
   Button,
   ButtonGroup,
@@ -14,11 +14,14 @@ import {
   Row,
 } from 'react-bootstrap';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
+import { GoSettings } from 'react-icons/go';
 import { ModeStatusContext } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import FileUploadModal from '../component/model/ExplorePrepare/FileUploadModal';
+import CONSTANT from '../utils/CONSTANTS';
+import ParamsSettingModal from '../component/model/ExplorePrepare/ParamsSettingModal';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
@@ -51,24 +54,16 @@ function ExplorePrepare({
   const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
   const [fileAlertModalshow, setFileAlertModalshow] = useState(false);
-  const [fileNum, setFileNum] = useState(0);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
-  const [parameters, setParameters] = useState(['4', '6', '2000']);
+  const [parameters, setParameters] = useState({
+    nd: '4',
+    ar: '6',
+    sn: '500',
+  });
   const [checkSend, setCheckSend] = useState([true, true, true, true]);
+  const [paramsSettingModalShow, setParamsSettingModalShow] = useState(false);
 
-  useEffect(() => {
-    if (!checkSend.includes(false)) {
-      setDisabled(false);
-      setAlertMessage('');
-    } else if (checkSend[0] === false && !checkSend.includes(false, 1)) {
-      setDisabled(true);
-      setAlertMessage('');
-    } else {
-      setDisabled(true);
-      setAlertMessage('数字を入力してください。');
-    }
-  }, [checkSend]);
   const { setModeStatus } = useContext(ModeStatusContext);
 
   const checkIsAllProcessDone = (updatedMenunames) =>
@@ -104,7 +99,7 @@ function ExplorePrepare({
     const reactApiUri = process.env.REACT_APP_API_URI;
     const response = await axios.put(`${reactApiUri}copy`);
     const dataList = response.data.result.sort();
-    if (fileNum !== dataList.length / 2) {
+    if (fileNames.length !== dataList.length / 2) {
       setAlertMessage('ファイルの中身が異なる可能性があります。');
       setAlertButtonMessage('アップロードに戻る');
       setFileAlertModalshow(true);
@@ -135,15 +130,25 @@ function ExplorePrepare({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setMenunames((prevMenunames) =>
+      prevMenunames.map((items) =>
+        items.id === 6
+          ? {
+              id: items.id,
+              name: items.name,
+              query: items.query,
+              done: false,
+            }
+          : items,
+      ),
+    );
     const { files } = fileInput.current;
     const data = new FormData();
     const filesForProps = [];
     setErrorFile([]);
-    setFileNum(files.length);
 
     const pattern =
       /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/;
-    console.log(files);
     const firstFileAreaName = files[0].name
       .split('-')
       .filter((_, index) => index === 3 || index === 4)
@@ -266,10 +271,10 @@ function ExplorePrepare({
       .then(() => {
         const updatedMenunames = menunames.map((item) => {
           if (
-            item.query === query ||
-            (query.startsWith('startsearch2R?binning=') &&
+            item.query === uriQuery ||
+            (uriQuery.startsWith('startsearch2R?binning=') &&
               item.query.startsWith('startsearch2R?binning=')) ||
-            (query.startsWith('astsearch_new') &&
+            (uriQuery.startsWith('astsearch_new') &&
               item.query.startsWith('astsearch_new'))
           ) {
             // eslint-disable-next-line no-param-reassign
@@ -281,11 +286,15 @@ function ExplorePrepare({
         if (uriQuery.startsWith('startsearch2R?binning=')) {
           fileContentCheck();
         }
+        setModeStatus((prevModeStatus) => {
+          const modeStatusCopy = { ...prevModeStatus };
+          modeStatusCopy.COIAS = checkIsAllProcessDone(updatedMenunames);
+          return modeStatusCopy;
+        });
       })
       .catch((e) => {
-        console.log(e);
         const errorResponse = e.response?.data?.detail;
-        if (errorResponse.place) {
+        if (errorResponse?.place) {
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
           setShowProcessError(true);
@@ -313,7 +322,7 @@ function ExplorePrepare({
     }
     // ビニングマスク（size: 2)
     result = await onProcessExecute(
-      `${uri}startsearch2R?binning=2&sn=${parameters[2]}`,
+      `${uri}startsearch2R?binning=2&sn=${parameters.sn}`,
       `ビニングマスク（'2x2'）`,
     );
     if (!result) {
@@ -338,7 +347,7 @@ function ExplorePrepare({
 
     // 自動検出
     await onProcessExecute(
-      `${uri}astsearch_new?nd=${parameters[0]}&ar=${parameters[1]}`,
+      `${uri}astsearch_new?nd=${parameters.nd}&ar=${parameters.ar}`,
       '自動検出',
     );
 
@@ -418,7 +427,7 @@ function ExplorePrepare({
                     <Dropdown.Item
                       eventKey="1"
                       onClick={() =>
-                        onProcess(`${menunames[2].query}2&sn=${parameters[2]}`)
+                        onProcess(`${menunames[2].query}2&sn=${parameters.sn}`)
                       }
                     >
                       2×2
@@ -426,7 +435,7 @@ function ExplorePrepare({
                     <Dropdown.Item
                       eventKey="2"
                       onClick={() =>
-                        onProcess(`${menunames[2].query}4&sn=${parameters[2]}`)
+                        onProcess(`${menunames[2].query}4&sn=${parameters.sn}`)
                       }
                     >
                       4×4
@@ -472,7 +481,7 @@ function ExplorePrepare({
                     style={{ whiteSpace: 'nowrap' }}
                     onClick={() => {
                       onProcess(
-                        `${menunames[5].query}?nd=${parameters[0]}&ar=${parameters[1]}`,
+                        `${menunames[5].query}?nd=${parameters.nd}&ar=${parameters.ar}`,
                       );
                     }}
                     variant={menunames[5].done ? 'success' : 'secondary'}
@@ -482,6 +491,9 @@ function ExplorePrepare({
                 </Col>
               </>
             )}
+            <Button onClick={() => setParamsSettingModalShow(true)}>
+              <GoSettings size={CONSTANT.iconSize} />
+            </Button>
           </Row>
           <Row>
             <Col style={{ margin: 'auto 0' }}>
@@ -540,6 +552,14 @@ function ExplorePrepare({
         checkSend={checkSend}
         setCheckSend={setCheckSend}
         alertMessage={alertMessage}
+      />
+      <ParamsSettingModal
+        show={paramsSettingModalShow}
+        handleClose={() => setParamsSettingModalShow(false)}
+        setParameters={setParameters}
+        parameters={parameters}
+        setMenunames={setMenunames}
+        inputFileLength={fileNames.length}
       />
       <AlertModal
         alertModalShow={fileAlertModalshow}

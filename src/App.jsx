@@ -75,9 +75,9 @@ function App() {
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
 
   const [modeStatus, setModeStatus] = useState({
-    COIAS: true,
-    Manual: true,
-    Report: true,
+    COIAS: false,
+    Manual: false,
+    Report: false,
   });
   const modeStatusValue = useMemo(
     () => ({ modeStatus, setModeStatus }),
@@ -100,7 +100,7 @@ function App() {
             bottom: 0,
             left: 0,
             right: 0,
-            overflow: 'scroll',
+            overflow: 'hidden',
             backgroundColor: '#F8F9FA',
           }}
         >
@@ -138,6 +138,8 @@ function App() {
                         setNext={setNext}
                         back={back}
                         setBack={setBack}
+                        setting={setting}
+                        setSetting={setSetting}
                       />
                     }
                   />
