@@ -129,12 +129,12 @@ function ParamsSettingModal({
                 <Form.Group>
                   <Form.Control
                     required
-                    type="number"
                     defaultValue={parameters.ar}
                     className="params-input"
                     placeholder="初期値は6"
-                    pattern="^([1-9][0-9]*)$"
-                    maxLength={2}
+                    pattern="\d+"
+                    maxLength={3}
+                    min={1}
                   />
                   <Form.Control.Feedback type="invalid">
                     1以上の整数を入力してください
@@ -150,12 +150,12 @@ function ParamsSettingModal({
                 <Form.Group>
                   <Form.Control
                     required
-                    type="number"
                     defaultValue={parameters.sn}
                     className="params-input"
                     placeholder="初期値は500"
-                    pattern="^([1-9][0-9]*)$"
-                    maxLength={4}
+                    pattern="\d+"
+                    maxLength={5}
+                    min={1}
                   />
                   <Form.Control.Feedback type="invalid">
                     1以上の整数を入力してください

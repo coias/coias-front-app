@@ -386,7 +386,7 @@ function PanZoom({
         if (
           item.name.startsWith('H') &&
           position &&
-          testHit(position.x, position.y)
+          testHit(position?.x, position?.y)
         ) {
           setRenameNewStarModalShow(true);
           setOldStarName(item.name);

@@ -11,6 +11,7 @@ import React, {
 import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {
+  ModeStatusContext,
   PageContext,
   StarPositionContext,
 } from '../component/functional/context';
@@ -18,7 +19,7 @@ import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import ManualStarModal from '../component/model/ManualMeasurement/ManualStarModal';
 import ManualToolBar from '../component/model/ManualMeasurement/ManualToolBar';
-import RenameNewStarModal from '../component/model/ManualMeasurement/RenameNewStar';
+import RenameNewStarModal from '../component/model/ManualMeasurement/RenameNewStarModal';
 import COIASToolBar from '../component/model/MeasurementCommon/COIASToolBar';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
@@ -114,6 +115,7 @@ function ManualMeasurement({
   const [fileNum, setFileNum] = useState(0);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
+  const { setModeStatus } = useContext(ModeStatusContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -180,6 +182,12 @@ function ManualMeasurement({
     };
 
     getImages();
+
+    setModeStatus({
+      COIAS: true,
+      Manual: true,
+      Report: false,
+    });
   }, []);
 
   useEffect(() => {
@@ -356,6 +364,11 @@ function ManualMeasurement({
     setOriginalStarPos(starPos);
     setStarPos(toObject);
     setLoading(false);
+    setModeStatus({
+      COIAS: true,
+      Manual: true,
+      Report: true,
+    });
   };
 
   useEventListener('keydown', (e) => {
@@ -457,6 +470,8 @@ function ManualMeasurement({
                   setConfirmMessage={setConfirmMessage}
                   scaleArray={scaleArray}
                   wrapperRef={wrapperRef}
+                  setRenameNewStarModalShow={setRenameNewStarModalShow}
+                  setOldStarName={setOldStarName}
                 />
               </Col>
             </Row>
@@ -498,7 +513,6 @@ function ManualMeasurement({
             className={
               isEditMode() ? 'manual-btn-fixed-delete' : 'manual-btn-fixed'
             }
-            // style={{ marginRight: '10px' }}
           >
             {isEditMode() && (
               <Button

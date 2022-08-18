@@ -1,7 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
-  Button, ButtonGroup, Col, Container, Form, Nav, Navbar, ToggleButton
+  Button,
+  ButtonGroup,
+  Col,
+  Container,
+  Form,
+  Nav,
+  Navbar,
+  ToggleButton,
 } from 'react-bootstrap';
 import { IconContext } from 'react-icons';
 import { AiFillSetting } from 'react-icons/ai';
@@ -151,7 +158,7 @@ function PlayMenu({
   return (
     <Navbar bg="light" className="play-menu">
       <Container fluid>
-        <Col md={3}>
+        <Col md={4} sm={6}>
           <Nav>
             <Nav.Item className="text-center d-flex m-1">
               <Button
