@@ -55,7 +55,6 @@ function COIAS({
   setSetting,
 }) {
   const [isSelect, setIsSelect] = useState(true);
-  const [isReload, setIsReload] = useState(false);
   const [isHide, setIsHide] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
@@ -306,7 +305,7 @@ function COIAS({
               i[1].complete &&
               i[1].naturalWidth !== 0,
           ).length === window.images.length;
-        if (window.imageLoadComplete && !isReload && isAutoSave) {
+        if (window.imageLoadComplete && isAutoSave) {
           getDisp();
         }
       };
@@ -323,7 +322,7 @@ function COIAS({
     } else {
       setCurrentPage(0);
     }
-  }, [imageURLs, memoList, isReload]);
+  }, [imageURLs, memoList]);
 
   // 探索終了ボタンが押された時の処理
   const onClickFinishButton = async (num) => {
@@ -467,15 +466,12 @@ function COIAS({
                 contrastVal={contrastVal}
                 setBrightnessVal={setBrightnessVal}
                 setContrastVal={setContrastVal}
-                isReload={isReload}
-                setIsReload={setIsReload}
                 isHide={isHide}
                 setIsHide={setIsHide}
               />
               <Col>
                 <PanZoom
                   imageURLs={imageURLs}
-                  isReload={isReload}
                   brightnessVal={brightnessVal}
                   contrastVal={contrastVal}
                   onClickFinishButton={onClickFinishButton}

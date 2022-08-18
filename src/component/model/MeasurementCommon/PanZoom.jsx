@@ -21,7 +21,6 @@ import MousePosition from '../../ui/MousePosition';
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
   isManual: false,
-  isReload: false,
   brightnessVal: 150,
   contrastVal: 150,
   positionList: [],
@@ -43,7 +42,6 @@ PanZoom.defaultProps = {
 // eslint-disable-next-line no-use-before-define
 PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isReload: PropTypes.bool,
   brightnessVal: PropTypes.number,
   contrastVal: PropTypes.number,
   isManual: PropTypes.bool,
@@ -70,7 +68,6 @@ PanZoom.propTypes = {
 
 function PanZoom({
   imageURLs,
-  isReload,
   brightnessVal,
   contrastVal,
   isManual,
@@ -278,7 +275,6 @@ function PanZoom({
     context,
     currentPage,
     starPos,
-    isReload,
     IMAGE_HEIGHT,
     isHide,
     positionList,

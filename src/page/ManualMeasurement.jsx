@@ -46,7 +46,6 @@ function ManualMeasurement({
 }) {
   const [show, setShow] = useState(false);
   const [isSelect, setIsSelect] = useState(true);
-  const [isReload, setIsReload] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
   const [isHide, setIsHide] = useState(false);
@@ -307,7 +306,7 @@ function ManualMeasurement({
 
     // setCurrentPage(0);
     document.getElementById('wrapper-coias').focus();
-  }, [imageURLs, isReload]);
+  }, [imageURLs]);
 
   const removePositionByIndex = (targetListIndex, targetElementIndex) => {
     setPositionList(
@@ -441,8 +440,6 @@ function ManualMeasurement({
                 contrastVal={contrastVal}
                 setBrightnessVal={setBrightnessVal}
                 setContrastVal={setContrastVal}
-                isReload={isReload}
-                setIsReload={setIsReload}
                 isHide={isHide}
                 setIsHide={setIsHide}
               />
@@ -455,7 +452,6 @@ function ManualMeasurement({
                   setShow={setShow}
                   brightnessVal={brightnessVal}
                   contrastVal={contrastVal}
-                  isReload={isReload}
                   isHide={isHide}
                   setManualStarModalShow={setManualStarModalShow}
                   isZoomIn={isZoomIn}

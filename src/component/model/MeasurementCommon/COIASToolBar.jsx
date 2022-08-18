@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import { IconContext } from 'react-icons';
-import { AiOutlineReload } from 'react-icons/ai';
 import { BiHide } from 'react-icons/bi';
 import { FaMousePointer } from 'react-icons/fa';
 import CONSTANT from '../../../utils/CONSTANTS';
-import { StarPositionContext } from '../../functional/context';
 import BrightnessBar from '../../ui/BrightnessBar';
 import ContrastBar from '../COIAS/ContrastBar';
 
@@ -14,8 +12,6 @@ import ContrastBar from '../COIAS/ContrastBar';
 COIASToolBar.propTypes = {
   isSelect: PropTypes.bool.isRequired,
   setIsSelect: PropTypes.func.isRequired,
-  isReload: PropTypes.bool.isRequired,
-  setIsReload: PropTypes.func.isRequired,
   setBrightnessVal: PropTypes.func.isRequired,
   setContrastVal: PropTypes.func.isRequired,
   isHide: PropTypes.bool.isRequired,
@@ -27,8 +23,6 @@ COIASToolBar.propTypes = {
 function COIASToolBar({
   isSelect,
   setIsSelect,
-  isReload,
-  setIsReload,
   setBrightnessVal,
   setContrastVal,
   isHide,
@@ -36,7 +30,6 @@ function COIASToolBar({
   contrastVal,
   brightnessVal,
 }) {
-  const { setStarPos } = useContext(StarPositionContext);
   return (
     <div className="coias-tool-bar">
       <Button
@@ -57,32 +50,6 @@ function COIASToolBar({
           }}
         >
           <FaMousePointer size={CONSTANT.iconSize} />
-        </IconContext.Provider>
-      </Button>
-      <Button
-        id="reloadButton"
-        variant="light"
-        onClick={() => {
-          setIsSelect(false);
-          setIsHide(false);
-          setIsReload(!isReload);
-          setBrightnessVal(150);
-          setContrastVal(150);
-          setStarPos((prevStarPos) => {
-            const newStarPos = prevStarPos;
-            Object.keys(prevStarPos).forEach((key) => {
-              newStarPos[key].isSelected = false;
-            });
-            return newStarPos;
-          });
-        }}
-        className="tool-btn"
-      >
-        <IconContext.Provider
-          // eslint-disable-next-line react/jsx-no-constructed-context-values
-          value={{ color: CONSTANT.defaultBtnColor }}
-        >
-          <AiOutlineReload size={CONSTANT.iconSize} />
         </IconContext.Provider>
       </Button>
       <Button
