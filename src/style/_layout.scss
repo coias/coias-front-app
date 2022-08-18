@@ -306,22 +306,23 @@ footer {
     }
 
     .manual-star-list-wrraper {
+      position: relative;
       height: calc(100% + 63px);
       border-left: solid #707070 1px;
 
       .manual-btn-fixed {
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
         display: flex;
-        justify-content: end;
         width: 100%;
-        margin-top: 30px;
-        margin-right: 10px;
       }
 
       .manual-btn-fixed-delete {
+        position: absolute;
+        bottom: 5%;
+        left: 2%;
         display: flex;
-        justify-content: space-between;
-        width: 100%;
-        margin-top: 30px;
       }
     }
 

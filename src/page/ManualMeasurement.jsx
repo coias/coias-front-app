@@ -478,7 +478,9 @@ function ManualMeasurement({
         </Col>
 
         <div
-          className="manual-star-list-wrraper"
+          className={
+            isRedisp ? 'coias-star-list-wrraper' : 'manual-star-list-wrraper'
+          }
           style={{ width: isRedisp ? '10vw' : '20vw' }}
         >
           {isRedisp ? (
@@ -522,7 +524,7 @@ function ManualMeasurement({
                 style={{ marginRight: '90px' }}
                 size="lg"
               >
-                削除する
+                削除
               </Button>
             )}
             {loading ? (

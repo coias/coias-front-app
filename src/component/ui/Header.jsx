@@ -84,7 +84,7 @@ function Header({ setMenunames }) {
             }}
             onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
           >
-            <h3>手動測定</h3>
+            <h3>手動測定/名前修正</h3>
           </NavLink>
           <NavLink
             to="/Report"
