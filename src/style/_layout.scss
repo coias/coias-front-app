@@ -6,6 +6,10 @@
 // Layout
 // =======================
 
+* {
+  overscroll-behavior-x: none !important;
+}
+
 .btn {
   box-shadow: none !important;
 }
