@@ -3,7 +3,6 @@ import { Modal, Button, Table } from 'react-bootstrap';
 
 import { FaMousePointer } from 'react-icons/fa';
 import { BiHide } from 'react-icons/bi';
-import { AiOutlineReload } from 'react-icons/ai';
 import { RiArrowUpDownFill, RiArrowLeftRightFill } from 'react-icons/ri';
 import PropTypes from 'prop-types';
 
@@ -21,21 +20,13 @@ function HelpModal({ show, onHide }) {
       </Modal.Header>
       <Modal.Body>
         <Table striped bordered hover>
-          <tbody>
+          <tbody className="help-modal-table">
             <tr>
               <td>
                 <FaMousePointer size={30} />
               </td>
               <td>
                 <h4>天体の枠をクリックして選択可能になります</h4>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <AiOutlineReload size={30} />
-              </td>
-              <td>
-                <h4>全ての状態がリセットされます</h4>
               </td>
             </tr>
             <tr>

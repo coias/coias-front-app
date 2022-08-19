@@ -120,6 +120,19 @@ body {
   color: red;
 }
 
+.help-modal-table {
+  td {
+    text-align: center;
+    vertical-align: middle;
+
+    h4 {
+      margin: 0;
+      text-align: left;
+      vertical-align: middle;
+    }
+  }
+}
+
 canvas {
   border: 0;
   image-rendering: crisp-edges; /* Firefox用 */
@@ -229,7 +242,6 @@ footer {
 
   &::-webkit-scrollbar-thumb {
     background-color: gray;
-    border-radius: 0.25rem;
 
     --bg-opacity: 1;
   }
@@ -269,7 +281,7 @@ footer {
           width: 40px;
           padding: 0;
           margin-left: 10px;
-          border: #707070 solid 1px;
+          border-right: #707070 solid 1px;
 
           .tool-btn {
             width: 100%;
@@ -375,8 +387,7 @@ footer {
         }
 
         &::-webkit-scrollbar-thumb {
-          background-color: gray;
-          border-radius: 0.25rem;
+          background-color: #707070;
 
           --bg-opacity: 1;
         }
@@ -405,7 +416,6 @@ footer {
 
   &::-webkit-scrollbar-thumb {
     background-color: gray;
-    border-radius: 0.25rem;
 
     --bg-opacity: 1;
   }
