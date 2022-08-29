@@ -527,11 +527,12 @@ function ExplorePrepare({
         disabled={disabled}
         onClickStarUpdateButton={async () => {
           handleClose();
+          setLoading(true);
           await axios
             .put(`${uri}getMPCORB_and_mpc2edb`)
             .then(() => {
               setProcessName('小惑星データ更新中...');
-              setLoading(true);
+              setLoading(false);
             })
             .catch((e) => {
               const errorResponse = e.response?.data?.detail;
@@ -541,7 +542,6 @@ function ExplorePrepare({
                 setShowProcessError(true);
               }
             });
-          setLoading(false);
         }}
         setParameters={setParameters}
         parameters={parameters}
