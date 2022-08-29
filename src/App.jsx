@@ -23,7 +23,7 @@ import './style/style.scss';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [fileNames, setFileNames] = useState(['Please input files']);
+  const [fileNames, setFileNames] = useState(['ファイルを選択してください']);
   const intervalRef = useRef(null);
   const [isAuto, setIsAuto] = useState(true);
   const [menunames, setMenunames] = useState([
@@ -92,7 +92,7 @@ function App() {
   return (
     <BrowserRouter style={{ position: 'relative' }}>
       <ModeStatusContext.Provider value={modeStatusValue}>
-        <Header setMenunames={setMenunames} />
+        <Header setMenunames={setMenunames} setFileNames={setFileNames} />
         <main
           style={{
             position: 'absolute',

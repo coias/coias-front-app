@@ -5,7 +5,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { ModeStatusContext } from '../functional/context';
 import ConfirmationModal from './ConfirmationModal';
 
-function Header({ setMenunames }) {
+function Header({ setMenunames, setFileNames }) {
   const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -115,6 +115,7 @@ function Header({ setMenunames }) {
           setShow(false);
         }}
         onClickYes={() => {
+          setFileNames(['ファイルを選択してください']);
           setModeStatus({
             COIAS: false,
             Manual: false,
@@ -140,4 +141,5 @@ export default Header;
 
 Header.propTypes = {
   setMenunames: PropTypes.func.isRequired,
+  setFileNames: PropTypes.func.isRequired,
 };

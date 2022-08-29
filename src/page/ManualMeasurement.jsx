@@ -531,6 +531,11 @@ function ManualMeasurement({
                 onClick={() => {
                   if (isRedisp) {
                     setStarPos(originalStarPos);
+                    setModeStatus({
+                      COIAS: true,
+                      Manual: true,
+                      Report: false,
+                    });
                   } else {
                     handleClick();
                   }

@@ -508,6 +508,11 @@ function COIAS({
                   setStarModalShow(true);
                 } else {
                   setStarPos(originalStarPos);
+                  setModeStatus({
+                    COIAS: true,
+                    Manual: false,
+                    Report: false,
+                  });
                 }
                 setDisable(!disable);
               }}
