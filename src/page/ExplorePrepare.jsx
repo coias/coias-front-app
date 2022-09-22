@@ -182,7 +182,15 @@ function ExplorePrepare({
       setProcessName('アップロード中...');
 
       setLoading(true);
-      await axios.delete(`${uri}deletefiles`);
+      await axios
+        .delete(`${uri}deletefiles`)
+        .then(() => {})
+        .catch(() => {
+          setShowProcessError(true);
+          setErrorPlace('ファイルアップロード');
+          setErrorReason('ファイルアップロードに失敗しました。');
+          setLoading(false);
+        });
       await axios
         .post(`${uri}uploadfiles/`, data)
         .then(() => {
@@ -542,6 +550,7 @@ function ExplorePrepare({
                 setShowProcessError(true);
               }
             });
+          setLoading(false);
         }}
         setParameters={setParameters}
         parameters={parameters}
@@ -570,6 +579,7 @@ function ExplorePrepare({
         setShow={setShowProcessError}
         errorPlace={errorPlace}
         errorReason={errorReason}
+        setLoading={setLoading}
       />
     </div>
   );

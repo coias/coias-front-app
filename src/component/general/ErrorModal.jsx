@@ -3,7 +3,14 @@ import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-function ErrorModal({ show, setShow, errorPlace, errorReason, onExit }) {
+function ErrorModal({
+  show,
+  setShow,
+  errorPlace,
+  errorReason,
+  onExit,
+  setLoading,
+}) {
   const reactApiUri = process.env.REACT_APP_API_URI;
 
   const downloadLogFIle = () => {
@@ -30,6 +37,7 @@ function ErrorModal({ show, setShow, errorPlace, errorReason, onExit }) {
 
   const handleClose = () => {
     setShow(false);
+    setLoading(false);
   };
 
   return (
@@ -71,6 +79,7 @@ ErrorModal.propTypes = {
   errorPlace: PropTypes.string.isRequired,
   errorReason: PropTypes.string.isRequired,
   onExit: PropTypes.func,
+  setLoading: PropTypes.func.isRequired,
 };
 
 ErrorModal.defaultProps = {
