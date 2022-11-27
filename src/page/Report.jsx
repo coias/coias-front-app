@@ -193,7 +193,7 @@ function Report() {
             }}
             className="mt-3"
           >
-            Downlaod send_mpc
+            Download send_mpc
           </Button>
 
           <Button
@@ -204,7 +204,7 @@ function Report() {
             className="mt-3"
             style={{ marginLeft: '10px' }}
           >
-            Downlaod final_all
+            Download final_all
           </Button>
         </Col>
       </Row>
