@@ -22,6 +22,7 @@ import LoadingButton from '../component/general/LoadingButton';
 import FileUploadModal from '../component/model/ExplorePrepare/FileUploadModal';
 import CONSTANT from '../utils/CONSTANTS';
 import ParamsSettingModal from '../component/model/ExplorePrepare/ParamsSettingModal';
+import GetProgress from '../component/general/GetProgress';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
@@ -62,6 +63,9 @@ function ExplorePrepare({
     sn: '500',
   });
   const [paramsSettingModalShow, setParamsSettingModalShow] = useState(false);
+
+  const [showProgress, setShowProgress] = useState(false);
+  const [progress, setProgress] = useState('');
 
   const { setModeStatus } = useContext(ModeStatusContext);
 
@@ -181,7 +185,8 @@ function ExplorePrepare({
       handleClose();
       setProcessName('アップロード中...');
 
-      setLoading(true);
+	  setLoading(true);
+	  setShowProgress(false);
       await axios
         .delete(`${uri}deletefiles`)
         .then(() => {})
@@ -213,9 +218,12 @@ function ExplorePrepare({
   };
 
   const onProcess = (query) => {
-    setProcessName('処理中...');
+    setProcessName('処理中...'); 
     const put = async () => {
       setLoading(true);
+	  setShowProgress(true);
+	  setProgress("0%");
+      const timerID = setInterval(() => GetProgress(setProgress, query.split('?')[0]), 250);
       await axios
         .put(uri + query)
         .then(() => {
@@ -241,7 +249,8 @@ function ExplorePrepare({
             return modeStatusCopy;
           });
           setMenunames(updatedMenunames);
-          setLoading(false);
+		  setLoading(false);
+          clearTimeout(timerID);
         })
         .catch((e) => {
           const errorResponse = e.response?.data?.detail;
@@ -251,6 +260,7 @@ function ExplorePrepare({
             setShowProcessError(true);
           }
           setLoading(false);
+          clearTimeout(timerID);
         });
     };
     if (query.length > 0) put();
@@ -267,6 +277,8 @@ function ExplorePrepare({
     let result = true;
     const uriQuery = url.split('/')[3];
     setProcessName(`${query}...`);
+	setProgress("0%");
+	const timerID = setInterval(() => GetProgress(setProgress, uriQuery.split('?')[0]), 250);
     await axios
       .put(url)
       .then(() => {
@@ -303,6 +315,7 @@ function ExplorePrepare({
         result = false;
         setLoading(false);
       });
+	clearTimeout(timerID);
     return result;
   };
 
@@ -315,6 +328,7 @@ function ExplorePrepare({
   const onProcessAuto = async () => {
     // 事前処理
     setLoading(true);
+    setShowProgress(true);
 
     let result = true;
     result = await onProcessExecute(`${uri}preprocess`, '事前処理');
@@ -520,7 +534,7 @@ function ExplorePrepare({
           </Row>
         </Col>
       </Row>
-      <LoadingButton loading={loading} processName={processName} />
+	  <LoadingButton loading={loading} processName={processName} showProgress={showProgress} progress={progress} />
 
       <FileUploadModal
         show={show}
@@ -536,6 +550,7 @@ function ExplorePrepare({
         onClickStarUpdateButton={async () => {
           handleClose();
           setLoading(true);
+          setShowProgress(false);
           await axios
             .put(`${uri}getMPCORB_and_mpc2edb`)
             .then(() => {

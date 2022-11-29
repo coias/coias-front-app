@@ -4,6 +4,7 @@ import { Button, Col, Form, Row } from 'react-bootstrap';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
+import GetProgress from '../component/general/GetProgress';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -18,6 +19,9 @@ function Report() {
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
+
+  const [showProgress, setShowProgress] = useState(false);
+  const [progress, setProgress] = useState('');
 
   const makeSendMpc = async () => {
     const header = [
@@ -56,6 +60,9 @@ function Report() {
 
   const getMpc = async () => {
     setLoading(true);
+    setShowProgress(true);
+	setProgress("0%");
+    const timerID = setInterval(() => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'), 250);
     await axios
       .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
       .then((response) => {
@@ -72,6 +79,7 @@ function Report() {
           }),
         );
         setLoading(false);
+		clearTimeout(timerID);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -81,6 +89,7 @@ function Report() {
           setShowProcessError(true);
         }
         setLoading(false);
+		clearTimeout(timerID);
       });
   };
 
@@ -208,7 +217,7 @@ function Report() {
           </Button>
         </Col>
       </Row>
-      <LoadingButton loading={loading} processName="レポートデータ取得中…" />
+      <LoadingButton loading={loading} processName="レポートデータ取得中…" showProgress={showProgress} progress={progress} />
       <AlertModal
         alertModalShow={showError}
         onClickOk={() => {

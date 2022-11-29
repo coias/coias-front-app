@@ -2,7 +2,7 @@ import { React } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-function LoadingButton({ loading, processName }) {
+function LoadingButton({ loading, processName, showProgress, progress }) {
   return (
     <Button
       type="button"
@@ -25,7 +25,8 @@ function LoadingButton({ loading, processName }) {
           height: '50px',
         }}
       />
-      <div id="current-process">{processName}</div>
+	  <div id="current-process">{processName}</div>
+	  <div id="current-progress" style={{display: showProgress ? 'block' : 'none'}}>{progress}</div>
     </Button>
   );
 }
@@ -33,6 +34,13 @@ function LoadingButton({ loading, processName }) {
 LoadingButton.propTypes = {
   loading: PropTypes.bool.isRequired,
   processName: PropTypes.string.isRequired,
+  showProgress: PropTypes.bool,
+  progress: PropTypes.string,
+};
+
+LoadingButton.defaultProps = {
+  showProgress: false,
+  progress: '',
 };
 
 export default LoadingButton;
