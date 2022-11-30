@@ -375,9 +375,6 @@ function COIAS({
           setShowProcessError(true);
         }
       });
-
-    // rename
-    await axios.put(`${reactApiUri}rename`);
   };
 
   const onStarModalExit = () => {
