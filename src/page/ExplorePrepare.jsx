@@ -250,7 +250,7 @@ function ExplorePrepare({
           });
           setMenunames(updatedMenunames);
 		  setLoading(false);
-          clearTimeout(timerID);
+          clearInterval(timerID);
         })
         .catch((e) => {
           const errorResponse = e.response?.data?.detail;
@@ -260,7 +260,7 @@ function ExplorePrepare({
             setShowProcessError(true);
           }
           setLoading(false);
-          clearTimeout(timerID);
+          clearInterval(timerID);
         });
     };
     if (query.length > 0) put();
@@ -315,7 +315,7 @@ function ExplorePrepare({
         result = false;
         setLoading(false);
       });
-	clearTimeout(timerID);
+	clearInterval(timerID);
     return result;
   };
 

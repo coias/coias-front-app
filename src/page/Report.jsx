@@ -79,7 +79,7 @@ function Report() {
           }),
         );
         setLoading(false);
-		clearTimeout(timerID);
+		clearInterval(timerID);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -89,7 +89,7 @@ function Report() {
           setShowProcessError(true);
         }
         setLoading(false);
-		clearTimeout(timerID);
+		clearInterval(timerID);
       });
   };
 
