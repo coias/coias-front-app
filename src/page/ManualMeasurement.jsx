@@ -231,9 +231,14 @@ function ManualMeasurement({
       } else {
         const res1 = await axios.get(`${reactApiUri}unknown_disp`);
         const unknownDisp = await res1.data.result;
+		let leadNum;  
 
-        const leadNum =
-          Number(unknownDisp[unknownDisp.length - 1][0].replace('H', '')) + 1;
+		if (res1.data.result.length===0){
+			leadNum = 0;
+		}
+		else{
+			leadNum = Number(unknownDisp[unknownDisp.length - 1][0].replace('H', '')) + 1;
+		}
 
         setLeadStarNumber(leadNum);
         setStarPos(toObject);
