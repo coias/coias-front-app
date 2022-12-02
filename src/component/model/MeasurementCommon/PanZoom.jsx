@@ -328,7 +328,7 @@ function PanZoom({
     Object.keys(newStarPos)
       .map((key) => newStarPos[key])
       .forEach((item, index) => {
-        if (!item.name.startsWith('H')) return null;
+        if (item.isKnown) return null;
         const position = item.page[currentPage];
         if (position && testHit(position.x, position.y)) {
           newStarPos[item.name].isSelected = !item.isSelected;
@@ -380,7 +380,7 @@ function PanZoom({
       .forEach((item) => {
         const position = item.page[currentPage];
         if (
-          item.name.startsWith('H') &&
+          !item.isKnown &&
           position &&
           testHit(position?.x, position?.y)
         ) {

@@ -232,9 +232,7 @@ function COIAS({
             toObject[item[0]] = {
               name: item[0],
               page: Array(fileNum).fill(null),
-              isSelected: memoList.find(
-                (memoName) => memoName === item[0].replace('H', ''),
-              ),
+              isSelected: false,
               isKnown: true,
             };
             star = toObject[item[0]];
@@ -254,9 +252,7 @@ function COIAS({
             toObject[item[0]] = {
               name: item[0],
               page: Array(fileNum).fill(null),
-              isSelected: memoList.find(
-                (memoName) => memoName === item[0].replace('H', ''),
-              ),
+              isSelected: false,
               isKnown: true,
             };
             star = toObject[item[0]];

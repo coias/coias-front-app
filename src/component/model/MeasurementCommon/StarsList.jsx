@@ -69,7 +69,7 @@ function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
                       disabled
                       type="checkbox"
                       id={pos.name}
-                      label={pos.name === pos.newName ? pos.name : pos.newName}
+                      label={pos.name === pos.newName || !isManual ? pos.name : pos.newName}
                       checked={false}
                     />
                   </div>

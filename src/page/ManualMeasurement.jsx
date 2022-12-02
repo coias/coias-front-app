@@ -210,7 +210,7 @@ function ManualMeasurement({
                 newName: item[0],
                 page: Array(imageURLs.length).fill(null),
                 isSelected: false,
-                isKnown: false,
+                isKnown: !(item[0].startsWith('H')&&item[0].length===7),
               };
               star = toObject[item[0]];
             }
@@ -340,7 +340,7 @@ function ManualMeasurement({
               newName: item[0],
               page: Array(imageURLs.length).fill(null),
               isSelected: false,
-              isKnown: false,
+		      isKnown: !(item[0].startsWith('H')&&item[0].length===7),
             };
             star = toObject[item[0]];
           }
