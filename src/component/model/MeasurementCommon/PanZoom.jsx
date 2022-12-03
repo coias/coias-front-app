@@ -201,7 +201,7 @@ function PanZoom({
               context.strokeStyle = 'rgba(0, 0, 0, 0)';
             } else if (pos.newName && position.name !== pos.newName) {
               context.strokeStyle = 'yellow';
-            } else if (pos.isSelected) {
+            } else if (pos.isSelected || pos.isKnown) {
               context.strokeStyle = 'red';
             } else if (!pos.isSelected) {
               context.strokeStyle = 'black';
