@@ -59,7 +59,16 @@ function SettingModal({
           <>
             <h4>拡大率を選んでください。</h4>
             <Form>
-              <Row>
+			  <Row>
+				<Col>
+                  <Form.Check
+                    name="group1"
+                    label="極小"
+                    type="radio"
+                    onChange={() => setDefaultZoomRate(250)}
+                    defaultChecked={defaultZoomRate === 250 && 'true'}
+                  />
+                </Col>
                 <Col>
                   <Form.Check
                     name="group1"
