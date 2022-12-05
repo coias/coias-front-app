@@ -34,7 +34,7 @@ function PlayMenu({
   setSetting,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
-  const [sec, setSec] = useState(0.01);
+  const [sec, setSec] = useState(250);
   const [play, setPlay] = useState(false);
   const [settingModalShow, setSettingModalShow] = useState(false);
   const [helpModalShow, setHelpModalShow] = useState(false);
@@ -218,6 +218,7 @@ function PlayMenu({
             <Nav.Item className="d-flex">
               <Form.Control
                 as="select"
+                defaultValue="250"
                 onChange={(v) => {
                   setSec(parseFloat(v.target.value));
                 }}
@@ -226,6 +227,7 @@ function PlayMenu({
                 <option value="20">0.02</option>
                 <option value="50">0.05</option>
                 <option value="100">0.10</option>
+                <option value="250">0.25</option>
                 <option value="500">0.50</option>
               </Form.Control>
               <Form.Text style={{ margin: 'auto 0', marginLeft: '5px' }}>
