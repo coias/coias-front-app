@@ -379,11 +379,7 @@ function PanZoom({
       .map((key) => newStarPos[key])
       .forEach((item) => {
         const position = item.page[currentPage];
-        if (
-          !item.isKnown &&
-          position &&
-          testHit(position?.x, position?.y)
-        ) {
+        if (!item.isKnown && position && testHit(position?.x, position?.y)) {
           setRenameNewStarModalShow(true);
           setOldStarName(item.name);
         } else if (position && testHit(position.x, position.y)) {

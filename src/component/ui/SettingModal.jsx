@@ -59,8 +59,8 @@ function SettingModal({
           <>
             <h4>拡大率を選んでください。</h4>
             <Form>
-			  <Row>
-				<Col>
+              <Row>
+                <Col>
                   <Form.Check
                     name="group1"
                     label="極小"
