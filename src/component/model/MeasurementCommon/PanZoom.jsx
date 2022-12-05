@@ -201,7 +201,7 @@ function PanZoom({
               context.strokeStyle = 'rgba(0, 0, 0, 0)';
             } else if (pos.newName && position.name !== pos.newName) {
               context.strokeStyle = 'yellow';
-            } else if (pos.isSelected) {
+            } else if (pos.isSelected || pos.isKnown) {
               context.strokeStyle = 'red';
             } else if (!pos.isSelected) {
               context.strokeStyle = 'black';
@@ -328,7 +328,7 @@ function PanZoom({
     Object.keys(newStarPos)
       .map((key) => newStarPos[key])
       .forEach((item, index) => {
-        if (!item.name.startsWith('H')) return null;
+        if (item.isKnown) return null;
         const position = item.page[currentPage];
         if (position && testHit(position.x, position.y)) {
           newStarPos[item.name].isSelected = !item.isSelected;
@@ -379,11 +379,7 @@ function PanZoom({
       .map((key) => newStarPos[key])
       .forEach((item) => {
         const position = item.page[currentPage];
-        if (
-          item.name.startsWith('H') &&
-          position &&
-          testHit(position?.x, position?.y)
-        ) {
+        if (!item.isKnown && position && testHit(position?.x, position?.y)) {
           setRenameNewStarModalShow(true);
           setOldStarName(item.name);
         } else if (position && testHit(position.x, position.y)) {

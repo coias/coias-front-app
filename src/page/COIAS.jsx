@@ -214,12 +214,6 @@ function COIAS({
             name: item[0],
             x: parseFloat(item[2], 10),
             y: parseFloat(item[3], 10),
-            newName: item[0],
-            page: Array(fileNum).fill(null),
-            isSelected: memoList.find(
-              (memoName) => memoName === item[0].replace('H', ''),
-            ),
-            isKnown: false,
           };
         });
       }
@@ -237,11 +231,8 @@ function COIAS({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
-              newName: item[0],
               page: Array(fileNum).fill(null),
-              isSelected: memoList.find(
-                (memoName) => memoName === item[0].replace('H', ''),
-              ),
+              isSelected: false,
               isKnown: true,
             };
             star = toObject[item[0]];
@@ -260,11 +251,8 @@ function COIAS({
           if (!star) {
             toObject[item[0]] = {
               name: item[0],
-              newName: item[0],
               page: Array(fileNum).fill(null),
-              isSelected: memoList.find(
-                (memoName) => memoName === item[0].replace('H', ''),
-              ),
+              isSelected: false,
               isKnown: true,
             };
             star = toObject[item[0]];
