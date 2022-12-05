@@ -185,8 +185,8 @@ function ExplorePrepare({
       handleClose();
       setProcessName('アップロード中...');
 
-	  setLoading(true);
-	  setShowProgress(false);
+      setLoading(true);
+      setShowProgress(false);
       await axios
         .delete(`${uri}deletefiles`)
         .then(() => {})
@@ -218,12 +218,15 @@ function ExplorePrepare({
   };
 
   const onProcess = (query) => {
-    setProcessName('処理中...'); 
+    setProcessName('処理中...');
     const put = async () => {
       setLoading(true);
-	  setShowProgress(true);
-	  setProgress("0%");
-      const timerID = setInterval(() => GetProgress(setProgress, query.split('?')[0]), 250);
+      setShowProgress(true);
+      setProgress('0%');
+      const timerID = setInterval(
+        () => GetProgress(setProgress, query.split('?')[0]),
+        250,
+      );
       await axios
         .put(uri + query)
         .then(() => {
@@ -249,7 +252,7 @@ function ExplorePrepare({
             return modeStatusCopy;
           });
           setMenunames(updatedMenunames);
-		  setLoading(false);
+          setLoading(false);
           clearInterval(timerID);
         })
         .catch((e) => {
@@ -277,8 +280,11 @@ function ExplorePrepare({
     let result = true;
     const uriQuery = url.split('/')[3];
     setProcessName(`${query}...`);
-	setProgress("0%");
-	const timerID = setInterval(() => GetProgress(setProgress, uriQuery.split('?')[0]), 250);
+    setProgress('0%');
+    const timerID = setInterval(
+      () => GetProgress(setProgress, uriQuery.split('?')[0]),
+      250,
+    );
     await axios
       .put(url)
       .then(() => {
@@ -315,7 +321,7 @@ function ExplorePrepare({
         result = false;
         setLoading(false);
       });
-	clearInterval(timerID);
+    clearInterval(timerID);
     return result;
   };
 
@@ -534,7 +540,12 @@ function ExplorePrepare({
           </Row>
         </Col>
       </Row>
-	  <LoadingButton loading={loading} processName={processName} showProgress={showProgress} progress={progress} />
+      <LoadingButton
+        loading={loading}
+        processName={processName}
+        showProgress={showProgress}
+        progress={progress}
+      />
 
       <FileUploadModal
         show={show}

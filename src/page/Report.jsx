@@ -61,8 +61,11 @@ function Report() {
   const getMpc = async () => {
     setLoading(true);
     setShowProgress(true);
-	setProgress("0%");
-    const timerID = setInterval(() => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'), 250);
+    setProgress('0%');
+    const timerID = setInterval(
+      () => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'),
+      250,
+    );
     await axios
       .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
       .then((response) => {
@@ -79,7 +82,7 @@ function Report() {
           }),
         );
         setLoading(false);
-		clearInterval(timerID);
+        clearInterval(timerID);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -89,7 +92,7 @@ function Report() {
           setShowProcessError(true);
         }
         setLoading(false);
-		clearInterval(timerID);
+        clearInterval(timerID);
       });
   };
 
@@ -217,7 +220,12 @@ function Report() {
           </Button>
         </Col>
       </Row>
-      <LoadingButton loading={loading} processName="レポートデータ取得中…" showProgress={showProgress} progress={progress} />
+      <LoadingButton
+        loading={loading}
+        processName="レポートデータ取得中…"
+        showProgress={showProgress}
+        progress={progress}
+      />
       <AlertModal
         alertModalShow={showError}
         onClickOk={() => {
