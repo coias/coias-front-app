@@ -341,6 +341,7 @@ function COIAS({
               name: item[0],
               page: Array(fileNum).fill(null),
               isSelected: false,
+              isKnown: !(item[0].startsWith('H') && item[0].length === 7),
             };
             star = toObject[item[0]];
           }
