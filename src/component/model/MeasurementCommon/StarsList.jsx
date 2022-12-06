@@ -4,7 +4,13 @@ import { Button, Form } from 'react-bootstrap';
 import { MdOutlineExpandMore } from 'react-icons/md';
 import { PageContext, StarPositionContext } from '../../functional/context';
 
-function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
+function StarsList({
+  disable,
+  writeMemo,
+  isManual,
+  isCOIAS,
+  setSelectedListState,
+}) {
   const { currentPage } = useContext(PageContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const [dispLimit, setDispLimit] = useState(100);
@@ -36,7 +42,7 @@ function StarsList({ disable, writeMemo, isManual, setSelectedListState }) {
           .map((pos, index) => {
             if (index < dispLimit) {
               if (pos.page[currentPage]) {
-                if (!pos.isKnown && !isManual) {
+                if (!pos.isKnown && isCOIAS) {
                   return (
                     <div className="mb-3" key={pos.name}>
                       <Form.Check
@@ -101,12 +107,15 @@ StarsList.propTypes = {
   disable: PropTypes.bool.isRequired,
   writeMemo: PropTypes.func,
   isManual: PropTypes.bool,
-  setSelectedListState: PropTypes.func.isRequired,
+  isCOIAS: PropTypes.bool,
+  setSelectedListState: PropTypes.func,
 };
 
 StarsList.defaultProps = {
   writeMemo: () => {},
   isManual: false,
+  isCOIAS: false,
+  setSelectedListState: () => {},
 };
 
 export default StarsList;
