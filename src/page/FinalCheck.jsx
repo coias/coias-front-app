@@ -60,6 +60,7 @@ function FinalCheck({
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const wrapperRef = useRef(null);
   const [validImages] = useState([]);
+  const [timeList, setTimeList] = useState([]);
   const [navigateDest, setNavigateDest] = useState('');
   const navigate = useNavigate();
 
@@ -129,7 +130,8 @@ function FinalCheck({
         setNavigateDest('/');
       }
 
-      setFileNum(dataList.length / 2);
+      const fileNumbers = dataList.length / 2;
+      setFileNum(fileNumbers);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -149,6 +151,17 @@ function FinalCheck({
       });
       setImageURLs(toObjectArray);
       setLoading(false);
+
+      setTimeList(Array(fileNumbers).fill(''));
+      await axios
+        .get(`${reactApiUri}time_list`)
+        .then((res) => res.data.result)
+        .then((tmpTimeList) => {
+          if (tmpTimeList.length === fileNumbers) {
+            setTimeList(tmpTimeList);
+          }
+        })
+        .catch(() => {});
     };
 
     getImages();
@@ -306,6 +319,7 @@ function FinalCheck({
                   wrapperRef={wrapperRef}
                   setting={setting}
                   setSetting={setSetting}
+                  timeList={timeList}
                 />
               </Col>
             </Row>

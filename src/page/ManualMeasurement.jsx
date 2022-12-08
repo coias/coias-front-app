@@ -113,6 +113,8 @@ function ManualMeasurement({
 
   const navigate = useNavigate();
   const [fileNum, setFileNum] = useState(0);
+  const [timeList, setTimeList] = useState([]);
+
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
@@ -161,7 +163,9 @@ function ManualMeasurement({
     const getImages = async () => {
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
-      setFileNum(dataList.length / 2);
+
+      const fileNumbers = dataList.length / 2;
+      setFileNum(fileNumbers);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -180,10 +184,20 @@ function ManualMeasurement({
         o.nomasked = false;
       });
       setImageURLs(toObjectArray);
+
+      setTimeList(Array(fileNumbers).fill(''));
+      await axios
+        .get(`${reactApiUri}time_list`)
+        .then((res) => res.data.result)
+        .then((tmpTimeList) => {
+          if (tmpTimeList.length === fileNumbers) {
+            setTimeList(tmpTimeList);
+          }
+        })
+        .catch(() => {});
     };
 
     getImages();
-
     setModeStatus({
       COIAS: true,
       Manual: true,
@@ -480,6 +494,7 @@ function ManualMeasurement({
                   setOldStarName={setOldStarName}
                   setSetting={setSetting}
                   setting={setting}
+                  timeList={timeList}
                 />
               </Col>
             </Row>

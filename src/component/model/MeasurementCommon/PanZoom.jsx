@@ -17,6 +17,7 @@ import {
 } from '../../functional/context';
 import AlertModal from '../../general/AlertModal';
 import MousePosition from '../../ui/MousePosition';
+import ImageTimes from '../../ui/ImageTimes';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
@@ -66,6 +67,7 @@ PanZoom.propTypes = {
   setOldStarName: PropTypes.func,
   setting: PropTypes.bool.isRequired,
   setSetting: PropTypes.func.isRequired,
+  timeList: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 function PanZoom({
@@ -93,6 +95,7 @@ function PanZoom({
   setOldStarName,
   setting,
   setSetting,
+  timeList,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -420,6 +423,7 @@ function PanZoom({
           IMAGE_WIDTH={IMAGE_WIDTH}
           IMAGE_HEIGHT={IMAGE_HEIGHT}
         />
+        <ImageTimes timeList={timeList} />
         <div
           className="wrapper"
           style={{
