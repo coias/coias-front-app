@@ -13,7 +13,6 @@ import {
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
 
-  const [sendMpcOBS, setSendMpcOBS] = useState('');
   const [sendMpcMEA, setSendMpcMEA] = useState('');
   const [sendMpcBody, setSendMpcBody] = useState([]);
   const [sendMpc, setSendMpc] = useState([]);
@@ -34,7 +33,17 @@ function Report() {
       'COD 568',
       'CON S. Urakawa, Bisei Spaceguard Center, 1716-3, Okura, Bisei',
       'CON Ibara, 714-1411 Okayama, Japan [urakawa@spaceguard.or.jp]',
-      `OBS ${sendMpcOBS}`,
+      `OBS H. Aihara, Y. AlSayyad, M. Ando, R. Armstrong, J. Bosch, E. Egami,`,
+      `H. Furusawa, J. Furusawa, S. Harasawa, Y. Harikane, B-H, Hsieh, H. Ikeda,`,
+      `K. Ito, I. Iwata, T. Kodama, M. Koike, M. Kokubo, Y. Komiyama, X. Li, Y. Liang,`,
+      `Y-T. Lin, R. H. Lupton, N. B. Lust, L. A. MacArthur, K. Mawatari, S. Mineo,`,
+      `H. Miyatake, S. Miyazaki, S. More, T. Morishima, H. Murayama, K. Nakajima,`,
+      `F. Nakata, A. J. Nishizawa, M. Oguri, N. Okabe, Y. Okura, Y. Ono, K. Osato,`,
+      `M. Ouchi, Y-C. Pan, A. A. Plazas Malagón, P. A. Price, S. L. Reed,`,
+      `E. S. Rykoff, T. Shibuya, M. Simunovic, M. A. Strauss, K. Sugimori, Y. Suto,`,
+      `N. Suzuki, M. Takada, Y. Takagi, T. Takata, S. Takita, M. Tanaka, S. Tang,`,
+      `D. S. Taranu, T. Terai, Y. Toba, E. L. Turner, H. Uchiyama,`,
+      `B. Vijarnwannaluk, C. Z. Waters, Y. Yamada, N. Yamamoto, T. Yamashita`,
       `MEA ${sendMpcMEA}`,
       'TEL 8.2-m f/2.0 reflector + CCD(HSC)',
       'NET Pan-STARRS(PS1) DR1 catalog',
@@ -152,34 +161,32 @@ function Report() {
 
   useEffect(() => {
     makeSendMpc();
-  }, [sendMpcMEA, sendMpcOBS, sendMpcBody]);
+  }, [sendMpcMEA, sendMpcBody]);
 
   return (
     <div>
       <Form>
-        <Form.Group className="p-3 w-75">
+        <Form.Group className="p-3 w-76">
           <Row xs="auto">
             <Col md={1}>
               <h4>OBS </h4>
             </Col>
-            <Col md={10} style={{ marginLeft: '20px' }}>
+            <Col md={10} style={{ marginLeft: '10px' }}>
               <Form.Control
-                placeholder="複数の場合は空白区切りで入力してください"
-                onChange={(e) => {
-                  setSendMpcOBS(e.target.value);
-                }}
+                placeholder="観測者名: default = HSC observers (変更したい場合はsend_mpc.txtをダウンロードした後に直接編集してください)"
+                disabled
               />
             </Col>
           </Row>
         </Form.Group>
-        <Form.Group className="p-3 w-75">
+        <Form.Group className="p-3 w-76">
           <Row xs="auto">
             <Col md={1}>
               <h4>MEA </h4>
             </Col>
-            <Col md={10} style={{ marginLeft: '20px' }}>
+            <Col md={10} style={{ marginLeft: '10px' }}>
               <Form.Control
-                placeholder="複数の場合は空白区切りで入力してください"
+                placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入してください. (例) Y. Endo, M. Konohata, A. Manaka"
                 onChange={(e) => {
                   setSendMpcMEA(e.target.value);
                 }}
@@ -195,9 +202,9 @@ function Report() {
         <Col md={8}>
           <div
             style={{
-              marginLeft: '12px',
+              marginLeft: '10px',
               backgroundColor: 'black',
-              height: '63vh',
+              height: '61vh',
               overflow: 'scroll',
             }}
           >
