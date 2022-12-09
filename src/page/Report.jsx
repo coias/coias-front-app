@@ -64,11 +64,6 @@ function Report() {
     setLoading(true);
     setShowProgress(true);
     setProgress('0%');
-    setModeStatus((prevModeStatus) => {
-      const modeStatusCopy = { ...prevModeStatus };
-      modeStatusCopy.FinalCheck = false;
-      return modeStatusCopy;
-    });
     const timerID = setInterval(
       () => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'),
       250,
