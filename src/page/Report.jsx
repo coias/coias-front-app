@@ -74,14 +74,12 @@ function Report() {
       250,
     );
 
-    let getMpcAPIDest;
-    if (!modeStatus.FinalCheck) {
-      getMpcAPIDest = `${reactApiUri}AstsearchR_afterReCOIAS`;
-    } else {
-      getMpcAPIDest = `${reactApiUri}get_mpc`;
-    }
     await axios
-      .put(getMpcAPIDest)
+      .put(
+        modeStatus.FinalCheck
+          ? `${reactApiUri}get_mpc`
+          : `${reactApiUri}AstsearchR_afterReCOIAS`,
+      )
       .then((response) => {
         const mpctext = response.data.send_mpc;
         const result = mpctext.split('\n');
