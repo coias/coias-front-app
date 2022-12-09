@@ -14,7 +14,6 @@ import {
   ModeStatusContext,
   PageContext,
   StarPositionContext,
-  ReportDoneContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
@@ -89,7 +88,6 @@ function ManualMeasurement({
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
-  const { setReportDone } = useContext(ReportDoneContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -163,7 +161,6 @@ function ManualMeasurement({
       Report: false,
       FinalCheck: false,
     });
-    setReportDone(false);
   }, []);
 
   useEffect(() => {

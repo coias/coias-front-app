@@ -13,7 +13,6 @@ import {
   MousePositionContext,
   PageContext,
   StarPositionContext,
-  ReportDoneContext,
 } from './component/functional/context';
 import Header from './component/ui/Header';
 import COIAS from './page/COIAS';
@@ -87,12 +86,6 @@ function App() {
     [modeStatus],
   );
 
-  const [reportDone, setReportDone] = useState(false);
-  const reportDoneValue = useMemo(
-    () => ({ reportDone, setReportDone }),
-    [reportDone],
-  );
-
   const [start, setStart] = useState(false);
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
@@ -101,108 +94,106 @@ function App() {
   return (
     <BrowserRouter style={{ position: 'relative' }}>
       <ModeStatusContext.Provider value={modeStatusValue}>
-        <ReportDoneContext.Provider value={reportDoneValue}>
-          <Header setMenunames={setMenunames} setFileNames={setFileNames} />
-          <main
-            style={{
-              position: 'absolute',
-              top: 80,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              overflow: 'hidden',
-              backgroundColor: '#F8F9FA',
-            }}
-          >
-            <PageContext.Provider value={pageValue}>
-              <MousePositionContext.Provider value={mouseValue}>
-                <StarPositionContext.Provider value={starValue}>
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <ExplorePrepare
-                          fileNames={fileNames}
-                          setFileNames={setFileNames}
-                          menunames={menunames}
-                          setMenunames={setMenunames}
-                          isAuto={isAuto}
-                          setIsAuto={setIsAuto}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/COIAS"
-                      element={
-                        <COIAS
-                          intervalRef={intervalRef}
-                          imageURLs={imageURLs}
-                          setImageURLs={setImageURLs}
-                          subImageURLs={subImageURLs}
-                          setSubImageURLs={setSubImageURLs}
-                          originalStarPos={originalStarPos}
-                          setOriginalStarPos={setOriginalStarPos}
-                          start={start}
-                          setStart={setStart}
-                          next={next}
-                          setNext={setNext}
-                          back={back}
-                          setBack={setBack}
-                          setting={setting}
-                          setSetting={setSetting}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/ManualMeasurement"
-                      element={
-                        <ManualMeasurement
-                          intervalRef={intervalRef}
-                          imageURLs={imageURLs}
-                          setImageURLs={setImageURLs}
-                          originalStarPos={originalStarPos}
-                          setOriginalStarPos={setOriginalStarPos}
-                          start={start}
-                          setStart={setStart}
-                          next={next}
-                          setNext={setNext}
-                          back={back}
-                          setBack={setBack}
-                          leadStarNumber={leadStarNumber}
-                          setLeadStarNumber={setLeadStarNumber}
-                          setting={setting}
-                          setSetting={setSetting}
-                        />
-                      }
-                    />
-                    <Route path="/Report" element={<Report />} />
-                    <Route
-                      path="/FinalCheck"
-                      element={
-                        <FinalCheck
-                          intervalRef={intervalRef}
-                          imageURLs={imageURLs}
-                          setImageURLs={setImageURLs}
-                          start={start}
-                          setStart={setStart}
-                          next={next}
-                          setNext={setNext}
-                          back={back}
-                          setBack={setBack}
-                          setting={setting}
-                          setSetting={setSetting}
-                        />
-                      }
-                    />
-                  </Routes>
-                </StarPositionContext.Provider>
-              </MousePositionContext.Provider>
-            </PageContext.Provider>
-          </main>
-          <footer>
-            <div style={{ display: 'none' }}>footer</div>
-          </footer>
-        </ReportDoneContext.Provider>
+        <Header setMenunames={setMenunames} setFileNames={setFileNames} />
+        <main
+          style={{
+            position: 'absolute',
+            top: 80,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            overflow: 'hidden',
+            backgroundColor: '#F8F9FA',
+          }}
+        >
+          <PageContext.Provider value={pageValue}>
+            <MousePositionContext.Provider value={mouseValue}>
+              <StarPositionContext.Provider value={starValue}>
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <ExplorePrepare
+                        fileNames={fileNames}
+                        setFileNames={setFileNames}
+                        menunames={menunames}
+                        setMenunames={setMenunames}
+                        isAuto={isAuto}
+                        setIsAuto={setIsAuto}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/COIAS"
+                    element={
+                      <COIAS
+                        intervalRef={intervalRef}
+                        imageURLs={imageURLs}
+                        setImageURLs={setImageURLs}
+                        subImageURLs={subImageURLs}
+                        setSubImageURLs={setSubImageURLs}
+                        originalStarPos={originalStarPos}
+                        setOriginalStarPos={setOriginalStarPos}
+                        start={start}
+                        setStart={setStart}
+                        next={next}
+                        setNext={setNext}
+                        back={back}
+                        setBack={setBack}
+                        setting={setting}
+                        setSetting={setSetting}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/ManualMeasurement"
+                    element={
+                      <ManualMeasurement
+                        intervalRef={intervalRef}
+                        imageURLs={imageURLs}
+                        setImageURLs={setImageURLs}
+                        originalStarPos={originalStarPos}
+                        setOriginalStarPos={setOriginalStarPos}
+                        start={start}
+                        setStart={setStart}
+                        next={next}
+                        setNext={setNext}
+                        back={back}
+                        setBack={setBack}
+                        leadStarNumber={leadStarNumber}
+                        setLeadStarNumber={setLeadStarNumber}
+                        setting={setting}
+                        setSetting={setSetting}
+                      />
+                    }
+                  />
+                  <Route path="/Report" element={<Report />} />
+                  <Route
+                    path="/FinalCheck"
+                    element={
+                      <FinalCheck
+                        intervalRef={intervalRef}
+                        imageURLs={imageURLs}
+                        setImageURLs={setImageURLs}
+                        start={start}
+                        setStart={setStart}
+                        next={next}
+                        setNext={setNext}
+                        back={back}
+                        setBack={setBack}
+                        setting={setting}
+                        setSetting={setSetting}
+                      />
+                    }
+                  />
+                </Routes>
+              </StarPositionContext.Provider>
+            </MousePositionContext.Provider>
+          </PageContext.Provider>
+        </main>
+        <footer>
+          <div style={{ display: 'none' }}>footer</div>
+        </footer>
       </ModeStatusContext.Provider>
     </BrowserRouter>
   );

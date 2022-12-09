@@ -5,10 +5,7 @@ import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import GetProgress from '../component/general/GetProgress';
-import {
-  ModeStatusContext,
-  ReportDoneContext,
-} from '../component/functional/context';
+import { ModeStatusContext } from '../component/functional/context';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -26,8 +23,7 @@ function Report() {
 
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState('');
-  const { setModeStatus } = useContext(ModeStatusContext);
-  const { reportDone, setReportDone } = useContext(ReportDoneContext);
+  const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
 
   const makeSendMpc = async () => {
     const header = [
@@ -79,7 +75,7 @@ function Report() {
     );
 
     let getMpcAPIDest;
-    if (!reportDone) {
+    if (!modeStatus.FinalCheck) {
       getMpcAPIDest = `${reactApiUri}AstsearchR_afterReCOIAS`;
     } else {
       getMpcAPIDest = `${reactApiUri}get_mpc`;
@@ -106,7 +102,6 @@ function Report() {
           modeStatusCopy.FinalCheck = true;
           return modeStatusCopy;
         });
-        setReportDone(true);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;

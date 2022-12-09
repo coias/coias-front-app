@@ -7,7 +7,6 @@ import {
   ModeStatusContext,
   PageContext,
   StarPositionContext,
-  ReportDoneContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
@@ -79,7 +78,6 @@ function COIAS({
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
-  const { setReportDone } = useContext(ReportDoneContext);
 
   // ズーム時に使用する状態管理配列
   const [scaleArray, setScaleArray] = useState(
@@ -156,7 +154,6 @@ function COIAS({
       Report: false,
       FinalCheck: false,
     });
-    setReportDone(false);
   }, []);
 
   useEffect(() => {
