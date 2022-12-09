@@ -2,15 +2,10 @@ import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { MdOutlineExpandMore } from 'react-icons/md';
+import { useLocation } from 'react-router-dom';
 import { PageContext, StarPositionContext } from '../../functional/context';
 
-function StarsList({
-  disable,
-  writeMemo,
-  isManual,
-  isCOIAS,
-  setSelectedListState,
-}) {
+function StarsList({ disable, writeMemo, setSelectedListState }) {
   const { currentPage } = useContext(PageContext);
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const [dispLimit, setDispLimit] = useState(100);
@@ -20,6 +15,11 @@ function StarsList({
       setDispLimit(100);
     }
   }, [currentPage]);
+
+  const location = useLocation();
+
+  const isCOIAS = location.pathname === '/COIAS';
+  const isManual = location.pathname === '/ManualMeasurement';
 
   return (
     <>
@@ -106,15 +106,11 @@ function StarsList({
 StarsList.propTypes = {
   disable: PropTypes.bool.isRequired,
   writeMemo: PropTypes.func,
-  isManual: PropTypes.bool,
-  isCOIAS: PropTypes.bool,
   setSelectedListState: PropTypes.func,
 };
 
 StarsList.defaultProps = {
   writeMemo: () => {},
-  isManual: false,
-  isCOIAS: false,
   setSelectedListState: () => {},
 };
 

@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { Button, Row, Modal, Form, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { ModeStatusContext, ReportDoneContext } from '../../functional/context';
+import { ModeStatusContext } from '../../functional/context';
 
 // eslint-disable-next-line no-use-before-define
 ParamsSettingModal.propTypes = {
@@ -24,7 +24,6 @@ function ParamsSettingModal({
 }) {
   const [validated, setValidated] = useState(false);
   const { setModeStatus } = useContext(ModeStatusContext);
-  const { setReportDone } = useContext(ReportDoneContext);
 
   return (
     <Modal
@@ -72,7 +71,6 @@ function ParamsSettingModal({
                 Report: false,
                 FinalCheck: false,
               });
-              setReportDone(false);
             } else if (isChangedArray[0] || isChangedArray[1]) {
               setMenunames((prevMenunames) =>
                 prevMenunames.map((items) =>
@@ -92,7 +90,6 @@ function ParamsSettingModal({
                 Report: false,
                 FinalCheck: false,
               });
-              setReportDone(false);
             }
             setParameters({
               nd: event.target[0].value,

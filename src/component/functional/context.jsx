@@ -24,8 +24,3 @@ export const ModeStatusContext = createContext({
   },
   setModeStatus: () => {},
 });
-
-export const ReportDoneContext = createContext({
-  reportDone: false,
-  setReportDone: () => {},
-});
