@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 // eslint-disable-next-line object-curly-newline
 import { Col } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 import useEventListener from '../../../hooks/useEventListener';
 import {
   MousePositionContext,
@@ -20,7 +21,6 @@ import MousePosition from '../../ui/MousePosition';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
-  isManual: false,
   brightnessVal: 150,
   contrastVal: 150,
   positionList: [],
@@ -44,7 +44,6 @@ PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   brightnessVal: PropTypes.number,
   contrastVal: PropTypes.number,
-  isManual: PropTypes.bool,
   positionList: PropTypes.arrayOf(PropTypes.array),
   isHide: PropTypes.bool.isRequired,
   disable: PropTypes.bool,
@@ -70,7 +69,6 @@ function PanZoom({
   imageURLs,
   brightnessVal,
   contrastVal,
-  isManual,
   positionList,
   isHide,
   disable,
@@ -113,6 +111,11 @@ function PanZoom({
   const [alertModalShow, setAlertModalShow] = useState(false);
 
   const dataSetOfImageSize = [5100, 2100, 1050];
+
+  const location = useLocation();
+
+  const isCOIAS = location.pathname === '/COIAS';
+  const isManual = location.pathname === '/ManualMeasurement';
 
   function relativeCoords(event) {
     const bounds = event.target.getBoundingClientRect();
@@ -438,7 +441,7 @@ function PanZoom({
                   saveEventPosition();
                 } else if (isManual && disable) {
                   renameNewStar();
-                } else {
+                } else if (isCOIAS) {
                   changeColorOnClick();
                 }
               }}

@@ -1,10 +1,11 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import GetProgress from '../component/general/GetProgress';
+import { ModeStatusContext } from '../component/functional/context';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -22,6 +23,7 @@ function Report() {
 
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState('');
+  const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
 
   const makeSendMpc = async () => {
     const header = [
@@ -66,8 +68,13 @@ function Report() {
       () => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'),
       250,
     );
+
     await axios
-      .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
+      .put(
+        modeStatus.FinalCheck
+          ? `${reactApiUri}get_mpc`
+          : `${reactApiUri}AstsearchR_afterReCOIAS`,
+      )
       .then((response) => {
         const mpctext = response.data.send_mpc;
         const result = mpctext.split('\n');
@@ -83,6 +90,11 @@ function Report() {
         );
         setLoading(false);
         clearInterval(timerID);
+        setModeStatus((prevModeStatus) => {
+          const modeStatusCopy = { ...prevModeStatus };
+          modeStatusCopy.FinalCheck = true;
+          return modeStatusCopy;
+        });
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -239,6 +251,7 @@ function Report() {
         setShow={setShowProcessError}
         errorPlace={errorPlace}
         errorReason={errorReason}
+        setLoading={setLoading}
       />
     </div>
   );

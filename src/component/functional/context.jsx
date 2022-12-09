@@ -20,6 +20,7 @@ export const ModeStatusContext = createContext({
     COIAS: false,
     Manual: false,
     Report: false,
+    FinalCheck: false,
   },
   setModeStatus: () => {},
 });

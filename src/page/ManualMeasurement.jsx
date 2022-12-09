@@ -64,47 +64,20 @@ function ManualMeasurement({
   const [errorReason, setErrorReason] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
   const [positionList, setPositionList] = useState([[]]);
-  const [scaleArray, setScaleArray] = useState([
-    { id: 1, done: true },
-    { id: 1.5, done: false },
-    { id: 2, done: false },
-    { id: 2.5, done: false },
-    { id: 3, done: false },
-    { id: 3.5, done: false },
-    { id: 4, done: false },
-    { id: 4.5, done: false },
-    { id: 5, done: false },
-    { id: 5.5, done: false },
-    { id: 6, done: false },
-    { id: 6.5, done: false },
-    { id: 7, done: false },
-    { id: 7.5, done: false },
-    { id: 8, done: false },
-    { id: 8.5, done: false },
-    { id: 9, done: false },
-    { id: 9.5, done: false },
-    { id: 10, done: false },
-    { id: 10.5, done: false },
-    { id: 11, done: false },
-    { id: 11.5, done: false },
-    { id: 12, done: false },
-    { id: 12.5, done: false },
-    { id: 13, done: false },
-    { id: 13.5, done: false },
-    { id: 14, done: false },
-    { id: 14.5, done: false },
-    { id: 15, done: false },
-    { id: 15.5, done: false },
-    { id: 16, done: false },
-    { id: 16.5, done: false },
-    { id: 17, done: false },
-    { id: 17.5, done: false },
-    { id: 18, done: false },
-    { id: 18.5, done: false },
-    { id: 19, done: false },
-    { id: 19.5, done: false },
-    { id: 20, done: false },
-  ]);
+  // ズーム時に使用する状態管理配列
+  const [scaleArray, setScaleArray] = useState(
+    Array(39)
+      .fill({ id: null, done: null })
+      .map((_, index) => {
+        let element = {};
+        if (index === 0) {
+          element = { id: 1, done: true };
+        } else {
+          element = { id: 1 + 0.5 * index, done: false };
+        }
+        return element;
+      }),
+  );
   const [renameNewStarModalShow, setRenameNewStarModalShow] = useState(false);
   const [oldStarName, setOldStarName] = useState('');
 
@@ -186,6 +159,7 @@ function ManualMeasurement({
       COIAS: true,
       Manual: true,
       Report: false,
+      FinalCheck: false,
     });
   }, []);
 
@@ -372,6 +346,7 @@ function ManualMeasurement({
       COIAS: true,
       Manual: true,
       Report: true,
+      FinalCheck: false,
     });
   };
 
@@ -435,6 +410,7 @@ function ManualMeasurement({
             handleClick={handleClick}
             originalStarPos={originalStarPos}
             loading={loading}
+            setSetting={setSetting}
           />
           <Container fluid>
             <Row className="m-0 p-0">
@@ -472,6 +448,8 @@ function ManualMeasurement({
                   wrapperRef={wrapperRef}
                   setRenameNewStarModalShow={setRenameNewStarModalShow}
                   setOldStarName={setOldStarName}
+                  setSetting={setSetting}
+                  setting={setting}
                 />
               </Col>
             </Row>
@@ -540,6 +518,7 @@ function ManualMeasurement({
                       COIAS: true,
                       Manual: true,
                       Report: false,
+                      FinalCheck: false,
                     });
                   } else {
                     handleClick();
@@ -620,6 +599,7 @@ function ManualMeasurement({
           setIsRedisp(!isRedisp);
           setStarPos(originalStarPos);
         }}
+        setLoading={setLoading}
       />
       <RenameNewStarModal
         show={renameNewStarModalShow}

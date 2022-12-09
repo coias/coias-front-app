@@ -18,6 +18,7 @@ import Header from './component/ui/Header';
 import COIAS from './page/COIAS';
 import ExplorePrepare from './page/ExplorePrepare';
 import ManualMeasurement from './page/ManualMeasurement';
+import FinalCheck from './page/FinalCheck';
 import Report from './page/Report';
 import './style/style.scss';
 
@@ -78,6 +79,7 @@ function App() {
     COIAS: false,
     Manual: false,
     Report: false,
+    FinalCheck: false,
   });
   const modeStatusValue = useMemo(
     () => ({ modeStatus, setModeStatus }),
@@ -166,6 +168,24 @@ function App() {
                     }
                   />
                   <Route path="/Report" element={<Report />} />
+                  <Route
+                    path="/FinalCheck"
+                    element={
+                      <FinalCheck
+                        intervalRef={intervalRef}
+                        imageURLs={imageURLs}
+                        setImageURLs={setImageURLs}
+                        start={start}
+                        setStart={setStart}
+                        next={next}
+                        setNext={setNext}
+                        back={back}
+                        setBack={setBack}
+                        setting={setting}
+                        setSetting={setSetting}
+                      />
+                    }
+                  />
                 </Routes>
               </StarPositionContext.Provider>
             </MousePositionContext.Provider>
