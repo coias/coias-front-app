@@ -57,9 +57,9 @@ function SettingModal({
         ))}
         {defaultZoomRate !== 0 && (
           <>
-            <h4>拡大率を選んでください。</h4>
+            <h4>手動測定時の拡大モーダルの拡大率を選んでください。</h4>
             <Form>
-              <Row>
+              <Row className="pb-4">
                 <Col>
                   <Form.Check
                     name="group1"
