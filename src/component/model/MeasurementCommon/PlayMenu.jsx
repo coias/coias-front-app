@@ -12,7 +12,7 @@ import {
 } from 'react-bootstrap';
 import { IconContext } from 'react-icons';
 import { AiFillSetting } from 'react-icons/ai';
-import { BiHelpCircle } from 'react-icons/bi';
+import { BiHelpCircle, BiZoomIn, BiZoomOut } from 'react-icons/bi';
 import { FaPlay, FaStepBackward, FaStepForward, FaStop } from 'react-icons/fa';
 import CONSTANT from '../../../utils/CONSTANTS';
 import { PageContext } from '../../functional/context';
@@ -32,6 +32,13 @@ function PlayMenu({
   setIsAutoSave,
   isAutoSave,
   setSetting,
+  scaleArray,
+  setScaleArray,
+  zoomIn,
+  setZoomIn,
+  zoomOut,
+  setZoomOut,
+  wrapperRef,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(250);
@@ -127,6 +134,42 @@ function PlayMenu({
     intervalRef.current = null;
   }, []);
 
+  const onClickZoomIn = () => {
+    const scrollYRate =
+      wrapperRef.current.scrollTop /
+      (wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight);
+    const scrollXRate =
+      wrapperRef.current.scrollLeft /
+      (wrapperRef.current.scrollWidth - wrapperRef.current.clientWidth);
+
+    const currentIndex = scaleArray.findIndex((item) => item.done);
+    const arrayCopy = scaleArray.concat();
+    if (currentIndex < arrayCopy.length - 1) {
+      arrayCopy[currentIndex].done = false;
+      arrayCopy[currentIndex + 1].done = true;
+      wrapperRef.current.scrollBy(400 * scrollXRate, 400 * scrollYRate);
+    }
+    setScaleArray(arrayCopy);
+  };
+
+  const onClickZoomOut = () => {
+    const scrollYRate =
+      wrapperRef.current.scrollTop /
+      (wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight);
+    const scrollXRate =
+      wrapperRef.current.scrollLeft /
+      (wrapperRef.current.scrollWidth - wrapperRef.current.clientWidth);
+
+    const currentIndex = scaleArray.findIndex((item) => item.done);
+    const arrayCopy = scaleArray.concat();
+    if (currentIndex > 0) {
+      arrayCopy[currentIndex].done = false;
+      arrayCopy[currentIndex - 1].done = true;
+      wrapperRef.current.scrollBy(-400 * scrollXRate, -400 * scrollYRate);
+    }
+    setScaleArray(arrayCopy);
+  };
+
   useEffect(() => {
     if (start) onClickBlinkStart(imageNames);
     if (!start) onClickBlinkStop();
@@ -138,7 +181,15 @@ function PlayMenu({
       onClickBack();
       setBack(!back);
     }
-  }, [start, next, back]);
+    if (zoomIn) {
+      onClickZoomIn();
+      setZoomIn(!zoomIn);
+    }
+    if (zoomOut) {
+      onClickZoomOut();
+      setZoomOut(!zoomOut);
+    }
+  }, [start, next, back, zoomIn, zoomOut]);
 
   const setValid = () => {
     const array = imageNames
@@ -234,9 +285,40 @@ function PlayMenu({
                 sec
               </Form.Text>
             </Nav.Item>
+            <Nav.Item className="text-center d-flex m-0">
+              <Button
+                variant="light"
+                onClick={() => {
+                  onClickZoomIn();
+                }}
+              >
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{ color: CONSTANT.defaultBtnColor }}
+                >
+                  <BiZoomIn size={CONSTANT.iconSize} />
+                </IconContext.Provider>
+              </Button>
+            </Nav.Item>
+            <Nav.Item className="text-center d-flex m-0">
+              <Button
+                variant="light"
+                onClick={() => {
+                  onClickZoomOut();
+                }}
+                style={{ marginLeft: '-10px' }}
+              >
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{ color: CONSTANT.defaultBtnColor }}
+                >
+                  <BiZoomOut size={CONSTANT.iconSize} />
+                </IconContext.Provider>
+              </Button>
+            </Nav.Item>
           </Nav>
         </Col>
-        <Col md={7} className="d-flex">
+        <Col md={8} className="d-flex">
           <ButtonGroup className="flex-grow-1" style={{ margin: 'auto 0' }}>
             {imageNames
               .filter((img) => img.visible)
@@ -294,7 +376,7 @@ function PlayMenu({
           </ButtonGroup>
           <ButtonGroup
             className="justify-content-end"
-            style={{ marginLeft: '8rem', marginRight: '10px' }}
+            style={{ marginLeft: '5rem', marginRight: '10px' }}
           >
             <Button variant="light" onClick={() => setSettingModalShow(true)}>
               <IconContext.Provider
@@ -358,6 +440,13 @@ PlayMenu.propTypes = {
   setIsAutoSave: PropTypes.func.isRequired,
   isAutoSave: PropTypes.bool.isRequired,
   setSetting: PropTypes.func.isRequired,
+  scaleArray: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setScaleArray: PropTypes.func.isRequired,
+  zoomIn: PropTypes.bool.isRequired,
+  setZoomIn: PropTypes.func.isRequired,
+  zoomOut: PropTypes.bool.isRequired,
+  setZoomOut: PropTypes.func.isRequired,
+  wrapperRef: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 PlayMenu.defaultProps = {

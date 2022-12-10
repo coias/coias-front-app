@@ -29,6 +29,10 @@ FinalCheck.propTypes = {
   setBack: PropTypes.func.isRequired,
   setting: PropTypes.bool.isRequired,
   setSetting: PropTypes.func.isRequired,
+  zoomIn: PropTypes.bool.isRequired,
+  setZoomIn: PropTypes.func.isRequired,
+  zoomOut: PropTypes.bool.isRequired,
+  setZoomOut: PropTypes.func.isRequired,
 };
 
 function FinalCheck({
@@ -43,6 +47,10 @@ function FinalCheck({
   setBack,
   setting,
   setSetting,
+  zoomIn,
+  setZoomIn,
+  zoomOut,
+  setZoomOut,
 }) {
   const [isSelect, setIsSelect] = useState(true);
   const [isHide, setIsHide] = useState(false);
@@ -216,13 +224,6 @@ function FinalCheck({
 
   useEventListener('keydown', (e) => {
     e.preventDefault();
-    const scrollYRate =
-      wrapperRef.current.scrollTop /
-      (wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight);
-
-    const scrollXRate =
-      wrapperRef.current.scrollLeft /
-      (wrapperRef.current.scrollWidth - wrapperRef.current.clientWidth);
 
     if (e.key === 's') {
       setStart(!start);
@@ -231,23 +232,9 @@ function FinalCheck({
     } else if (e.key === 'ArrowLeft') {
       setBack(!back);
     } else if (e.key === 'ArrowUp') {
-      const currentIndex = scaleArray.findIndex((item) => item.done);
-      const arrayCopy = scaleArray.concat();
-      if (currentIndex < arrayCopy.length - 1) {
-        arrayCopy[currentIndex].done = false;
-        arrayCopy[currentIndex + 1].done = true;
-        wrapperRef.current.scrollBy(400 * scrollXRate, 400 * scrollYRate);
-      }
-      setScaleArray(arrayCopy);
+      setZoomIn(!zoomIn);
     } else if (e.key === 'ArrowDown') {
-      const currentIndex = scaleArray.findIndex((item) => item.done);
-      const arrayCopy = scaleArray.concat();
-      if (currentIndex > 0) {
-        arrayCopy[currentIndex].done = false;
-        arrayCopy[currentIndex - 1].done = true;
-        wrapperRef.current.scrollBy(-400 * scrollXRate, -400 * scrollYRate);
-      }
-      setScaleArray(arrayCopy);
+      setZoomOut(!zoomOut);
     }
   });
 
@@ -268,6 +255,13 @@ function FinalCheck({
             isAutoSave={isAutoSave}
             setIsAutoSave={setIsAutoSave}
             setSetting={setSetting}
+            scaleArray={scaleArray}
+            setScaleArray={setScaleArray}
+            zoomIn={zoomIn}
+            setZoomIn={setZoomIn}
+            zoomOut={zoomOut}
+            setZoomOut={setZoomOut}
+            wrapperRef={wrapperRef}
           />
           <Container fluid>
             <Row className="m-0 p-0">

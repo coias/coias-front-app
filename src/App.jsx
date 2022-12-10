@@ -90,6 +90,8 @@ function App() {
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
   const [setting, setSetting] = useState(false);
+  const [zoomIn, setZoomIn] = useState(false);
+  const [zoomOut, setZoomOut] = useState(false);
 
   return (
     <BrowserRouter style={{ position: 'relative' }}>
@@ -142,6 +144,10 @@ function App() {
                         setBack={setBack}
                         setting={setting}
                         setSetting={setSetting}
+                        zoomIn={zoomIn}
+                        setZoomIn={setZoomIn}
+                        zoomOut={zoomOut}
+                        setZoomOut={setZoomOut}
                       />
                     }
                   />
@@ -164,6 +170,10 @@ function App() {
                         setLeadStarNumber={setLeadStarNumber}
                         setting={setting}
                         setSetting={setSetting}
+                        zoomIn={zoomIn}
+                        setZoomIn={setZoomIn}
+                        zoomOut={zoomOut}
+                        setZoomOut={setZoomOut}
                       />
                     }
                   />
@@ -183,6 +193,10 @@ function App() {
                         setBack={setBack}
                         setting={setting}
                         setSetting={setSetting}
+                        zoomIn={zoomIn}
+                        setZoomIn={setZoomIn}
+                        zoomOut={zoomOut}
+                        setZoomOut={setZoomOut}
                       />
                     }
                   />
