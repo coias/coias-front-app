@@ -39,6 +39,7 @@ function PlayMenu({
   zoomOut,
   setZoomOut,
   wrapperRef,
+  disableShowAutoSave,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(250);
@@ -402,6 +403,7 @@ function PlayMenu({
               defaultZoomRate={defaultZoomRate}
               setIsAutoSave={setIsAutoSave}
               isAutoSave={isAutoSave}
+              disableShowAutoSave={disableShowAutoSave}
             />
             <Button variant="light" onClick={() => setHelpModalShow(true)}>
               <IconContext.Provider
@@ -447,11 +449,13 @@ PlayMenu.propTypes = {
   zoomOut: PropTypes.bool.isRequired,
   setZoomOut: PropTypes.func.isRequired,
   wrapperRef: PropTypes.objectOf(PropTypes.object).isRequired,
+  disableShowAutoSave: PropTypes.bool,
 };
 
 PlayMenu.defaultProps = {
   setDefaultZoomRate: () => {},
   defaultZoomRate: 0,
+  disableShowAutoSave: false,
 };
 
 export default PlayMenu;

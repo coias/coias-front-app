@@ -10,6 +10,7 @@ function SettingModal({
   defaultZoomRate,
   setIsAutoSave,
   isAutoSave,
+  disableShowAutoSave,
 }) {
   return (
     <Modal
@@ -100,29 +101,33 @@ function SettingModal({
             </Form>
           </>
         )}
-        <h4>オートセーブ</h4>
-        <Row>
-          <Col>
-            <Form.Check
-              name="group2"
-              label="ON"
-              type="radio"
-              onChange={() => setIsAutoSave(true)}
-              defaultChecked={isAutoSave && 'true'}
-              className="m-3"
-            />
-          </Col>
-          <Col>
-            <Form.Check
-              name="group2"
-              label="OFF"
-              type="radio"
-              onChange={() => setIsAutoSave(false)}
-              defaultChecked={!isAutoSave && 'true'}
-              className="m-3"
-            />
-          </Col>
-        </Row>
+        {!disableShowAutoSave && (
+          <>
+            <h4>オートセーブ</h4>
+            <Row>
+              <Col>
+                <Form.Check
+                  name="group2"
+                  label="ON"
+                  type="radio"
+                  onChange={() => setIsAutoSave(true)}
+                  defaultChecked={isAutoSave && 'true'}
+                  className="m-3"
+                />
+              </Col>
+              <Col>
+                <Form.Check
+                  name="group2"
+                  label="OFF"
+                  type="radio"
+                  onChange={() => setIsAutoSave(false)}
+                  defaultChecked={!isAutoSave && 'true'}
+                  className="m-3"
+                />
+              </Col>
+            </Row>
+          </>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onHide}>閉じる</Button>
@@ -142,4 +147,5 @@ SettingModal.propTypes = {
   defaultZoomRate: PropTypes.number.isRequired,
   setIsAutoSave: PropTypes.func.isRequired,
   isAutoSave: PropTypes.bool.isRequired,
+  disableShowAutoSave: PropTypes.bool.isRequired,
 };

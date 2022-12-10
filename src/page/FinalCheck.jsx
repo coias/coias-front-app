@@ -262,6 +262,7 @@ function FinalCheck({
             zoomOut={zoomOut}
             setZoomOut={setZoomOut}
             wrapperRef={wrapperRef}
+            disableShowAutoSave
           />
           <Container fluid>
             <Row className="m-0 p-0">
