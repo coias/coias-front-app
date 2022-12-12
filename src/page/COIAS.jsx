@@ -7,6 +7,7 @@ import {
   ModeStatusContext,
   PageContext,
   StarPositionContext,
+  PredictedStarPositionContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
@@ -85,6 +86,7 @@ function COIAS({
   const navigate = useNavigate();
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
+  const { setPredictedStarPos } = useContext(PredictedStarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
 
@@ -260,6 +262,33 @@ function COIAS({
         });
       }
 
+      const toPredictedObject = {};
+
+      const res4 = await axios
+        .get(`${reactApiUri}predicted_disp`)
+        .catch(() => {});
+      if (res4 !== undefined) {
+        const predictedDisp = await res4.data.result;
+        predictedDisp.forEach((item) => {
+          let star = toPredictedObject[item[0]];
+          if (!star) {
+            toPredictedObject[item[0]] = {
+              name: item[0],
+              page: Array(fileNum).fill(null),
+              isSelected: false,
+              isKnown: !(item[0].startsWith('H') && item[0].length === 7),
+            };
+            star = toPredictedObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+            isPredict: item[4] === '0',
+          };
+        });
+      }
+
       setSelectedListState(
         Object.values(toObject).map((star) => {
           if (star.isSelected) {
@@ -270,6 +299,7 @@ function COIAS({
       );
       setStarPos(toObject);
       setOriginalStarPos(toObject);
+      setPredictedStarPos(toPredictedObject);
       setLoading(false);
     };
     setStarPos({});

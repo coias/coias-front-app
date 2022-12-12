@@ -13,6 +13,7 @@ import {
   MousePositionContext,
   PageContext,
   StarPositionContext,
+  PredictedStarPositionContext,
 } from './component/functional/context';
 import Header from './component/ui/Header';
 import COIAS from './page/COIAS';
@@ -75,6 +76,12 @@ function App() {
   const [starPos, setStarPos] = useState({});
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
 
+  const [predictedStarPos, setPredictedStarPos] = useState({});
+  const predictedStarValue = useMemo(
+    () => ({ predictedStarPos, setPredictedStarPos }),
+    [predictedStarPos],
+  );
+
   const [modeStatus, setModeStatus] = useState({
     COIAS: false,
     Manual: false,
@@ -111,96 +118,100 @@ function App() {
           <PageContext.Provider value={pageValue}>
             <MousePositionContext.Provider value={mouseValue}>
               <StarPositionContext.Provider value={starValue}>
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <ExplorePrepare
-                        fileNames={fileNames}
-                        setFileNames={setFileNames}
-                        menunames={menunames}
-                        setMenunames={setMenunames}
-                        isAuto={isAuto}
-                        setIsAuto={setIsAuto}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/COIAS"
-                    element={
-                      <COIAS
-                        intervalRef={intervalRef}
-                        imageURLs={imageURLs}
-                        setImageURLs={setImageURLs}
-                        subImageURLs={subImageURLs}
-                        setSubImageURLs={setSubImageURLs}
-                        originalStarPos={originalStarPos}
-                        setOriginalStarPos={setOriginalStarPos}
-                        start={start}
-                        setStart={setStart}
-                        next={next}
-                        setNext={setNext}
-                        back={back}
-                        setBack={setBack}
-                        setting={setting}
-                        setSetting={setSetting}
-                        zoomIn={zoomIn}
-                        setZoomIn={setZoomIn}
-                        zoomOut={zoomOut}
-                        setZoomOut={setZoomOut}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/ManualMeasurement"
-                    element={
-                      <ManualMeasurement
-                        intervalRef={intervalRef}
-                        imageURLs={imageURLs}
-                        setImageURLs={setImageURLs}
-                        originalStarPos={originalStarPos}
-                        setOriginalStarPos={setOriginalStarPos}
-                        start={start}
-                        setStart={setStart}
-                        next={next}
-                        setNext={setNext}
-                        back={back}
-                        setBack={setBack}
-                        leadStarNumber={leadStarNumber}
-                        setLeadStarNumber={setLeadStarNumber}
-                        setting={setting}
-                        setSetting={setSetting}
-                        zoomIn={zoomIn}
-                        setZoomIn={setZoomIn}
-                        zoomOut={zoomOut}
-                        setZoomOut={setZoomOut}
-                      />
-                    }
-                  />
-                  <Route path="/Report" element={<Report />} />
-                  <Route
-                    path="/FinalCheck"
-                    element={
-                      <FinalCheck
-                        intervalRef={intervalRef}
-                        imageURLs={imageURLs}
-                        setImageURLs={setImageURLs}
-                        start={start}
-                        setStart={setStart}
-                        next={next}
-                        setNext={setNext}
-                        back={back}
-                        setBack={setBack}
-                        setting={setting}
-                        setSetting={setSetting}
-                        zoomIn={zoomIn}
-                        setZoomIn={setZoomIn}
-                        zoomOut={zoomOut}
-                        setZoomOut={setZoomOut}
-                      />
-                    }
-                  />
-                </Routes>
+                <PredictedStarPositionContext.Provider
+                  value={predictedStarValue}
+                >
+                  <Routes>
+                    <Route
+                      path="/"
+                      element={
+                        <ExplorePrepare
+                          fileNames={fileNames}
+                          setFileNames={setFileNames}
+                          menunames={menunames}
+                          setMenunames={setMenunames}
+                          isAuto={isAuto}
+                          setIsAuto={setIsAuto}
+                        />
+                      }
+                    />
+                    <Route
+                      path="/COIAS"
+                      element={
+                        <COIAS
+                          intervalRef={intervalRef}
+                          imageURLs={imageURLs}
+                          setImageURLs={setImageURLs}
+                          subImageURLs={subImageURLs}
+                          setSubImageURLs={setSubImageURLs}
+                          originalStarPos={originalStarPos}
+                          setOriginalStarPos={setOriginalStarPos}
+                          start={start}
+                          setStart={setStart}
+                          next={next}
+                          setNext={setNext}
+                          back={back}
+                          setBack={setBack}
+                          setting={setting}
+                          setSetting={setSetting}
+                          zoomIn={zoomIn}
+                          setZoomIn={setZoomIn}
+                          zoomOut={zoomOut}
+                          setZoomOut={setZoomOut}
+                        />
+                      }
+                    />
+                    <Route
+                      path="/ManualMeasurement"
+                      element={
+                        <ManualMeasurement
+                          intervalRef={intervalRef}
+                          imageURLs={imageURLs}
+                          setImageURLs={setImageURLs}
+                          originalStarPos={originalStarPos}
+                          setOriginalStarPos={setOriginalStarPos}
+                          start={start}
+                          setStart={setStart}
+                          next={next}
+                          setNext={setNext}
+                          back={back}
+                          setBack={setBack}
+                          leadStarNumber={leadStarNumber}
+                          setLeadStarNumber={setLeadStarNumber}
+                          setting={setting}
+                          setSetting={setSetting}
+                          zoomIn={zoomIn}
+                          setZoomIn={setZoomIn}
+                          zoomOut={zoomOut}
+                          setZoomOut={setZoomOut}
+                        />
+                      }
+                    />
+                    <Route path="/Report" element={<Report />} />
+                    <Route
+                      path="/FinalCheck"
+                      element={
+                        <FinalCheck
+                          intervalRef={intervalRef}
+                          imageURLs={imageURLs}
+                          setImageURLs={setImageURLs}
+                          start={start}
+                          setStart={setStart}
+                          next={next}
+                          setNext={setNext}
+                          back={back}
+                          setBack={setBack}
+                          setting={setting}
+                          setSetting={setSetting}
+                          zoomIn={zoomIn}
+                          setZoomIn={setZoomIn}
+                          zoomOut={zoomOut}
+                          setZoomOut={setZoomOut}
+                        />
+                      }
+                    />
+                  </Routes>
+                </PredictedStarPositionContext.Provider>
               </StarPositionContext.Provider>
             </MousePositionContext.Provider>
           </PageContext.Provider>
