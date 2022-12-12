@@ -213,13 +213,13 @@ function PanZoom({
             } else if (position.isPredict) {
               context.strokeStyle = 'lime';
             } else if (!position.isPredict) {
-              context.strokeStyle = 'violet';
+              context.strokeStyle = 'cyan';
             }
             context.arc(xpos, ypos, RECT_SIZE * 0.8, 0, Math.PI * 2, true);
             context.stroke();
 
-            const prefix = position.isPredict ? 'pre: ' : 'done: ';
-            context.strokeStyle = 'white';
+            const prefix = position.isPredict ? '予測: ' : '測定済: ';
+            context.strokeStyle = 'maroon';
             context.strokeStyle = isThisPredictStarHide
               ? 'rgba(0, 0, 0, 0)'
               : '';
@@ -231,7 +231,7 @@ function PanZoom({
               ypos + RECT_SIZE * 1.5,
             );
 
-            context.fillStyle = position.isPredict ? 'lime' : 'violet';
+            context.fillStyle = position.isPredict ? 'lime' : 'cyan';
             context.fillStyle = isThisPredictStarHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
               prefix + pos.name,
