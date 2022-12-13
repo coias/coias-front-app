@@ -31,21 +31,51 @@ body {
   padding: 0;
   margin: 0;
 
-  @include mq(md) {
+  @include mq(max-md) {
     background: linear-gradient(
       120deg,
       #ffd759 0%,
-      #ffd759 15%,
-      #28297e 15%,
+      #ffd759 120px,
+      #28297e 120px,
       #28297e 100%
     );
 
     .color-nav-title {
       display: none;
     }
+
+    .nav-content {
+      font-size: 12px;
+    }
+
+    .btn {
+      font-size: 16px;
+    }
   }
 
-  @include mq(lg) {
+  @include mq(md) {
+    background: linear-gradient(
+      120deg,
+      #ffd759 0%,
+      #ffd759 120px,
+      #28297e 120px,
+      #28297e 100%
+    );
+
+    .color-nav-title {
+      display: none;
+    }
+
+    .nav-content {
+      font-size: 16px;
+    }
+
+    .btn {
+      font-size: 16px;
+    }
+  }
+
+  @include mq(xl) {
     background: linear-gradient(
       120deg,
       #ffd759 0%,
@@ -56,6 +86,14 @@ body {
 
     .color-nav-title {
       display: inline;
+    }
+
+    .nav-content {
+      font-size: 20px;
+    }
+
+    .btn {
+      font-size: 20px;
     }
   }
 
@@ -69,17 +107,19 @@ body {
     text-align: center;
     text-decoration: none;
 
-    h3 {
+    .nav-content {
       margin: 0;
       margin-top: 20px;
-      font-size: 20px;
+
+      // font-size: 20px;
     }
   }
 
   .btn {
     padding: 7px 25px;
     margin-right: 30px;
-    font-size: 20px;
+
+    // font-size: 20px;
     color: white;
     background: none;
   }
@@ -343,7 +383,7 @@ footer {
         }
       }
 
-      @include mq(xl) {
+      @include mq(xxl) {
         .manual-btn-fixed {
           position: absolute;
           bottom: 5%;
