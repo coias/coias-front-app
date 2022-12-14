@@ -51,6 +51,54 @@ function Header({ setMenunames, setFileNames }) {
         </Row>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Nav className="nav-disappear">
+        <NavLink
+          to="/"
+          className={(navData) => (navData.isActive ? 'active' : 'not-active')}
+        >
+          <h3 className="nav-content">探索準備</h3>
+        </NavLink>
+        <NavLink
+          to="/COIAS"
+          className={(navData) => (navData.isActive ? 'active' : 'not-active')}
+          style={{
+            opacity: modeStatus.COIAS ? 1 : 0.3,
+          }}
+          onClick={modeStatus.COIAS ? () => {} : (e) => e.preventDefault()}
+        >
+          <h3 className="nav-content">探索/再描画</h3>
+        </NavLink>
+        <NavLink
+          to="/ManualMeasurement"
+          className={(navData) => (navData.isActive ? 'active' : 'not-active')}
+          style={{
+            opacity: modeStatus.Manual ? 1 : 0.3,
+          }}
+          onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
+        >
+          <h3 className="nav-content">手動測定/名前修正</h3>
+        </NavLink>
+        <NavLink
+          to="/Report"
+          className={(navData) => (navData.isActive ? 'active' : 'not-active')}
+          style={{
+            opacity: modeStatus.Report ? 1 : 0.3,
+          }}
+          onClick={modeStatus.Report ? () => {} : (e) => e.preventDefault()}
+        >
+          <h3 className="nav-content">レポート</h3>
+        </NavLink>
+      </Nav>
+      <Button
+        onClick={() => {
+          setShow(true);
+        }}
+        variant="light"
+        disabled={checkIsStatusUpdated()}
+        className="nav-disappear"
+      >
+        探索終了
+      </Button>
       <Navbar.Offcanvas placement="end">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>
@@ -130,32 +178,32 @@ function Header({ setMenunames, setFileNames }) {
           >
             探索終了
           </Button>
-          <ConfirmationModal
-            show={show}
-            onHide={() => {
-              setShow(false);
-            }}
-            onClickYes={() => {
-              setFileNames(['ファイルを選択してください']);
-              setModeStatus({
-                COIAS: false,
-                Manual: false,
-                Report: false,
-              });
-              handleNavigate();
-              setShow(false);
-              setMenunames((prevMenunames) =>
-                prevMenunames.map((items) => {
-                  const objCopy = { ...items };
-                  objCopy.done = false;
-                  return objCopy;
-                }),
-              );
-            }}
-            confirmMessage="状態を全てクリアしますか？"
-          />
         </Offcanvas.Body>
       </Navbar.Offcanvas>
+      <ConfirmationModal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+        onClickYes={() => {
+          setFileNames(['ファイルを選択してください']);
+          setModeStatus({
+            COIAS: false,
+            Manual: false,
+            Report: false,
+          });
+          handleNavigate();
+          setShow(false);
+          setMenunames((prevMenunames) =>
+            prevMenunames.map((items) => {
+              const objCopy = { ...items };
+              objCopy.done = false;
+              return objCopy;
+            }),
+          );
+        }}
+        confirmMessage="状態を全てクリアしますか？"
+      />
     </Navbar>
   );
 }
