@@ -143,7 +143,7 @@ function COIAS({
         .get(`${reactApiUri}time_list`)
         .then((res) => res.data.result)
         .then((tmpTimeList) => {
-          if (tmpTimeList.length !== fileNumbers) {
+          if (tmpTimeList.length === fileNumbers) {
             setTimeList(tmpTimeList);
           }
         })
