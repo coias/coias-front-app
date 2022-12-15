@@ -6,7 +6,7 @@ import { PageContext } from '../functional/context';
 function ImageTimes({ timeList }) {
   const { currentPage } = useContext(PageContext);
 
-  return (
+  return timeList.length > 0 ? (
     <div
       style={{
         opacity: 0.5,
@@ -26,7 +26,7 @@ function ImageTimes({ timeList }) {
       <BiTime size={22} style={{ marginRight: '5px' }} />
       {`${timeList[currentPage]}`}
     </div>
-  );
+  ) : null;
 }
 
 export default ImageTimes;

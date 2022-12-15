@@ -156,7 +156,6 @@ function ManualMeasurement({
       });
       setImageURLs(toObjectArray);
 
-      setTimeList(Array(fileNumbers).fill(''));
       await axios
         .get(`${reactApiUri}time_list`)
         .then((res) => res.data.result)

@@ -139,12 +139,11 @@ function COIAS({
       setSubImageURLs(toObjectArray);
       setLoading(false);
 
-      setTimeList(Array(fileNumbers).fill(''));
       await axios
         .get(`${reactApiUri}time_list`)
         .then((res) => res.data.result)
         .then((tmpTimeList) => {
-          if (tmpTimeList.length === fileNumbers) {
+          if (tmpTimeList.length !== fileNumbers) {
             setTimeList(tmpTimeList);
           }
         })
