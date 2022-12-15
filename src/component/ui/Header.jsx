@@ -88,6 +88,16 @@ function Header({ setMenunames, setFileNames }) {
         >
           <h3 className="nav-content">レポート</h3>
         </NavLink>
+        <NavLink
+          to="/FinalCheck"
+          className={(navData) => (navData.isActive ? 'active' : 'not-active')}
+          style={{
+            opacity: modeStatus.FinalCheck ? 1 : 0.3,
+          }}
+          onClick={modeStatus.FinalCheck ? () => {} : (e) => e.preventDefault()}
+        >
+          <h3>最終確認</h3>
+        </NavLink>
       </Nav>
       <Button
         onClick={() => {
@@ -191,6 +201,7 @@ function Header({ setMenunames, setFileNames }) {
             COIAS: false,
             Manual: false,
             Report: false,
+            FinalCheck: false,
           });
           handleNavigate();
           setShow(false);

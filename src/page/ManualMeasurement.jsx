@@ -14,6 +14,7 @@ import {
   ModeStatusContext,
   PageContext,
   StarPositionContext,
+  ReportDoneContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
@@ -115,6 +116,7 @@ function ManualMeasurement({
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
+  const { setReportDone } = useContext(ReportDoneContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -186,7 +188,9 @@ function ManualMeasurement({
       COIAS: true,
       Manual: true,
       Report: false,
+      FinalCheck: false,
     });
+    setReportDone(false);
   }, []);
 
   useEffect(() => {
@@ -372,6 +376,7 @@ function ManualMeasurement({
       COIAS: true,
       Manual: true,
       Report: true,
+      FinalCheck: false,
     });
   };
 
@@ -435,6 +440,7 @@ function ManualMeasurement({
             handleClick={handleClick}
             originalStarPos={originalStarPos}
             loading={loading}
+            setSetting={setSetting}
           />
           <Container fluid>
             <Row className="m-0 p-0">
@@ -472,6 +478,8 @@ function ManualMeasurement({
                   wrapperRef={wrapperRef}
                   setRenameNewStarModalShow={setRenameNewStarModalShow}
                   setOldStarName={setOldStarName}
+                  setSetting={setSetting}
+                  setting={setting}
                 />
               </Col>
             </Row>
@@ -540,6 +548,7 @@ function ManualMeasurement({
                       COIAS: true,
                       Manual: true,
                       Report: false,
+                      FinalCheck: false,
                     });
                   } else {
                     handleClick();
@@ -620,6 +629,7 @@ function ManualMeasurement({
           setIsRedisp(!isRedisp);
           setStarPos(originalStarPos);
         }}
+        setLoading={setLoading}
       />
       <RenameNewStarModal
         show={renameNewStarModalShow}

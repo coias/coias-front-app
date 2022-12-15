@@ -21,6 +21,7 @@ import MousePosition from '../../ui/MousePosition';
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
   isManual: false,
+  isCOIAS: false,
   brightnessVal: 150,
   contrastVal: 150,
   positionList: [],
@@ -45,6 +46,7 @@ PanZoom.propTypes = {
   brightnessVal: PropTypes.number,
   contrastVal: PropTypes.number,
   isManual: PropTypes.bool,
+  isCOIAS: PropTypes.bool,
   positionList: PropTypes.arrayOf(PropTypes.array),
   isHide: PropTypes.bool.isRequired,
   disable: PropTypes.bool,
@@ -71,6 +73,7 @@ function PanZoom({
   brightnessVal,
   contrastVal,
   isManual,
+  isCOIAS,
   positionList,
   isHide,
   disable,
@@ -438,7 +441,7 @@ function PanZoom({
                   saveEventPosition();
                 } else if (isManual && disable) {
                   renameNewStar();
-                } else {
+                } else if (isCOIAS) {
                   changeColorOnClick();
                 }
               }}

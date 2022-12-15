@@ -1,10 +1,14 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import GetProgress from '../component/general/GetProgress';
+import {
+  ModeStatusContext,
+  ReportDoneContext,
+} from '../component/functional/context';
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -22,6 +26,8 @@ function Report() {
 
   const [showProgress, setShowProgress] = useState(false);
   const [progress, setProgress] = useState('');
+  const { setModeStatus } = useContext(ModeStatusContext);
+  const { reportDone, setReportDone } = useContext(ReportDoneContext);
 
   const makeSendMpc = async () => {
     const header = [
@@ -62,12 +68,24 @@ function Report() {
     setLoading(true);
     setShowProgress(true);
     setProgress('0%');
+    setModeStatus((prevModeStatus) => {
+      const modeStatusCopy = { ...prevModeStatus };
+      modeStatusCopy.FinalCheck = false;
+      return modeStatusCopy;
+    });
     const timerID = setInterval(
       () => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'),
       250,
     );
+
+    let getMpcAPIDest;
+    if (!reportDone) {
+      getMpcAPIDest = `${reactApiUri}AstsearchR_afterReCOIAS`;
+    } else {
+      getMpcAPIDest = `${reactApiUri}get_mpc`;
+    }
     await axios
-      .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
+      .put(getMpcAPIDest)
       .then((response) => {
         const mpctext = response.data.send_mpc;
         const result = mpctext.split('\n');
@@ -83,6 +101,12 @@ function Report() {
         );
         setLoading(false);
         clearInterval(timerID);
+        setModeStatus((prevModeStatus) => {
+          const modeStatusCopy = { ...prevModeStatus };
+          modeStatusCopy.FinalCheck = true;
+          return modeStatusCopy;
+        });
+        setReportDone(true);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -239,6 +263,7 @@ function Report() {
         setShow={setShowProcessError}
         errorPlace={errorPlace}
         errorReason={errorReason}
+        setLoading={setLoading}
       />
     </div>
   );
