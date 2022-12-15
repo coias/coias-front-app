@@ -10,15 +10,17 @@ function ImageTimes({ timeList }) {
     <div
       style={{
         opacity: 0.5,
-        width: '230px',
+        width: '190px',
         height: '35px',
         color: 'white',
         backgroundColor: 'black',
         position: 'absolute',
         top: '0px',
-        right: '180px',
+        right: '140px',
         zIndex: 999,
         padding: '6px',
+        display: 'flex',
+        margin: 'auto 0',
       }}
     >
       <BiTime size={22} style={{ marginRight: '5px' }} />

@@ -28,7 +28,7 @@ function MousePosition({ isZoomIn, IMAGE_WIDTH, IMAGE_HEIGHT }) {
     <div
       style={{
         opacity: 0.5,
-        width: '150px',
+        width: '125px',
         height: '35px',
         color: 'white',
         backgroundColor: 'black',
@@ -37,6 +37,8 @@ function MousePosition({ isZoomIn, IMAGE_WIDTH, IMAGE_HEIGHT }) {
         right: '15px',
         zIndex: 999,
         padding: '6px',
+        display: 'flex',
+        margin: 'auto 0',
       }}
     >
       <BiCurrentLocation size={22} style={{ marginRight: '5px' }} />
