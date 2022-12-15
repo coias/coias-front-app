@@ -8,6 +8,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useMemo, useRef, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ReactKeycloakProvider } from '@react-keycloak/web';
+import keycloak from './keycloak';
 import {
   ModeStatusContext,
   MousePositionContext,
@@ -19,7 +21,10 @@ import COIAS from './page/COIAS';
 import ExplorePrepare from './page/ExplorePrepare';
 import ManualMeasurement from './page/ManualMeasurement';
 import Report from './page/Report';
+import Login from './page/Login';
+
 import './style/style.scss';
+import PrivateRoute from './utils/PrivateRoutes';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -90,92 +95,113 @@ function App() {
   const [setting, setSetting] = useState(false);
 
   return (
-    <BrowserRouter style={{ position: 'relative' }}>
-      <ModeStatusContext.Provider value={modeStatusValue}>
-        <Header setMenunames={setMenunames} setFileNames={setFileNames} />
-        <main
-          style={{
-            position: 'absolute',
-            top: 80,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            overflow: 'hidden',
-            backgroundColor: '#F8F9FA',
-          }}
-        >
-          <PageContext.Provider value={pageValue}>
-            <MousePositionContext.Provider value={mouseValue}>
-              <StarPositionContext.Provider value={starValue}>
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <ExplorePrepare
-                        fileNames={fileNames}
-                        setFileNames={setFileNames}
-                        menunames={menunames}
-                        setMenunames={setMenunames}
-                        isAuto={isAuto}
-                        setIsAuto={setIsAuto}
+    <ReactKeycloakProvider authClient={keycloak}>
+      <BrowserRouter
+        style={keycloak.authenticated ? { position: 'relative' } : {}}
+      >
+        <ModeStatusContext.Provider value={modeStatusValue}>
+          <Header setMenunames={setMenunames} setFileNames={setFileNames} />
+          <main
+            style={
+              keycloak.authenticated
+                ? {
+                    position: 'absolute',
+                    top: 80,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    overflow: 'hidden',
+                    backgroundColor: '#F8F9FA',
+                  }
+                : {
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }
+            }
+          >
+            <PageContext.Provider value={pageValue}>
+              <MousePositionContext.Provider value={mouseValue}>
+                <StarPositionContext.Provider value={starValue}>
+                  <Routes>
+                    <Route path="/Login" element={<Login />} />
+                    <Route path="/" element={<PrivateRoute />}>
+                      <Route
+                        path="/"
+                        element={
+                          <ExplorePrepare
+                            fileNames={fileNames}
+                            setFileNames={setFileNames}
+                            menunames={menunames}
+                            setMenunames={setMenunames}
+                            isAuto={isAuto}
+                            setIsAuto={setIsAuto}
+                          />
+                        }
                       />
-                    }
-                  />
-                  <Route
-                    path="/COIAS"
-                    element={
-                      <COIAS
-                        intervalRef={intervalRef}
-                        imageURLs={imageURLs}
-                        setImageURLs={setImageURLs}
-                        subImageURLs={subImageURLs}
-                        setSubImageURLs={setSubImageURLs}
-                        originalStarPos={originalStarPos}
-                        setOriginalStarPos={setOriginalStarPos}
-                        start={start}
-                        setStart={setStart}
-                        next={next}
-                        setNext={setNext}
-                        back={back}
-                        setBack={setBack}
-                        setting={setting}
-                        setSetting={setSetting}
+                    </Route>
+                    <Route path="/COIAS" element={<PrivateRoute />}>
+                      <Route
+                        element={
+                          <COIAS
+                            intervalRef={intervalRef}
+                            imageURLs={imageURLs}
+                            setImageURLs={setImageURLs}
+                            subImageURLs={subImageURLs}
+                            setSubImageURLs={setSubImageURLs}
+                            originalStarPos={originalStarPos}
+                            setOriginalStarPos={setOriginalStarPos}
+                            start={start}
+                            setStart={setStart}
+                            next={next}
+                            setNext={setNext}
+                            back={back}
+                            setBack={setBack}
+                            setting={setting}
+                            setSetting={setSetting}
+                          />
+                        }
                       />
-                    }
-                  />
-                  <Route
-                    path="/ManualMeasurement"
-                    element={
-                      <ManualMeasurement
-                        intervalRef={intervalRef}
-                        imageURLs={imageURLs}
-                        setImageURLs={setImageURLs}
-                        originalStarPos={originalStarPos}
-                        setOriginalStarPos={setOriginalStarPos}
-                        start={start}
-                        setStart={setStart}
-                        next={next}
-                        setNext={setNext}
-                        back={back}
-                        setBack={setBack}
-                        leadStarNumber={leadStarNumber}
-                        setLeadStarNumber={setLeadStarNumber}
-                        setting={setting}
-                        setSetting={setSetting}
+                    </Route>
+                    <Route element={<PrivateRoute />}>
+                      <Route
+                        path="/ManualMeasurement"
+                        element={
+                          <ManualMeasurement
+                            intervalRef={intervalRef}
+                            imageURLs={imageURLs}
+                            setImageURLs={setImageURLs}
+                            originalStarPos={originalStarPos}
+                            setOriginalStarPos={setOriginalStarPos}
+                            start={start}
+                            setStart={setStart}
+                            next={next}
+                            setNext={setNext}
+                            back={back}
+                            setBack={setBack}
+                            leadStarNumber={leadStarNumber}
+                            setLeadStarNumber={setLeadStarNumber}
+                            setting={setting}
+                            setSetting={setSetting}
+                          />
+                        }
                       />
-                    }
-                  />
-                  <Route path="/Report" element={<Report />} />
-                </Routes>
-              </StarPositionContext.Provider>
-            </MousePositionContext.Provider>
-          </PageContext.Provider>
-        </main>
-        <footer>
-          <div style={{ display: 'none' }}>footer</div>
-        </footer>
-      </ModeStatusContext.Provider>
-    </BrowserRouter>
+                    </Route>
+                    <Route element={<PrivateRoute />}>
+                      <Route path="/Report" element={<Report />} />
+                    </Route>
+                  </Routes>
+                </StarPositionContext.Provider>
+              </MousePositionContext.Provider>
+            </PageContext.Provider>
+          </main>
+          <footer>
+            <div style={{ display: 'none' }}>footer</div>
+          </footer>
+        </ModeStatusContext.Provider>
+      </BrowserRouter>
+    </ReactKeycloakProvider>
   );
 }
 

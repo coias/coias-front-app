@@ -26,6 +26,11 @@ body {
   font-family: Avenir !important;
 }
 
+body,
+#root {
+  height: 100vh;
+}
+
 // Header
 .color-nav {
   padding: 0;

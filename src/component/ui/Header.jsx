@@ -1,3 +1,4 @@
+import { useKeycloak } from '@react-keycloak/web';
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useState } from 'react';
 import { Button, Col, Nav, Navbar, Row } from 'react-bootstrap';
@@ -17,7 +18,9 @@ function Header({ setMenunames, setFileNames }) {
     [modeStatus],
   );
 
-  return (
+  const { keycloak } = useKeycloak();
+
+  return keycloak.authenticated ? (
     <Navbar className="color-nav" style={{ margin: 0, padding: 0 }}>
       <Navbar.Brand>
         <Row>
@@ -134,7 +137,7 @@ function Header({ setMenunames, setFileNames }) {
         confirmMessage="状態を全てクリアしますか？"
       />
     </Navbar>
-  );
+  ) : null;
 }
 
 export default Header;
