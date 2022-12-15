@@ -18,7 +18,7 @@ function Header({ setMenunames, setFileNames }) {
   );
 
   return (
-    <Navbar expand="md" className="color-nav" style={{ margin: 0, padding: 0 }}>
+    <Navbar expand="lg" className="color-nav" style={{ margin: 0, padding: 0 }}>
       <Navbar.Brand>
         <Row>
           <Col>
@@ -96,7 +96,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.FinalCheck ? () => {} : (e) => e.preventDefault()}
         >
-          <h3>最終確認</h3>
+          <h3 className="nav-content">最終確認</h3>
         </NavLink>
       </Nav>
       <Button

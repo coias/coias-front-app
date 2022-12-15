@@ -46,7 +46,7 @@ body {
     }
   }
 
-  @include mq(max-md) {
+  @include mq(max-lg-bootstrap) {
     background: linear-gradient(
       120deg,
       #ffd759 0%,
@@ -64,7 +64,7 @@ body {
     }
   }
 
-  @include mq(md) {
+  @include mq(min-lg-bootstrap) {
     background: linear-gradient(
       120deg,
       #ffd759 0%,
@@ -104,7 +104,7 @@ body {
     }
 
     a {
-      margin-left: 50px;
+      margin-left: 40px;
 
       .nav-content {
         font-size: 20px;
@@ -141,7 +141,7 @@ body {
 }
 
 // Humburger Menu Modal styles
-.navbar-expand-md {
+.navbar-expand-lg {
   justify-content: space-between;
 }
 
@@ -435,7 +435,7 @@ footer {
         }
       }
 
-      @include mq(xxl) {
+      @include mq(xl) {
         .manual-btn-fixed {
           position: absolute;
           bottom: 5%;
