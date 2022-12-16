@@ -133,7 +133,6 @@ function FinalCheck({
       setImageURLs(toObjectArray);
       setLoading(false);
 
-      setTimeList(Array(fileNumbers).fill(''));
       await axios
         .get(`${reactApiUri}time_list`)
         .then((res) => res.data.result)
