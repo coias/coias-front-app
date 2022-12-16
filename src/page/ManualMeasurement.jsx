@@ -20,6 +20,7 @@ import ErrorModal from '../component/general/ErrorModal';
 import ManualStarModal from '../component/model/ManualMeasurement/ManualStarModal';
 import ManualToolBar from '../component/model/ManualMeasurement/ManualToolBar';
 import RenameNewStarModal from '../component/model/ManualMeasurement/RenameNewStarModal';
+import DeleteStarModal from '../component/model/ManualMeasurement/DeleteStarModal';
 import COIASToolBar from '../component/model/MeasurementCommon/COIASToolBar';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
@@ -91,6 +92,9 @@ function ManualMeasurement({
   const [fileNum, setFileNum] = useState(0);
   const [timeList, setTimeList] = useState([]);
 
+  const [deleteNameList, setDeleteNameList] = useState([]);
+  const [deleteModalShow, setDeleteModalShow] = useState(false);
+
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
@@ -106,6 +110,21 @@ function ManualMeasurement({
   const onClickFinishButton = async (filteredList = []) => {
     const targetList = filteredList.length === 0 ? positionList : filteredList;
     await axios.put(`${reactApiUri}memo_manual`, targetList);
+  };
+
+  const writeManualDeleteList = async () => {
+    const deleteStrLinesList = [];
+    Object.keys(starPos).forEach((key) => {
+      starPos[key].page.forEach((item, index) => {
+        if (item) {
+          if (item.isDeleted) {
+            const deleteStrLine = `${item.name} ${index}`;
+            deleteStrLinesList.push(deleteStrLine);
+          }
+        }
+      });
+    });
+    await axios.put(`${reactApiUri}manual_delete_list`, deleteStrLinesList);
   };
 
   const removePositionListByCheckState = () => {
@@ -209,12 +228,23 @@ function ManualMeasurement({
               name: item[0],
               x: parseFloat(item[2], 10),
               y: parseFloat(item[3], 10),
+              isDeleted: false,
             };
           });
         })
         .catch((error) => {
           console.error(error);
         });
+
+      await axios
+        .get(`${reactApiUri}manual_delete_list`)
+        .then((res) => res.data.result)
+        .then((deleteStarList) =>
+          deleteStarList.forEach((deleteStar) => {
+            toObject[deleteStar[0]].page[deleteStar[1]].isDeleted = true;
+          }),
+        )
+        .catch(() => {});
 
       // TODO : 動的なエラーハンドリング
       if (toObject['awk:']) {
@@ -454,6 +484,8 @@ function ManualMeasurement({
                   setSetting={setSetting}
                   setting={setting}
                   timeList={timeList}
+                  setDeleteNameList={setDeleteNameList}
+                  setDeleteModalShow={setDeleteModalShow}
                 />
               </Col>
             </Row>
@@ -625,6 +657,28 @@ function ManualMeasurement({
         isAlreadyChanged={
           starPos[oldStarName]?.name !== starPos[oldStarName]?.newName
         }
+      />
+      <DeleteStarModal
+        show={deleteModalShow}
+        onExit={() => {
+          setDeleteModalShow(false);
+          setDeleteNameList([]);
+        }}
+        onExited={() => {
+          if (isAutoSave) {
+            writeManualDeleteList();
+          }
+          setDeleteNameList([]);
+        }}
+        onClickSetButton={async (deleteFlags) => {
+          setDeleteModalShow(false);
+          const objectCopy = { ...starPos };
+          deleteFlags.forEach((item) => {
+            objectCopy[item.name].page[item.page].isDeleted = item.isDeleted;
+          });
+          setStarPos(objectCopy);
+        }}
+        deleteNameList={deleteNameList}
       />
     </div>
   );
