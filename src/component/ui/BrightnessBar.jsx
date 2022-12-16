@@ -24,6 +24,7 @@ function BrightnessBar({ val, set }) {
         min="0"
         max="300"
         data-slider-step="1"
+        orient="vertical"
         value={val.toString()}
         onChange={(e) => {
           set(Number(e.target.value));
