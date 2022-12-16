@@ -153,36 +153,26 @@ function Report() {
 
   return (
     <div>
-      <Form>
-        <Form.Group className="p-3 w-76">
-          <Row xs="auto">
-            <Col md={1}>
-              <h4>OBS </h4>
-            </Col>
-            <Col md={10} style={{ marginLeft: '10px' }}>
-              <Form.Control
-                placeholder="観測者名: default = HSC observers (変更したい場合はsend_mpc.txtをダウンロードした後に直接編集してください)"
-                disabled
-              />
-            </Col>
-          </Row>
-        </Form.Group>
-        <Form.Group className="p-3 w-76">
-          <Row xs="auto">
-            <Col md={1}>
-              <h4>MEA </h4>
-            </Col>
-            <Col md={10} style={{ marginLeft: '10px' }}>
-              <Form.Control
-                placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入してください. (例) Y. Endo, M. Konohata, A. Manaka"
-                onChange={(e) => {
-                  setSendMpcMEA(e.target.value);
-                }}
-              />
-            </Col>
-          </Row>
-        </Form.Group>
-      </Form>
+      <div className="d-flex p-3">
+        <h4>OBS </h4>
+        <Form.Control
+          className="w-75"
+          style={{ textOverflow: 'ellipsis', marginLeft: '75px' }}
+          placeholder="観測者名: default = HSC observers (変更したい場合はsend_mpc.txtをダウンロードした後に直接編集してください)"
+          disabled
+        />
+      </div>
+      <div className="d-flex p-3">
+        <h4>MEA </h4>
+        <Form.Control
+          className="w-75"
+          style={{ textOverflow: 'ellipsis', marginLeft: '70px' }}
+          placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入してください. (例) Y. Endo, M. Konohata, A. Manaka"
+          onChange={(e) => {
+            setSendMpcMEA(e.target.value);
+          }}
+        />
+      </div>
       <Row xs="auto" className="mt-3">
         <Col>
           <h4 style={{ marginLeft: '13px' }}>レポート </h4>
