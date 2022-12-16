@@ -12,7 +12,6 @@ import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import NewStarModal from '../component/model/COIAS/NewStarModal';
-import COIASToolBar from '../component/model/MeasurementCommon/COIASToolBar';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
 import StarsList from '../component/model/MeasurementCommon/StarsList';
@@ -62,7 +61,6 @@ function COIAS({
   zoomOut,
   setZoomOut,
 }) {
-  const [isSelect, setIsSelect] = useState(true);
   const [isHide, setIsHide] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
@@ -422,19 +420,11 @@ function COIAS({
             zoomOut={zoomOut}
             setZoomOut={setZoomOut}
             wrapperRef={wrapperRef}
+            isHide={isHide}
+            setIsHide={setIsHide}
           />
           <Container fluid>
             <Row className="m-0 p-0">
-              <COIASToolBar
-                isSelect={isSelect}
-                setIsSelect={setIsSelect}
-                brightnessVal={brightnessVal}
-                contrastVal={contrastVal}
-                setBrightnessVal={setBrightnessVal}
-                setContrastVal={setContrastVal}
-                isHide={isHide}
-                setIsHide={setIsHide}
-              />
               <Col>
                 <PanZoom
                   imageURLs={imageURLs}
@@ -454,6 +444,8 @@ function COIAS({
                   setting={setting}
                   setSetting={setSetting}
                   timeList={timeList}
+                  setBrightnessVal={setBrightnessVal}
+                  setContrastVal={setContrastVal}
                 />
               </Col>
             </Row>

@@ -19,6 +19,8 @@ import {
 import AlertModal from '../../general/AlertModal';
 import MousePosition from '../../ui/MousePosition';
 import ImageTimes from '../../ui/ImageTimes';
+import BrightnessBar from '../../ui/BrightnessBar';
+import ContrastBar from '../COIAS/ContrastBar';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
@@ -65,6 +67,8 @@ PanZoom.propTypes = {
   setting: PropTypes.bool.isRequired,
   setSetting: PropTypes.func.isRequired,
   timeList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  setBrightnessVal: PropTypes.func.isRequired,
+  setContrastVal: PropTypes.func.isRequired,
 };
 
 function PanZoom({
@@ -91,6 +95,8 @@ function PanZoom({
   setting,
   setSetting,
   timeList,
+  setBrightnessVal,
+  setContrastVal,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -418,12 +424,18 @@ function PanZoom({
           overflow: 'none',
         }}
       >
-        <MousePosition
-          isZoomIn={isZoomIn}
-          IMAGE_WIDTH={IMAGE_WIDTH}
-          IMAGE_HEIGHT={IMAGE_HEIGHT}
-        />
-        <ImageTimes timeList={timeList} />
+        <div className="slidebar-time-wrapper">
+          <div className="slidebar-wrapper">
+            <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
+            <ContrastBar val={contrastVal} set={setContrastVal} />
+          </div>
+          <MousePosition
+            isZoomIn={isZoomIn}
+            IMAGE_WIDTH={IMAGE_WIDTH}
+            IMAGE_HEIGHT={IMAGE_HEIGHT}
+          />
+          <ImageTimes timeList={timeList} />
+        </div>
         <div
           className="wrapper"
           style={{

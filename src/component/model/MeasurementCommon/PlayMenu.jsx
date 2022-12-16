@@ -12,7 +12,7 @@ import {
 } from 'react-bootstrap';
 import { IconContext } from 'react-icons';
 import { AiFillSetting } from 'react-icons/ai';
-import { BiHelpCircle, BiZoomIn, BiZoomOut } from 'react-icons/bi';
+import { BiHelpCircle, BiHide, BiZoomIn, BiZoomOut } from 'react-icons/bi';
 import { FaPlay, FaStepBackward, FaStepForward, FaStop } from 'react-icons/fa';
 import CONSTANT from '../../../utils/CONSTANTS';
 import { PageContext } from '../../functional/context';
@@ -40,6 +40,8 @@ function PlayMenu({
   setZoomOut,
   wrapperRef,
   disableShowAutoSave,
+  isHide,
+  setIsHide,
 }) {
   const { currentPage, setCurrentPage } = useContext(PageContext);
   const [sec, setSec] = useState(250);
@@ -271,6 +273,7 @@ function PlayMenu({
               <Form.Control
                 as="select"
                 defaultValue="250"
+                style={{ minWidth: '60px' }}
                 onChange={(v) => {
                   setSec(parseFloat(v.target.value));
                 }}
@@ -307,13 +310,32 @@ function PlayMenu({
                 onClick={() => {
                   onClickZoomOut();
                 }}
-                style={{ marginLeft: '-10px' }}
               >
                 <IconContext.Provider
                   // eslint-disable-next-line react/jsx-no-constructed-context-values
                   value={{ color: CONSTANT.defaultBtnColor }}
                 >
                   <BiZoomOut size={CONSTANT.iconSize} />
+                </IconContext.Provider>
+              </Button>
+            </Nav.Item>
+            <Nav.Item className="text-center d-flex m-0">
+              <Button
+                data-active={isHide}
+                variant="light"
+                onClick={() => {
+                  setIsHide(!isHide);
+                }}
+              >
+                <IconContext.Provider
+                  // eslint-disable-next-line react/jsx-no-constructed-context-values
+                  value={{
+                    color: isHide
+                      ? CONSTANT.selectedBtnColor
+                      : CONSTANT.defaultBtnColor,
+                  }}
+                >
+                  <BiHide size={CONSTANT.iconSize} />
                 </IconContext.Provider>
               </Button>
             </Nav.Item>
@@ -450,6 +472,8 @@ PlayMenu.propTypes = {
   setZoomOut: PropTypes.func.isRequired,
   wrapperRef: PropTypes.objectOf(PropTypes.object).isRequired,
   disableShowAutoSave: PropTypes.bool,
+  isHide: PropTypes.bool.isRequired,
+  setIsHide: PropTypes.func.isRequired,
 };
 
 PlayMenu.defaultProps = {

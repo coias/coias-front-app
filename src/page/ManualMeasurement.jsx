@@ -20,7 +20,6 @@ import ErrorModal from '../component/general/ErrorModal';
 import ManualStarModal from '../component/model/ManualMeasurement/ManualStarModal';
 import ManualToolBar from '../component/model/ManualMeasurement/ManualToolBar';
 import RenameNewStarModal from '../component/model/ManualMeasurement/RenameNewStarModal';
-import COIASToolBar from '../component/model/MeasurementCommon/COIASToolBar';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
 import StarsList from '../component/model/MeasurementCommon/StarsList';
@@ -49,7 +48,6 @@ function ManualMeasurement({
   setZoomOut,
 }) {
   const [show, setShow] = useState(false);
-  const [isSelect, setIsSelect] = useState(true);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
   const [isHide, setIsHide] = useState(false);
@@ -414,19 +412,11 @@ function ManualMeasurement({
             zoomOut={zoomOut}
             setZoomOut={setZoomOut}
             wrapperRef={wrapperRef}
+            isHide={isHide}
+            setIsHide={setIsHide}
           />
           <Container fluid>
             <Row className="m-0 p-0">
-              <COIASToolBar
-                isSelect={isSelect}
-                setIsSelect={setIsSelect}
-                brightnessVal={brightnessVal}
-                contrastVal={contrastVal}
-                setBrightnessVal={setBrightnessVal}
-                setContrastVal={setContrastVal}
-                isHide={isHide}
-                setIsHide={setIsHide}
-              />
               <Col className="manual-mode-control-view">
                 <PanZoom
                   imageURLs={imageURLs}
@@ -454,6 +444,8 @@ function ManualMeasurement({
                   setSetting={setSetting}
                   setting={setting}
                   timeList={timeList}
+                  setBrightnessVal={setBrightnessVal}
+                  setContrastVal={setContrastVal}
                 />
               </Col>
             </Row>

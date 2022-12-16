@@ -10,12 +10,12 @@ function BrightnessBar({ val, set }) {
       <IconContext.Provider
         // eslint-disable-next-line react/jsx-no-constructed-context-values
         value={{
-          color: CONSTANT.defaultBtnColor,
+          color: 'white',
         }}
       >
         <ImBrightnessContrast
           size={CONSTANT.iconSize}
-          style={{ margin: '0 auto 10px auto' }}
+          style={{ margin: 'auto 10px' }}
         />
       </IconContext.Provider>
       <input

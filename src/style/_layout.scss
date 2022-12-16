@@ -365,37 +365,6 @@ footer {
       .row {
         height: 100%;
 
-        // tool buttons
-        .coias-tool-bar {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          width: 40px;
-          padding: 0;
-          margin-left: 10px;
-          border-right: #707070 solid 1px;
-
-          .tool-btn {
-            width: 100%;
-            margin-top: 10px;
-            margin-left: -3px;
-          }
-
-          .bright-contrast-bar {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 35%;
-            margin-top: 20px;
-            text-align: center;
-
-            #ex4 {
-              appearance: slider-vertical; /* Chromium */
-              height: 87%;
-            }
-          }
-        }
-
         .manual-mode-control-view {
           height: 100%;
 
@@ -406,6 +375,38 @@ footer {
           .wrapper {
             height: 100%;
           }
+        }
+      }
+    }
+
+    .slidebar-time-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+
+      .slidebar-wrapper {
+        position: absolute;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        width: 360px;
+        height: 35px;
+        padding: 0;
+        padding: 6px;
+        margin: auto 0;
+        background-color: black;
+        opacity: 0.5;
+
+        @include mq(min-main-canvas) {
+          top: 35px;
+          right: 15px;
+        }
+
+        .bright-contrast-bar {
+          display: flex;
+          width: 100%;
+          height: 100%;
+          margin: auto 0;
+          text-align: center;
         }
       }
     }
