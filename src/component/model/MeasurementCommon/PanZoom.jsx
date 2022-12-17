@@ -211,9 +211,9 @@ function PanZoom({
             if (isThisPredictStarHide) {
               context.strokeStyle = 'rgba(0, 0, 0, 0)';
             } else if (position.isPredict) {
-              context.strokeStyle = 'lime';
+              context.strokeStyle = 'yellow';
             } else if (!position.isPredict) {
-              context.strokeStyle = 'cyan';
+              context.strokeStyle = 'red';
             }
             context.arc(xpos, ypos, RECT_SIZE * 0.8, 0, Math.PI * 2, true);
             context.stroke();
@@ -231,7 +231,7 @@ function PanZoom({
               ypos + RECT_SIZE * 1.5,
             );
 
-            context.fillStyle = position.isPredict ? 'lime' : 'cyan';
+            context.fillStyle = position.isPredict ? 'yellow' : 'red';
             context.fillStyle = isThisPredictStarHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
               prefix + pos.name,
