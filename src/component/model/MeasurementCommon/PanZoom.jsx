@@ -321,16 +321,11 @@ function PanZoom({
 
   // クリック時に色を変化させるイベントリスナー
   function changeColorOnClick() {
-    if (
-      isManual ||
-      document.getElementById('selectButton').dataset.active !== 'true' ||
-      !disable
-    ) {
+    if (isManual || !disable) {
       return;
     }
     const canvasElem = canvasRef.current;
-    const isSelect = document.getElementById('selectButton').dataset.active;
-    if (canvasElem === null || isSelect === 'false') {
+    if (canvasElem === null) {
       return;
     }
 
@@ -359,10 +354,8 @@ function PanZoom({
   // 再測定時に天体の座標を保存する
   function saveEventPosition() {
     setIsZoomIn(true);
-    const sval = document.getElementById('selectButton').dataset.active;
-    const sshouldIgnore = sval === 'true';
 
-    if (positionList.length < 1 || !sshouldIgnore) return;
+    if (positionList.length < 1) return;
 
     const currentPageIndex = positionList[activeKey].findIndex(
       (e) => e.page === currentPage,
