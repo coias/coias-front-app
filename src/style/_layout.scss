@@ -180,17 +180,10 @@ body {
 .play-menu {
   border-bottom: solid #707070 1px;
 
-  .col-md-9 {
-    .flex-grow-1 {
-      margin: 0 auto;
-    }
-
-    .btn-group {
-      .btn-outline-secondary {
-        height: 35px;
-        margin: 0 auto;
-        font-weight: bold;
-      }
+  .btn-group {
+    .btn-outline-secondary {
+      height: 35px;
+      font-weight: bold;
     }
   }
 }
