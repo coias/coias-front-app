@@ -219,7 +219,7 @@ function PanZoom({
             context.stroke();
 
             const prefix = position.isPredict ? '予測: ' : '測定済: ';
-            context.strokeStyle = 'maroon';
+            context.strokeStyle = 'black';
             context.strokeStyle = isThisPredictStarHide
               ? 'rgba(0, 0, 0, 0)'
               : '';
@@ -227,16 +227,16 @@ function PanZoom({
             context.font = `${RECT_SIZE * 0.5}px serif`;
             context.strokeText(
               prefix + pos.name,
-              xpos - RECT_SIZE / 3,
-              ypos + RECT_SIZE * 1.5,
+              xpos - RECT_SIZE * 1.5,
+              ypos + RECT_SIZE * 1.3,
             );
 
             context.fillStyle = position.isPredict ? 'yellow' : 'red';
             context.fillStyle = isThisPredictStarHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
               prefix + pos.name,
-              xpos - RECT_SIZE / 3,
-              ypos + RECT_SIZE * 1.5,
+              xpos - RECT_SIZE * 1.5,
+              ypos + RECT_SIZE * 1.3,
             );
           }
         });
