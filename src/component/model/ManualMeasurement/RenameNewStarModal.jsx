@@ -1,9 +1,12 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import PropTypes from 'prop-types';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
-import { StarPositionContext } from '../../functional/context';
+import {
+  StarPositionContext,
+  PredictedStarPositionContext,
+} from '../../functional/context';
 
 function RenameNewStarModal({
   show,
@@ -29,6 +32,17 @@ function RenameNewStarModal({
   };
 
   const { starPos } = useContext(StarPositionContext);
+  const { predictedStarPos } = useContext(PredictedStarPositionContext);
+  const [renameStarPos, setRenameStarPos] = useState({});
+  useEffect(() => {
+    setRenameStarPos(starPos);
+    if (Object.keys(predictedStarPos).length !== 0) {
+      const exclusivePredictedStarPos = Object.keys(predictedStarPos)
+        .map((key) => predictedStarPos[key])
+        .filter((pos) => !Object.keys(starPos).includes(pos.name));
+      setRenameStarPos(Object.assign(starPos, exclusivePredictedStarPos));
+    }
+  }, []);
 
   return (
     <Modal
@@ -56,7 +70,7 @@ function RenameNewStarModal({
               onClickRenameButton(oldStarName);
             } else if (
               !isAlreadyChanged &&
-              Object.values(starPos).some(
+              Object.values(renameStarPos).some(
                 (starContent) => starContent.name === search,
               )
             ) {
@@ -117,7 +131,7 @@ function RenameNewStarModal({
                     }}
                     className="search_suggestions"
                   >
-                    {Object.values(starPos)
+                    {Object.values(renameStarPos)
                       .filter(
                         (star) =>
                           star.name

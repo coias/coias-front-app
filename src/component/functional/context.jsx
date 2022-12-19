@@ -15,6 +15,11 @@ export const StarPositionContext = createContext({
   setStarPos: () => {},
 });
 
+export const PredictedStarPositionContext = createContext({
+  predictedStarPos: {},
+  setPredictedStarPos: () => {},
+});
+
 export const ModeStatusContext = createContext({
   modeStatus: {
     COIAS: false,

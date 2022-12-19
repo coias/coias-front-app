@@ -15,6 +15,7 @@ import {
   MousePositionContext,
   PageContext,
   StarPositionContext,
+  PredictedStarPositionContext,
 } from '../../functional/context';
 import AlertModal from '../../general/AlertModal';
 import MousePosition from '../../ui/MousePosition';
@@ -115,6 +116,7 @@ function PanZoom({
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [context, setContext] = useState();
   const { starPos, setStarPos } = useContext(StarPositionContext);
+  const { predictedStarPos } = useContext(PredictedStarPositionContext);
   const [loaded, setLoaded] = useState(0);
   const [scaleValue, setScaleValue] = useState(0);
   const [alertModalShow, setAlertModalShow] = useState(false);
@@ -125,6 +127,7 @@ function PanZoom({
 
   const isCOIAS = location.pathname === '/COIAS';
   const isManual = location.pathname === '/ManualMeasurement';
+  const isFinalCheck = location.pathname === '/FinalCheck';
 
   function relativeCoords(event) {
     const bounds = event.target.getBoundingClientRect();
@@ -200,6 +203,49 @@ function PanZoom({
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       const RECT_SIZE = calcRectangle();
 
+      Object.keys(predictedStarPos)
+        .map((key) => predictedStarPos[key])
+        .forEach((pos) => {
+          if (pos.page[currentPage]) {
+            context.beginPath();
+            const position = pos.page[currentPage];
+            const xpos = position.x;
+            const ypos = img.naturalHeight - position.y;
+            context.lineWidth = RECT_SIZE * 0.075;
+            const isThisPredictStarHide =
+              isHide || (position.isPredict && isFinalCheck);
+            if (isThisPredictStarHide) {
+              context.strokeStyle = 'rgba(0, 0, 0, 0)';
+            } else if (position.isPredict) {
+              context.strokeStyle = 'yellow';
+            } else if (!position.isPredict) {
+              context.strokeStyle = 'red';
+            }
+            context.arc(xpos, ypos, RECT_SIZE * 0.8, 0, Math.PI * 2, true);
+            context.stroke();
+
+            const prefix = position.isPredict ? '予測: ' : '測定済: ';
+            context.strokeStyle = 'black';
+            context.strokeStyle = isThisPredictStarHide
+              ? 'rgba(0, 0, 0, 0)'
+              : '';
+            context.lineWidth = RECT_SIZE * 0.075;
+            context.font = `${RECT_SIZE * 0.5}px serif`;
+            context.strokeText(
+              prefix + pos.name,
+              xpos - RECT_SIZE * 1.5,
+              ypos + RECT_SIZE * 1.3,
+            );
+
+            context.fillStyle = position.isPredict ? 'yellow' : 'red';
+            context.fillStyle = isThisPredictStarHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.fillText(
+              prefix + pos.name,
+              xpos - RECT_SIZE * 1.5,
+              ypos + RECT_SIZE * 1.3,
+            );
+          }
+        });
       Object.keys(starPos)
         .map((key) => starPos[key])
         .forEach((pos) => {
