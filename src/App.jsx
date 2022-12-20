@@ -24,7 +24,7 @@ import Report from './page/Report';
 import Login from './page/Login';
 
 import './style/style.scss';
-import PrivateRoute from './utils/PrivateRoutes';
+import PrivateRoutes from './utils/PrivateRoutes';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -103,7 +103,7 @@ function App() {
           <Header setMenunames={setMenunames} setFileNames={setFileNames} />
           <main
             style={
-              keycloak.authenticated
+              keycloak?.authenticated
                 ? {
                     position: 'absolute',
                     top: 80,
@@ -125,8 +125,7 @@ function App() {
               <MousePositionContext.Provider value={mouseValue}>
                 <StarPositionContext.Provider value={starValue}>
                   <Routes>
-                    <Route path="/Login" element={<Login />} />
-                    <Route path="/" element={<PrivateRoute />}>
+                    <Route element={<PrivateRoutes />}>
                       <Route
                         path="/"
                         element={
@@ -140,9 +139,8 @@ function App() {
                           />
                         }
                       />
-                    </Route>
-                    <Route path="/COIAS" element={<PrivateRoute />}>
                       <Route
+                        path="/COIAS"
                         element={
                           <COIAS
                             intervalRef={intervalRef}
@@ -163,8 +161,6 @@ function App() {
                           />
                         }
                       />
-                    </Route>
-                    <Route element={<PrivateRoute />}>
                       <Route
                         path="/ManualMeasurement"
                         element={
@@ -187,10 +183,9 @@ function App() {
                           />
                         }
                       />
-                    </Route>
-                    <Route element={<PrivateRoute />}>
                       <Route path="/Report" element={<Report />} />
                     </Route>
+                    <Route path="/Login" element={<Login />} />
                   </Routes>
                 </StarPositionContext.Provider>
               </MousePositionContext.Provider>
