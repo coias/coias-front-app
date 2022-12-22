@@ -1,32 +1,12 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import PropTypes from 'prop-types';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { StarPositionContext, PageContext } from '../../functional/context';
 
-function DeleteStarModal({
-  show,
-  onExit,
-  onExited,
-  deleteNameList,
-  onClickSetButton,
-}) {
-  const { starPos } = useContext(StarPositionContext);
+function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
+  const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
-  const [deleteFlags, setDeleteFlags] = useState([]);
-  const readDeleteFlags = () => {
-    const deleteObjectList = [];
-    deleteNameList.forEach((thisName) => {
-      const tmpDeleteObject = {
-        name: thisName,
-        page: currentPage,
-        isDeleted: starPos[thisName].page[currentPage].isDeleted,
-      };
-      deleteObjectList.push(tmpDeleteObject);
-    });
-    setDeleteFlags(deleteObjectList);
-  };
-  useEffect(readDeleteFlags, [starPos, deleteNameList, currentPage]);
 
   return (
     <Modal
@@ -37,7 +17,7 @@ function DeleteStarModal({
       onExited={() => {
         onExited();
       }}
-      size="lg"
+      size="md"
       aria-labelledby="contained-modal-title-vcenter"
       centered
       backdrop="static"
@@ -51,48 +31,50 @@ function DeleteStarModal({
         <Form
           onSubmit={(e) => {
             e.preventDefault();
-            onClickSetButton(deleteFlags);
+            e.stopPropagation();
+            onExit();
           }}
         >
           <Form.Label>
             クリックした承認済み自動検出天体のうち削除したいものにチェックをつけてください。
+            <br />
+            (削除した天体は、チェックを外すことで再表示することができます。)
           </Form.Label>
           <Row>
             <Col style={{ textAlign: 'center' }}>天体名</Col>
             <Col style={{ textAlign: 'center' }}>削除する</Col>
           </Row>
           <hr />
-          {deleteFlags.map((item) => (
-            <Row key={item.name} className="mb-2">
-              <Col style={{ textAlign: 'center' }}>{item.name}</Col>
-              <Col className="text-center">
-                <Form.Check
-                  type="checkbox"
-                  defaultChecked={item.isDeleted}
-                  onChange={(e) => {
-                    // eslint-disable-next-line no-param-reassign
-                    item.isDeleted = e.target.checked;
-                  }}
-                />
-              </Col>
-            </Row>
-          ))}
+          {Object.keys(starPos)
+            .filter((name) => deleteNameList.includes(name))
+            .map((item) => {
+              const name = item;
+              const { isDeleted } = starPos[item].page[currentPage];
+              return (
+                <Row key={name} className="mb-2">
+                  <Col style={{ textAlign: 'center' }}>{name}</Col>
+                  <Col className="text-center">
+                    <Form.Check
+                      type="checkbox"
+                      defaultChecked={isDeleted}
+                      onChange={(e) => {
+                        const newStarPos = JSON.parse(JSON.stringify(starPos));
+                        newStarPos[item].page[currentPage].isDeleted =
+                          e.target.checked;
+                        setStarPos(newStarPos);
+                      }}
+                    />
+                  </Col>
+                </Row>
+              );
+            })}
           <Form.Group
             className="m-3"
-            style={{ display: 'flex', justifyContent: 'space-between' }}
+            style={{ display: 'flex', justifyContent: 'end' }}
             controlId="formBasicCheckbox"
           >
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                readDeleteFlags();
-                onExit();
-              }}
-            >
-              キャンセル
-            </Button>
-            <Button variant="success" type="submit">
-              設定
+            <Button variant="danger" type="submit">
+              終了
             </Button>
           </Form.Group>
         </Form>
@@ -108,5 +90,4 @@ DeleteStarModal.propTypes = {
   onExit: PropTypes.func.isRequired,
   onExited: PropTypes.func.isRequired,
   deleteNameList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onClickSetButton: PropTypes.func.isRequired,
 };

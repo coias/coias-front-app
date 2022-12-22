@@ -670,14 +670,6 @@ function ManualMeasurement({
           }
           setDeleteNameList([]);
         }}
-        onClickSetButton={async (deleteFlags) => {
-          setDeleteModalShow(false);
-          const objectCopy = { ...starPos };
-          deleteFlags.forEach((item) => {
-            objectCopy[item.name].page[item.page].isDeleted = item.isDeleted;
-          });
-          setStarPos(objectCopy);
-        }}
         deleteNameList={deleteNameList}
       />
     </div>
