@@ -208,7 +208,7 @@ function PlayMenu({
   };
 
   return (
-    <Navbar bg="light" className="play-menu">
+    <Navbar bg="light" className="play-menu btn-style_hover">
       <Nav>
         <Nav.Item className="text-center d-flex m-1">
           <Button
@@ -269,7 +269,7 @@ function PlayMenu({
           <Form.Control
             as="select"
             defaultValue="250"
-            style={{ minWidth: '60px' }}
+            style={{ minWidth: '60px', margin: 'auto 0px' }}
             onChange={(v) => {
               setSec(parseFloat(v.target.value));
             }}
@@ -328,7 +328,7 @@ function PlayMenu({
               value={{
                 color: isHide
                   ? CONSTANT.selectedBtnColor
-                  : CONSTANT.defaultBtnColor,
+                  : CONSTANT.offBtnColor,
               }}
             >
               <BiHide size={CONSTANT.iconSize} />

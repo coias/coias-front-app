@@ -200,10 +200,14 @@ body {
   }
 }
 
-.error-message {
-  color: red;
+// Setting Modal
+.setting_modal {
+  h4 {
+    color: #5c636a;
+  }
 }
 
+// Help Modal
 .help-modal-table {
   td {
     text-align: center;
@@ -211,10 +215,15 @@ body {
 
     h4 {
       margin: 0;
+      color: #5c636a;
       text-align: left;
       vertical-align: middle;
     }
   }
+}
+
+.error-message {
+  color: red;
 }
 
 canvas {
@@ -520,4 +529,33 @@ footer {
 
 .params-btn {
   margin-left: 28px;
+}
+
+// Check Button and Accordion Button Styles
+.form-check-input:checked {
+  background-color: #5c636a;
+  border: #5c636a;
+}
+
+.accordion-button {
+  color: #5c636a;
+
+  &::after {
+    filter: invert(39%) sepia(46%) saturate(19%) hue-rotate(337deg)
+      brightness(101%) contrast(92%);
+  }
+
+  &:not(.collapsed) {
+    color: #5c636a;
+    background-color: #5c636a33;
+  }
+}
+
+// Button Hover Style
+.btn-style_hover {
+  .btn {
+    &:hover {
+      opacity: 0.7;
+    }
+  }
 }

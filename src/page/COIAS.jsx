@@ -490,7 +490,6 @@ function COIAS({
           />
           <div className="star-list-button">
             <Button
-              variant="success"
               onClick={() => {
                 if (disable) {
                   setOriginalStarPos(starPos);
@@ -506,6 +505,7 @@ function COIAS({
                 }
                 setDisable(!disable);
               }}
+              style={{ backgroundColor: '#28297e', border: '#28297e' }}
               size="lg"
             >
               {disable ? '再描画' : 'やり直す'}

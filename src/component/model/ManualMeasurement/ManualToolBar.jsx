@@ -35,7 +35,7 @@ function ManualToolBar({
   };
 
   return (
-    <div>
+    <div className="btn-style_hover">
       <Row className="m-3">
         <Col className="d-flex justify-content-between">
           <p style={{ margin: 'auto 0', fontWeight: 'bold', color: '#5C636A' }}>
@@ -45,6 +45,7 @@ function ManualToolBar({
             onClick={() => {
               onClickAddButton();
             }}
+            style={{ backgroundColor: '#28297e', border: '#28297e' }}
           >
             <BiAddToQueue size={30} />
           </Button>
@@ -67,7 +68,7 @@ function ManualToolBar({
                   onClick={() => onClickAccordion(index)}
                   className="w-100"
                 >
-                  <Accordion.Header>
+                  <Accordion.Header style={{ color: '#28297e' }}>
                     {`#H${'000000'.slice(
                       (leadStarNumber + index).toString().length - 6,
                     )}${leadStarNumber + index}`}

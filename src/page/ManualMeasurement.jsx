@@ -487,16 +487,22 @@ function ManualMeasurement({
           )}
           <div
             className={
-              isEditMode() ? 'manual-btn-fixed-delete' : 'manual-btn-fixed'
+              isEditMode()
+                ? 'manual-btn-fixed-delete btn-style_hover'
+                : 'manual-btn-fixed btn-style_hover'
             }
           >
             {isEditMode() && (
               <Button
-                variant="danger"
                 onClick={() => {
                   removePositionListByCheckState();
                 }}
-                style={{ marginRight: '90px' }}
+                style={{
+                  marginRight: '90px',
+                  backgroundColor: '#fff',
+                  border: '3px solid #28297e',
+                  color: '#28297e',
+                }}
                 size="lg"
               >
                 削除
@@ -506,7 +512,6 @@ function ManualMeasurement({
               <Spinner size="md" animation="border" />
             ) : (
               <Button
-                variant="success"
                 onClick={() => {
                   if (isRedisp) {
                     setStarPos(originalStarPos);
@@ -520,6 +525,10 @@ function ManualMeasurement({
                     handleClick();
                   }
                   setIsRedisp(!isRedisp);
+                }}
+                style={{
+                  backgroundColor: '#28297e',
+                  border: '3px solid #28297e',
                 }}
                 size="lg"
               >

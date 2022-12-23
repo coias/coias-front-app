@@ -38,9 +38,25 @@ function ConfirmationModal({
           <p>{confirmMessage}</p>
         )}
       </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-between">
-        <Button onClick={onHide}>いいえ</Button>
-        <Button variant="danger" onClick={onClickYes}>
+      <Modal.Footer className="d-flex justify-content-between btn-style_hover">
+        <Button
+          onClick={onHide}
+          style={{
+            color: '#28297e',
+            backgroundColor: '#fff',
+            border: '3px solid #28297e',
+          }}
+        >
+          いいえ
+        </Button>
+        <Button
+          onClick={onClickYes}
+          style={{
+            color: '#fff',
+            backgroundColor: '#28297e',
+            border: '3px solid #28297e',
+          }}
+        >
           はい
         </Button>
       </Modal.Footer>
