@@ -41,6 +41,8 @@ PanZoom.defaultProps = {
   setSelectedListState: () => {},
   setRenameNewStarModalShow: () => {},
   setOldStarName: () => {},
+  setDeleteNameList: () => {},
+  setDeleteModalShow: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -70,6 +72,8 @@ PanZoom.propTypes = {
   timeList: PropTypes.arrayOf(PropTypes.string).isRequired,
   setBrightnessVal: PropTypes.func.isRequired,
   setContrastVal: PropTypes.func.isRequired,
+  setDeleteNameList: PropTypes.func,
+  setDeleteModalShow: PropTypes.func,
 };
 
 function PanZoom({
@@ -98,6 +102,8 @@ function PanZoom({
   timeList,
   setBrightnessVal,
   setContrastVal,
+  setDeleteNameList,
+  setDeleteModalShow,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -259,6 +265,8 @@ function PanZoom({
               context.strokeStyle = 'rgba(0, 0, 0, 0)';
             } else if (pos.newName && position.name !== pos.newName) {
               context.strokeStyle = 'yellow';
+            } else if (isManual && position.isDeleted) {
+              context.strokeStyle = 'silver';
             } else if (pos.isSelected || pos.isKnown) {
               context.strokeStyle = 'red';
             } else if (!pos.isSelected) {
@@ -277,7 +285,8 @@ function PanZoom({
               x - RECT_SIZE / 10,
               y - RECT_SIZE / 10,
             );
-            context.fillStyle = 'red';
+            context.fillStyle =
+              isManual && position.isDeleted ? 'silver' : 'red';
             context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
               pos.newName && position.name !== pos.newName
@@ -365,7 +374,7 @@ function PanZoom({
     );
   }
 
-  // クリック時に色を変化させるイベントリスナー
+  // 探索モードにて未知天体をクリックした時に色を変化させるイベントリスナー
   function changeColorOnClick() {
     if (isManual || !disable) {
       return;
@@ -397,33 +406,51 @@ function PanZoom({
     setStarPos(newStarPos);
   }
 
-  // 再測定時に天体の座標を保存する
-  function saveEventPosition() {
-    setIsZoomIn(true);
+  // 手動測定モードにて画面をクリックした時のイベントリスナー
+  function manualOnClick() {
+    const deleteNameList = [];
+    Object.keys(starPos)
+      .map((key) => starPos[key])
+      .forEach((item) => {
+        const position = item.page[currentPage];
+        if (position && !item.isKnown && testHit(position.x, position.y)) {
+          deleteNameList.push(item.name);
+        }
+      });
+    setDeleteNameList(deleteNameList);
 
-    if (positionList.length < 1) return;
+    if (deleteNameList.length !== 0) {
+      setDeleteModalShow(true);
+    } else {
+      setIsZoomIn(true);
+      const sval = document.getElementById('selectButton').dataset.active;
+      const sshouldIgnore = sval === 'true';
 
-    const currentPageIndex = positionList[activeKey].findIndex(
-      (e) => e.page === currentPage,
-    );
+      if (positionList.length < 1 || !sshouldIgnore) return;
 
-    const hitJudge = testHit(
-      positionList[activeKey][currentPageIndex]?.x,
-      positionList[activeKey][currentPageIndex]?.y,
-      isManual,
-    );
+      const currentPageIndex = positionList[activeKey].findIndex(
+        (e) => e.page === currentPage,
+      );
 
-    if (currentPageIndex !== -1 && hitJudge) {
-      setConfirmationModalShow(true);
-      setConfirmMessage('を削除しますか？');
-    } else if (currentPageIndex !== -1 && !hitJudge) {
-      setConfirmationModalShow(true);
-      setConfirmMessage('は既に選択されていますが更新しますか？');
-    } else if (currentPageIndex === -1) {
-      setManualStarModalShow(true);
+      const hitJudge = testHit(
+        positionList[activeKey][currentPageIndex]?.x,
+        positionList[activeKey][currentPageIndex]?.y,
+        isManual,
+      );
+
+      if (currentPageIndex !== -1 && hitJudge) {
+        setConfirmationModalShow(true);
+        setConfirmMessage('を削除しますか？');
+      } else if (currentPageIndex !== -1 && !hitJudge) {
+        setConfirmationModalShow(true);
+        setConfirmMessage('は既に選択されていますが更新しますか？');
+      } else if (currentPageIndex === -1) {
+        setManualStarModalShow(true);
+      }
     }
   }
 
+  // 名前修正モードにて未知天体の名前を修正するためにそれをクリックした時のイベントリスナー
   const renameNewStar = () => {
     const newStarPos = JSON.parse(JSON.stringify(starPos));
     Object.keys(newStarPos)
@@ -493,7 +520,7 @@ function PanZoom({
               height={`${calcCanvasSize(IMAGE_HEIGHT)}px`}
               onClick={() => {
                 if (isManual && !disable) {
-                  saveEventPosition();
+                  manualOnClick();
                 } else if (isManual && disable) {
                   renameNewStar();
                 } else if (isCOIAS) {

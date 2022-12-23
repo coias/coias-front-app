@@ -107,7 +107,7 @@ function PlayMenu({
             10,
           ),
         );
-      let tmpIndex = 0;
+      let tmpIndex = index;
       if (intervalRef.current !== null) {
         return;
       }
@@ -115,14 +115,16 @@ function PlayMenu({
       intervalRef.current = setInterval(() => {
         if (tmpIndex === array.length - 1) {
           tmpIndex = 0;
+          setIndex(0);
           setCurrentPage(array[0]);
         } else {
           tmpIndex += 1;
+          setIndex(tmpIndex);
           setCurrentPage(array[tmpIndex]);
         }
       }, sec);
     },
-    [sec],
+    [sec, index],
   );
 
   const onClickBlinkStop = useCallback(() => {
