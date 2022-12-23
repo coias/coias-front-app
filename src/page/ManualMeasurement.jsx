@@ -398,13 +398,16 @@ function ManualMeasurement({
   useEventListener('keydown', (e) => {
     e.preventDefault();
 
-    if (e.key === 's') {
-      setStart(!start);
-    } else if (e.key === 'ArrowRight') {
-      setNext(!next);
-    } else if (e.key === 'ArrowLeft') {
-      setBack(!back);
-    } else if (e.key === 'ArrowUp') {
+    if (!manualStarModalShow && !confirmationModalShow && !deleteModalShow) {
+      if (e.key === 's') {
+        setStart(!start);
+      } else if (e.key === 'ArrowRight') {
+        setNext(!next);
+      } else if (e.key === 'ArrowLeft') {
+        setBack(!back);
+      }
+    }
+    if (e.key === 'ArrowUp') {
       setZoomIn(!zoomIn);
     } else if (e.key === 'ArrowDown') {
       setZoomOut(!zoomOut);
