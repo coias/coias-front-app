@@ -423,10 +423,8 @@ function PanZoom({
       setDeleteModalShow(true);
     } else {
       setIsZoomIn(true);
-      const sval = document.getElementById('selectButton').dataset.active;
-      const sshouldIgnore = sval === 'true';
 
-      if (positionList.length < 1 || !sshouldIgnore) return;
+      if (positionList.length < 1) return;
 
       const currentPageIndex = positionList[activeKey].findIndex(
         (e) => e.page === currentPage,
