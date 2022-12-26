@@ -180,10 +180,54 @@ body {
 .play-menu {
   border-bottom: solid #707070 1px;
 
+  .icon-color {
+    color: #5c636a;
+
+    &:hover {
+      color: #ffd759;
+    }
+  }
+
+  .icon-color_off {
+    color: #e5e5e5;
+
+    &:hover {
+      color: #ffd759;
+    }
+  }
+
+  .select-style {
+    min-width: 60px;
+    margin: auto 0;
+
+    &:hover {
+      border: 1px solid #ffd759;
+    }
+  }
+
   .btn-group {
-    .btn-outline-secondary {
+    .btn-primary {
       height: 35px;
       font-weight: bold;
+      color: #5c636a;
+      background-color: #fff;
+      border: 1px solid #5c636a;
+
+      &:hover {
+        color: #ffd759;
+        border: 1px solid #ffd759;
+      }
+    }
+
+    .btn-check:checked + .btn-primary {
+      color: #fff;
+      background-color: #5c636a;
+      border: 1px solid #5c636a;
+
+      &:hover {
+        background-color: #ffd759;
+        border: 1px solid #ffd759;
+      }
     }
   }
 }
@@ -204,6 +248,19 @@ body {
 .setting_modal {
   h4 {
     color: #5c636a;
+  }
+
+  .setting_modal-content_wrap {
+    padding: 10px 30px 40px;
+    color: #5c636a;
+
+    .content_wrap-table {
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 
@@ -413,49 +470,76 @@ footer {
       }
     }
 
+    // 画面右側　Style "manual"
+    .manual-toolbar_wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
     .manual-star-list-wrraper {
-      position: relative;
+      // position: relative;
       height: calc(100% + 63px);
       border-left: solid #707070 1px;
 
       @include mq(md) {
         .manual-btn-fixed {
-          position: absolute;
-          bottom: 5%;
-          left: 40%;
+          // position: absolute;
+          // bottom: 5%;
+          // left: 40%;
           display: flex;
+          justify-content: right;
           width: 100%;
+          padding-right: 10px;
+          padding-bottom: 20px;
+          margin-top: auto;
         }
       }
 
       @include mq(lg) {
         .manual-btn-fixed {
-          position: absolute;
-          bottom: 5%;
-          left: 50%;
+          // position: absolute;
+          // bottom: 5%;
+          // left: 50%;
           display: flex;
+          justify-content: right;
           width: 100%;
+          padding-right: 10px;
+          padding-bottom: 20px;
+          margin-top: auto;
         }
       }
 
       @include mq(xl) {
         .manual-btn-fixed {
-          position: absolute;
-          bottom: 5%;
-          left: 60%;
+          // position: absolute;
+          // bottom: 5%;
+          // left: 60%;
           display: flex;
+          justify-content: right;
           width: 100%;
+          padding-right: 10px;
+          padding-bottom: 20px;
+          margin-top: auto;
         }
       }
 
       .manual-btn-fixed-delete {
-        position: absolute;
-        bottom: 5%;
-        left: 2%;
+        // position: absolute;
+        // bottom: 5%;
+        // left: 1%;
         display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 10px;
+        padding-bottom: 20px;
+        margin-top: auto;
       }
     }
 
+    // 画面右側　Style "coias"
     .coias-star-list-wrraper {
       display: flex;
       flex-direction: column;
@@ -463,38 +547,38 @@ footer {
       width: 13vw;
       height: calc(100% + 63px);
       border-left: solid #707070 1px;
+    }
 
-      .star-list-title {
-        width: 100%;
-      }
+    // 天体一覧部分　Style
+    .star-list-title {
+      width: 100%;
+    }
+
+    .star-list {
+      width: 100%;
+      height: 80%;
+      padding: 0;
+      margin: 0;
+      overflow-y: scroll;
+      color: #5c636a;
 
       // 星のリストのスクロールバーを常に表示する
-      .star-list {
-        width: 100%;
-        height: 80%;
-        padding: 0;
-        margin: 0;
-        overflow-y: scroll;
-
-        &::-webkit-scrollbar {
-          width: 5px;
-          height: 10px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-color: #707070;
-
-          --bg-opacity: 1;
-        }
+      &::-webkit-scrollbar {
+        width: 5px;
+        height: 10px;
       }
 
-      .star-list-button {
-        display: flex;
-        justify-content: end;
-        width: 100%;
-        margin-top: 30px;
-        margin-right: 10px;
+      &::-webkit-scrollbar-thumb {
+        background-color: #707070;
+
+        --bg-opacity: 1;
       }
+    }
+
+    .star-list-button {
+      display: flex;
+      justify-content: end;
+      width: 100%;
     }
   }
 }
@@ -555,7 +639,7 @@ footer {
 .btn-style_hover {
   .btn {
     &:hover {
-      opacity: 0.7;
+      opacity: 0.8;
     }
   }
 }

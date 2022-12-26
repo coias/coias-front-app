@@ -8,7 +8,7 @@ import {
   Navbar,
   ToggleButton,
 } from 'react-bootstrap';
-import { IconContext } from 'react-icons';
+// import { IconContext } from 'react-icons';
 import { AiFillSetting } from 'react-icons/ai';
 import { BiHelpCircle, BiHide, BiZoomIn, BiZoomOut } from 'react-icons/bi';
 import { FaPlay, FaStepBackward, FaStepForward, FaStop } from 'react-icons/fa';
@@ -208,7 +208,7 @@ function PlayMenu({
   };
 
   return (
-    <Navbar bg="light" className="play-menu btn-style_hover">
+    <Navbar bg="light" className="play-menu">
       <Nav>
         <Nav.Item className="text-center d-flex m-1">
           <Button
@@ -222,16 +222,16 @@ function PlayMenu({
               }
             }}
           >
-            <IconContext.Provider
+            {/* <IconContext.Provider
               // eslint-disable-next-line react/jsx-no-constructed-context-values
               value={{ color: CONSTANT.defaultBtnColor }}
-            >
-              {play ? (
-                <FaStop size={CONSTANT.iconSize} />
-              ) : (
-                <FaPlay size={CONSTANT.iconSize} />
-              )}
-            </IconContext.Provider>
+            > */}
+            {play ? (
+              <FaStop size={CONSTANT.iconSize} className="icon-color" />
+            ) : (
+              <FaPlay size={CONSTANT.iconSize} className="icon-color" />
+            )}
+            {/* </IconContext.Provider> */}
           </Button>
         </Nav.Item>
         <Nav.Item className="text-center d-flex m-0">
@@ -241,12 +241,12 @@ function PlayMenu({
               onClickBack();
             }}
           >
-            <IconContext.Provider
+            {/* <IconContext.Provider
               // eslint-disable-next-line react/jsx-no-constructed-context-values
               value={{ color: CONSTANT.defaultBtnColor }}
-            >
-              <FaStepBackward size={CONSTANT.iconSize} />
-            </IconContext.Provider>
+            > */}
+            <FaStepBackward size={CONSTANT.iconSize} className="icon-color" />
+            {/* </IconContext.Provider> */}
           </Button>
         </Nav.Item>
         <Nav.Item className="text-center d-flex m-0">
@@ -257,19 +257,20 @@ function PlayMenu({
             }}
             style={{ marginLeft: '-10px' }}
           >
-            <IconContext.Provider
+            {/* <IconContext.Provider
               // eslint-disable-next-line react/jsx-no-constructed-context-values
               value={{ color: CONSTANT.defaultBtnColor }}
-            >
-              <FaStepForward size={CONSTANT.iconSize} />
-            </IconContext.Provider>
+            > */}
+            <FaStepForward size={CONSTANT.iconSize} className="icon-color" />
+            {/* </IconContext.Provider> */}
           </Button>
         </Nav.Item>
         <Nav.Item className="d-flex">
           <Form.Control
             as="select"
             defaultValue="250"
-            style={{ minWidth: '60px', margin: 'auto 0px' }}
+            // style={{ minWidth: '60px', margin: 'auto 0px' }}
+            className="select-style"
             onChange={(v) => {
               setSec(parseFloat(v.target.value));
             }}
@@ -292,12 +293,12 @@ function PlayMenu({
               onClickZoomIn();
             }}
           >
-            <IconContext.Provider
+            {/* <IconContext.Provider
               // eslint-disable-next-line react/jsx-no-constructed-context-values
               value={{ color: CONSTANT.defaultBtnColor }}
-            >
-              <BiZoomIn size={CONSTANT.iconSize} />
-            </IconContext.Provider>
+            > */}
+            <BiZoomIn size={CONSTANT.iconSize} className="icon-color" />
+            {/* </IconContext.Provider> */}
           </Button>
         </Nav.Item>
         <Nav.Item className="text-center d-flex m-0">
@@ -307,12 +308,12 @@ function PlayMenu({
               onClickZoomOut();
             }}
           >
-            <IconContext.Provider
+            {/* <IconContext.Provider
               // eslint-disable-next-line react/jsx-no-constructed-context-values
               value={{ color: CONSTANT.defaultBtnColor }}
-            >
-              <BiZoomOut size={CONSTANT.iconSize} />
-            </IconContext.Provider>
+            > */}
+            <BiZoomOut size={CONSTANT.iconSize} className="icon-color" />
+            {/* </IconContext.Provider> */}
           </Button>
         </Nav.Item>
         <Nav.Item className="text-center d-flex m-0">
@@ -323,16 +324,20 @@ function PlayMenu({
               setIsHide(!isHide);
             }}
           >
-            <IconContext.Provider
+            {/* <IconContext.Provider
               // eslint-disable-next-line react/jsx-no-constructed-context-values
               value={{
                 color: isHide
                   ? CONSTANT.selectedBtnColor
                   : CONSTANT.offBtnColor,
               }}
-            >
-              <BiHide size={CONSTANT.iconSize} />
-            </IconContext.Provider>
+            > */}
+            {isHide ? (
+              <BiHide size={CONSTANT.iconSize} className="icon-color_off" />
+            ) : (
+              <BiHide size={CONSTANT.iconSize} className="icon-color" />
+            )}
+            {/* </IconContext.Provider> */}
           </Button>
         </Nav.Item>
       </Nav>
@@ -350,7 +355,6 @@ function PlayMenu({
                 ) - 1
               }`}
               type="radio"
-              variant="outline-secondary"
               name="radio"
               checked={
                 (radioValue === name.name &&
@@ -393,12 +397,12 @@ function PlayMenu({
       </ButtonGroup>
       <ButtonGroup style={{ marginRight: '10px' }}>
         <Button variant="light" onClick={() => setSettingModalShow(true)}>
-          <IconContext.Provider
+          {/* <IconContext.Provider
             // eslint-disable-next-line react/jsx-no-constructed-context-values
             value={{ color: CONSTANT.defaultBtnColor }}
-          >
-            <AiFillSetting size={CONSTANT.iconSize} />
-          </IconContext.Provider>
+          > */}
+          <AiFillSetting size={CONSTANT.iconSize} className="icon-color" />
+          {/* </IconContext.Provider> */}
         </Button>
         <SettingModal
           show={settingModalShow}
@@ -419,12 +423,12 @@ function PlayMenu({
           disableShowAutoSave={disableShowAutoSave}
         />
         <Button variant="light" onClick={() => setHelpModalShow(true)}>
-          <IconContext.Provider
+          {/* <IconContext.Provider
             // eslint-disable-next-line react/jsx-no-constructed-context-values
             value={{ color: CONSTANT.defaultBtnColor }}
-          >
-            <BiHelpCircle size={CONSTANT.iconSize} />
-          </IconContext.Provider>
+          > */}
+          <BiHelpCircle size={CONSTANT.iconSize} className="icon-color" />
+          {/* </IconContext.Provider> */}
         </Button>
         <HelpModal
           show={helpModalShow}

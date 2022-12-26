@@ -23,14 +23,19 @@ function HelpModal({ show, onHide }) {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">ヘルプ</Modal.Title>
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
+          ヘルプ
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Table striped bordered hover>
+        <Table striped bordered>
           <tbody className="help-modal-table">
             <tr>
               <td>
-                <FaPlay size={30} />
+                <FaPlay size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>ブリンクを開始/停止します。sキーでも同じことができます</h4>
@@ -38,15 +43,19 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td style={{ whiteSpace: 'nowrap' }}>
-                <FaStepBackward size={30} />
-                <FaStepForward size={30} />
+                <FaStepBackward size={30} color="#5c636a" />
+                <FaStepForward size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>ページを移動します。左右キーでも同じことができます</h4>
               </td>
             </tr>
             <tr>
-              <td style={{ align: 'center', fontSize: '150%' }}>sec</td>
+              <td
+                style={{ align: 'center', fontSize: '150%', color: '#5c636a' }}
+              >
+                sec
+              </td>
               <td>
                 <h4>
                   ブリンク速度を調節できます。入力欄をクリックしてプルダウンリストから速度を選べます
@@ -55,8 +64,8 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td style={{ whiteSpace: 'nowrap' }}>
-                <BiZoomIn size={30} />
-                <BiZoomOut size={30} />
+                <BiZoomIn size={30} color="#5c636a" />
+                <BiZoomOut size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>画像の拡大縮小をします。上下キーでも同じことができます</h4>
@@ -64,14 +73,18 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <BiHide size={30} />
+                <BiHide size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>天体の枠、天体番号を非表示にします</h4>
               </td>
             </tr>
             <tr>
-              <td style={{ align: 'center', fontSize: '150%' }}>1</td>
+              <td
+                style={{ align: 'center', fontSize: '150%', color: '#5c636a' }}
+              >
+                1
+              </td>
               <td>
                 <h4>
                   画像番号です。現在の画像の番号は灰色の背景になります。クリックすることでその画像に移動できます
@@ -80,7 +93,7 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <AiFillSetting size={30} />
+                <AiFillSetting size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>
@@ -90,7 +103,7 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <ImBrightnessContrast size={30} />
+                <ImBrightnessContrast size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>画像の輝度を調節できる調節バーです</h4>
@@ -98,7 +111,7 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <ImContrast size={30} />
+                <ImContrast size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>画像のコントラストを調節できる調節バーです</h4>
@@ -106,7 +119,7 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <BiTime size={30} />
+                <BiTime size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>表示している画像の撮影時刻です</h4>
@@ -114,7 +127,7 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <BiCurrentLocation size={30} />
+                <BiCurrentLocation size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>マウスポインタの位置における画像のピクセル座標です</h4>
@@ -123,8 +136,20 @@ function HelpModal({ show, onHide }) {
           </tbody>
         </Table>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={onHide}>閉じる</Button>
+      <Modal.Footer
+        className="btn-style_hover"
+        style={{ display: 'flex', justifyContent: 'center' }}
+      >
+        <Button
+          onClick={onHide}
+          style={{
+            color: '#5c636a',
+            backgroundColor: '#fff',
+            border: '3px solid #5c636a',
+          }}
+        >
+          閉じる
+        </Button>
       </Modal.Footer>
     </Modal>
   );

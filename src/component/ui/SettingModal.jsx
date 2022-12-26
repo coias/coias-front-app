@@ -19,48 +19,56 @@ function SettingModal({
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      className="setting_modal"
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">表示設定</Modal.Title>
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
+          表示設定
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h4>表示する画像の設定を行ってください。</h4>
-        <Row>
-          <Col sm={8}>画像</Col>
-          <Col style={{ textAlign: 'center' }}>画像表示</Col>
-          <Col style={{ textAlign: 'center' }}>マスクなし</Col>
-        </Row>
-        <hr />
-        {imageURLs.map((img) => (
-          <Row key={img.name} className="mb-5">
-            <Col sm={8}>{img.name}</Col>
-            <Col className="text-center">
-              <Form.Check
-                type="checkbox"
-                defaultChecked={img.visible}
-                onChange={(e) => {
-                  // eslint-disable-next-line no-param-reassign
-                  img.visible = e.target.checked;
-                }}
-              />
-            </Col>
-            <Col style={{ textAlign: 'center' }}>
-              <Form.Check
-                type="checkbox"
-                defaultChecked={img.nomasked}
-                onChange={(e) => {
-                  // eslint-disable-next-line no-param-reassign
-                  img.nomasked = e.target.checked;
-                }}
-              />
-            </Col>
+        <h4>1. 表示する画像の設定</h4>
+        <Row className="setting_modal-content_wrap">
+          <Row>
+            <Col sm={8}>画像</Col>
+            <Col style={{ textAlign: 'center' }}>画像表示</Col>
+            <Col style={{ textAlign: 'center' }}>マスクなし</Col>
           </Row>
-        ))}
+          <hr />
+          {imageURLs.map((img) => (
+            <Row key={img.name} className="content_wrap-table">
+              <Col sm={8}>{img.name}</Col>
+              <Col className="text-center">
+                <Form.Check
+                  type="checkbox"
+                  defaultChecked={img.visible}
+                  onChange={(e) => {
+                    // eslint-disable-next-line no-param-reassign
+                    img.visible = e.target.checked;
+                  }}
+                />
+              </Col>
+              <Col style={{ textAlign: 'center' }}>
+                <Form.Check
+                  type="checkbox"
+                  defaultChecked={img.nomasked}
+                  onChange={(e) => {
+                    // eslint-disable-next-line no-param-reassign
+                    img.nomasked = e.target.checked;
+                  }}
+                />
+              </Col>
+            </Row>
+          ))}
+        </Row>
         {defaultZoomRate !== 0 && (
           <>
-            <h4>手動測定時の拡大モーダルの拡大率を選んでください。</h4>
-            <Form>
-              <Row className="pb-4">
+            <h4>2. 手動測定時の拡大モーダルの拡大率を選択</h4>
+            <Form className="setting_modal-content_wrap">
+              <Row>
                 <Col>
                   <Form.Check
                     name="group1"
@@ -103,8 +111,8 @@ function SettingModal({
         )}
         {!disableShowAutoSave && (
           <>
-            <h4>オートセーブ</h4>
-            <Row>
+            <h4>3. オートセーブ ON/OFF 切り替え</h4>
+            <Row className="setting_modal-content_wrap">
               <Col>
                 <Form.Check
                   name="group2"
@@ -112,7 +120,6 @@ function SettingModal({
                   type="radio"
                   onChange={() => setIsAutoSave(true)}
                   defaultChecked={isAutoSave && 'true'}
-                  className="m-3"
                 />
               </Col>
               <Col>
@@ -122,15 +129,26 @@ function SettingModal({
                   type="radio"
                   onChange={() => setIsAutoSave(false)}
                   defaultChecked={!isAutoSave && 'true'}
-                  className="m-3"
                 />
               </Col>
             </Row>
           </>
         )}
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={onHide}>閉じる</Button>
+      <Modal.Footer
+        className="btn-style_hover"
+        style={{ display: 'flex', justifyContent: 'center' }}
+      >
+        <Button
+          onClick={onHide}
+          style={{
+            color: '#5c636a',
+            backgroundColor: '#fff',
+            border: '3px solid #5c636a',
+          }}
+        >
+          閉じる
+        </Button>
       </Modal.Footer>
     </Modal>
   );

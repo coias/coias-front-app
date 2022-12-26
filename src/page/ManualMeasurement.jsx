@@ -453,10 +453,12 @@ function ManualMeasurement({
         </Col>
 
         <div
-          className={
-            isRedisp ? 'coias-star-list-wrraper' : 'manual-star-list-wrraper'
-          }
-          style={{ width: isRedisp ? '10vw' : '20vw' }}
+          // className={
+          //   isRedisp ? 'coias-star-list-wrraper' : 'manual-star-list-wrraper'
+          // }
+          // style={{ width: isRedisp ? '10vw' : '20vw' }}
+          className="manual-star-list-wrraper"
+          style={{ width: '250px', display: 'flex', flexFlow: 'column' }}
         >
           {isRedisp ? (
             <StarsList
@@ -498,7 +500,6 @@ function ManualMeasurement({
                   removePositionListByCheckState();
                 }}
                 style={{
-                  marginRight: '90px',
                   backgroundColor: '#fff',
                   border: '3px solid #28297e',
                   color: '#28297e',

@@ -36,8 +36,8 @@ function ManualToolBar({
 
   return (
     <div className="btn-style_hover">
-      <Row className="m-3">
-        <Col className="d-flex justify-content-between">
+      <Row className="m-3" style={{ height: '60px' }}>
+        <Col className="manual-toolbar_wrap">
           <p style={{ margin: 'auto 0', fontWeight: 'bold', color: '#5C636A' }}>
             天体一覧
           </p>
