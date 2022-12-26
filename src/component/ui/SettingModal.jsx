@@ -30,7 +30,7 @@ function SettingModal({
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h4>1. 表示する画像の設定</h4>
+        <h4>表示する画像の設定</h4>
         <Row className="setting_modal-content_wrap">
           <Row>
             <Col sm={8}>画像</Col>
@@ -66,7 +66,7 @@ function SettingModal({
         </Row>
         {defaultZoomRate !== 0 && (
           <>
-            <h4>2. 手動測定時の拡大モーダルの拡大率を選択</h4>
+            <h4>手動測定時の拡大モーダルの拡大率を選択</h4>
             <Form className="setting_modal-content_wrap">
               <Row>
                 <Col>
@@ -111,7 +111,7 @@ function SettingModal({
         )}
         {!disableShowAutoSave && (
           <>
-            <h4>3. オートセーブ ON/OFF 切り替え</h4>
+            <h4>オートセーブ ON/OFF 切り替え</h4>
             <Row className="setting_modal-content_wrap">
               <Col>
                 <Form.Check
@@ -135,18 +135,8 @@ function SettingModal({
           </>
         )}
       </Modal.Body>
-      <Modal.Footer
-        className="btn-style_hover"
-        style={{ display: 'flex', justifyContent: 'center' }}
-      >
-        <Button
-          onClick={onHide}
-          style={{
-            color: '#5c636a',
-            backgroundColor: '#fff',
-            border: '3px solid #5c636a',
-          }}
-        >
+      <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button onClick={onHide} className="btn-style box_border_gray">
           閉じる
         </Button>
       </Modal.Footer>

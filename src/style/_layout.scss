@@ -490,8 +490,7 @@ footer {
           display: flex;
           justify-content: right;
           width: 100%;
-          padding-right: 10px;
-          padding-bottom: 20px;
+          padding: 10px 10px 10px 0;
           margin-top: auto;
         }
       }
@@ -504,8 +503,7 @@ footer {
           display: flex;
           justify-content: right;
           width: 100%;
-          padding-right: 10px;
-          padding-bottom: 20px;
+          padding: 10px 10px 10px 0;
           margin-top: auto;
         }
       }
@@ -518,8 +516,7 @@ footer {
           display: flex;
           justify-content: right;
           width: 100%;
-          padding-right: 10px;
-          padding-bottom: 20px;
+          padding: 10px 10px 10px 0;
           margin-top: auto;
         }
       }
@@ -533,8 +530,7 @@ footer {
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        padding-right: 10px;
-        padding-bottom: 20px;
+        padding: 10px 10px 10px 0;
         margin-top: auto;
       }
     }
@@ -544,9 +540,17 @@ footer {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 13vw;
       height: calc(100% + 63px);
       border-left: solid #707070 1px;
+
+      // width: 13vw;
+      .coias-list_button {
+        display: flex;
+        justify-content: end;
+        width: 100%;
+        padding: 10px 10px 10px 0;
+        margin-top: auto;
+      }
     }
 
     // 天体一覧部分　Style
@@ -562,6 +566,12 @@ footer {
       overflow-y: scroll;
       color: #5c636a;
 
+      .form-check-label {
+        &:hover {
+          color: #ffd759;
+        }
+      }
+
       // 星のリストのスクロールバーを常に表示する
       &::-webkit-scrollbar {
         width: 5px;
@@ -574,17 +584,11 @@ footer {
         --bg-opacity: 1;
       }
     }
-
-    .star-list-button {
-      display: flex;
-      justify-content: end;
-      width: 100%;
-    }
   }
 }
 
 .manual-list {
-  max-height: 60vh;
+  max-height: 65vh;
   overflow-x: hidden;
   overflow-y: scroll;
 
@@ -616,9 +620,20 @@ footer {
 }
 
 // Check Button and Accordion Button Styles
-.form-check-input:checked {
-  background-color: #5c636a;
-  border: #5c636a;
+.form-check-input {
+  &:checked {
+    background-color: #5c636a;
+    border: #5c636a;
+
+    &:hover {
+      background-color: #ffd759;
+      border: #ffd759;
+    }
+  }
+
+  &:hover {
+    border: 1px solid #ffd759;
+  }
 }
 
 .accordion-button {
@@ -635,7 +650,43 @@ footer {
   }
 }
 
-// Button Hover Style
+// Button Style
+.btn-style {
+  &.box_blue {
+    background-color: #28297e;
+    border: 3px solid #28297e;
+
+    &:hover {
+      background-color: #ffd759;
+      border: 3px solid #ffd759;
+    }
+  }
+
+  &.box_border_blue {
+    color: #28297e;
+    background-color: #fff;
+    border: 3px solid #28297e;
+
+    &:hover {
+      color: #ffd759;
+      background-color: #fff;
+      border: 3px solid #ffd759;
+    }
+  }
+
+  &.box_border_gray {
+    color: #5c636a;
+    background-color: #fff;
+    border: 3px solid #5c636a;
+
+    &:hover {
+      color: #ffd759;
+      background-color: #fff;
+      border: 3px solid #ffd759;
+    }
+  }
+}
+
 .btn-style_hover {
   .btn {
     &:hover {

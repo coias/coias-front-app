@@ -35,7 +35,7 @@ function ManualToolBar({
   };
 
   return (
-    <div className="btn-style_hover">
+    <div>
       <Row className="m-3" style={{ height: '60px' }}>
         <Col className="manual-toolbar_wrap">
           <p style={{ margin: 'auto 0', fontWeight: 'bold', color: '#5C636A' }}>
@@ -45,7 +45,7 @@ function ManualToolBar({
             onClick={() => {
               onClickAddButton();
             }}
-            style={{ backgroundColor: '#28297e', border: '#28297e' }}
+            className="btn-style box_blue"
           >
             <BiAddToQueue size={30} />
           </Button>

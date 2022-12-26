@@ -481,14 +481,17 @@ function COIAS({
             </Row>
           </Container>
         </Col>
-        <div className="coias-star-list-wrraper">
+        <div
+          className="coias-star-list-wrraper"
+          style={{ display: 'flex', flexDirection: 'column', width: '200px' }}
+        >
           <StarsList
             disable={disable}
             writeMemo={isAutoSave ? writeMemo : () => {}}
             selectedListState={selectedListState}
             setSelectedListState={setSelectedListState}
           />
-          <div className="star-list-button">
+          <div className="coias-list_button">
             <Button
               onClick={() => {
                 if (disable) {
@@ -505,7 +508,7 @@ function COIAS({
                 }
                 setDisable(!disable);
               }}
-              style={{ backgroundColor: '#28297e', border: '#28297e' }}
+              className="btn-style box_blue"
               size="lg"
             >
               {disable ? '再描画' : 'やり直す'}

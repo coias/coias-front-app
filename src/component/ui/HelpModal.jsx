@@ -136,18 +136,8 @@ function HelpModal({ show, onHide }) {
           </tbody>
         </Table>
       </Modal.Body>
-      <Modal.Footer
-        className="btn-style_hover"
-        style={{ display: 'flex', justifyContent: 'center' }}
-      >
-        <Button
-          onClick={onHide}
-          style={{
-            color: '#5c636a',
-            backgroundColor: '#fff',
-            border: '3px solid #5c636a',
-          }}
-        >
+      <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button onClick={onHide} className="btn-style box_border_gray">
           閉じる
         </Button>
       </Modal.Footer>

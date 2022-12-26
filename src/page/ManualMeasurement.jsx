@@ -489,9 +489,7 @@ function ManualMeasurement({
           )}
           <div
             className={
-              isEditMode()
-                ? 'manual-btn-fixed-delete btn-style_hover'
-                : 'manual-btn-fixed btn-style_hover'
+              isEditMode() ? 'manual-btn-fixed-delete' : 'manual-btn-fixed'
             }
           >
             {isEditMode() && (
@@ -499,11 +497,7 @@ function ManualMeasurement({
                 onClick={() => {
                   removePositionListByCheckState();
                 }}
-                style={{
-                  backgroundColor: '#fff',
-                  border: '3px solid #28297e',
-                  color: '#28297e',
-                }}
+                className="btn-style box_border_blue"
                 size="lg"
               >
                 削除
@@ -527,10 +521,7 @@ function ManualMeasurement({
                   }
                   setIsRedisp(!isRedisp);
                 }}
-                style={{
-                  backgroundColor: '#28297e',
-                  border: '3px solid #28297e',
-                }}
+                className="btn-style box_blue"
                 size="lg"
               >
                 {isRedisp ? 'やり直す' : '再描画'}
