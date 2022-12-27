@@ -29,9 +29,14 @@ function ConfirmationModal({
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">確認</Modal.Title>
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
+          確認
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={{ color: '#5c636a' }}>
         {positionList[activeKey] ? (
           <p>{generateConfirmMessage()}</p>
         ) : (
@@ -39,24 +44,10 @@ function ConfirmationModal({
         )}
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between btn-style_hover">
-        <Button
-          onClick={onHide}
-          style={{
-            color: '#28297e',
-            backgroundColor: '#fff',
-            border: '3px solid #28297e',
-          }}
-        >
+        <Button onClick={onHide} className="btn-style box_border_blue">
           いいえ
         </Button>
-        <Button
-          onClick={onClickYes}
-          style={{
-            color: '#fff',
-            backgroundColor: '#28297e',
-            border: '3px solid #28297e',
-          }}
-        >
+        <Button onClick={onClickYes} className="btn-style box_blue">
           はい
         </Button>
       </Modal.Footer>
