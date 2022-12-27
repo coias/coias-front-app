@@ -152,35 +152,40 @@ function Report() {
   }, [sendMpcMEA, sendMpcBody]);
 
   return (
-    <div>
-      <div className="d-flex p-3">
-        <h4>OBS </h4>
-        <Form.Control
-          className="w-75"
-          style={{ textOverflow: 'ellipsis', marginLeft: '75px' }}
-          placeholder="観測者名: default = HSC observers (変更したい場合はsend_mpc.txtをダウンロードした後に直接編集してください)"
-          disabled
-        />
-      </div>
-      <div className="d-flex p-3">
-        <h4>MEA </h4>
-        <Form.Control
-          className="w-75"
-          style={{ textOverflow: 'ellipsis', marginLeft: '70px' }}
-          placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入してください. (例) Y. Endo, M. Konohata, A. Manaka"
-          onChange={(e) => {
-            setSendMpcMEA(e.target.value);
-          }}
-        />
-      </div>
-      <Row xs="auto" className="mt-3">
+    <div className="report-wrap">
+      <Row xs="auto" className="report-wrap_form">
         <Col>
-          <h4 style={{ marginLeft: '13px' }}>レポート </h4>
+          <h4>OBS </h4>
+        </Col>
+        <Col md={8}>
+          <Form.Control
+            placeholder="観測者名: default = HSC observers (変更したい場合はsend_mpc.txtをダウンロードした後に直接編集してください)"
+            disabled
+          />
+        </Col>
+      </Row>
+      <Row xs="auto" className="report-wrap_form">
+        <Col>
+          <h4>MEA </h4>
+        </Col>
+        <Col md={8}>
+          <Form.Control
+            style={{ textOverflow: 'ellipsis' }}
+            placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入してください. (例) Y. Endo, M. Konohata, A. Manaka"
+            onChange={(e) => {
+              setSendMpcMEA(e.target.value);
+            }}
+          />
+        </Col>
+      </Row>
+      <Row xs="auto">
+        <Col>
+          <h4>レポート </h4>
         </Col>
         <Col md={8}>
           <div
             style={{
-              marginLeft: '10px',
+              width: '100%',
               backgroundColor: 'black',
               height: '61vh',
               overflow: 'scroll',
@@ -191,42 +196,43 @@ function Report() {
                 sendMpc.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
-        </Col>
-      </Row>
-      <Row className="d-flex ">
-        <Col>
-          <Button
-            variant="primary"
-            onClick={() => {
-              getMpc();
-            }}
-            className="mt-3"
-            style={{ marginLeft: '144px' }}
+          <div
+            // className="mt-3"
+            className="report-btn_wrap"
           >
-            レポート作成をやり直す
-          </Button>
-        </Col>
-        <Col md={4} style={{ marginRight: '222px' }}>
-          <Button
-            variant="primary"
-            onClick={() => {
-              downloadFIle();
-            }}
-            className="mt-3"
-          >
-            Download send_mpc
-          </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                getMpc();
+              }}
+              className="btn-style box_blue"
+            >
+              レポート作成をやり直す
+            </Button>
+            <div className="btn_wrap-content">
+              <span>ファイルをダウンロード</span>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  downloadFIle();
+                }}
+                className="btn-style box_blue"
+              >
+                send_mpc.txt
+              </Button>
 
-          <Button
-            variant="primary"
-            onClick={() => {
-              downloadFinalAllFIle();
-            }}
-            className="mt-3"
-            style={{ marginLeft: '10px' }}
-          >
-            Download final_all
-          </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  downloadFinalAllFIle();
+                }}
+                // style={{ marginLeft: '10px' }}
+                className="btn-style box_blue"
+              >
+                final_all.txt
+              </Button>
+            </div>
+          </div>
         </Col>
       </Row>
       <LoadingButton
