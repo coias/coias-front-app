@@ -201,7 +201,7 @@ body {
     margin: auto 0;
 
     &:hover {
-      border: 1px solid #ffd759;
+      border: 2px solid #ffd759;
     }
   }
 
@@ -569,6 +569,7 @@ footer {
       .form-check-label {
         &:hover {
           color: #ffd759;
+          cursor: pointer;
         }
       }
 
@@ -621,6 +622,8 @@ footer {
 
 // Check Button and Accordion Button Styles
 .form-check-input {
+  cursor: pointer;
+
   &:checked {
     background-color: #5c636a;
     border: #5c636a;
@@ -629,15 +632,24 @@ footer {
       background-color: #ffd759;
       border: #ffd759;
     }
+
+    &:focus {
+      border: #5c636a;
+    }
   }
 
-  &:hover {
+  &:hover,
+  &:focus {
     border: 1px solid #ffd759;
   }
 }
 
 .accordion-button {
   color: #5c636a;
+
+  &:focus {
+    box-shadow: none;
+  }
 
   &::after {
     filter: invert(39%) sepia(46%) saturate(19%) hue-rotate(337deg)
@@ -647,6 +659,15 @@ footer {
   &:not(.collapsed) {
     color: #5c636a;
     background-color: #5c636a33;
+  }
+}
+
+.form-control {
+  cursor: pointer;
+  border: 2px solid #e5e5e5;
+
+  &:focus {
+    border: 2px solid #ffd759;
   }
 }
 
@@ -684,6 +705,17 @@ footer {
       background-color: #fff;
       border: 3px solid #ffd759;
     }
+  }
+}
+
+.btn-close {
+  &:hover {
+    filter: invert(89%) sepia(99%) saturate(5782%) hue-rotate(314deg)
+      brightness(105%) contrast(108%);
+  }
+
+  &:focus {
+    box-shadow: none;
   }
 }
 

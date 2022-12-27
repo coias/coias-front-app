@@ -77,7 +77,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
             </Form.Text>
           </Form.Group>
           <Form.Group
-            className="mb-3 btn-style_hover"
+            className="mb-3"
             style={{ display: 'flex', justifyContent: 'space-between' }}
             controlId="formBasicCheckbox"
           >
@@ -90,13 +90,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
               type="checkbox"
               label="変更する"
             />
-            <Button
-              type="submit"
-              style={{
-                backgroundColor: '#28297e',
-                border: '3px solid #28297e',
-              }}
-            >
+            <Button type="submit" className="btn-style box_blue">
               次へ
             </Button>
           </Form.Group>
