@@ -172,6 +172,11 @@ body {
       color: #28297e;
       background-color: #fff;
       border: 3px solid #28297e;
+
+      &:hover {
+        color: #ffd759;
+        border: 3px solid #ffd759;
+      }
     }
   }
 }
