@@ -20,6 +20,7 @@ import ErrorModal from '../component/general/ErrorModal';
 import ManualStarModal from '../component/model/ManualMeasurement/ManualStarModal';
 import ManualToolBar from '../component/model/ManualMeasurement/ManualToolBar';
 import RenameNewStarModal from '../component/model/ManualMeasurement/RenameNewStarModal';
+import DeleteStarModal from '../component/model/ManualMeasurement/DeleteStarModal';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
 import StarsList from '../component/model/MeasurementCommon/StarsList';
@@ -89,6 +90,9 @@ function ManualMeasurement({
   const [fileNum, setFileNum] = useState(0);
   const [timeList, setTimeList] = useState([]);
 
+  const [deleteNameList, setDeleteNameList] = useState([]);
+  const [deleteModalShow, setDeleteModalShow] = useState(false);
+
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
@@ -104,6 +108,21 @@ function ManualMeasurement({
   const onClickFinishButton = async (filteredList = []) => {
     const targetList = filteredList.length === 0 ? positionList : filteredList;
     await axios.put(`${reactApiUri}memo_manual`, targetList);
+  };
+
+  const writeManualDeleteList = async () => {
+    const deleteStrLinesList = [];
+    Object.keys(starPos).forEach((key) => {
+      starPos[key].page.forEach((item, index) => {
+        if (item) {
+          if (item.isDeleted) {
+            const deleteStrLine = `${item.name} ${index}`;
+            deleteStrLinesList.push(deleteStrLine);
+          }
+        }
+      });
+    });
+    await axios.put(`${reactApiUri}manual_delete_list`, deleteStrLinesList);
   };
 
   const removePositionListByCheckState = () => {
@@ -207,12 +226,23 @@ function ManualMeasurement({
               name: item[0],
               x: parseFloat(item[2], 10),
               y: parseFloat(item[3], 10),
+              isDeleted: false,
             };
           });
         })
         .catch((error) => {
           console.error(error);
         });
+
+      await axios
+        .get(`${reactApiUri}manual_delete_list`)
+        .then((res) => res.data.result)
+        .then((deleteStarList) =>
+          deleteStarList.forEach((deleteStar) => {
+            toObject[deleteStar[0]].page[deleteStar[1]].isDeleted = true;
+          }),
+        )
+        .catch(() => {});
 
       // TODO : 動的なエラーハンドリング
       if (toObject['awk:']) {
@@ -368,13 +398,16 @@ function ManualMeasurement({
   useEventListener('keydown', (e) => {
     e.preventDefault();
 
-    if (e.key === 's') {
-      setStart(!start);
-    } else if (e.key === 'ArrowRight') {
-      setNext(!next);
-    } else if (e.key === 'ArrowLeft') {
-      setBack(!back);
-    } else if (e.key === 'ArrowUp') {
+    if (!manualStarModalShow && !confirmationModalShow && !deleteModalShow) {
+      if (e.key === 's') {
+        setStart(!start);
+      } else if (e.key === 'ArrowRight') {
+        setNext(!next);
+      } else if (e.key === 'ArrowLeft') {
+        setBack(!back);
+      }
+    }
+    if (e.key === 'ArrowUp') {
       setZoomIn(!zoomIn);
     } else if (e.key === 'ArrowDown') {
       setZoomOut(!zoomOut);
@@ -446,6 +479,8 @@ function ManualMeasurement({
                   timeList={timeList}
                   setBrightnessVal={setBrightnessVal}
                   setContrastVal={setContrastVal}
+                  setDeleteNameList={setDeleteNameList}
+                  setDeleteModalShow={setDeleteModalShow}
                 />
               </Col>
             </Row>
@@ -618,6 +653,20 @@ function ManualMeasurement({
         isAlreadyChanged={
           starPos[oldStarName]?.name !== starPos[oldStarName]?.newName
         }
+      />
+      <DeleteStarModal
+        show={deleteModalShow}
+        onExit={() => {
+          setDeleteModalShow(false);
+          setDeleteNameList([]);
+        }}
+        onExited={() => {
+          if (isAutoSave) {
+            writeManualDeleteList();
+          }
+          setDeleteNameList([]);
+        }}
+        deleteNameList={deleteNameList}
       />
     </div>
   );
