@@ -23,7 +23,10 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
       backdrop="static"
     >
       <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
           {`承認済み自動検出天体の削除 (${currentPage + 1}枚目)`}
         </Modal.Title>
       </Modal.Header>
@@ -35,14 +38,16 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
             onExit();
           }}
         >
-          <Form.Label>
+          <Form.Label style={{ color: '#5c636a' }}>
             クリックした承認済み自動検出天体のうち削除したいものにチェックをつけてください。
             <br />
             (削除した天体は、チェックを外すことで再表示することができます。)
           </Form.Label>
           <Row>
-            <Col style={{ textAlign: 'center' }}>天体名</Col>
-            <Col style={{ textAlign: 'center' }}>削除する</Col>
+            <Col style={{ textAlign: 'center', color: '#5c636a' }}>天体名</Col>
+            <Col style={{ textAlign: 'center', color: '#5c636a' }}>
+              削除する
+            </Col>
           </Row>
           <hr />
           {Object.keys(starPos)
@@ -73,7 +78,11 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
             style={{ display: 'flex', justifyContent: 'end' }}
             controlId="formBasicCheckbox"
           >
-            <Button variant="danger" type="submit">
+            <Button
+              variant="danger"
+              type="submit"
+              className="btn-style box_blue"
+            >
               終了
             </Button>
           </Form.Group>
