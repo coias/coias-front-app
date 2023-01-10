@@ -488,10 +488,6 @@ function ManualMeasurement({
         </Col>
 
         <div
-          // className={
-          //   isRedisp ? 'coias-star-list-wrraper' : 'manual-star-list-wrraper'
-          // }
-          // style={{ width: isRedisp ? '10vw' : '20vw' }}
           className="manual-star-list-wrraper"
           style={{ width: '250px', display: 'flex', flexFlow: 'column' }}
         >

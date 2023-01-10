@@ -670,9 +670,11 @@ footer {
 }
 
 .search_suggestions {
+  color: #5c636a;
+
   .active,
   div:hover {
-    background-color: gray;
+    background-color: #ffd759;
   }
 }
 

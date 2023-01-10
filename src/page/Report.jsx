@@ -196,10 +196,7 @@ function Report() {
                 sendMpc.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
-          <div
-            // className="mt-3"
-            className="report-btn_wrap"
-          >
+          <div className="report-btn_wrap">
             <Button
               variant="primary"
               onClick={() => {
@@ -226,7 +223,6 @@ function Report() {
                 onClick={() => {
                   downloadFinalAllFIle();
                 }}
-                // style={{ marginLeft: '10px' }}
                 className="btn-style box_blue"
               >
                 final_all.txt
