@@ -1,14 +1,23 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
+import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
-import GetProgress from '../component/general/GetProgress';
 import { ModeStatusContext } from '../component/functional/context';
+
+const userId = crypto.randomUUID();
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
+  const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
+
+  const { lastJsonMessage } = useWebSocket(socketUrl, {
+    shouldReconnect: () => true,
+    reconnectAttempts: 3,
+    reconnectInterval: 3000,
+  });
 
   const [sendMpcMEA, setSendMpcMEA] = useState('');
   const [sendMpcBody, setSendMpcBody] = useState([]);
@@ -21,7 +30,6 @@ function Report() {
   const [errorReason, setErrorReason] = useState('');
 
   const [showProgress, setShowProgress] = useState(false);
-  const [progress, setProgress] = useState('');
   const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
 
   const makeSendMpc = async () => {
@@ -72,12 +80,6 @@ function Report() {
   const getMpc = async () => {
     setLoading(true);
     setShowProgress(true);
-    setProgress('0%');
-    const timerID = setInterval(
-      () => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'),
-      250,
-    );
-
     await axios
       .put(
         modeStatus.FinalCheck
@@ -97,8 +99,6 @@ function Report() {
             return trimedStr;
           }),
         );
-        setLoading(false);
-        clearInterval(timerID);
         setModeStatus((prevModeStatus) => {
           const modeStatusCopy = { ...prevModeStatus };
           modeStatusCopy.FinalCheck = true;
@@ -113,7 +113,6 @@ function Report() {
           setShowProcessError(true);
         }
         setLoading(false);
-        clearInterval(timerID);
       });
   };
 
@@ -233,7 +232,7 @@ function Report() {
         loading={loading}
         processName="レポートデータ取得中…"
         showProgress={showProgress}
-        progress={progress}
+        lastJsonMessage={lastJsonMessage}
       />
       <AlertModal
         alertModalShow={showError}
