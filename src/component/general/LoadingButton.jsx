@@ -7,6 +7,7 @@ function LoadingButton({
   processName,
   showProgress,
   lastJsonMessage,
+  fileUploadProgress,
 }) {
   return (
     <Button
@@ -36,7 +37,9 @@ function LoadingButton({
         id="current-progress"
         style={{ display: showProgress ? 'block' : 'none' }}
       >
-        {lastJsonMessage?.progress}
+        {processName === 'アップロード中...'
+          ? fileUploadProgress
+          : lastJsonMessage?.progress}
       </div>
     </Button>
   );
@@ -47,6 +50,7 @@ LoadingButton.propTypes = {
   processName: PropTypes.string.isRequired,
   showProgress: PropTypes.bool,
   lastJsonMessage: PropTypes.objectOf(PropTypes.string),
+  fileUploadProgress: PropTypes.string.isRequired,
 };
 
 LoadingButton.defaultProps = {

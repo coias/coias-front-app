@@ -57,6 +57,7 @@ function ExplorePrepare({
   const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
   const [fileAlertModalshow, setFileAlertModalshow] = useState(false);
+  const [fileUploadProgress, setFileUploadProgress] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const [parameters, setParameters] = useState({
@@ -194,7 +195,7 @@ function ExplorePrepare({
       setProcessName('アップロード中...');
 
       setLoading(true);
-      setShowProgress(false);
+      setShowProgress(true);
       await axios
         .delete(`${uri}deletefiles`)
         .then(() => {})
@@ -205,7 +206,15 @@ function ExplorePrepare({
           setLoading(false);
         });
       await axios
-        .post(`${uri}uploadfiles/`, data)
+        .post(`${uri}uploadfiles/`, data, {
+          onUploadProgress: (progressEvent) => {
+            const { loaded, total } = progressEvent;
+            const percent = Math.floor((loaded * 100) / total);
+            if (percent < 100) {
+              setFileUploadProgress(`${percent}%`);
+            }
+          },
+        })
         .then(() => {
           updateMenunames();
           setLoading(false);
@@ -539,6 +548,7 @@ function ExplorePrepare({
         processName={processName}
         showProgress={showProgress}
         lastJsonMessage={lastJsonMessage}
+        fileUploadProgress={fileUploadProgress}
       />
 
       <FileUploadModal
