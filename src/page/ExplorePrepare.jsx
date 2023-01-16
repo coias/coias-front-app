@@ -209,7 +209,7 @@ function ExplorePrepare({
           onUploadProgress: (progressEvent) => {
             const { loaded, total } = progressEvent;
             const percent = Math.floor((loaded * 100) / total);
-            if (percent < 100) {
+            if (percent <= 100) {
               setFileUploadProgress(`${percent}%`);
             }
           },

@@ -21,7 +21,11 @@ function LoadingButton({
         top: 0,
         left: 0,
         display:
-          loading && lastJsonMessage?.progress !== '100%' ? 'block' : 'none',
+          loading &&
+          (lastJsonMessage?.progress !== '100%' ||
+            fileUploadProgress !== '100%')
+            ? 'block'
+            : 'none',
         cursor: 'default',
       }}
     >
