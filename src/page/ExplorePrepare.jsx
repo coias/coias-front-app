@@ -102,8 +102,7 @@ function ExplorePrepare({
   };
 
   const fileContentCheck = async () => {
-    const reactApiUri = process.env.REACT_APP_API_URI;
-    const response = await axios.put(`${reactApiUri}copy`);
+    const response = await axios.put(`${uri}copy`);
     const dataList = response.data.result.sort();
     if (fileNames.length !== dataList.length / 2) {
       setAlertMessage('ファイルの中身が異なる可能性があります。');
@@ -206,7 +205,7 @@ function ExplorePrepare({
           setLoading(false);
         });
       await axios
-        .post(`${uri}uploadfiles/`, data, {
+        .post(`${uri}uploadfiles`, data, {
           onUploadProgress: (progressEvent) => {
             const { loaded, total } = progressEvent;
             const percent = Math.floor((loaded * 100) / total);
