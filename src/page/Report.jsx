@@ -104,6 +104,7 @@ function Report() {
           modeStatusCopy.FinalCheck = true;
           return modeStatusCopy;
         });
+        setLoading(false);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;

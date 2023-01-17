@@ -20,12 +20,7 @@ function LoadingButton({
         backgroundColor: '#0000004f',
         top: 0,
         left: 0,
-        display:
-          loading &&
-          (lastJsonMessage?.progress !== '100%' ||
-            fileUploadProgress !== '100%')
-            ? 'block'
-            : 'none',
+        display: loading ? 'block' : 'none',
         cursor: 'default',
       }}
     >
@@ -43,7 +38,7 @@ function LoadingButton({
       >
         {processName === 'アップロード中...'
           ? fileUploadProgress
-          : lastJsonMessage?.progress}
+          : lastJsonMessage && lastJsonMessage.progress}
       </div>
     </Button>
   );

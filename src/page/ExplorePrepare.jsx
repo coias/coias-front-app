@@ -209,12 +209,14 @@ function ExplorePrepare({
           onUploadProgress: (progressEvent) => {
             const { loaded, total } = progressEvent;
             const percent = Math.floor((loaded * 100) / total);
-            if (percent <= 100) {
+            if (percent < 100) {
               setFileUploadProgress(`${percent}%`);
             }
           },
         })
         .then(() => {
+          setFileUploadProgress('100%');
+
           updateMenunames();
           setLoading(false);
         })
@@ -242,6 +244,7 @@ function ExplorePrepare({
       await axios
         .put(uri + query)
         .then(() => {
+          setLoading(false);
           const updatedMenunames = menunames.map((item) => {
             if (
               item.query === query ||
@@ -380,6 +383,7 @@ function ExplorePrepare({
     item.done = true;
     items[6] = item;
     setMenunames(items);
+    setLoading(false);
   };
 
   return (
