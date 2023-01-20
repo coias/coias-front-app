@@ -60,7 +60,7 @@ function RenameNewStarModal({
       <Modal.Header>
         <Modal.Title
           id="contained-modal-title-vcenter"
-          style={{ color: '#5c636a', fontWeight: 'bold' }}
+          className="f-modal_title f-ja"
         >
           天体名の付け替え
         </Modal.Title>
@@ -83,7 +83,7 @@ function RenameNewStarModal({
             }
           }}
         >
-          <Form.Label style={{ color: '#5c636a' }}>
+          <Form.Label style={{ color: '#5c636a' }} className="f-ja">
             {`${oldStarName}の名前を変更します。変更後の名前を選んでください。`}
           </Form.Label>
           <Row style={{ marginBottom: '40px' }}>
@@ -91,21 +91,24 @@ function RenameNewStarModal({
               className="d-flex justify-content-center"
               style={{ alineItems: 'center' }}
             >
-              <h3 style={{ color: '#5c636a', marginBottom: 0 }}>
+              <h3
+                style={{ color: '#5c636a', marginBottom: 0 }}
+                className="f-en"
+              >
                 {oldStarName}
               </h3>
             </Col>
             <Col className="d-flex justify-content-center">
               {isAlreadyChanged ? (
-                <AiOutlineArrowLeft size={50} style={{ color: '#5c636a' }} />
+                <AiOutlineArrowLeft size={40} style={{ color: '#5c636a' }} />
               ) : (
-                <AiOutlineArrowRight size={50} style={{ color: '#5c636a' }} />
+                <AiOutlineArrowRight size={40} style={{ color: '#5c636a' }} />
               )}
             </Col>
             <Col>
               <div
                 ref={searchWrapperRef}
-                className="flex-container flex-column pos-rel"
+                className="flex-container flex-column pos-rel f-en"
               >
                 <Form.Control
                   id="auto"
@@ -178,14 +181,14 @@ function RenameNewStarModal({
                 e.stopPropagation();
                 onExit();
               }}
-              className="btn-style box_border_blue"
+              className="btn-style box_border_blue f-ja"
             >
               戻る
             </Button>
             <Button
               variant="success"
               type="submit"
-              className="btn-style box_blue"
+              className="btn-style box_blue f-ja"
             >
               {isAlreadyChanged ? '名前を元に戻す' : '名前を付け替える'}
             </Button>

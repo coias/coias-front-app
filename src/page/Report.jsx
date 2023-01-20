@@ -155,7 +155,7 @@ function Report() {
     <div className="report-wrap">
       <Row xs="auto" className="report-wrap_form">
         <Col>
-          <h4>OBS </h4>
+          <h4 className="f-modal_title f-en">OBS </h4>
         </Col>
         <Col md={8}>
           <Form.Control
@@ -166,7 +166,7 @@ function Report() {
       </Row>
       <Row xs="auto" className="report-wrap_form">
         <Col>
-          <h4>MEA </h4>
+          <h4 className="f-modal_title f-en">MEA </h4>
         </Col>
         <Col md={8}>
           <Form.Control
@@ -180,7 +180,7 @@ function Report() {
       </Row>
       <Row xs="auto">
         <Col>
-          <h4>レポート </h4>
+          <h4 className="f-modal_title f-ja">レポート </h4>
         </Col>
         <Col md={8}>
           <div
@@ -202,18 +202,18 @@ function Report() {
               onClick={() => {
                 getMpc();
               }}
-              className="btn-style box_blue"
+              className="btn-style box_blue f-ja"
             >
               レポート作成をやり直す
             </Button>
             <div className="btn_wrap-content">
-              <span>ファイルをダウンロード</span>
+              <span className="f-ja">ファイルをダウンロード</span>
               <Button
                 variant="primary"
                 onClick={() => {
                   downloadFIle();
                 }}
-                className="btn-style box_blue"
+                className="btn-style box_blue f-en"
               >
                 send_mpc.txt
               </Button>
@@ -223,7 +223,7 @@ function Report() {
                 onClick={() => {
                   downloadFinalAllFIle();
                 }}
-                className="btn-style box_blue"
+                className="btn-style box_blue f-en"
               >
                 final_all.txt
               </Button>

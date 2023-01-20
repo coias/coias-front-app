@@ -25,7 +25,9 @@ function LoadingButton({ loading, processName, showProgress, progress }) {
           height: '50px',
         }}
       />
-      <div id="current-process">{processName}</div>
+      <div id="current-process" className="f-ja">
+        {processName}
+      </div>
       <div
         id="current-progress"
         style={{ display: showProgress ? 'block' : 'none' }}

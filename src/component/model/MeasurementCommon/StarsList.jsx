@@ -23,7 +23,7 @@ function StarsList({ disable, writeMemo, setSelectedListState }) {
 
   return (
     <>
-      <div className="star-list-title">
+      <div className="star-list-title f-ja">
         <p
           style={{
             marginTop: '20px',
@@ -44,7 +44,7 @@ function StarsList({ disable, writeMemo, setSelectedListState }) {
               if (pos.page[currentPage]) {
                 if (!pos.isKnown && isCOIAS) {
                   return (
-                    <div className="mb-3" key={pos.name}>
+                    <div className="mb-3 f-en" key={pos.name}>
                       <Form.Check
                         type="checkbox"
                         disabled={!disable}
@@ -70,7 +70,7 @@ function StarsList({ disable, writeMemo, setSelectedListState }) {
                   );
                 }
                 return (
-                  <div className="mb-3" key={pos.name}>
+                  <div className="mb-3 f-en" key={pos.name}>
                     <Form.Check
                       disabled
                       type="checkbox"

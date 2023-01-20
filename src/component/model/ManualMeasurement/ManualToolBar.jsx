@@ -37,7 +37,7 @@ function ManualToolBar({
   return (
     <div>
       <Row className="m-3" style={{ height: '60px' }}>
-        <Col className="manual-toolbar_wrap">
+        <Col className="manual-toolbar_wrap f-ja">
           <p style={{ margin: 'auto 0', fontWeight: 'bold', color: '#5C636A' }}>
             天体一覧
           </p>
@@ -53,7 +53,7 @@ function ManualToolBar({
       </Row>
       <div className="manual-list m-1">
         <Row>
-          <Accordion activeKey={`${activeKey}`} className="mt-1">
+          <Accordion activeKey={`${activeKey}`} className="mt-1 f-en">
             {positionList.map((d, index) => (
               <div className="d-flex m-2" key={uuidv4()}>
                 <Form.Check

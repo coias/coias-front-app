@@ -1,0 +1,36 @@
+@charset "utf-8";
+
+// =======================
+// Font
+// =======================
+
+// Google Font
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Quicksand:wght@400;500;600;700&display=swap');
+
+.f-ja {
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.f-en {
+  font-family: Quicksand, sans-serif;
+}
+
+// font Style
+.f-title_sub {
+  font-size: 15px;
+}
+
+.f-title_main {
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.f-modal_title {
+  font-weight: 700;
+  color: #5c636a;
+}
+
+.f-modal_title_sub {
+  font-size: 20px;
+  font-weight: 400;
+}

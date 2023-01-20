@@ -255,7 +255,7 @@ function PlayMenu({
           <Form.Control
             as="select"
             defaultValue="250"
-            className="select-style"
+            className="select-style f-en"
             onChange={(v) => {
               setSec(parseFloat(v.target.value));
             }}
@@ -267,7 +267,10 @@ function PlayMenu({
             <option value="250">0.25</option>
             <option value="500">0.50</option>
           </Form.Control>
-          <Form.Text style={{ margin: 'auto 0', marginLeft: '5px' }}>
+          <Form.Text
+            style={{ margin: 'auto 0', marginLeft: '5px' }}
+            className="f-en"
+          >
             sec
           </Form.Text>
         </Nav.Item>
@@ -307,7 +310,7 @@ function PlayMenu({
           </Button>
         </Nav.Item>
       </Nav>
-      <ButtonGroup className="flex-grow-1" style={{ margin: 'auto 0' }}>
+      <ButtonGroup className="flex-grow-1 f-en" style={{ margin: 'auto 0' }}>
         {imageNames
           .filter((img) => img.visible)
           .map((name) => (

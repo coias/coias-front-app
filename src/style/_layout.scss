@@ -22,14 +22,19 @@ input {
   box-shadow: none !important;
 }
 
-body {
-  font-family: Avenir !important;
-}
+// body {
+//   font-family: Avenir !important;
+// }
 
 // Header
 .color-nav {
   padding: 0;
   margin: 0;
+  background-color: #6b80b6;
+
+  .color-nav-title {
+    color: #fff;
+  }
 
   // Humburger Menu
   .navbar-toggler {
@@ -47,14 +52,6 @@ body {
   }
 
   @include mq(max-lg-bootstrap) {
-    background: linear-gradient(
-      120deg,
-      #ffd759 0%,
-      #ffd759 120px,
-      #28297e 120px,
-      #28297e 100%
-    );
-
     .nav-disappear {
       display: none;
     }
@@ -65,14 +62,6 @@ body {
   }
 
   @include mq(min-lg-bootstrap) {
-    background: linear-gradient(
-      120deg,
-      #ffd759 0%,
-      #ffd759 120px,
-      #28297e 120px,
-      #28297e 100%
-    );
-
     .color-nav-title {
       display: none;
     }
@@ -91,14 +80,6 @@ body {
   }
 
   @include mq(xl) {
-    background: linear-gradient(
-      120deg,
-      #ffd759 0%,
-      #ffd759 280px,
-      #28297e 280px,
-      #28297e 100%
-    );
-
     .color-nav-title {
       display: inline;
     }
@@ -146,6 +127,13 @@ body {
 }
 
 .offcanvas {
+  .offcanvas-header {
+    .offcanvas-title {
+      padding-left: 10px;
+      color: #6b80b6;
+    }
+  }
+
   .offcanvas-body {
     .navbar-nav {
       .active::before {
@@ -153,14 +141,14 @@ body {
       }
 
       a {
-        color: #28297e;
+        color: #6b80b6;
         text-decoration: none;
 
         h3 {
           font-size: 20px;
 
           &:hover {
-            text-decoration: underline #28297e;
+            text-decoration: underline #6b80b6;
           }
         }
       }
@@ -169,13 +157,13 @@ body {
     .btn {
       margin-top: 20px;
       font-size: 20px;
-      color: #28297e;
+      color: #6b80b6;
       background-color: #fff;
-      border: 3px solid #28297e;
+      border: 3px solid #6b80b6;
 
       &:hover {
-        color: #ffd759;
-        border: 3px solid #ffd759;
+        color: #94a9e0;
+        border: 3px solid #94a9e0;
       }
     }
   }
@@ -189,7 +177,11 @@ body {
     color: #5c636a;
 
     &:hover {
-      color: #ffd759;
+      color: #94a9e0;
+
+      // 水色 #94a9e0
+      // 薄い黄色 #f8e58c
+      // 初期黄色 #ffd759
     }
   }
 
@@ -197,7 +189,7 @@ body {
     color: #e5e5e5;
 
     &:hover {
-      color: #ffd759;
+      color: #94a9e0;
     }
   }
 
@@ -206,7 +198,7 @@ body {
     margin: auto 0;
 
     &:hover {
-      border: 2px solid #ffd759;
+      border: 2px solid #94a9e0;
     }
   }
 
@@ -219,8 +211,8 @@ body {
       border: 1px solid #5c636a;
 
       &:hover {
-        color: #ffd759;
-        border: 1px solid #ffd759;
+        color: #94a9e0;
+        border: 1px solid #94a9e0;
       }
     }
 
@@ -230,8 +222,8 @@ body {
       border: 1px solid #5c636a;
 
       &:hover {
-        background-color: #ffd759;
-        border: 1px solid #ffd759;
+        background-color: #94a9e0;
+        border: 1px solid #94a9e0;
       }
     }
   }
@@ -628,7 +620,7 @@ footer {
 
       .form-check-label {
         &:hover {
-          color: #ffd759;
+          color: #94a9e0;
           cursor: pointer;
         }
       }
@@ -674,7 +666,7 @@ footer {
 
   .active,
   div:hover {
-    background-color: #ffd759;
+    background-color: #94a9e0;
   }
 }
 
@@ -691,8 +683,8 @@ footer {
     border: #5c636a;
 
     &:hover {
-      background-color: #ffd759;
-      border: #ffd759;
+      background-color: #94a9e0;
+      border: #94a9e0;
     }
 
     &:focus {
@@ -702,7 +694,7 @@ footer {
 
   &:hover,
   &:focus {
-    border: 1px solid #ffd759;
+    border: 1px solid #94a9e0;
   }
 }
 
@@ -730,31 +722,31 @@ footer {
   border: 2px solid #e5e5e5;
 
   &:focus {
-    border: 2px solid #ffd759;
+    border: 2px solid #94a9e0;
   }
 }
 
 // Button Style
 .btn-style {
   &.box_blue {
-    background-color: #28297e;
-    border: 3px solid #28297e;
+    background-color: #6b80b6;
+    border: 3px solid #6b80b6;
 
     &:hover {
-      background-color: #ffd759;
-      border: 3px solid #ffd759;
+      background-color: #94a9e0;
+      border: 3px solid #94a9e0;
     }
   }
 
   &.box_border_blue {
-    color: #28297e;
+    color: #6b80b6;
     background-color: #fff;
-    border: 3px solid #28297e;
+    border: 3px solid #6b80b6;
 
     &:hover {
-      color: #ffd759;
+      color: #94a9e0;
       background-color: #fff;
-      border: 3px solid #ffd759;
+      border: 3px solid #94a9e0;
     }
   }
 
@@ -764,17 +756,17 @@ footer {
     border: 3px solid #5c636a;
 
     &:hover {
-      color: #ffd759;
+      color: #94a9e0;
       background-color: #fff;
-      border: 3px solid #ffd759;
+      border: 3px solid #94a9e0;
     }
   }
 }
 
 .btn-close {
   &:hover {
-    filter: invert(89%) sepia(99%) saturate(5782%) hue-rotate(314deg)
-      brightness(105%) contrast(108%);
+    filter: invert(65%) sepia(67%) saturate(273%) hue-rotate(190deg)
+      brightness(93%) contrast(89%);
   }
 
   &:focus {

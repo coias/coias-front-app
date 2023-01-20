@@ -30,22 +30,14 @@ function Header({ setMenunames, setFileNames }) {
               className="d-inline-block align-top"
             />
           </Col>
-          <Col className="color-nav-title">
+          <Col className="color-nav-title f-en">
             <Row>
-              <div
-                className="p-0 m-0"
-                style={{ color: '#28297E', fontSize: '15px' }}
-              >
+              <div className="p-0 m-0 f-title_sub">
                 Come On! Impacting ASteroid
               </div>
             </Row>
             <Row>
-              <div
-                className="p-0 m-0"
-                style={{ color: '#28297E', fontSize: '25px' }}
-              >
-                COIAS
-              </div>
+              <div className="p-0 m-0 f-title_main">COIAS</div>
             </Row>
           </Col>
         </Row>
@@ -56,7 +48,7 @@ function Header({ setMenunames, setFileNames }) {
           to="/"
           className={(navData) => (navData.isActive ? 'active' : 'not-active')}
         >
-          <h3 className="nav-content">探索準備</h3>
+          <h3 className="nav-content f-ja">探索準備</h3>
         </NavLink>
         <NavLink
           to="/COIAS"
@@ -66,7 +58,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.COIAS ? () => {} : (e) => e.preventDefault()}
         >
-          <h3 className="nav-content">探索/再描画</h3>
+          <h3 className="nav-content f-ja">探索/再描画</h3>
         </NavLink>
         <NavLink
           to="/ManualMeasurement"
@@ -76,7 +68,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
         >
-          <h3 className="nav-content">手動測定/名前修正</h3>
+          <h3 className="nav-content f-ja">手動測定/名前修正</h3>
         </NavLink>
         <NavLink
           to="/Report"
@@ -86,7 +78,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.Report ? () => {} : (e) => e.preventDefault()}
         >
-          <h3 className="nav-content">レポート</h3>
+          <h3 className="nav-content f-ja">レポート</h3>
         </NavLink>
         <NavLink
           to="/FinalCheck"
@@ -96,7 +88,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.FinalCheck ? () => {} : (e) => e.preventDefault()}
         >
-          <h3 className="nav-content">最終確認</h3>
+          <h3 className="nav-content f-ja">最終確認</h3>
         </NavLink>
       </Nav>
       <Button
@@ -105,29 +97,21 @@ function Header({ setMenunames, setFileNames }) {
         }}
         variant="light"
         disabled={checkIsStatusUpdated()}
-        className="nav-disappear"
+        className="nav-disappear f-ja"
       >
         探索終了
       </Button>
       <Navbar.Offcanvas placement="end">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>
-            <Row>
+            <Row className="f-en">
               <Row>
-                <div
-                  className="p-0 m-0"
-                  style={{ color: '#28297E', fontSize: '15px' }}
-                >
+                <div className="p-0 m-0 f-title_sub">
                   Come On! Impacting ASteroid
                 </div>
               </Row>
               <Row>
-                <div
-                  className="p-0 m-0"
-                  style={{ color: '#28297E', fontSize: '25px' }}
-                >
-                  COIAS
-                </div>
+                <div className="p-0 m-0 f-title_main">COIAS</div>
               </Row>
             </Row>
           </Offcanvas.Title>
@@ -140,7 +124,7 @@ function Header({ setMenunames, setFileNames }) {
                 navData.isActive ? 'active' : 'not-active'
               }
             >
-              <h3 className="nav-content">探索準備</h3>
+              <h3 className="nav-content f-ja">探索準備</h3>
             </NavLink>
             <NavLink
               to="/COIAS"
@@ -152,7 +136,7 @@ function Header({ setMenunames, setFileNames }) {
               }}
               onClick={modeStatus.COIAS ? () => {} : (e) => e.preventDefault()}
             >
-              <h3 className="nav-content">探索/再描画</h3>
+              <h3 className="nav-content f-ja">探索/再描画</h3>
             </NavLink>
             <NavLink
               to="/ManualMeasurement"
@@ -164,7 +148,7 @@ function Header({ setMenunames, setFileNames }) {
               }}
               onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
             >
-              <h3 className="nav-content">手動測定/名前修正</h3>
+              <h3 className="nav-content f-ja">手動測定/名前修正</h3>
             </NavLink>
             <NavLink
               to="/Report"
@@ -176,7 +160,7 @@ function Header({ setMenunames, setFileNames }) {
               }}
               onClick={modeStatus.Report ? () => {} : (e) => e.preventDefault()}
             >
-              <h3 className="nav-content">レポート</h3>
+              <h3 className="nav-content f-ja">レポート</h3>
             </NavLink>
             <NavLink
               to="/FinalCheck"
@@ -190,7 +174,7 @@ function Header({ setMenunames, setFileNames }) {
                 modeStatus.FinalCheck ? () => {} : (e) => e.preventDefault()
               }
             >
-              <h3 className="nav-content">最終確認</h3>
+              <h3 className="nav-content f-ja">最終確認</h3>
             </NavLink>
           </Nav>
           <Button
@@ -199,6 +183,7 @@ function Header({ setMenunames, setFileNames }) {
             }}
             variant="light"
             disabled={checkIsStatusUpdated()}
+            className="f-ja"
           >
             探索終了
           </Button>

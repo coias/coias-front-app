@@ -13,16 +13,18 @@ function AlertModal({
       <Modal.Header>
         <Modal.Title
           id="contained-modal-title-vcenter"
-          style={{ color: '#5c636a', fontWeight: 'bold' }}
+          className="f-modal_title f-ja"
         >
           エラー
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ color: '#5c636a' }}>{alertMessage}</Modal.Body>
+      <Modal.Body style={{ color: '#5c636a' }} className="f-ja">
+        {alertMessage}
+      </Modal.Body>
       <Modal.Footer className="d-flex justify-content-end">
         <Button
           variant="success"
-          className="btn-style box_blue"
+          className="btn-style box_blue f-ja"
           onClick={() => onClickOk()}
         >
           {alertButtonMessage}
