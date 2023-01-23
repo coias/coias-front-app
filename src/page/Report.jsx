@@ -171,7 +171,7 @@ function Report() {
         <Col md={8}>
           <Form.Control
             style={{ textOverflow: 'ellipsis' }}
-            placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入してください. (例) Y. Endo, M. Konohata, A. Manaka"
+            placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入. (例) Y. Endo, M. Konohata, A. Manaka"
             onChange={(e) => {
               setSendMpcMEA(e.target.value);
             }}
@@ -212,20 +212,12 @@ function Report() {
                 variant="primary"
                 onClick={() => {
                   downloadFIle();
-                }}
-                className="btn-style box_blue"
-              >
-                send_mpc.txt
-              </Button>
-
-              <Button
-                variant="primary"
-                onClick={() => {
                   downloadFinalAllFIle();
                 }}
                 className="btn-style box_blue"
+                disabled={!modeStatus.FinalCheck}
               >
-                final_all.txt
+                send_mpc.txt and final_all.txt
               </Button>
             </div>
           </div>
