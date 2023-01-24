@@ -284,7 +284,10 @@ function FinalCheck({
             </Row>
           </Container>
         </Col>
-        <div className="coias-star-list-wrraper">
+        <div
+          className="coias-star-list-wrraper"
+          style={{ display: 'flex', flexDirection: 'column', width: '200px' }}
+        >
           <StarsList disable={disable} />
         </div>
       </Row>
