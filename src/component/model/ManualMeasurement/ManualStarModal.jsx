@@ -353,7 +353,7 @@ ManualStarModal.propTypes = {
   manualStarModalShow: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   defaultZoomRate: PropTypes.number.isRequired,
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
   activeKey: PropTypes.number.isRequired,
   setPositionList: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,

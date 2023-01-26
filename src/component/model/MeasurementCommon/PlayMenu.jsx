@@ -400,7 +400,7 @@ function PlayMenu({
 }
 
 PlayMenu.propTypes = {
-  imageNames: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageNames: PropTypes.arrayOf(PropTypes.string).isRequired,
   // setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.number).isRequired,
   setDefaultZoomRate: PropTypes.func,
@@ -413,13 +413,13 @@ PlayMenu.propTypes = {
   setIsAutoSave: PropTypes.func.isRequired,
   isAutoSave: PropTypes.bool.isRequired,
   setSetting: PropTypes.func.isRequired,
-  scaleArray: PropTypes.arrayOf(PropTypes.object).isRequired,
+  scaleArray: PropTypes.arrayOf(PropTypes.string).isRequired,
   setScaleArray: PropTypes.func.isRequired,
   zoomIn: PropTypes.bool.isRequired,
   setZoomIn: PropTypes.func.isRequired,
   zoomOut: PropTypes.bool.isRequired,
   setZoomOut: PropTypes.func.isRequired,
-  wrapperRef: PropTypes.objectOf(PropTypes.object).isRequired,
+  wrapperRef: PropTypes.objectOf(PropTypes.string).isRequired,
   disableShowAutoSave: PropTypes.bool,
   isHide: PropTypes.bool.isRequired,
   setIsHide: PropTypes.func.isRequired,

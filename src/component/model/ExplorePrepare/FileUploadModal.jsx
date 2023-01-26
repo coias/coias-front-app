@@ -7,7 +7,7 @@ FileUploadModal.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  fileInput: PropTypes.objectOf(PropTypes.object).isRequired,
+  fileInput: PropTypes.objectOf(PropTypes.string).isRequired,
   handleChange: PropTypes.func.isRequired,
   valid: PropTypes.bool.isRequired,
   errorFiles: PropTypes.arrayOf(PropTypes.string).isRequired,

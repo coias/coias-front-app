@@ -20,11 +20,11 @@ import useEventListener from '../hooks/useEventListener';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   setImageURLs: PropTypes.func.isRequired,
-  subImageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  subImageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   setSubImageURLs: PropTypes.func.isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.string).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
   start: PropTypes.bool.isRequired,
