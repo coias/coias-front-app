@@ -112,7 +112,7 @@ function Header({ setMenunames, setFileNames }) {
       >
         探索終了
       </Button>
-      <Navbar.Offcanvas placement="end">
+      <Offcanvas placement="end">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>
             <Row>
@@ -206,7 +206,7 @@ function Header({ setMenunames, setFileNames }) {
             探索終了
           </Button>
         </Offcanvas.Body>
-      </Navbar.Offcanvas>
+      </Offcanvas>
       <ConfirmationModal
         show={show}
         onHide={() => {
