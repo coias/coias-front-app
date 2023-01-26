@@ -20,6 +20,7 @@ import Header from './component/ui/Header';
 import COIAS from './page/COIAS';
 import ExplorePrepare from './page/ExplorePrepare';
 import ManualMeasurement from './page/ManualMeasurement';
+import FinalCheck from './page/FinalCheck';
 import Report from './page/Report';
 import Login from './page/Login';
 
@@ -83,6 +84,7 @@ function App() {
     COIAS: false,
     Manual: false,
     Report: false,
+    FinalCheck: false,
   });
   const modeStatusValue = useMemo(
     () => ({ modeStatus, setModeStatus }),
@@ -93,6 +95,8 @@ function App() {
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
   const [setting, setSetting] = useState(false);
+  const [zoomIn, setZoomIn] = useState(false);
+  const [zoomOut, setZoomOut] = useState(false);
 
   return (
     <ReactKeycloakProvider authClient={keycloak}>
@@ -158,6 +162,10 @@ function App() {
                             setBack={setBack}
                             setting={setting}
                             setSetting={setSetting}
+                            zoomIn={zoomIn}
+                            setZoomIn={setZoomIn}
+                            zoomOut={zoomOut}
+                            setZoomOut={setZoomOut}
                           />
                         }
                       />
@@ -180,10 +188,36 @@ function App() {
                             setLeadStarNumber={setLeadStarNumber}
                             setting={setting}
                             setSetting={setSetting}
+                            zoomIn={zoomIn}
+                            setZoomIn={setZoomIn}
+                            zoomOut={zoomOut}
+                            setZoomOut={setZoomOut}
                           />
                         }
                       />
                       <Route path="/Report" element={<Report />} />
+                      <Route
+                        path="/FinalCheck"
+                        element={
+                          <FinalCheck
+                            intervalRef={intervalRef}
+                            imageURLs={imageURLs}
+                            setImageURLs={setImageURLs}
+                            start={start}
+                            setStart={setStart}
+                            next={next}
+                            setNext={setNext}
+                            back={back}
+                            setBack={setBack}
+                            setting={setting}
+                            setSetting={setSetting}
+                            zoomIn={zoomIn}
+                            setZoomIn={setZoomIn}
+                            zoomOut={zoomOut}
+                            setZoomOut={setZoomOut}
+                          />
+                        }
+                      />
                     </Route>
                     <Route path="/Login" element={<Login />} />
                   </Routes>

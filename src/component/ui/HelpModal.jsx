@@ -1,9 +1,16 @@
 import React from 'react';
 import { Modal, Button, Table } from 'react-bootstrap';
 
-import { FaMousePointer } from 'react-icons/fa';
-import { BiHide } from 'react-icons/bi';
-import { RiArrowUpDownFill, RiArrowLeftRightFill } from 'react-icons/ri';
+import { FaPlay, FaStepBackward, FaStepForward } from 'react-icons/fa';
+import {
+  BiHide,
+  BiZoomIn,
+  BiZoomOut,
+  BiTime,
+  BiCurrentLocation,
+} from 'react-icons/bi';
+import { AiFillSetting } from 'react-icons/ai';
+import { ImBrightnessContrast, ImContrast } from 'react-icons/im';
 import PropTypes from 'prop-types';
 
 function HelpModal({ show, onHide }) {
@@ -16,48 +23,123 @@ function HelpModal({ show, onHide }) {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">ヘルプ</Modal.Title>
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
+          ヘルプ
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Table striped bordered hover>
+        <Table striped bordered>
           <tbody className="help-modal-table">
             <tr>
               <td>
-                <FaMousePointer size={30} />
+                <FaPlay size={30} color="#5c636a" />
               </td>
               <td>
-                <h4>天体の枠をクリックして選択可能になります</h4>
+                <h4>ブリンクを開始/停止します。sキーでも同じことができます</h4>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ whiteSpace: 'nowrap' }}>
+                <FaStepBackward size={30} color="#5c636a" />
+                <FaStepForward size={30} color="#5c636a" />
+              </td>
+              <td>
+                <h4>ページを移動します。左右キーでも同じことができます</h4>
+              </td>
+            </tr>
+            <tr>
+              <td
+                style={{ align: 'center', fontSize: '150%', color: '#5c636a' }}
+              >
+                sec
+              </td>
+              <td>
+                <h4>
+                  ブリンク速度を調節できます。入力欄をクリックしてプルダウンリストから速度を選べます
+                </h4>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ whiteSpace: 'nowrap' }}>
+                <BiZoomIn size={30} color="#5c636a" />
+                <BiZoomOut size={30} color="#5c636a" />
+              </td>
+              <td>
+                <h4>画像の拡大縮小をします。上下キーでも同じことができます</h4>
               </td>
             </tr>
             <tr>
               <td>
-                <BiHide size={30} />
+                <BiHide size={30} color="#5c636a" />
               </td>
               <td>
                 <h4>天体の枠、天体番号を非表示にします</h4>
               </td>
             </tr>
             <tr>
-              <td>
-                <RiArrowUpDownFill size={30} />
+              <td
+                style={{ align: 'center', fontSize: '150%', color: '#5c636a' }}
+              >
+                1
               </td>
               <td>
-                <h4>上下キーで拡大縮小をします</h4>
+                <h4>
+                  画像番号です。現在の画像の番号は灰色の背景になります。クリックすることでその画像に移動できます
+                </h4>
               </td>
             </tr>
             <tr>
               <td>
-                <RiArrowLeftRightFill size={30} />
+                <AiFillSetting size={30} color="#5c636a" />
               </td>
               <td>
-                <h4>左右キーでページを移動します</h4>
+                <h4>
+                  設定モーダルを開きます。画像の表示有無・画像のマスクの有無・手動測定モードでの拡大率・オートセーブの有無を選べます
+                </h4>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <ImBrightnessContrast size={30} color="#5c636a" />
+              </td>
+              <td>
+                <h4>画像の輝度を調節できる調節バーです</h4>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <ImContrast size={30} color="#5c636a" />
+              </td>
+              <td>
+                <h4>画像のコントラストを調節できる調節バーです</h4>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <BiTime size={30} color="#5c636a" />
+              </td>
+              <td>
+                <h4>表示している画像の撮影時刻です</h4>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <BiCurrentLocation size={30} color="#5c636a" />
+              </td>
+              <td>
+                <h4>マウスポインタの位置における画像のピクセル座標です</h4>
               </td>
             </tr>
           </tbody>
         </Table>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={onHide}>閉じる</Button>
+      <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button onClick={onHide} className="btn-style box_border_gray">
+          閉じる
+        </Button>
       </Modal.Footer>
     </Modal>
   );

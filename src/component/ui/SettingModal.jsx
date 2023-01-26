@@ -10,6 +10,7 @@ function SettingModal({
   defaultZoomRate,
   setIsAutoSave,
   isAutoSave,
+  disableShowAutoSave,
 }) {
   return (
     <Modal
@@ -18,47 +19,55 @@ function SettingModal({
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      className="setting_modal"
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">表示設定</Modal.Title>
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
+          表示設定
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h4>表示する画像の設定を行ってください。</h4>
-        <Row>
-          <Col sm={8}>画像</Col>
-          <Col style={{ textAlign: 'center' }}>画像表示</Col>
-          <Col style={{ textAlign: 'center' }}>マスクなし</Col>
-        </Row>
-        <hr />
-        {imageURLs.map((img) => (
-          <Row key={img.name} className="mb-5">
-            <Col sm={8}>{img.name}</Col>
-            <Col className="text-center">
-              <Form.Check
-                type="checkbox"
-                defaultChecked={img.visible}
-                onChange={(e) => {
-                  // eslint-disable-next-line no-param-reassign
-                  img.visible = e.target.checked;
-                }}
-              />
-            </Col>
-            <Col style={{ textAlign: 'center' }}>
-              <Form.Check
-                type="checkbox"
-                defaultChecked={img.nomasked}
-                onChange={(e) => {
-                  // eslint-disable-next-line no-param-reassign
-                  img.nomasked = e.target.checked;
-                }}
-              />
-            </Col>
+        <h4>表示する画像の設定</h4>
+        <Row className="setting_modal-content_wrap">
+          <Row>
+            <Col sm={8}>画像</Col>
+            <Col style={{ textAlign: 'center' }}>画像表示</Col>
+            <Col style={{ textAlign: 'center' }}>マスクなし</Col>
           </Row>
-        ))}
+          <hr />
+          {imageURLs.map((img) => (
+            <Row key={img.name} className="content_wrap-table">
+              <Col sm={8}>{img.name}</Col>
+              <Col className="text-center">
+                <Form.Check
+                  type="checkbox"
+                  defaultChecked={img.visible}
+                  onChange={(e) => {
+                    // eslint-disable-next-line no-param-reassign
+                    img.visible = e.target.checked;
+                  }}
+                />
+              </Col>
+              <Col style={{ textAlign: 'center' }}>
+                <Form.Check
+                  type="checkbox"
+                  defaultChecked={img.nomasked}
+                  onChange={(e) => {
+                    // eslint-disable-next-line no-param-reassign
+                    img.nomasked = e.target.checked;
+                  }}
+                />
+              </Col>
+            </Row>
+          ))}
+        </Row>
         {defaultZoomRate !== 0 && (
           <>
-            <h4>拡大率を選んでください。</h4>
-            <Form>
+            <h4>手動測定時の拡大モーダルの拡大率を選択</h4>
+            <Form className="setting_modal-content_wrap">
               <Row>
                 <Col>
                   <Form.Check
@@ -100,32 +109,36 @@ function SettingModal({
             </Form>
           </>
         )}
-        <h4>オートセーブ</h4>
-        <Row>
-          <Col>
-            <Form.Check
-              name="group2"
-              label="ON"
-              type="radio"
-              onChange={() => setIsAutoSave(true)}
-              defaultChecked={isAutoSave && 'true'}
-              className="m-3"
-            />
-          </Col>
-          <Col>
-            <Form.Check
-              name="group2"
-              label="OFF"
-              type="radio"
-              onChange={() => setIsAutoSave(false)}
-              defaultChecked={!isAutoSave && 'true'}
-              className="m-3"
-            />
-          </Col>
-        </Row>
+        {!disableShowAutoSave && (
+          <>
+            <h4>オートセーブ ON/OFF 切り替え</h4>
+            <Row className="setting_modal-content_wrap">
+              <Col>
+                <Form.Check
+                  name="group2"
+                  label="ON"
+                  type="radio"
+                  onChange={() => setIsAutoSave(true)}
+                  defaultChecked={isAutoSave && 'true'}
+                />
+              </Col>
+              <Col>
+                <Form.Check
+                  name="group2"
+                  label="OFF"
+                  type="radio"
+                  onChange={() => setIsAutoSave(false)}
+                  defaultChecked={!isAutoSave && 'true'}
+                />
+              </Col>
+            </Row>
+          </>
+        )}
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={onHide}>閉じる</Button>
+      <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button onClick={onHide} className="btn-style box_border_gray">
+          閉じる
+        </Button>
       </Modal.Footer>
     </Modal>
   );
@@ -136,10 +149,11 @@ export default SettingModal;
 SettingModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   // subImageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setDefaultZoomRate: PropTypes.func.isRequired,
   defaultZoomRate: PropTypes.number.isRequired,
   setIsAutoSave: PropTypes.func.isRequired,
   isAutoSave: PropTypes.bool.isRequired,
+  disableShowAutoSave: PropTypes.bool.isRequired,
 };

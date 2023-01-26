@@ -7,12 +7,12 @@ import {
   ModeStatusContext,
   PageContext,
   StarPositionContext,
+  PredictedStarPositionContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import NewStarModal from '../component/model/COIAS/NewStarModal';
-import COIASToolBar from '../component/model/MeasurementCommon/COIASToolBar';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
 import StarsList from '../component/model/MeasurementCommon/StarsList';
@@ -20,11 +20,11 @@ import useEventListener from '../hooks/useEventListener';
 
 // eslint-disable-next-line no-use-before-define
 COIAS.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   setImageURLs: PropTypes.func.isRequired,
-  subImageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  subImageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   setSubImageURLs: PropTypes.func.isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.string).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
   start: PropTypes.bool.isRequired,
@@ -35,6 +35,10 @@ COIAS.propTypes = {
   setBack: PropTypes.func.isRequired,
   setting: PropTypes.bool.isRequired,
   setSetting: PropTypes.func.isRequired,
+  zoomIn: PropTypes.bool.isRequired,
+  setZoomIn: PropTypes.func.isRequired,
+  zoomOut: PropTypes.bool.isRequired,
+  setZoomOut: PropTypes.func.isRequired,
 };
 
 function COIAS({
@@ -53,8 +57,11 @@ function COIAS({
   setBack,
   setting,
   setSetting,
+  zoomIn,
+  setZoomIn,
+  zoomOut,
+  setZoomOut,
 }) {
-  const [isSelect, setIsSelect] = useState(true);
   const [isHide, setIsHide] = useState(false);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
@@ -73,53 +80,28 @@ function COIAS({
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const wrapperRef = useRef(null);
   const [validImages, setValidImages] = useState([]);
+  const [timeList, setTimeList] = useState([]);
   const navigate = useNavigate();
 
   const { starPos, setStarPos } = useContext(StarPositionContext);
+  const { setPredictedStarPos } = useContext(PredictedStarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
 
-  const [scaleArray, setScaleArray] = useState([
-    { id: 1, done: true },
-    { id: 1.5, done: false },
-    { id: 2, done: false },
-    { id: 2.5, done: false },
-    { id: 3, done: false },
-    { id: 3.5, done: false },
-    { id: 4, done: false },
-    { id: 4.5, done: false },
-    { id: 5, done: false },
-    { id: 5.5, done: false },
-    { id: 6, done: false },
-    { id: 6.5, done: false },
-    { id: 7, done: false },
-    { id: 7.5, done: false },
-    { id: 8, done: false },
-    { id: 8.5, done: false },
-    { id: 9, done: false },
-    { id: 9.5, done: false },
-    { id: 10, done: false },
-    { id: 10.5, done: false },
-    { id: 11, done: false },
-    { id: 11.5, done: false },
-    { id: 12, done: false },
-    { id: 12.5, done: false },
-    { id: 13, done: false },
-    { id: 13.5, done: false },
-    { id: 14, done: false },
-    { id: 14.5, done: false },
-    { id: 15, done: false },
-    { id: 15.5, done: false },
-    { id: 16, done: false },
-    { id: 16.5, done: false },
-    { id: 17, done: false },
-    { id: 17.5, done: false },
-    { id: 18, done: false },
-    { id: 18.5, done: false },
-    { id: 19, done: false },
-    { id: 19.5, done: false },
-    { id: 20, done: false },
-  ]);
+  // ズーム時に使用する状態管理配列
+  const [scaleArray, setScaleArray] = useState(
+    Array(39)
+      .fill({ id: null, done: null })
+      .map((_, index) => {
+        let element = {};
+        if (index === 0) {
+          element = { id: 1, done: true };
+        } else {
+          element = { id: 1 + 0.5 * index, done: false };
+        }
+        return element;
+      }),
+  );
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;
@@ -142,7 +124,8 @@ function COIAS({
         setAlertButtonMessage('探索準備に戻る');
       }
 
-      setFileNum(dataList.length / 2);
+      const fileNumbers = dataList.length / 2;
+      setFileNum(fileNumbers);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -163,6 +146,16 @@ function COIAS({
       setImageURLs(toObjectArray);
       setSubImageURLs(toObjectArray);
       setLoading(false);
+
+      await axios
+        .get(`${reactApiUri}time_list`)
+        .then((res) => res.data.result)
+        .then((tmpTimeList) => {
+          if (tmpTimeList.length === fileNumbers) {
+            setTimeList(tmpTimeList);
+          }
+        })
+        .catch(() => {});
     };
     const getMemo = async () => {
       await axios
@@ -179,6 +172,7 @@ function COIAS({
       COIAS: true,
       Manual: false,
       Report: false,
+      FinalCheck: false,
     });
   }, []);
 
@@ -265,6 +259,33 @@ function COIAS({
         });
       }
 
+      const toPredictedObject = {};
+
+      const res4 = await axios
+        .get(`${reactApiUri}predicted_disp`)
+        .catch(() => {});
+      if (res4 !== undefined) {
+        const predictedDisp = await res4.data.result;
+        predictedDisp.forEach((item) => {
+          let star = toPredictedObject[item[0]];
+          if (!star) {
+            toPredictedObject[item[0]] = {
+              name: item[0],
+              page: Array(fileNum).fill(null),
+              isSelected: false,
+              isKnown: !(item[0].startsWith('H') && item[0].length === 7),
+            };
+            star = toPredictedObject[item[0]];
+          }
+          star.page[item[1]] = {
+            name: item[0],
+            x: parseFloat(item[2], 10),
+            y: parseFloat(item[3], 10),
+            isPredict: item[4] === '0',
+          };
+        });
+      }
+
       setSelectedListState(
         Object.values(toObject).map((star) => {
           if (star.isSelected) {
@@ -275,6 +296,7 @@ function COIAS({
       );
       setStarPos(toObject);
       setOriginalStarPos(toObject);
+      setPredictedStarPos(toPredictedObject);
       setLoading(false);
     };
     setStarPos({});
@@ -337,6 +359,7 @@ function COIAS({
               name: item[0],
               page: Array(fileNum).fill(null),
               isSelected: false,
+              isKnown: !(item[0].startsWith('H') && item[0].length === 7),
             };
             star = toObject[item[0]];
           }
@@ -380,13 +403,6 @@ function COIAS({
 
   useEventListener('keydown', (e) => {
     e.preventDefault();
-    const scrollYRate =
-      wrapperRef.current.scrollTop /
-      (wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight);
-
-    const scrollXRate =
-      wrapperRef.current.scrollLeft /
-      (wrapperRef.current.scrollWidth - wrapperRef.current.clientWidth);
 
     if (e.key === 's') {
       setStart(!start);
@@ -395,23 +411,9 @@ function COIAS({
     } else if (e.key === 'ArrowLeft') {
       setBack(!back);
     } else if (e.key === 'ArrowUp') {
-      const currentIndex = scaleArray.findIndex((item) => item.done);
-      const arrayCopy = scaleArray.concat();
-      if (currentIndex < arrayCopy.length - 1) {
-        arrayCopy[currentIndex].done = false;
-        arrayCopy[currentIndex + 1].done = true;
-        wrapperRef.current.scrollBy(400 * scrollXRate, 400 * scrollYRate);
-      }
-      setScaleArray(arrayCopy);
+      setZoomIn(!zoomIn);
     } else if (e.key === 'ArrowDown') {
-      const currentIndex = scaleArray.findIndex((item) => item.done);
-      const arrayCopy = scaleArray.concat();
-      if (currentIndex > 0) {
-        arrayCopy[currentIndex].done = false;
-        arrayCopy[currentIndex - 1].done = true;
-        wrapperRef.current.scrollBy(-400 * scrollXRate, -400 * scrollYRate);
-      }
-      setScaleArray(arrayCopy);
+      setZoomOut(!zoomOut);
     }
   });
 
@@ -441,19 +443,18 @@ function COIAS({
             setValidImages={setValidImages}
             subImageURLs={subImageURLs}
             setSetting={setSetting}
+            scaleArray={scaleArray}
+            setScaleArray={setScaleArray}
+            zoomIn={zoomIn}
+            setZoomIn={setZoomIn}
+            zoomOut={zoomOut}
+            setZoomOut={setZoomOut}
+            wrapperRef={wrapperRef}
+            isHide={isHide}
+            setIsHide={setIsHide}
           />
           <Container fluid>
             <Row className="m-0 p-0">
-              <COIASToolBar
-                isSelect={isSelect}
-                setIsSelect={setIsSelect}
-                brightnessVal={brightnessVal}
-                contrastVal={contrastVal}
-                setBrightnessVal={setBrightnessVal}
-                setContrastVal={setContrastVal}
-                isHide={isHide}
-                setIsHide={setIsHide}
-              />
               <Col>
                 <PanZoom
                   imageURLs={imageURLs}
@@ -472,21 +473,26 @@ function COIAS({
                   wrapperRef={wrapperRef}
                   setting={setting}
                   setSetting={setSetting}
+                  timeList={timeList}
+                  setBrightnessVal={setBrightnessVal}
+                  setContrastVal={setContrastVal}
                 />
               </Col>
             </Row>
           </Container>
         </Col>
-        <div className="coias-star-list-wrraper">
+        <div
+          className="coias-star-list-wrraper"
+          style={{ display: 'flex', flexDirection: 'column', width: '200px' }}
+        >
           <StarsList
             disable={disable}
             writeMemo={isAutoSave ? writeMemo : () => {}}
             selectedListState={selectedListState}
             setSelectedListState={setSelectedListState}
           />
-          <div className="star-list-button">
+          <div className="coias-list_button">
             <Button
-              variant="success"
               onClick={() => {
                 if (disable) {
                   setOriginalStarPos(starPos);
@@ -497,10 +503,12 @@ function COIAS({
                     COIAS: true,
                     Manual: false,
                     Report: false,
+                    FinalCheck: false,
                   });
                 }
                 setDisable(!disable);
               }}
+              className="btn-style box_blue"
               size="lg"
             >
               {disable ? '再描画' : 'やり直す'}
@@ -531,6 +539,7 @@ function COIAS({
         setShow={setShowProcessError}
         errorPlace={errorPlace}
         errorReason={errorReason}
+        setLoading={setLoading}
       />
     </div>
   );

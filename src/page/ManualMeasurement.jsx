@@ -20,7 +20,7 @@ import ErrorModal from '../component/general/ErrorModal';
 import ManualStarModal from '../component/model/ManualMeasurement/ManualStarModal';
 import ManualToolBar from '../component/model/ManualMeasurement/ManualToolBar';
 import RenameNewStarModal from '../component/model/ManualMeasurement/RenameNewStarModal';
-import COIASToolBar from '../component/model/MeasurementCommon/COIASToolBar';
+import DeleteStarModal from '../component/model/ManualMeasurement/DeleteStarModal';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
 import StarsList from '../component/model/MeasurementCommon/StarsList';
@@ -43,9 +43,12 @@ function ManualMeasurement({
   originalStarPos,
   setting,
   setSetting,
+  zoomIn,
+  setZoomIn,
+  zoomOut,
+  setZoomOut,
 }) {
   const [show, setShow] = useState(false);
-  const [isSelect, setIsSelect] = useState(true);
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
   const [isHide, setIsHide] = useState(false);
@@ -64,47 +67,20 @@ function ManualMeasurement({
   const [errorReason, setErrorReason] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
   const [positionList, setPositionList] = useState([[]]);
-  const [scaleArray, setScaleArray] = useState([
-    { id: 1, done: true },
-    { id: 1.5, done: false },
-    { id: 2, done: false },
-    { id: 2.5, done: false },
-    { id: 3, done: false },
-    { id: 3.5, done: false },
-    { id: 4, done: false },
-    { id: 4.5, done: false },
-    { id: 5, done: false },
-    { id: 5.5, done: false },
-    { id: 6, done: false },
-    { id: 6.5, done: false },
-    { id: 7, done: false },
-    { id: 7.5, done: false },
-    { id: 8, done: false },
-    { id: 8.5, done: false },
-    { id: 9, done: false },
-    { id: 9.5, done: false },
-    { id: 10, done: false },
-    { id: 10.5, done: false },
-    { id: 11, done: false },
-    { id: 11.5, done: false },
-    { id: 12, done: false },
-    { id: 12.5, done: false },
-    { id: 13, done: false },
-    { id: 13.5, done: false },
-    { id: 14, done: false },
-    { id: 14.5, done: false },
-    { id: 15, done: false },
-    { id: 15.5, done: false },
-    { id: 16, done: false },
-    { id: 16.5, done: false },
-    { id: 17, done: false },
-    { id: 17.5, done: false },
-    { id: 18, done: false },
-    { id: 18.5, done: false },
-    { id: 19, done: false },
-    { id: 19.5, done: false },
-    { id: 20, done: false },
-  ]);
+  // ズーム時に使用する状態管理配列
+  const [scaleArray, setScaleArray] = useState(
+    Array(39)
+      .fill({ id: null, done: null })
+      .map((_, index) => {
+        let element = {};
+        if (index === 0) {
+          element = { id: 1, done: true };
+        } else {
+          element = { id: 1 + 0.5 * index, done: false };
+        }
+        return element;
+      }),
+  );
   const [renameNewStarModalShow, setRenameNewStarModalShow] = useState(false);
   const [oldStarName, setOldStarName] = useState('');
 
@@ -112,6 +88,11 @@ function ManualMeasurement({
 
   const navigate = useNavigate();
   const [fileNum, setFileNum] = useState(0);
+  const [timeList, setTimeList] = useState([]);
+
+  const [deleteNameList, setDeleteNameList] = useState([]);
+  const [deleteModalShow, setDeleteModalShow] = useState(false);
+
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
@@ -127,6 +108,21 @@ function ManualMeasurement({
   const onClickFinishButton = async (filteredList = []) => {
     const targetList = filteredList.length === 0 ? positionList : filteredList;
     await axios.put(`${reactApiUri}memo_manual`, targetList);
+  };
+
+  const writeManualDeleteList = async () => {
+    const deleteStrLinesList = [];
+    Object.keys(starPos).forEach((key) => {
+      starPos[key].page.forEach((item, index) => {
+        if (item) {
+          if (item.isDeleted) {
+            const deleteStrLine = `${item.name} ${index}`;
+            deleteStrLinesList.push(deleteStrLine);
+          }
+        }
+      });
+    });
+    await axios.put(`${reactApiUri}manual_delete_list`, deleteStrLinesList);
   };
 
   const removePositionListByCheckState = () => {
@@ -159,7 +155,9 @@ function ManualMeasurement({
     const getImages = async () => {
       const response = await axios.put(`${reactApiUri}copy`);
       const dataList = await response.data.result.sort();
-      setFileNum(dataList.length / 2);
+
+      const fileNumbers = dataList.length / 2;
+      setFileNum(fileNumbers);
 
       await dataList.forEach((data) => {
         const idx = data.slice(0, 2);
@@ -178,14 +176,24 @@ function ManualMeasurement({
         o.nomasked = false;
       });
       setImageURLs(toObjectArray);
+
+      await axios
+        .get(`${reactApiUri}time_list`)
+        .then((res) => res.data.result)
+        .then((tmpTimeList) => {
+          if (tmpTimeList.length === fileNumbers) {
+            setTimeList(tmpTimeList);
+          }
+        })
+        .catch(() => {});
     };
 
     getImages();
-
     setModeStatus({
       COIAS: true,
       Manual: true,
       Report: false,
+      FinalCheck: false,
     });
   }, []);
 
@@ -218,12 +226,23 @@ function ManualMeasurement({
               name: item[0],
               x: parseFloat(item[2], 10),
               y: parseFloat(item[3], 10),
+              isDeleted: false,
             };
           });
         })
         .catch((error) => {
           console.error(error);
         });
+
+      await axios
+        .get(`${reactApiUri}manual_delete_list`)
+        .then((res) => res.data.result)
+        .then((deleteStarList) =>
+          deleteStarList.forEach((deleteStar) => {
+            toObject[deleteStar[0]].page[deleteStar[1]].isDeleted = true;
+          }),
+        )
+        .catch(() => {});
 
       // TODO : 動的なエラーハンドリング
       if (toObject['awk:']) {
@@ -372,43 +391,26 @@ function ManualMeasurement({
       COIAS: true,
       Manual: true,
       Report: true,
+      FinalCheck: false,
     });
   };
 
   useEventListener('keydown', (e) => {
     e.preventDefault();
-    const scrollYRate =
-      wrapperRef.current.scrollTop /
-      (wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight);
 
-    const scrollXRate =
-      wrapperRef.current.scrollLeft /
-      (wrapperRef.current.scrollWidth - wrapperRef.current.clientWidth);
-
-    if (e.key === 's') {
-      setStart(!start);
-    } else if (e.key === 'ArrowRight') {
-      setNext(!next);
-    } else if (e.key === 'ArrowLeft') {
-      setBack(!back);
-    } else if (e.key === 'ArrowUp') {
-      const currentIndex = scaleArray.findIndex((item) => item.done);
-      const arrayCopy = scaleArray.concat();
-      if (currentIndex < arrayCopy.length - 1) {
-        arrayCopy[currentIndex].done = false;
-        arrayCopy[currentIndex + 1].done = true;
-        wrapperRef.current.scrollBy(400 * scrollXRate, 400 * scrollYRate);
+    if (!manualStarModalShow && !confirmationModalShow && !deleteModalShow) {
+      if (e.key === 's') {
+        setStart(!start);
+      } else if (e.key === 'ArrowRight') {
+        setNext(!next);
+      } else if (e.key === 'ArrowLeft') {
+        setBack(!back);
       }
-      setScaleArray(arrayCopy);
+    }
+    if (e.key === 'ArrowUp') {
+      setZoomIn(!zoomIn);
     } else if (e.key === 'ArrowDown') {
-      const currentIndex = scaleArray.findIndex((item) => item.done);
-      const arrayCopy = scaleArray.concat();
-      if (currentIndex > 0) {
-        arrayCopy[currentIndex].done = false;
-        arrayCopy[currentIndex - 1].done = true;
-        wrapperRef.current.scrollBy(-400 * scrollXRate, -400 * scrollYRate);
-      }
-      setScaleArray(arrayCopy);
+      setZoomOut(!zoomOut);
     }
   });
 
@@ -435,19 +437,19 @@ function ManualMeasurement({
             handleClick={handleClick}
             originalStarPos={originalStarPos}
             loading={loading}
+            setSetting={setSetting}
+            scaleArray={scaleArray}
+            setScaleArray={setScaleArray}
+            zoomIn={zoomIn}
+            setZoomIn={setZoomIn}
+            zoomOut={zoomOut}
+            setZoomOut={setZoomOut}
+            wrapperRef={wrapperRef}
+            isHide={isHide}
+            setIsHide={setIsHide}
           />
           <Container fluid>
             <Row className="m-0 p-0">
-              <COIASToolBar
-                isSelect={isSelect}
-                setIsSelect={setIsSelect}
-                brightnessVal={brightnessVal}
-                contrastVal={contrastVal}
-                setBrightnessVal={setBrightnessVal}
-                setContrastVal={setContrastVal}
-                isHide={isHide}
-                setIsHide={setIsHide}
-              />
               <Col className="manual-mode-control-view">
                 <PanZoom
                   imageURLs={imageURLs}
@@ -472,6 +474,13 @@ function ManualMeasurement({
                   wrapperRef={wrapperRef}
                   setRenameNewStarModalShow={setRenameNewStarModalShow}
                   setOldStarName={setOldStarName}
+                  setSetting={setSetting}
+                  setting={setting}
+                  timeList={timeList}
+                  setBrightnessVal={setBrightnessVal}
+                  setContrastVal={setContrastVal}
+                  setDeleteNameList={setDeleteNameList}
+                  setDeleteModalShow={setDeleteModalShow}
                 />
               </Col>
             </Row>
@@ -479,10 +488,8 @@ function ManualMeasurement({
         </Col>
 
         <div
-          className={
-            isRedisp ? 'coias-star-list-wrraper' : 'manual-star-list-wrraper'
-          }
-          style={{ width: isRedisp ? '10vw' : '20vw' }}
+          className="manual-star-list-wrraper"
+          style={{ width: '250px', display: 'flex', flexFlow: 'column' }}
         >
           {isRedisp ? (
             <StarsList
@@ -518,11 +525,10 @@ function ManualMeasurement({
           >
             {isEditMode() && (
               <Button
-                variant="danger"
                 onClick={() => {
                   removePositionListByCheckState();
                 }}
-                style={{ marginRight: '90px' }}
+                className="btn-style box_border_blue"
                 size="lg"
               >
                 削除
@@ -532,7 +538,6 @@ function ManualMeasurement({
               <Spinner size="md" animation="border" />
             ) : (
               <Button
-                variant="success"
                 onClick={() => {
                   if (isRedisp) {
                     setStarPos(originalStarPos);
@@ -540,12 +545,14 @@ function ManualMeasurement({
                       COIAS: true,
                       Manual: true,
                       Report: false,
+                      FinalCheck: false,
                     });
                   } else {
                     handleClick();
                   }
                   setIsRedisp(!isRedisp);
                 }}
+                className="btn-style box_blue"
                 size="lg"
               >
                 {isRedisp ? 'やり直す' : '再描画'}
@@ -620,6 +627,7 @@ function ManualMeasurement({
           setIsRedisp(!isRedisp);
           setStarPos(originalStarPos);
         }}
+        setLoading={setLoading}
       />
       <RenameNewStarModal
         show={renameNewStarModalShow}
@@ -642,6 +650,20 @@ function ManualMeasurement({
           starPos[oldStarName]?.name !== starPos[oldStarName]?.newName
         }
       />
+      <DeleteStarModal
+        show={deleteModalShow}
+        onExit={() => {
+          setDeleteModalShow(false);
+          setDeleteNameList([]);
+        }}
+        onExited={() => {
+          if (isAutoSave) {
+            writeManualDeleteList();
+          }
+          setDeleteNameList([]);
+        }}
+        deleteNameList={deleteNameList}
+      />
     </div>
   );
 }
@@ -649,11 +671,11 @@ function ManualMeasurement({
 export default ManualMeasurement;
 
 ManualMeasurement.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.string).isRequired,
   start: PropTypes.bool.isRequired,
   setStart: PropTypes.func.isRequired,
   next: PropTypes.bool.isRequired,
@@ -664,4 +686,8 @@ ManualMeasurement.propTypes = {
   setLeadStarNumber: PropTypes.func.isRequired,
   setting: PropTypes.bool.isRequired,
   setSetting: PropTypes.func.isRequired,
+  zoomIn: PropTypes.bool.isRequired,
+  setZoomIn: PropTypes.func.isRequired,
+  zoomOut: PropTypes.bool.isRequired,
+  setZoomOut: PropTypes.func.isRequired,
 };

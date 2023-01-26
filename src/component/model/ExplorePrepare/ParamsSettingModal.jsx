@@ -69,6 +69,7 @@ function ParamsSettingModal({
                 COIAS: false,
                 Manual: false,
                 Report: false,
+                FinalCheck: false,
               });
             } else if (isChangedArray[0] || isChangedArray[1]) {
               setMenunames((prevMenunames) =>
@@ -87,6 +88,7 @@ function ParamsSettingModal({
                 COIAS: false,
                 Manual: false,
                 Report: false,
+                FinalCheck: false,
               });
             }
             setParameters({

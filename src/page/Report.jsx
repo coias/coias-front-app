@@ -1,15 +1,24 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
+import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
-import GetProgress from '../component/general/GetProgress';
+import { ModeStatusContext } from '../component/functional/context';
+
+const userId = crypto.randomUUID();
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
+  const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
 
-  const [sendMpcOBS, setSendMpcOBS] = useState('');
+  const { lastJsonMessage } = useWebSocket(socketUrl, {
+    shouldReconnect: () => true,
+    reconnectAttempts: 3,
+    reconnectInterval: 3000,
+  });
+
   const [sendMpcMEA, setSendMpcMEA] = useState('');
   const [sendMpcBody, setSendMpcBody] = useState([]);
   const [sendMpc, setSendMpc] = useState([]);
@@ -21,14 +30,24 @@ function Report() {
   const [errorReason, setErrorReason] = useState('');
 
   const [showProgress, setShowProgress] = useState(false);
-  const [progress, setProgress] = useState('');
+  const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
 
   const makeSendMpc = async () => {
     const header = [
       'COD 568',
       'CON S. Urakawa, Bisei Spaceguard Center, 1716-3, Okura, Bisei',
       'CON Ibara, 714-1411 Okayama, Japan [urakawa@spaceguard.or.jp]',
-      `OBS ${sendMpcOBS}`,
+      `OBS H. Aihara, Y. AlSayyad, M. Ando, R. Armstrong, J. Bosch, E. Egami,`,
+      `H. Furusawa, J. Furusawa, S. Harasawa, Y. Harikane, B-H, Hsieh, H. Ikeda,`,
+      `K. Ito, I. Iwata, T. Kodama, M. Koike, M. Kokubo, Y. Komiyama, X. Li, Y. Liang,`,
+      `Y-T. Lin, R. H. Lupton, N. B. Lust, L. A. MacArthur, K. Mawatari, S. Mineo,`,
+      `H. Miyatake, S. Miyazaki, S. More, T. Morishima, H. Murayama, K. Nakajima,`,
+      `F. Nakata, A. J. Nishizawa, M. Oguri, N. Okabe, Y. Okura, Y. Ono, K. Osato,`,
+      `M. Ouchi, Y-C. Pan, A. A. Plazas Malagón, P. A. Price, S. L. Reed,`,
+      `E. S. Rykoff, T. Shibuya, M. Simunovic, M. A. Strauss, K. Sugimori, Y. Suto,`,
+      `N. Suzuki, M. Takada, Y. Takagi, T. Takata, S. Takita, M. Tanaka, S. Tang,`,
+      `D. S. Taranu, T. Terai, Y. Toba, E. L. Turner, H. Uchiyama,`,
+      `B. Vijarnwannaluk, C. Z. Waters, Y. Yamada, N. Yamamoto, T. Yamashita`,
       `MEA ${sendMpcMEA}`,
       'TEL 8.2-m f/2.0 reflector + CCD(HSC)',
       'NET Pan-STARRS(PS1) DR1 catalog',
@@ -61,13 +80,12 @@ function Report() {
   const getMpc = async () => {
     setLoading(true);
     setShowProgress(true);
-    setProgress('0%');
-    const timerID = setInterval(
-      () => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'),
-      250,
-    );
     await axios
-      .put(`${reactApiUri}AstsearchR_afterReCOIAS`)
+      .put(
+        modeStatus.FinalCheck
+          ? `${reactApiUri}get_mpc`
+          : `${reactApiUri}AstsearchR_afterReCOIAS`,
+      )
       .then((response) => {
         const mpctext = response.data.send_mpc;
         const result = mpctext.split('\n');
@@ -81,8 +99,12 @@ function Report() {
             return trimedStr;
           }),
         );
+        setModeStatus((prevModeStatus) => {
+          const modeStatusCopy = { ...prevModeStatus };
+          modeStatusCopy.FinalCheck = true;
+          return modeStatusCopy;
+        });
         setLoading(false);
-        clearInterval(timerID);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -92,7 +114,6 @@ function Report() {
           setShowProcessError(true);
         }
         setLoading(false);
-        clearInterval(timerID);
       });
   };
 
@@ -128,52 +149,45 @@ function Report() {
 
   useEffect(() => {
     makeSendMpc();
-  }, [sendMpcMEA, sendMpcOBS, sendMpcBody]);
+  }, [sendMpcMEA, sendMpcBody]);
 
   return (
-    <div>
-      <Form>
-        <Form.Group className="p-3 w-75">
-          <Row xs="auto">
-            <Col md={1}>
-              <h4>OBS </h4>
-            </Col>
-            <Col md={10} style={{ marginLeft: '20px' }}>
-              <Form.Control
-                placeholder="複数の場合は空白区切りで入力してください"
-                onChange={(e) => {
-                  setSendMpcOBS(e.target.value);
-                }}
-              />
-            </Col>
-          </Row>
-        </Form.Group>
-        <Form.Group className="p-3 w-75">
-          <Row xs="auto">
-            <Col md={1}>
-              <h4>MEA </h4>
-            </Col>
-            <Col md={10} style={{ marginLeft: '20px' }}>
-              <Form.Control
-                placeholder="複数の場合は空白区切りで入力してください"
-                onChange={(e) => {
-                  setSendMpcMEA(e.target.value);
-                }}
-              />
-            </Col>
-          </Row>
-        </Form.Group>
-      </Form>
-      <Row xs="auto" className="mt-3">
+    <div className="report-wrap">
+      <Row xs="auto" className="report-wrap_form">
         <Col>
-          <h4 style={{ marginLeft: '13px' }}>レポート </h4>
+          <h4>OBS </h4>
+        </Col>
+        <Col md={8}>
+          <Form.Control
+            placeholder="観測者名: default = HSC observers (変更したい場合はsend_mpc.txtをダウンロードした後に直接編集してください)"
+            disabled
+          />
+        </Col>
+      </Row>
+      <Row xs="auto" className="report-wrap_form">
+        <Col>
+          <h4>MEA </h4>
+        </Col>
+        <Col md={8}>
+          <Form.Control
+            style={{ textOverflow: 'ellipsis' }}
+            placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入. (例) Y. Endo, M. Konohata, A. Manaka"
+            onChange={(e) => {
+              setSendMpcMEA(e.target.value);
+            }}
+          />
+        </Col>
+      </Row>
+      <Row xs="auto">
+        <Col>
+          <h4>レポート </h4>
         </Col>
         <Col md={8}>
           <div
             style={{
-              marginLeft: '12px',
+              width: '100%',
               backgroundColor: 'black',
-              height: '63vh',
+              height: '61vh',
               overflow: 'scroll',
             }}
           >
@@ -182,49 +196,38 @@ function Report() {
                 sendMpc.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
-        </Col>
-      </Row>
-      <Row className="d-flex ">
-        <Col>
-          <Button
-            variant="primary"
-            onClick={() => {
-              getMpc();
-            }}
-            className="mt-3"
-            style={{ marginLeft: '144px' }}
-          >
-            レポート作成をやり直す
-          </Button>
-        </Col>
-        <Col md={4} style={{ marginRight: '222px' }}>
-          <Button
-            variant="primary"
-            onClick={() => {
-              downloadFIle();
-            }}
-            className="mt-3"
-          >
-            Download send_mpc
-          </Button>
-
-          <Button
-            variant="primary"
-            onClick={() => {
-              downloadFinalAllFIle();
-            }}
-            className="mt-3"
-            style={{ marginLeft: '10px' }}
-          >
-            Download final_all
-          </Button>
+          <div className="report-btn_wrap">
+            <Button
+              variant="primary"
+              onClick={() => {
+                getMpc();
+              }}
+              className="btn-style box_blue"
+            >
+              レポート作成をやり直す
+            </Button>
+            <div className="btn_wrap-content">
+              <span>ファイルをダウンロード</span>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  downloadFIle();
+                  downloadFinalAllFIle();
+                }}
+                className="btn-style box_blue"
+                disabled={!modeStatus.FinalCheck}
+              >
+                send_mpc.txt and final_all.txt
+              </Button>
+            </div>
+          </div>
         </Col>
       </Row>
       <LoadingButton
         loading={loading}
         processName="レポートデータ取得中…"
         showProgress={showProgress}
-        progress={progress}
+        lastJsonMessage={lastJsonMessage}
       />
       <AlertModal
         alertModalShow={showError}
@@ -239,6 +242,7 @@ function Report() {
         setShow={setShowProcessError}
         errorPlace={errorPlace}
         errorReason={errorReason}
+        setLoading={setLoading}
       />
     </div>
   );

@@ -36,8 +36,8 @@ function ManualToolBar({
 
   return (
     <div>
-      <Row className="m-3">
-        <Col className="d-flex justify-content-between">
+      <Row className="m-3" style={{ height: '60px' }}>
+        <Col className="manual-toolbar_wrap">
           <p style={{ margin: 'auto 0', fontWeight: 'bold', color: '#5C636A' }}>
             天体一覧
           </p>
@@ -45,6 +45,7 @@ function ManualToolBar({
             onClick={() => {
               onClickAddButton();
             }}
+            className="btn-style box_blue"
           >
             <BiAddToQueue size={30} />
           </Button>
@@ -67,7 +68,7 @@ function ManualToolBar({
                   onClick={() => onClickAccordion(index)}
                   className="w-100"
                 >
-                  <Accordion.Header>
+                  <Accordion.Header style={{ color: '#28297e' }}>
                     {`#H${'000000'.slice(
                       (leadStarNumber + index).toString().length - 6,
                     )}${leadStarNumber + index}`}
