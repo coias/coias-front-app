@@ -17,7 +17,7 @@ import useEventListener from '../hooks/useEventListener';
 
 // eslint-disable-next-line no-use-before-define
 FinalCheck.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
   start: PropTypes.bool.isRequired,

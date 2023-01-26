@@ -63,7 +63,7 @@ ConfirmationModal.propTypes = {
   onExit: PropTypes.func,
   onClickYes: PropTypes.func.isRequired,
   confirmMessage: PropTypes.string.isRequired,
-  positionList: PropTypes.arrayOf(PropTypes.array),
+  positionList: PropTypes.arrayOf(PropTypes.string),
   activeKey: PropTypes.number,
   leadStarNumber: PropTypes.number,
 };

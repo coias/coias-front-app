@@ -47,10 +47,10 @@ PanZoom.defaultProps = {
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   brightnessVal: PropTypes.number,
   contrastVal: PropTypes.number,
-  positionList: PropTypes.arrayOf(PropTypes.array),
+  positionList: PropTypes.arrayOf(PropTypes.string),
   isHide: PropTypes.bool.isRequired,
   disable: PropTypes.bool,
   setManualStarModalShow: PropTypes.func,
@@ -63,8 +63,8 @@ PanZoom.propTypes = {
   writeMemo: PropTypes.func,
   setConfirmMessage: PropTypes.func,
   setSelectedListState: PropTypes.func,
-  scaleArray: PropTypes.arrayOf(PropTypes.object).isRequired,
-  wrapperRef: PropTypes.objectOf(PropTypes.object).isRequired,
+  scaleArray: PropTypes.arrayOf(PropTypes.string).isRequired,
+  wrapperRef: PropTypes.objectOf(PropTypes.string).isRequired,
   setRenameNewStarModalShow: PropTypes.func,
   setOldStarName: PropTypes.func,
   setting: PropTypes.bool.isRequired,

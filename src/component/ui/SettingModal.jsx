@@ -149,7 +149,7 @@ export default SettingModal;
 SettingModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   // subImageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setDefaultZoomRate: PropTypes.func.isRequired,
   defaultZoomRate: PropTypes.number.isRequired,

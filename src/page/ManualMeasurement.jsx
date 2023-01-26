@@ -671,11 +671,11 @@ function ManualMeasurement({
 export default ManualMeasurement;
 
 ManualMeasurement.propTypes = {
-  imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  imageURLs: PropTypes.arrayOf(PropTypes.string).isRequired,
   setImageURLs: PropTypes.func.isRequired,
   intervalRef: PropTypes.objectOf(PropTypes.func).isRequired,
   setOriginalStarPos: PropTypes.func.isRequired,
-  originalStarPos: PropTypes.objectOf(PropTypes.object).isRequired,
+  originalStarPos: PropTypes.objectOf(PropTypes.string).isRequired,
   start: PropTypes.bool.isRequired,
   setStart: PropTypes.func.isRequired,
   next: PropTypes.bool.isRequired,

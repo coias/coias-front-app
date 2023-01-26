@@ -28,7 +28,7 @@ import ParamsSettingModal from '../component/model/ExplorePrepare/ParamsSettingM
 ExplorePrepare.propTypes = {
   fileNames: PropTypes.arrayOf(PropTypes.string).isRequired,
   setFileNames: PropTypes.func.isRequired,
-  menunames: PropTypes.arrayOf(PropTypes.object).isRequired,
+  menunames: PropTypes.arrayOf(PropTypes.string).isRequired,
   setMenunames: PropTypes.func.isRequired,
   isAuto: PropTypes.bool.isRequired,
   setIsAuto: PropTypes.func.isRequired,
