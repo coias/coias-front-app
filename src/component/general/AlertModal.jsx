@@ -11,11 +11,20 @@ function AlertModal({
   return (
     <Modal show={alertModalShow} size="sm" backdrop="static">
       <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">エラー</Modal.Title>
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
+          エラー
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>{alertMessage}</Modal.Body>
+      <Modal.Body style={{ color: '#5c636a' }}>{alertMessage}</Modal.Body>
       <Modal.Footer className="d-flex justify-content-end">
-        <Button variant="success" onClick={() => onClickOk()}>
+        <Button
+          variant="success"
+          className="btn-style box_blue"
+          onClick={() => onClickOk()}
+        >
           {alertButtonMessage}
         </Button>
       </Modal.Footer>

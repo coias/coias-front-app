@@ -9,18 +9,22 @@ import React, {
 } from 'react';
 // eslint-disable-next-line object-curly-newline
 import { Col } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 import useEventListener from '../../../hooks/useEventListener';
 import {
   MousePositionContext,
   PageContext,
   StarPositionContext,
+  PredictedStarPositionContext,
 } from '../../functional/context';
 import AlertModal from '../../general/AlertModal';
 import MousePosition from '../../ui/MousePosition';
+import ImageTimes from '../../ui/ImageTimes';
+import BrightnessBar from '../../ui/BrightnessBar';
+import ContrastBar from '../COIAS/ContrastBar';
 
 // eslint-disable-next-line no-use-before-define
 PanZoom.defaultProps = {
-  isManual: false,
   brightnessVal: 150,
   contrastVal: 150,
   positionList: [],
@@ -37,6 +41,8 @@ PanZoom.defaultProps = {
   setSelectedListState: () => {},
   setRenameNewStarModalShow: () => {},
   setOldStarName: () => {},
+  setDeleteNameList: () => {},
+  setDeleteModalShow: () => {},
 };
 
 // eslint-disable-next-line no-use-before-define
@@ -44,7 +50,6 @@ PanZoom.propTypes = {
   imageURLs: PropTypes.arrayOf(PropTypes.object).isRequired,
   brightnessVal: PropTypes.number,
   contrastVal: PropTypes.number,
-  isManual: PropTypes.bool,
   positionList: PropTypes.arrayOf(PropTypes.array),
   isHide: PropTypes.bool.isRequired,
   disable: PropTypes.bool,
@@ -64,13 +69,17 @@ PanZoom.propTypes = {
   setOldStarName: PropTypes.func,
   setting: PropTypes.bool.isRequired,
   setSetting: PropTypes.func.isRequired,
+  timeList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  setBrightnessVal: PropTypes.func.isRequired,
+  setContrastVal: PropTypes.func.isRequired,
+  setDeleteNameList: PropTypes.func,
+  setDeleteModalShow: PropTypes.func,
 };
 
 function PanZoom({
   imageURLs,
   brightnessVal,
   contrastVal,
-  isManual,
   positionList,
   isHide,
   disable,
@@ -90,6 +99,11 @@ function PanZoom({
   setOldStarName,
   setting,
   setSetting,
+  timeList,
+  setBrightnessVal,
+  setContrastVal,
+  setDeleteNameList,
+  setDeleteModalShow,
 }) {
   if (window.hitIndex === undefined) {
     window.hitIndex = '';
@@ -108,11 +122,18 @@ function PanZoom({
   const [IMAGE_HEIGHT, setImageHeight] = useState(0);
   const [context, setContext] = useState();
   const { starPos, setStarPos } = useContext(StarPositionContext);
+  const { predictedStarPos } = useContext(PredictedStarPositionContext);
   const [loaded, setLoaded] = useState(0);
   const [scaleValue, setScaleValue] = useState(0);
   const [alertModalShow, setAlertModalShow] = useState(false);
 
   const dataSetOfImageSize = [5100, 2100, 1050];
+
+  const location = useLocation();
+
+  const isCOIAS = location.pathname === '/COIAS';
+  const isManual = location.pathname === '/ManualMeasurement';
+  const isFinalCheck = location.pathname === '/FinalCheck';
 
   function relativeCoords(event) {
     const bounds = event.target.getBoundingClientRect();
@@ -188,6 +209,49 @@ function PanZoom({
       context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
       const RECT_SIZE = calcRectangle();
 
+      Object.keys(predictedStarPos)
+        .map((key) => predictedStarPos[key])
+        .forEach((pos) => {
+          if (pos.page[currentPage]) {
+            context.beginPath();
+            const position = pos.page[currentPage];
+            const xpos = position.x;
+            const ypos = img.naturalHeight - position.y;
+            context.lineWidth = RECT_SIZE * 0.075;
+            const isThisPredictStarHide =
+              isHide || (position.isPredict && isFinalCheck);
+            if (isThisPredictStarHide) {
+              context.strokeStyle = 'rgba(0, 0, 0, 0)';
+            } else if (position.isPredict) {
+              context.strokeStyle = 'yellow';
+            } else if (!position.isPredict) {
+              context.strokeStyle = 'red';
+            }
+            context.arc(xpos, ypos, RECT_SIZE * 0.8, 0, Math.PI * 2, true);
+            context.stroke();
+
+            const prefix = position.isPredict ? '予測: ' : '測定済: ';
+            context.strokeStyle = 'black';
+            context.strokeStyle = isThisPredictStarHide
+              ? 'rgba(0, 0, 0, 0)'
+              : '';
+            context.lineWidth = RECT_SIZE * 0.075;
+            context.font = `${RECT_SIZE * 0.5}px serif`;
+            context.strokeText(
+              prefix + pos.name,
+              xpos - RECT_SIZE * 1.5,
+              ypos + RECT_SIZE * 1.3,
+            );
+
+            context.fillStyle = position.isPredict ? 'yellow' : 'red';
+            context.fillStyle = isThisPredictStarHide ? 'rgba(0, 0, 0, 0)' : '';
+            context.fillText(
+              prefix + pos.name,
+              xpos - RECT_SIZE * 1.5,
+              ypos + RECT_SIZE * 1.3,
+            );
+          }
+        });
       Object.keys(starPos)
         .map((key) => starPos[key])
         .forEach((pos) => {
@@ -201,6 +265,8 @@ function PanZoom({
               context.strokeStyle = 'rgba(0, 0, 0, 0)';
             } else if (pos.newName && position.name !== pos.newName) {
               context.strokeStyle = 'yellow';
+            } else if (isManual && position.isDeleted) {
+              context.strokeStyle = 'silver';
             } else if (pos.isSelected || pos.isKnown) {
               context.strokeStyle = 'red';
             } else if (!pos.isSelected) {
@@ -219,7 +285,8 @@ function PanZoom({
               x - RECT_SIZE / 10,
               y - RECT_SIZE / 10,
             );
-            context.fillStyle = 'red';
+            context.fillStyle =
+              isManual && position.isDeleted ? 'silver' : 'red';
             context.fillStyle = isHide ? 'rgba(0, 0, 0, 0)' : '';
             context.fillText(
               pos.newName && position.name !== pos.newName
@@ -307,18 +374,13 @@ function PanZoom({
     );
   }
 
-  // クリック時に色を変化させるイベントリスナー
+  // 探索モードにて未知天体をクリックした時に色を変化させるイベントリスナー
   function changeColorOnClick() {
-    if (
-      isManual ||
-      document.getElementById('selectButton').dataset.active !== 'true' ||
-      !disable
-    ) {
+    if (isManual || !disable) {
       return;
     }
     const canvasElem = canvasRef.current;
-    const isSelect = document.getElementById('selectButton').dataset.active;
-    if (canvasElem === null || isSelect === 'false') {
+    if (canvasElem === null) {
       return;
     }
 
@@ -344,35 +406,49 @@ function PanZoom({
     setStarPos(newStarPos);
   }
 
-  // 再測定時に天体の座標を保存する
-  function saveEventPosition() {
-    setIsZoomIn(true);
-    const sval = document.getElementById('selectButton').dataset.active;
-    const sshouldIgnore = sval === 'true';
+  // 手動測定モードにて画面をクリックした時のイベントリスナー
+  function manualOnClick() {
+    const deleteNameList = [];
+    Object.keys(starPos)
+      .map((key) => starPos[key])
+      .forEach((item) => {
+        const position = item.page[currentPage];
+        if (position && !item.isKnown && testHit(position.x, position.y)) {
+          deleteNameList.push(item.name);
+        }
+      });
+    setDeleteNameList(deleteNameList);
 
-    if (positionList.length < 1 || !sshouldIgnore) return;
+    if (deleteNameList.length !== 0) {
+      setDeleteModalShow(true);
+    } else {
+      setIsZoomIn(true);
 
-    const currentPageIndex = positionList[activeKey].findIndex(
-      (e) => e.page === currentPage,
-    );
+      if (positionList.length < 1) return;
 
-    const hitJudge = testHit(
-      positionList[activeKey][currentPageIndex]?.x,
-      positionList[activeKey][currentPageIndex]?.y,
-      isManual,
-    );
+      const currentPageIndex = positionList[activeKey].findIndex(
+        (e) => e.page === currentPage,
+      );
 
-    if (currentPageIndex !== -1 && hitJudge) {
-      setConfirmationModalShow(true);
-      setConfirmMessage('を削除しますか？');
-    } else if (currentPageIndex !== -1 && !hitJudge) {
-      setConfirmationModalShow(true);
-      setConfirmMessage('は既に選択されていますが更新しますか？');
-    } else if (currentPageIndex === -1) {
-      setManualStarModalShow(true);
+      const hitJudge = testHit(
+        positionList[activeKey][currentPageIndex]?.x,
+        positionList[activeKey][currentPageIndex]?.y,
+        isManual,
+      );
+
+      if (currentPageIndex !== -1 && hitJudge) {
+        setConfirmationModalShow(true);
+        setConfirmMessage('を削除しますか？');
+      } else if (currentPageIndex !== -1 && !hitJudge) {
+        setConfirmationModalShow(true);
+        setConfirmMessage('は既に選択されていますが更新しますか？');
+      } else if (currentPageIndex === -1) {
+        setManualStarModalShow(true);
+      }
     }
   }
 
+  // 名前修正モードにて未知天体の名前を修正するためにそれをクリックした時のイベントリスナー
   const renameNewStar = () => {
     const newStarPos = JSON.parse(JSON.stringify(starPos));
     Object.keys(newStarPos)
@@ -412,11 +488,18 @@ function PanZoom({
           overflow: 'none',
         }}
       >
-        <MousePosition
-          isZoomIn={isZoomIn}
-          IMAGE_WIDTH={IMAGE_WIDTH}
-          IMAGE_HEIGHT={IMAGE_HEIGHT}
-        />
+        <div className="slidebar-time-wrapper">
+          <div className="slidebar-wrapper">
+            <BrightnessBar val={brightnessVal} set={setBrightnessVal} />
+            <ContrastBar val={contrastVal} set={setContrastVal} />
+          </div>
+          <MousePosition
+            isZoomIn={isZoomIn}
+            IMAGE_WIDTH={IMAGE_WIDTH}
+            IMAGE_HEIGHT={IMAGE_HEIGHT}
+          />
+          <ImageTimes timeList={timeList} />
+        </div>
         <div
           className="wrapper"
           style={{
@@ -435,10 +518,10 @@ function PanZoom({
               height={`${calcCanvasSize(IMAGE_HEIGHT)}px`}
               onClick={() => {
                 if (isManual && !disable) {
-                  saveEventPosition();
+                  manualOnClick();
                 } else if (isManual && disable) {
                   renameNewStar();
-                } else {
+                } else if (isCOIAS) {
                   changeColorOnClick();
                 }
               }}

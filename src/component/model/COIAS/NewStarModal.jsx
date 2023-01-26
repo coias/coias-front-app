@@ -32,7 +32,10 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
       backdrop="static"
     >
       <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
           新天体の番号指定
         </Modal.Title>
       </Modal.Header>
@@ -51,7 +54,9 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
           }}
         >
           <Form.Group>
-            <Form.Label>先頭の新天体番号を指定する(最大６桁)</Form.Label>
+            <Form.Label style={{ color: '#5c636a' }}>
+              先頭の新天体番号を指定する(最大６桁)
+            </Form.Label>
             <Form.Control
               placeholder="H000005の場合 '5' を入力"
               disabled={disable}
@@ -81,10 +86,13 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
                 setDisable(!disable);
                 setNewName('1');
               }}
+              style={{ color: '#5c636a' }}
               type="checkbox"
               label="変更する"
             />
-            <Button type="submit">次へ</Button>
+            <Button type="submit" className="btn-style box_blue">
+              次へ
+            </Button>
           </Form.Group>
         </Form>
       </Modal.Body>

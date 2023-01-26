@@ -3,4 +3,7 @@ $breakpoints: (
   'md': 'screen and (min-width: 768px)',
   'lg': 'screen and (min-width: 1000px)',
   'xl': 'screen and (min-width: 1200px)',
+  'max-lg-bootstrap': 'screen and (max-width: 992px)',
+  'min-lg-bootstrap': 'screen and (min-width: 992px)',
+  'min-main-canvas': 'screen and (max-width: 665px)',
 ) !default;

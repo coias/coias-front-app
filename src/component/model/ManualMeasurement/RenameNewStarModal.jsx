@@ -1,9 +1,12 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import PropTypes from 'prop-types';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
-import { StarPositionContext } from '../../functional/context';
+import {
+  StarPositionContext,
+  PredictedStarPositionContext,
+} from '../../functional/context';
 
 function RenameNewStarModal({
   show,
@@ -29,6 +32,17 @@ function RenameNewStarModal({
   };
 
   const { starPos } = useContext(StarPositionContext);
+  const { predictedStarPos } = useContext(PredictedStarPositionContext);
+  const [renameStarPos, setRenameStarPos] = useState({});
+  useEffect(() => {
+    setRenameStarPos(starPos);
+    if (Object.keys(predictedStarPos).length !== 0) {
+      const exclusivePredictedStarPos = Object.keys(predictedStarPos)
+        .map((key) => predictedStarPos[key])
+        .filter((pos) => !Object.keys(starPos).includes(pos.name));
+      setRenameStarPos(Object.assign(starPos, exclusivePredictedStarPos));
+    }
+  }, [starPos]);
 
   return (
     <Modal
@@ -44,7 +58,10 @@ function RenameNewStarModal({
       backdrop="static"
     >
       <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">
+        <Modal.Title
+          id="contained-modal-title-vcenter"
+          style={{ color: '#5c636a', fontWeight: 'bold' }}
+        >
           天体名の付け替え
         </Modal.Title>
       </Modal.Header>
@@ -56,7 +73,7 @@ function RenameNewStarModal({
               onClickRenameButton(oldStarName);
             } else if (
               !isAlreadyChanged &&
-              Object.values(starPos).some(
+              Object.values(renameStarPos).some(
                 (starContent) => starContent.name === search,
               )
             ) {
@@ -66,18 +83,23 @@ function RenameNewStarModal({
             }
           }}
         >
-          <Form.Label>
+          <Form.Label style={{ color: '#5c636a' }}>
             {`${oldStarName}の名前を変更します。変更後の名前を選んでください。`}
           </Form.Label>
-          <Row>
-            <Col className="d-flex justify-content-center">
-              <h3>{oldStarName}</h3>
+          <Row style={{ marginBottom: '40px' }}>
+            <Col
+              className="d-flex justify-content-center"
+              style={{ alineItems: 'center' }}
+            >
+              <h3 style={{ color: '#5c636a', marginBottom: 0 }}>
+                {oldStarName}
+              </h3>
             </Col>
             <Col className="d-flex justify-content-center">
               {isAlreadyChanged ? (
-                <AiOutlineArrowLeft size={50} />
+                <AiOutlineArrowLeft size={50} style={{ color: '#5c636a' }} />
               ) : (
-                <AiOutlineArrowRight size={50} />
+                <AiOutlineArrowRight size={50} style={{ color: '#5c636a' }} />
               )}
             </Col>
             <Col>
@@ -105,6 +127,7 @@ function RenameNewStarModal({
                   disabled={isAlreadyChanged}
                   autoComplete="off"
                   size="lg"
+                  style={{ color: '#5c636a' }}
                 />
                 {errorMessage !== '' && (
                   <p style={{ color: 'red' }}>{errorMessage}</p>
@@ -117,7 +140,7 @@ function RenameNewStarModal({
                     }}
                     className="search_suggestions"
                   >
-                    {Object.values(starPos)
+                    {Object.values(renameStarPos)
                       .filter(
                         (star) =>
                           star.name
@@ -155,10 +178,15 @@ function RenameNewStarModal({
                 e.stopPropagation();
                 onExit();
               }}
+              className="btn-style box_border_blue"
             >
               戻る
             </Button>
-            <Button variant="success" type="submit">
+            <Button
+              variant="success"
+              type="submit"
+              className="btn-style box_blue"
+            >
               {isAlreadyChanged ? '名前を元に戻す' : '名前を付け替える'}
             </Button>
           </Form.Group>

@@ -36,21 +36,66 @@ body,
   padding: 0;
   margin: 0;
 
-  @include mq(md) {
+  // Humburger Menu
+  .navbar-toggler {
+    margin-right: 20px;
+    border: 1px solid #fff;
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    .navbar-toggler-icon {
+      filter: invert(100%) sepia(36%) saturate(301%) hue-rotate(235deg)
+        brightness(118%) contrast(100%);
+    }
+  }
+
+  @include mq(max-lg-bootstrap) {
     background: linear-gradient(
       120deg,
       #ffd759 0%,
-      #ffd759 15%,
-      #28297e 15%,
+      #ffd759 120px,
+      #28297e 120px,
       #28297e 100%
     );
+
+    .nav-disappear {
+      display: none;
+    }
 
     .color-nav-title {
       display: none;
     }
   }
 
-  @include mq(lg) {
+  @include mq(min-lg-bootstrap) {
+    background: linear-gradient(
+      120deg,
+      #ffd759 0%,
+      #ffd759 120px,
+      #28297e 120px,
+      #28297e 100%
+    );
+
+    .color-nav-title {
+      display: none;
+    }
+
+    a {
+      margin-left: 30px;
+
+      .nav-content {
+        font-size: 18px;
+      }
+    }
+
+    .btn {
+      font-size: 18px;
+    }
+  }
+
+  @include mq(xl) {
     background: linear-gradient(
       120deg,
       #ffd759 0%,
@@ -62,6 +107,18 @@ body,
     .color-nav-title {
       display: inline;
     }
+
+    a {
+      margin-left: 40px;
+
+      .nav-content {
+        font-size: 20px;
+      }
+    }
+
+    .btn {
+      font-size: 20px;
+    }
   }
 
   .navbar-brand {
@@ -69,24 +126,63 @@ body,
   }
 
   a {
-    margin-left: 50px;
-    color: white;
+    padding-bottom: 20px;
+    color: #fff;
     text-align: center;
     text-decoration: none;
 
-    h3 {
+    .nav-content {
       margin: 0;
       margin-top: 20px;
-      font-size: 20px;
     }
   }
 
   .btn {
     padding: 7px 25px;
     margin-right: 30px;
-    font-size: 20px;
-    color: white;
+    color: #fff;
     background: none;
+  }
+}
+
+// Humburger Menu Modal styles
+.navbar-expand-lg {
+  justify-content: space-between;
+}
+
+.offcanvas {
+  .offcanvas-body {
+    .navbar-nav {
+      .active::before {
+        display: none;
+      }
+
+      a {
+        color: #28297e;
+        text-decoration: none;
+
+        h3 {
+          font-size: 20px;
+
+          &:hover {
+            text-decoration: underline #28297e;
+          }
+        }
+      }
+    }
+
+    .btn {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #28297e;
+      background-color: #fff;
+      border: 3px solid #28297e;
+
+      &:hover {
+        color: #ffd759;
+        border: 3px solid #ffd759;
+      }
+    }
   }
 }
 
@@ -94,16 +190,53 @@ body,
 .play-menu {
   border-bottom: solid #707070 1px;
 
-  .col-md-9 {
-    .flex-grow-1 {
-      margin: 0 auto;
+  .icon-color {
+    color: #5c636a;
+
+    &:hover {
+      color: #ffd759;
+    }
+  }
+
+  .icon-color_off {
+    color: #e5e5e5;
+
+    &:hover {
+      color: #ffd759;
+    }
+  }
+
+  .select-style {
+    min-width: 60px;
+    margin: auto 0;
+
+    &:hover {
+      border: 2px solid #ffd759;
+    }
+  }
+
+  .btn-group {
+    .btn-primary {
+      height: 35px;
+      font-weight: bold;
+      color: #5c636a;
+      background-color: #fff;
+      border: 1px solid #5c636a;
+
+      &:hover {
+        color: #ffd759;
+        border: 1px solid #ffd759;
+      }
     }
 
-    .btn-group {
-      .btn-outline-secondary {
-        height: 35px;
-        margin: 0 auto;
-        font-weight: bold;
+    .btn-check:checked + .btn-primary {
+      color: #fff;
+      background-color: #5c636a;
+      border: 1px solid #5c636a;
+
+      &:hover {
+        background-color: #ffd759;
+        border: 1px solid #ffd759;
       }
     }
   }
@@ -121,10 +254,27 @@ body,
   }
 }
 
-.error-message {
-  color: red;
+// Setting Modal
+.setting_modal {
+  h4 {
+    color: #5c636a;
+  }
+
+  .setting_modal-content_wrap {
+    padding: 10px 30px 40px;
+    color: #5c636a;
+
+    .content_wrap-table {
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 
+// Help Modal
 .help-modal-table {
   td {
     text-align: center;
@@ -132,10 +282,70 @@ body,
 
     h4 {
       margin: 0;
+      color: #5c636a;
       text-align: left;
       vertical-align: middle;
     }
   }
+}
+
+// Report Page
+.report-wrap {
+  padding: 2%;
+
+  h4 {
+    margin: 0;
+    color: #5c636a;
+  }
+
+  .col {
+    width: 200px;
+  }
+
+  .col-md-8 {
+    padding: 0;
+  }
+
+  .report-wrap_form {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .form-control {
+      width: 100%;
+      text-overflow: 'ellipsis';
+    }
+  }
+
+  .report-btn_wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    margin-right: 0;
+
+    .btn_wrap-content {
+      display: flex;
+      align-items: center;
+
+      span {
+        margin-top: 10px;
+        color: #5c636a;
+      }
+
+      :not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+
+    .btn-style {
+      margin-top: 10px;
+    }
+  }
+}
+
+.error-message {
+  color: red;
 }
 
 canvas {
@@ -197,11 +407,12 @@ canvas {
 
 .active {
   position: relative;
-  padding-bottom: 20px;
+
+  // padding-bottom: 20px;
 }
 
 .active:hover {
-  color: white !important;
+  color: white;
   cursor: pointer;
 }
 
@@ -218,12 +429,12 @@ canvas {
 }
 
 .not-active:hover {
-  color: white !important;
+  color: white;
   cursor: pointer;
 }
 
 .not-active-no-hover:hover {
-  color: gray !important;
+  color: gray;
   cursor: default;
 }
 
@@ -278,37 +489,6 @@ footer {
       .row {
         height: 100%;
 
-        // tool buttons
-        .coias-tool-bar {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          width: 40px;
-          padding: 0;
-          margin-left: 10px;
-          border-right: #707070 solid 1px;
-
-          .tool-btn {
-            width: 100%;
-            margin-top: 10px;
-            margin-left: -3px;
-          }
-
-          .bright-contrast-bar {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 35%;
-            margin-top: 20px;
-            text-align: center;
-
-            #ex4 {
-              appearance: slider-vertical; /* Chromium */
-              height: 87%;
-            }
-          }
-        }
-
         .manual-mode-control-view {
           height: 100%;
 
@@ -323,94 +503,158 @@ footer {
       }
     }
 
+    .slidebar-time-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+
+      .slidebar-wrapper {
+        position: absolute;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        width: 360px;
+        height: 35px;
+        padding: 0;
+        padding: 6px;
+        margin: auto 0;
+        background-color: black;
+        opacity: 0.5;
+
+        @include mq(min-main-canvas) {
+          top: 35px;
+          right: 15px;
+        }
+
+        .bright-contrast-bar {
+          display: flex;
+          width: 100%;
+          height: 100%;
+          margin: auto 0;
+          text-align: center;
+        }
+      }
+    }
+
+    // 画面右側　Style "manual"
+    .manual-toolbar_wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
     .manual-star-list-wrraper {
-      position: relative;
+      // position: relative;
       height: calc(100% + 63px);
       border-left: solid #707070 1px;
 
       @include mq(md) {
         .manual-btn-fixed {
-          position: absolute;
-          bottom: 5%;
-          left: 40%;
+          // position: absolute;
+          // bottom: 5%;
+          // left: 40%;
           display: flex;
+          justify-content: right;
           width: 100%;
+          padding: 10px 10px 10px 0;
+          margin-top: auto;
         }
       }
 
       @include mq(lg) {
         .manual-btn-fixed {
-          position: absolute;
-          bottom: 5%;
-          left: 50%;
+          // position: absolute;
+          // bottom: 5%;
+          // left: 50%;
           display: flex;
+          justify-content: right;
           width: 100%;
+          padding: 10px 10px 10px 0;
+          margin-top: auto;
         }
       }
 
       @include mq(xl) {
         .manual-btn-fixed {
-          position: absolute;
-          bottom: 5%;
-          left: 60%;
+          // position: absolute;
+          // bottom: 5%;
+          // left: 60%;
           display: flex;
+          justify-content: right;
           width: 100%;
+          padding: 10px 10px 10px 0;
+          margin-top: auto;
         }
       }
 
       .manual-btn-fixed-delete {
-        position: absolute;
-        bottom: 5%;
-        left: 2%;
+        // position: absolute;
+        // bottom: 5%;
+        // left: 1%;
         display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 10px 10px 10px 0;
+        margin-top: auto;
       }
     }
 
+    // 画面右側　Style "coias"
     .coias-star-list-wrraper {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 13vw;
       height: calc(100% + 63px);
       border-left: solid #707070 1px;
 
-      .star-list-title {
-        width: 100%;
-      }
-
-      // 星のリストのスクロールバーを常に表示する
-      .star-list {
-        width: 100%;
-        height: 80%;
-        padding: 0;
-        margin: 0;
-        overflow-y: scroll;
-
-        &::-webkit-scrollbar {
-          width: 5px;
-          height: 10px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-color: #707070;
-
-          --bg-opacity: 1;
-        }
-      }
-
-      .star-list-button {
+      // width: 13vw;
+      .coias-list_button {
         display: flex;
         justify-content: end;
         width: 100%;
-        margin-top: 30px;
-        margin-right: 10px;
+        padding: 10px 10px 10px 0;
+        margin-top: auto;
+      }
+    }
+
+    // 天体一覧部分　Style
+    .star-list-title {
+      width: 100%;
+    }
+
+    .star-list {
+      width: 100%;
+      height: 80%;
+      padding: 0;
+      margin: 0;
+      overflow-y: scroll;
+      color: #5c636a;
+
+      .form-check-label {
+        &:hover {
+          color: #ffd759;
+          cursor: pointer;
+        }
+      }
+
+      // 星のリストのスクロールバーを常に表示する
+      &::-webkit-scrollbar {
+        width: 5px;
+        height: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #707070;
+
+        --bg-opacity: 1;
       }
     }
   }
 }
 
 .manual-list {
-  max-height: 60vh;
+  max-height: 65vh;
   overflow-x: hidden;
   overflow-y: scroll;
 
@@ -431,12 +675,122 @@ footer {
 }
 
 .search_suggestions {
+  color: #5c636a;
+
   .active,
   div:hover {
-    background-color: gray;
+    background-color: #ffd759;
   }
 }
 
 .params-btn {
   margin-left: 28px;
+}
+
+// Check Button and Accordion Button Styles
+.form-check-input {
+  cursor: pointer;
+
+  &:checked {
+    background-color: #5c636a;
+    border: #5c636a;
+
+    &:hover {
+      background-color: #ffd759;
+      border: #ffd759;
+    }
+
+    &:focus {
+      border: #5c636a;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    border: 1px solid #ffd759;
+  }
+}
+
+.accordion-button {
+  color: #5c636a;
+
+  &:focus {
+    box-shadow: none;
+  }
+
+  &::after {
+    filter: invert(39%) sepia(46%) saturate(19%) hue-rotate(337deg)
+      brightness(101%) contrast(92%);
+  }
+
+  &:not(.collapsed) {
+    color: #5c636a;
+    background-color: #5c636a33;
+  }
+}
+
+.form-control {
+  color: #5c636a;
+  cursor: pointer;
+  border: 2px solid #e5e5e5;
+
+  &:focus {
+    border: 2px solid #ffd759;
+  }
+}
+
+// Button Style
+.btn-style {
+  &.box_blue {
+    background-color: #28297e;
+    border: 3px solid #28297e;
+
+    &:hover {
+      background-color: #ffd759;
+      border: 3px solid #ffd759;
+    }
+  }
+
+  &.box_border_blue {
+    color: #28297e;
+    background-color: #fff;
+    border: 3px solid #28297e;
+
+    &:hover {
+      color: #ffd759;
+      background-color: #fff;
+      border: 3px solid #ffd759;
+    }
+  }
+
+  &.box_border_gray {
+    color: #5c636a;
+    background-color: #fff;
+    border: 3px solid #5c636a;
+
+    &:hover {
+      color: #ffd759;
+      background-color: #fff;
+      border: 3px solid #ffd759;
+    }
+  }
+}
+
+.btn-close {
+  &:hover {
+    filter: invert(89%) sepia(99%) saturate(5782%) hue-rotate(314deg)
+      brightness(105%) contrast(108%);
+  }
+
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.btn-style_hover {
+  .btn {
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 }
