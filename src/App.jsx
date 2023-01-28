@@ -22,6 +22,7 @@ import ManualMeasurement from './page/ManualMeasurement';
 import FinalCheck from './page/FinalCheck';
 import Report from './page/Report';
 import './style/style.scss';
+import DataSelector from './page/DataSelector'
 
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -210,6 +211,7 @@ function App() {
                         />
                       }
                     />
+                    <Route path="/DataSelector" element={<DataSelector />} />
                   </Routes>
                 </PredictedStarPositionContext.Provider>
               </StarPositionContext.Provider>

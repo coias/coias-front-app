@@ -13,7 +13,6 @@ import {
   DropdownButton,
   Row,
 } from 'react-bootstrap';
-import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
 import { GoSettings } from 'react-icons/go';
 import { ModeStatusContext } from '../component/functional/context';
@@ -23,6 +22,7 @@ import LoadingButton from '../component/general/LoadingButton';
 import FileUploadModal from '../component/model/ExplorePrepare/FileUploadModal';
 import CONSTANT from '../utils/CONSTANTS';
 import ParamsSettingModal from '../component/model/ExplorePrepare/ParamsSettingModal';
+import GetProgress from '../component/general/GetProgress';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
@@ -33,8 +33,6 @@ ExplorePrepare.propTypes = {
   isAuto: PropTypes.bool.isRequired,
   setIsAuto: PropTypes.func.isRequired,
 };
-
-const userId = crypto.randomUUID();
 
 function ExplorePrepare({
   fileNames,
@@ -57,7 +55,6 @@ function ExplorePrepare({
   const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
   const [fileAlertModalshow, setFileAlertModalshow] = useState(false);
-  const [fileUploadProgress, setFileUploadProgress] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const [parameters, setParameters] = useState({
@@ -65,16 +62,10 @@ function ExplorePrepare({
     ar: '6',
     sn: '500',
   });
-  const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
-
-  const { lastJsonMessage } = useWebSocket(socketUrl, {
-    shouldReconnect: () => true,
-    reconnectAttempts: 3,
-    reconnectInterval: 3000,
-  });
   const [paramsSettingModalShow, setParamsSettingModalShow] = useState(false);
 
   const [showProgress, setShowProgress] = useState(false);
+  const [progress, setProgress] = useState('');
 
   const { setModeStatus } = useContext(ModeStatusContext);
 
@@ -102,7 +93,8 @@ function ExplorePrepare({
   };
 
   const fileContentCheck = async () => {
-    const response = await axios.put(`${uri}copy`);
+    const reactApiUri = process.env.REACT_APP_API_URI;
+    const response = await axios.put(`${reactApiUri}copy`);
     const dataList = response.data.result.sort();
     if (fileNames.length !== dataList.length / 2) {
       setAlertMessage('ファイルの中身が異なる可能性があります。');
@@ -194,7 +186,7 @@ function ExplorePrepare({
       setProcessName('アップロード中...');
 
       setLoading(true);
-      setShowProgress(true);
+      setShowProgress(false);
       await axios
         .delete(`${uri}deletefiles`)
         .then(() => {})
@@ -205,18 +197,8 @@ function ExplorePrepare({
           setLoading(false);
         });
       await axios
-        .post(`${uri}uploadfiles`, data, {
-          onUploadProgress: (progressEvent) => {
-            const { loaded, total } = progressEvent;
-            const percent = Math.floor((loaded * 100) / total);
-            if (percent < 100) {
-              setFileUploadProgress(`${percent}%`);
-            }
-          },
-        })
+        .post(`${uri}uploadfiles/`, data)
         .then(() => {
-          setFileUploadProgress('100%');
-
           updateMenunames();
           setLoading(false);
         })
@@ -240,11 +222,14 @@ function ExplorePrepare({
     const put = async () => {
       setLoading(true);
       setShowProgress(true);
-
+      setProgress('0%');
+      const timerID = setInterval(
+        () => GetProgress(setProgress, query.split('?')[0]),
+        250,
+      );
       await axios
         .put(uri + query)
         .then(() => {
-          setLoading(false);
           const updatedMenunames = menunames.map((item) => {
             if (
               item.query === query ||
@@ -267,6 +252,8 @@ function ExplorePrepare({
             return modeStatusCopy;
           });
           setMenunames(updatedMenunames);
+          setLoading(false);
+          clearInterval(timerID);
         })
         .catch((e) => {
           const errorResponse = e.response?.data?.detail;
@@ -276,6 +263,7 @@ function ExplorePrepare({
             setShowProcessError(true);
           }
           setLoading(false);
+          clearInterval(timerID);
         });
     };
     if (query.length > 0) put();
@@ -292,6 +280,11 @@ function ExplorePrepare({
     let result = true;
     const uriQuery = url.split('/')[3];
     setProcessName(`${query}...`);
+    setProgress('0%');
+    const timerID = setInterval(
+      () => GetProgress(setProgress, uriQuery.split('?')[0]),
+      250,
+    );
     await axios
       .put(url)
       .then(() => {
@@ -328,6 +321,7 @@ function ExplorePrepare({
         result = false;
         setLoading(false);
       });
+    clearInterval(timerID);
     return result;
   };
 
@@ -550,8 +544,7 @@ function ExplorePrepare({
         loading={loading}
         processName={processName}
         showProgress={showProgress}
-        lastJsonMessage={lastJsonMessage}
-        fileUploadProgress={fileUploadProgress}
+        progress={progress}
       />
 
       <FileUploadModal

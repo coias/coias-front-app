@@ -53,6 +53,11 @@ function Header({ setMenunames, setFileNames }) {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Nav className="nav-disappear">
         <NavLink
+          to="/DataSelector"
+        >
+          <h3 className="nav-content">データ選択</h3>
+        </NavLink>
+        <NavLink
           to="/"
           className={(navData) => (navData.isActive ? 'active' : 'not-active')}
         >

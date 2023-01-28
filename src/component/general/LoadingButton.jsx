@@ -2,13 +2,7 @@ import { React } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-function LoadingButton({
-  loading,
-  processName,
-  showProgress,
-  lastJsonMessage,
-  fileUploadProgress,
-}) {
+function LoadingButton({ loading, processName, showProgress, progress }) {
   return (
     <Button
       type="button"
@@ -36,9 +30,7 @@ function LoadingButton({
         id="current-progress"
         style={{ display: showProgress ? 'block' : 'none' }}
       >
-        {processName === 'アップロード中...'
-          ? fileUploadProgress
-          : lastJsonMessage && lastJsonMessage.progress}
+        {progress}
       </div>
     </Button>
   );
@@ -48,13 +40,12 @@ LoadingButton.propTypes = {
   loading: PropTypes.bool.isRequired,
   processName: PropTypes.string.isRequired,
   showProgress: PropTypes.bool,
-  lastJsonMessage: PropTypes.objectOf(PropTypes.string),
-  fileUploadProgress: PropTypes.string.isRequired,
+  progress: PropTypes.string,
 };
 
 LoadingButton.defaultProps = {
   showProgress: false,
-  lastJsonMessage: {},
+  progress: '',
 };
 
 export default LoadingButton;

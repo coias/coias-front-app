@@ -42,7 +42,7 @@ function RenameNewStarModal({
         .filter((pos) => !Object.keys(starPos).includes(pos.name));
       setRenameStarPos(Object.assign(starPos, exclusivePredictedStarPos));
     }
-  }, [starPos]);
+  }, []);
 
   return (
     <Modal
