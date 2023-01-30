@@ -22,6 +22,7 @@ export const PredictedStarPositionContext = createContext({
 
 export const ModeStatusContext = createContext({
   modeStatus: {
+    ExplorePrepare: false,
     COIAS: false,
     Manual: false,
     Report: false,

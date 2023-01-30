@@ -52,14 +52,18 @@ function Header({ setMenunames, setFileNames }) {
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Nav className="nav-disappear">
-        <NavLink
-          to="/DataSelector"
-        >
+        <NavLink to="/">
           <h3 className="nav-content">データ選択</h3>
         </NavLink>
         <NavLink
-          to="/"
+          to="/ExplorePrepare"
           className={(navData) => (navData.isActive ? 'active' : 'not-active')}
+          style={{
+            opacity: modeStatus.ExplorePrepare ? 1 : 0.3,
+          }}
+          onClick={
+            modeStatus.ExplorePrepare ? () => {} : (e) => e.preventDefault()
+          }
         >
           <h3 className="nav-content">探索準備</h3>
         </NavLink>
@@ -217,6 +221,7 @@ function Header({ setMenunames, setFileNames }) {
         onClickYes={() => {
           setFileNames(['ファイルを選択してください']);
           setModeStatus({
+            ExplorePrepare: false,
             COIAS: false,
             Manual: false,
             Report: false,

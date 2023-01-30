@@ -66,6 +66,7 @@ function ParamsSettingModal({
                 ),
               );
               setModeStatus({
+                ExplorePrepare: true,
                 COIAS: false,
                 Manual: false,
                 Report: false,
@@ -85,6 +86,7 @@ function ParamsSettingModal({
                 ),
               );
               setModeStatus({
+                ExplorePrepare: true,
                 COIAS: false,
                 Manual: false,
                 Report: false,

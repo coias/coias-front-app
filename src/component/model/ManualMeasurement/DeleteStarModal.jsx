@@ -17,7 +17,7 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
       onExited={() => {
         onExited();
       }}
-      size="md"
+      size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
       backdrop="static"

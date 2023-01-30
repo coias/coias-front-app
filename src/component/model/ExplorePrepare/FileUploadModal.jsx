@@ -14,7 +14,7 @@ FileUploadModal.propTypes = {
   handleSelect: PropTypes.func.isRequired,
   onClickStarUpdateButton: PropTypes.func.isRequired,
   isAutoProcess: PropTypes.bool.isRequired,
-  disabled: PropTypes.bool.isRequired,
+  // disabled: PropTypes.bool.isRequired,
   alertMessage: PropTypes.string.isRequired,
 };
 
@@ -29,7 +29,7 @@ function FileUploadModal({
   errorFiles,
   handleSelect,
   onClickStarUpdateButton,
-  disabled,
+  // disabled,
   alertMessage,
 }) {
   return (
@@ -53,6 +53,7 @@ function FileUploadModal({
                 isInvalid={valid}
                 multiple
                 className="mx-2"
+                disabled
               />
             </Row>
             <Row>
@@ -109,7 +110,7 @@ function FileUploadModal({
           <Button variant="secondary" onClick={handleClose}>
             閉じる
           </Button>
-          <Button variant="primary" type="submit" disabled={disabled}>
+          <Button variant="primary" type="submit" disabled>
             送信
           </Button>
         </Modal.Footer>

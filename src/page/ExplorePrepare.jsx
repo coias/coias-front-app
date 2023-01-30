@@ -197,7 +197,7 @@ function ExplorePrepare({
           setLoading(false);
         });
       await axios
-        .post(`${uri}uploadfiles/`, data)
+        .post(`${uri}uploadfiles?doUploadFiles=True`, data)
         .then(() => {
           updateMenunames();
           setLoading(false);

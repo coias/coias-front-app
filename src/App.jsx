@@ -1,4 +1,5 @@
 /**
+ * DataSelector: 画像選択モード
  * ExparePrepare : 探索準備モード
  * COIAS : 探索/再描画
  * ManualMeasurement : 再測定モード
@@ -22,7 +23,7 @@ import ManualMeasurement from './page/ManualMeasurement';
 import FinalCheck from './page/FinalCheck';
 import Report from './page/Report';
 import './style/style.scss';
-import DataSelector from './page/DataSelector'
+import DataSelector from './page/DataSelector';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -84,6 +85,7 @@ function App() {
   );
 
   const [modeStatus, setModeStatus] = useState({
+    ExplorePrepare: false,
     COIAS: false,
     Manual: false,
     Report: false,
@@ -125,6 +127,10 @@ function App() {
                   <Routes>
                     <Route
                       path="/"
+                      element={<DataSelector setFileNames={setFileNames} />}
+                    />
+                    <Route
+                      path="/ExplorePrepare"
                       element={
                         <ExplorePrepare
                           fileNames={fileNames}
@@ -211,7 +217,6 @@ function App() {
                         />
                       }
                     />
-                    <Route path="/DataSelector" element={<DataSelector />} />
                   </Routes>
                 </PredictedStarPositionContext.Provider>
               </StarPositionContext.Provider>

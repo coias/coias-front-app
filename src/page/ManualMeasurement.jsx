@@ -190,6 +190,7 @@ function ManualMeasurement({
 
     getImages();
     setModeStatus({
+      ExplorePrepare: true,
       COIAS: true,
       Manual: true,
       Report: false,
@@ -388,6 +389,7 @@ function ManualMeasurement({
     setStarPos(toObject);
     setLoading(false);
     setModeStatus({
+      ExplorePrepare: true,
       COIAS: true,
       Manual: true,
       Report: true,
@@ -542,6 +544,7 @@ function ManualMeasurement({
                   if (isRedisp) {
                     setStarPos(originalStarPos);
                     setModeStatus({
+                      ExplorePrepare: true,
                       COIAS: true,
                       Manual: true,
                       Report: false,
