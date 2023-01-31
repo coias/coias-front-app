@@ -159,7 +159,7 @@ function tractId2polygon(tractId: number): Polygon {
   const [a, d] = ringsTract.index2ad(tractId);
   const m = rotate(a, d);
   const pixelScale = 0.168; // arcsec / pixel
-  const tractSize = 36000; // in pixels
+  const tractSize = 31200; // in pixels
   const s = 0.5 * tractSize * angle.deg2rad(pixelScale / 3600); // half tract size
   const v0: V3 = [1, -s, -s];
   const v1: V3 = [1, -s, +s];
@@ -179,12 +179,12 @@ const nPatchesRA = 9;
 function patchPolygon(tractId: number, patchId: [number, number]): Polygon {
   const [j, i] = patchId;
   const [t10, _t11, t01, t00] = tractId2polygon(tractId);
-  const y0 = i / nPatchesDec;
-  const y1 = (i + 1) / nPatchesDec;
+  const y0 = (i + 0.05) / nPatchesDec;
+  const y1 = (i + 0.95) / nPatchesDec;
   // t00 + x * (t10 - t00) + y * (t01 - t00)
   // == (1 - x - y) * t00 + x * t10 + y * t01
-  const x0 = j / nPatchesRA;
-  const x1 = (j + 1) / nPatchesRA;
+  const x0 = (j + 0.05) / nPatchesRA;
+  const x1 = (j + 0.95) / nPatchesRA;
   const patchCorners = [
     [x0, y0],
     [x1, y0],

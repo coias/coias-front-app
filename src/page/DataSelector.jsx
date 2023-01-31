@@ -76,8 +76,8 @@ function DataSelector({ setFileNames }) {
   // デフォルト色
   const defaultStyle = useMemo(
     () => ({
-      baseColor: [1, 0, 0, 0.5],
-      hoverColor: [1, 0, 0, 0.8],
+      baseColor: [1, 0, 0, 1],
+      hoverColor: [1, 0, 0, 1],
       activeColor: [1, 0, 0, 1],
     }),
     [],
@@ -103,8 +103,8 @@ function DataSelector({ setFileNames }) {
             id: tractId,
             style: {
               ...defaultStyle,
-              baseColor: [1.0 - progress, progress, 0, 0.5],
-              hoverColor: [1.0 - progress, progress, 0, 0.8],
+              baseColor: [1.0 - progress, progress, 0, 1],
+              hoverColor: [1.0 - progress, progress, 0, 1],
               // tract個別の色
             },
           };
@@ -120,8 +120,8 @@ function DataSelector({ setFileNames }) {
       const { progress } = validPatchProgress;
       patchStyle[validPatchProgress.patchIdStr] = {
         ...defaultStyle,
-        baseColor: [1.0 - progress, progress, 0, 0.5],
-        hoverColor: [1.0 - progress, progress, 0, 0.8],
+        baseColor: [1.0 - progress, progress, 0, 1],
+        hoverColor: [1.0 - progress, progress, 0, 1],
       };
       // patch個別の色
     });
@@ -437,7 +437,7 @@ function DataSelector({ setFileNames }) {
               <Tract
                 tractId={selectedTractId}
                 style={selectedStyle}
-                baseLineWidth={7}
+                baseLineWidth={8}
               />
               {/* Patch選択肢 */}
               <PatchSelector
