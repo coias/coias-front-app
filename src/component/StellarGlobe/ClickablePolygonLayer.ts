@@ -1,7 +1,8 @@
 /* eslint-disable */
-import { mat3, vec3 } from "gl-matrix"
 import { Globe, GlobePointerEvent, Layer, MousePicker, path, V3, V4, View } from "@stellar-globe/stellar-globe"
 import { GlobeStoppablePointerEvent } from "@stellar-globe/stellar-globe/types/globe/pointer_event"
+import { mat3, vec3 } from "gl-matrix"
+
 
 
 type Polygon = V3[]
@@ -9,46 +10,47 @@ type Style = {
   baseColor: V4
   activeColor?: V4
   hoverColor?: V4
-  lineWidth?: number
+}
+
+
+export type StyledPolygon = {
+  polygon: Polygon
+  style: Style
 }
 
 
 export class ClicakblePolygonLayer extends Layer {
   private basePathRenderer: path.Renderer
   private activePathRenderer: path.Renderer
-  private readonly baseColor: V4
-  private readonly activeColor: V4
-  private readonly hoverColor: V4
 
   constructor(
     globe: Globe,
-    readonly polygons: Polygon[],
-    style: Style,
-    readonly onClick: (polygonIndex: number) => void,
+    readonly polygons: StyledPolygon[],
+    readonly onClick: (objectIndex: number) => void,
+    baseLineWidth: number,
+    activeLineWidth: number,
   ) {
     super(globe)
-    this.polygons = polygons
-    this.baseColor = style.baseColor
-    this.activeColor = style.activeColor ?? style.hoverColor ?? this.baseColor
-    this.hoverColor = style.hoverColor ?? style.baseColor
-    const lineWidth = style.lineWidth ?? 5
     this.basePathRenderer = new path.Renderer(globe.gl)
-    this.basePathRenderer.minWidth = lineWidth * globe.camera.canvasPixels
+    this.basePathRenderer.minWidth = baseLineWidth * globe.camera.canvasPixels
     this.basePathRenderer.darkenNarrowLine = false
+    this.basePathRenderer.blendMode = path.BlendMode.NORMAL
+
     this.activePathRenderer = new path.Renderer(globe.gl)
     this.activePathRenderer.darkenNarrowLine = false
-    this.activePathRenderer.minWidth = lineWidth * globe.camera.canvasPixels
+    this.activePathRenderer.minWidth = 1.5 * activeLineWidth * globe.camera.canvasPixels
     this.activePathRenderer.blendMode = path.BlendMode.NORMAL
+
     this.onRelease(() => {
       this.activePathRenderer.release()
       this.basePathRenderer.release()
     })
-    this.basePathRenderer.setPaths(polygons.map(polygon => ({
+    this.basePathRenderer.setPaths(polygons.map(o => ({
       close: true,
       joint: path.JOINT.MITER,
-      points: polygon.map(position => ({ color: this.baseColor, position, size: 0 })),
+      points: o.polygon.map(position => ({ color: o.style.baseColor, position, size: 0 })),
     })))
-    this.mousePickers = polygons.map((polygon, index) => new PolygonMousePicker(this, index, polygon))
+    this.mousePickers = polygons.map((o, index) => new PolygonMousePicker(this, index, o.polygon))
   }
 
   render(view: View): void {
@@ -92,24 +94,30 @@ export class ClicakblePolygonLayer extends Layer {
   }
 
   private refreshActivePath() {
-    const hoverPath: path.Path[] = Array.from(this.hoverIndices.values()).map(i => ({
-      close: true,
-      joint: path.JOINT.MITER,
-      points: this.polygons[i].map(position => ({
-        color: this.hoverColor,
-        size: 0,
-        position,
-      }))
-    }))
-    const activePath: path.Path[] = Array.from(this.activesIndices.values()).map(i => ({
-      close: true,
-      joint: path.JOINT.MITER,
-      points: this.polygons[i].map(position => ({
-        color: this.activeColor,
-        size: 0,
-        position,
-      }))
-    }))
+    const hoverPath: path.Path[] = Array.from(this.hoverIndices.values()).map(i => {
+      const o = this.polygons[i]
+      return ({
+        close: true,
+        joint: path.JOINT.MITER,
+        points: o.polygon.map(position => ({
+          color: o.style.hoverColor ?? o.style.baseColor,
+          size: 0,
+          position,
+        }))
+      })
+    })
+    const activePath: path.Path[] = Array.from(this.activesIndices.values()).map(i => {
+      const o = this.polygons[i]
+      return ({
+        close: true,
+        joint: path.JOINT.MITER,
+        points: o.polygon.map(position => ({
+          color: o.style.activeColor ?? o.style.hoverColor ?? o.style.baseColor,
+          size: 0,
+          position,
+        }))
+      })
+    })
     this.activePathRenderer.setPaths([...hoverPath, ...activePath])
     this.globe.requestRefresh()
   }

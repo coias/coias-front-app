@@ -37,3 +37,5 @@ export const Ecliptic = React.memo(({
   ], [nSteps])
   return <Path paths={paths} darkenNarrowLine />
 })
+
+Ecliptic.displayName = 'Ecliptic'

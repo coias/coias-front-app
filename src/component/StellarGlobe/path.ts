@@ -62,3 +62,5 @@ export function Path({
   }, [alphaFunc])
   return element
 }
+
+Path.displayName = 'Path'

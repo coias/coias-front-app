@@ -30,3 +30,5 @@ export const SspData = React.memo(({
   }, [colorParams])
   return element
 })
+
+SspData.displayName = 'SspData'

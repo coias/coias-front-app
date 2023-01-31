@@ -36,3 +36,5 @@ export { Ecliptic } from './Ecliptic';
 export { ClickablePolygon } from './ClickablePolygon';
 
 export { RingsTract } from './RingsTract';
+
+import './prop-types';

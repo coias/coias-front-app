@@ -127,6 +127,8 @@ export const StellarGlobe = forwardRef(({ children, style, retina = true }: Glob
   )
 })
 
+StellarGlobe.displayName = 'StellarGlobe'
+
 
 export type StellarGlobeHandle = {
   globe: () => Globe
