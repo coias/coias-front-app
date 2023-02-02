@@ -38,6 +38,7 @@ import CONSTANT from '../utils/CONSTANTS';
 import SelectDateModal from '../component/StellarGlobe/SelectDateModal';
 import SelectImageModal from '../component/StellarGlobe/SelectImageModal';
 import StellarGlobeHelpModal from '../component/StellarGlobe/StellarGlobeHelpModal';
+import ColorLegend from '../component/StellarGlobe/ColorLegend';
 import { ModeStatusContext } from '../component/functional/context';
 
 function DataSelector({ setFileNames }) {
@@ -73,6 +74,17 @@ function DataSelector({ setFileNames }) {
   const ringsTract = new RingsTract();
 
   // ---tract・patchの色関係の定義--------------------------------------------------
+  const TRACT_PATCH_COLORS = [
+    {
+      color: [1, 0, 0],
+      comment: '未解析',
+    },
+    { color: [1, 0.65, 0], comment: '解析率中' },
+    { color: [1, 1, 0], comment: '解析率大' },
+    { color: [0, 1, 0], comment: '解析完了' },
+    { color: [1, 0, 1], comment: '選択中' },
+  ];
+
   // デフォルト色
   const defaultStyle = useMemo(
     () => ({
@@ -83,24 +95,37 @@ function DataSelector({ setFileNames }) {
     }),
     [],
   );
+
   // 選択された時の色
   const selectedStyle = useMemo(
     () => ({
-      baseColor: [1, 0, 1, 1],
-      baseFillColor: [1, 0, 1, 0.5],
+      baseColor: TRACT_PATCH_COLORS[4].color.concat([1]),
+      baseFillColor: TRACT_PATCH_COLORS[4].color.concat([0.5]),
     }),
     [],
   );
+
   // tract・patchごとの進捗率に依存した色
   const proggressDependentStyle = (tmpProgress) => {
+    let color;
+    if (tmpProgress < 0.33) {
+      color = TRACT_PATCH_COLORS[0].color;
+    } else if (tmpProgress < 0.66) {
+      color = TRACT_PATCH_COLORS[1].color;
+    } else if (tmpProgress < 0.99) {
+      color = TRACT_PATCH_COLORS[2].color;
+    } else {
+      color = TRACT_PATCH_COLORS[3].color;
+    }
     const style = {
       ...defaultStyle,
-      baseColor: [1.0 - tmpProgress, tmpProgress, 0, 1],
-      hoverColor: [1.0 - tmpProgress, tmpProgress, 0, 1],
-      baseFillColor: [1.0 - tmpProgress, tmpProgress, 0, 0.5],
+      baseColor: color.concat([1]),
+      hoverColor: color.concat([1]),
+      baseFillColor: color.concat([0.5]),
     };
     return style;
   };
+
   useEffect(async () => {
     const res = await axios.get(`${reactApiUri}tract_list`).catch(() => {
       console.log('tract情報のロード時にエラーが発生しました');
@@ -120,6 +145,7 @@ function DataSelector({ setFileNames }) {
       );
     }
   }, []);
+
   const progressColoredPatch = useMemo(() => {
     /** @type {import('../../component/StellarGlobe/TractPatch').PatchSelectorProps["patchStyle"]} */
     const patchStyle = {};
@@ -127,7 +153,6 @@ function DataSelector({ setFileNames }) {
       const { progress } = validPatchProgress;
       patchStyle[validPatchProgress.patchIdStr] =
         proggressDependentStyle(progress);
-      // patch個別の色
     });
     return patchStyle;
   }, [validPatchProgresses]);
@@ -464,6 +489,10 @@ function DataSelector({ setFileNames }) {
           )}
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <CelestialText {...textProp} />
+
+          {/* 凡例 */}
+          <ColorLegend TRACT_PATCH_COLORS={TRACT_PATCH_COLORS} />
+
           {/* <GlobeDebug /> */}
         </StellarGlobe>
         {/* ビューワー関係はここまで */}
