@@ -87,6 +87,7 @@ function DataSelector({ setFileNames }) {
   const selectedStyle = useMemo(
     () => ({
       baseColor: [1, 0, 1, 1],
+      baseFillColor: [1, 0, 1, 0.5],
     }),
     [],
   );
@@ -95,7 +96,8 @@ function DataSelector({ setFileNames }) {
     const style = {
       ...defaultStyle,
       baseColor: [1.0 - tmpProgress, tmpProgress, 0, 1],
-      hoverColorc: [1.0 - tmpProgress, tmpProgress, 0, 1],
+      hoverColor: [1.0 - tmpProgress, tmpProgress, 0, 1],
+      baseFillColor: [1.0 - tmpProgress, tmpProgress, 0, 0.5],
     };
     return style;
   };
@@ -111,12 +113,7 @@ function DataSelector({ setFileNames }) {
           /** @type {import('../../component/StellarGlobe/TractPatch').TractSelectorTract} */
           const tractDef = {
             id: tractId,
-            style: {
-              ...defaultStyle,
-              baseColor: [1.0 - progress, progress, 0, 1],
-              hoverColor: [1.0 - progress, progress, 0, 1],
-              // tract個別の色
-            },
+            style: proggressDependentStyle(progress),
           };
           return tractDef;
         }),
@@ -128,11 +125,8 @@ function DataSelector({ setFileNames }) {
     const patchStyle = {};
     validPatchProgresses.forEach((validPatchProgress) => {
       const { progress } = validPatchProgress;
-      patchStyle[validPatchProgress.patchIdStr] = {
-        ...defaultStyle,
-        baseColor: [1.0 - progress, progress, 0, 1],
-        hoverColor: [1.0 - progress, progress, 0, 1],
-      };
+      patchStyle[validPatchProgress.patchIdStr] =
+        proggressDependentStyle(progress);
       // patch個別の色
     });
     return patchStyle;
@@ -272,8 +266,7 @@ function DataSelector({ setFileNames }) {
   const patchOnClick = useCallback(async (patchId) => {
     setSelectedPatchId(patchId);
 
-    // const tractPatchStr = String(selectedTractId) + partchId;
-    const tractPatchStr = '10105-7,5';
+    const tractPatchStr = `${selectedTractId}-${patchId}`;
     const res = await axios
       .get(`${reactApiUri}observe_date_list?patchId=${tractPatchStr}`)
       .catch(() => {
