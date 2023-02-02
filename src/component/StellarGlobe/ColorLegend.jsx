@@ -23,13 +23,13 @@ function ColorLegend({ TRACT_PATCH_COLORS }) {
     <div
       style={{
         opacity: 0.9,
-        width: '150px',
+        width: '130px',
         height: '150px',
         color: 'black',
         backgroundColor: 'white',
         position: 'absolute',
         top: '100px',
-        right: '100px',
+        left: '10px',
         zIndex: 999,
         padding: '6px',
         display: 'flex',
