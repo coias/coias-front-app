@@ -79,6 +79,7 @@ function DataSelector({ setFileNames }) {
       baseColor: [1, 0, 0, 1],
       hoverColor: [1, 0, 0, 1],
       activeColor: [1, 0, 0, 1],
+      baseFillColor: [1, 0, 0, 1],
     }),
     [],
   );
@@ -89,6 +90,15 @@ function DataSelector({ setFileNames }) {
     }),
     [],
   );
+  // tract・patchごとの進捗率に依存した色
+  const proggressDependentStyle = (tmpProgress) => {
+    const style = {
+      ...defaultStyle,
+      baseColor: [1.0 - tmpProgress, tmpProgress, 0, 1],
+      hoverColorc: [1.0 - tmpProgress, tmpProgress, 0, 1],
+    };
+    return style;
+  };
   useEffect(async () => {
     const res = await axios.get(`${reactApiUri}tract_list`).catch(() => {
       console.log('tract情報のロード時にエラーが発生しました');

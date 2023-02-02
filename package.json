@@ -6,7 +6,7 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@stellar-globe/stellar-globe": "git+https://hsc-gitlab.mtk.nao.ac.jp/michitaro/stellar-globe.git#2.0.2",
+    "@stellar-globe/stellar-globe": "git+https://hsc-gitlab.mtk.nao.ac.jp/michitaro/stellar-globe.git#2.0.4",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",

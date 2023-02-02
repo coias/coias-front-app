@@ -119,7 +119,7 @@ export type PatchSelectorProps = {
   onClick?: (patchId: string) => void;
 };
 
-export function patchId({ j, i }: { j: number; i: number }) {
+function makePatchId({ j, i }: { j: number; i: number }) {
   return `${j},${i}`;
 }
 
@@ -131,23 +131,21 @@ export const PatchSelector = React.memo(
     validPatchIds,
     onClick = noop,
   }: PatchSelectorProps) => {
-    // for (let i = 0; i < nPatchesDec; ++i) {  // 赤緯方向
-    //   for (let j = 0; j < nPatchesRA; ++j) {  // 赤経方向
-    //   }
-    // }
     const polygons: StyledPolygon[] = [];
-    validPatchIds.map((validPatchId) => {
+    const index2patchId = new Map<number, string>();
+    validPatchIds.map((validPatchId, index) => {
       const j = validPatchId[0];
       const i = validPatchId[1];
+      const patchId = makePatchId({ j, i });
       polygons.push({
-        style: patchStyle[patchId({ j, i })] ?? defaultStyle,
+        style: patchStyle[patchId] ?? defaultStyle,
         polygon: patchPolygon(tractId, [j, i]),
       });
+      index2patchId.set(index, patchId);
     });
     const nativeOnClick = (objectIndex: number) => {
-      const j = objectIndex % nPatchesRA;
-      const i = Math.floor(objectIndex / nPatchesDec);
-      onClick(patchId({ j, i }));
+      const patchId = index2patchId.get(objectIndex)!;
+      onClick(patchId);
     };
     return <ClickablePolygon polygons={polygons} onClick={nativeOnClick} />;
   },
@@ -155,12 +153,17 @@ export const PatchSelector = React.memo(
 
 PatchSelector.displayName = 'PatchSelector';
 
-function tractId2polygon(tractId: number): Polygon {
+type TractId2polygonOptions = {
+  tractSize?: number; // tract size in radian
+};
+
+function tractId2polygon(
+  tractId: number,
+  { tractSize = angle.deg2rad(1.456) }: TractId2polygonOptions = {},
+): Polygon {
   const [a, d] = ringsTract.index2ad(tractId);
   const m = rotate(a, d);
-  const pixelScale = 0.168; // arcsec / pixel
-  const tractSize = 31200; // in pixels
-  const s = 0.5 * tractSize * angle.deg2rad(pixelScale / 3600); // half tract size
+  const s = tractSize / 2;
   const v0: V3 = [1, -s, -s];
   const v1: V3 = [1, -s, +s];
   const v2: V3 = [1, +s, +s];
@@ -176,15 +179,23 @@ function tractId2polygon(tractId: number): Polygon {
 const nPatchesDec = 9;
 const nPatchesRA = 9;
 
-function patchPolygon(tractId: number, patchId: [number, number]): Polygon {
+type PatchPolygonOptions = {
+  paddingRatio?: number;
+};
+
+function patchPolygon(
+  tractId: number,
+  patchId: [number, number],
+  { paddingRatio = 0.05 }: PatchPolygonOptions = {},
+): Polygon {
   const [j, i] = patchId;
   const [t10, _t11, t01, t00] = tractId2polygon(tractId);
-  const y0 = (i + 0.05) / nPatchesDec;
-  const y1 = (i + 0.95) / nPatchesDec;
+  const y0 = (i + paddingRatio) / nPatchesDec;
+  const y1 = (i + 1 - paddingRatio) / nPatchesDec;
   // t00 + x * (t10 - t00) + y * (t01 - t00)
   // == (1 - x - y) * t00 + x * t10 + y * t01
-  const x0 = (j + 0.05) / nPatchesRA;
-  const x1 = (j + 0.95) / nPatchesRA;
+  const x0 = (j + paddingRatio) / nPatchesRA;
+  const x1 = (j + 1 - paddingRatio) / nPatchesRA;
   const patchCorners = [
     [x0, y0],
     [x1, y0],

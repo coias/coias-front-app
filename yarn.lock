@@ -1708,9 +1708,9 @@
   version "1.0.0"
   resolved "git+https://hsc-gitlab.mtk.nao.ac.jp/michitaro/inertia.git#eaba3343648595ea01dacad1411d900f0f06b0ac"
 
-"@stellar-globe/stellar-globe@git+https://hsc-gitlab.mtk.nao.ac.jp/michitaro/stellar-globe.git#2.0.2":
-  version "2.0.2"
-  resolved "git+https://hsc-gitlab.mtk.nao.ac.jp/michitaro/stellar-globe.git#d061a5853d9050b8e06179bb2fde991d90c6acc2"
+"@stellar-globe/stellar-globe@git+https://hsc-gitlab.mtk.nao.ac.jp/michitaro/stellar-globe.git#2.0.4":
+  version "2.0.4"
+  resolved "git+https://hsc-gitlab.mtk.nao.ac.jp/michitaro/stellar-globe.git#09dc89de8c9d8f0cdb0fd55fa1c95ef3435eb663"
   dependencies:
     "@hscmap/healpix" "^1.4.12"
     "@stellar-globe/inertia" "git+https://hsc-gitlab.mtk.nao.ac.jp/michitaro/inertia.git#semver:^1.0.0"
