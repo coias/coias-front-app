@@ -33,7 +33,7 @@ function Header({ setMenunames, setFileNames }) {
           <Col className="color-nav-title f-en">
             <Row>
               <div className="p-0 m-0 f-title_sub">
-                Come On! Impacting ASteroid
+                Come On! Impacting ASteroids
               </div>
             </Row>
             <Row>
@@ -107,7 +107,7 @@ function Header({ setMenunames, setFileNames }) {
             <Row className="f-en">
               <Row>
                 <div className="p-0 m-0 f-title_sub">
-                  Come On! Impacting ASteroid
+                  Come On! Impacting ASteroids
                 </div>
               </Row>
               <Row>
