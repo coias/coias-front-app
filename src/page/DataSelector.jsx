@@ -222,7 +222,7 @@ function DataSelector({ setFileNames }) {
     );
   }, []);
 
-  const tractOnClick = useCallback(async (tractIndex) => {
+  const tractOnClick = async (tractIndex) => {
     setSelectedTractId(tractIndex);
     setSelectedPatchId(undefined);
 
@@ -261,11 +261,10 @@ function DataSelector({ setFileNames }) {
         }),
       );
     }
-  }, []);
+  };
 
-  const patchOnClick = useCallback(async (patchId) => {
+  const patchOnClick = async (patchId) => {
     setSelectedPatchId(patchId);
-
     const tractPatchStr = `${selectedTractId}-${patchId}`;
     const res = await axios
       .get(`${reactApiUri}observe_date_list?patchId=${tractPatchStr}`)
@@ -291,9 +290,9 @@ function DataSelector({ setFileNames }) {
       setSelectedDateId(undefined);
       setSelectDateModalShow(true);
     }
-  }, []);
+  };
 
-  const dateOnClick = useCallback(async (dateId) => {
+  const dateOnClick = async (dateId) => {
     const res = await axios
       .get(`${reactApiUri}image_list?dirId=${dateId}`)
       .catch(() => {
@@ -324,9 +323,9 @@ function DataSelector({ setFileNames }) {
       setImages(sortedImages);
       setSelectImageModalShow(true);
     }
-  }, []);
+  };
 
-  const imageOnClick = useCallback(async (callBackImages) => {
+  const imageOnClick = async (callBackImages) => {
     let NSelectedImages = 0;
     const tmpSelectedImageNames = [];
     Object.keys(callBackImages).forEach((key) => {
@@ -348,9 +347,9 @@ function DataSelector({ setFileNames }) {
     await axios
       .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames)
       .catch(() => {});
-  }, []);
+  };
 
-  const clearImageSelect = useCallback(() => {
+  const clearImageSelect = () => {
     setFileSelectState('未選択');
     setSelectedTractId(undefined);
     setSelectedPatchId(undefined);
@@ -362,7 +361,7 @@ function DataSelector({ setFileNames }) {
       modeStatusCopy.ExplorePrepare = false;
       return modeStatusCopy;
     });
-  }, []);
+  };
   // ----------------------------------------------------
 
   return (
