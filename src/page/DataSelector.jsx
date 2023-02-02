@@ -222,7 +222,7 @@ function DataSelector({ setFileNames }) {
     );
   }, []);
 
-  const tractOnClick = async (tractIndex) => {
+  const tractOnClick = useCallback(async (tractIndex) => {
     setSelectedTractId(tractIndex);
     setSelectedPatchId(undefined);
 
@@ -261,38 +261,41 @@ function DataSelector({ setFileNames }) {
         }),
       );
     }
-  };
+  }, []);
 
-  const patchOnClick = async (patchId) => {
-    setSelectedPatchId(patchId);
-    const tractPatchStr = `${selectedTractId}-${patchId}`;
-    const res = await axios
-      .get(`${reactApiUri}observe_date_list?patchId=${tractPatchStr}`)
-      .catch(() => {
-        console.log('観測日情報のロード時にエラーが発生しました');
-      });
-    if (res !== undefined) {
-      const pairs = Object.entries(res.data.result);
-      pairs.sort((p1, p2) => {
-        const p1Key = p1[0];
-        const p2Key = p2[0];
-        if (p1Key < p2Key) {
-          return -1;
-        }
-        if (p1Key > p2Key) {
-          return 1;
-        }
-        return 0;
-      });
-      const sortedDates = Object.fromEntries(pairs);
+  const patchOnClick = useCallback(
+    async (patchId) => {
+      setSelectedPatchId(patchId);
+      const tractPatchStr = `${selectedTractId}-${patchId}`;
+      const res = await axios
+        .get(`${reactApiUri}observe_date_list?patchId=${tractPatchStr}`)
+        .catch(() => {
+          console.log('観測日情報のロード時にエラーが発生しました');
+        });
+      if (res !== undefined) {
+        const pairs = Object.entries(res.data.result);
+        pairs.sort((p1, p2) => {
+          const p1Key = p1[0];
+          const p2Key = p2[0];
+          if (p1Key < p2Key) {
+            return -1;
+          }
+          if (p1Key > p2Key) {
+            return 1;
+          }
+          return 0;
+        });
+        const sortedDates = Object.fromEntries(pairs);
 
-      setObservedDates(sortedDates);
-      setSelectedDateId(undefined);
-      setSelectDateModalShow(true);
-    }
-  };
+        setObservedDates(sortedDates);
+        setSelectedDateId(undefined);
+        setSelectDateModalShow(true);
+      }
+    },
+    [selectedTractId],
+  );
 
-  const dateOnClick = async (dateId) => {
+  const dateOnClick = useCallback(async (dateId) => {
     const res = await axios
       .get(`${reactApiUri}image_list?dirId=${dateId}`)
       .catch(() => {
@@ -323,9 +326,9 @@ function DataSelector({ setFileNames }) {
       setImages(sortedImages);
       setSelectImageModalShow(true);
     }
-  };
+  }, []);
 
-  const imageOnClick = async (callBackImages) => {
+  const imageOnClick = useCallback(async (callBackImages) => {
     let NSelectedImages = 0;
     const tmpSelectedImageNames = [];
     Object.keys(callBackImages).forEach((key) => {
@@ -347,7 +350,7 @@ function DataSelector({ setFileNames }) {
     await axios
       .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames)
       .catch(() => {});
-  };
+  }, []);
 
   const clearImageSelect = () => {
     setFileSelectState('未選択');
