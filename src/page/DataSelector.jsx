@@ -85,7 +85,7 @@ function DataSelector({ setFileNames }) {
     { color: [1, 0.65, 0], comment: '解析率中' },
     { color: [1, 1, 0], comment: '解析率大' },
     { color: [0, 1, 0], comment: '解析完了' },
-    { color: [1, 0, 1], comment: '選択中' },
+    { color: [0, 1, 1], comment: '選択中' },
   ];
 
   // デフォルト色
@@ -183,19 +183,19 @@ function DataSelector({ setFileNames }) {
         {
           position: SkyCoord.fromDeg(5, 10).xyz,
           text: REGION_NAMES[1],
-          color: 'magenta',
+          color: 'cyan',
           font: '35px serif',
         },
         {
           position: SkyCoord.fromDeg(177, 10).xyz,
           text: REGION_NAMES[2],
-          color: 'magenta',
+          color: 'cyan',
           font: '35px serif',
         },
         {
           position: SkyCoord.fromDeg(225, 48).xyz,
           text: REGION_NAMES[3],
-          color: 'magenta',
+          color: 'cyan',
           font: '35px serif',
         },
         // { position: SkyCoord.fromDeg(90, 0).xyz, text: '赤道', color: 'red' },
@@ -514,7 +514,7 @@ function DataSelector({ setFileNames }) {
           {/* HSCの画像データの枠 */}
           <SspOutline
             url="//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide/area.json"
-            color={[1, 0, 1, 0.5]}
+            color={[0, 1, 1, 0.5]}
           />
 
           {/* 背景の天の川 */}
@@ -538,7 +538,7 @@ function DataSelector({ setFileNames }) {
               <Tract
                 tractId={selectedTractId}
                 style={selectedStyle}
-                baseLineWidth={8}
+                baseLineWidth={15}
               />
               {/* Patch選択肢 */}
               <PatchSelector
