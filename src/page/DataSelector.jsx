@@ -37,6 +37,7 @@ import {
 import CONSTANT from '../utils/CONSTANTS';
 import SelectDateModal from '../component/StellarGlobe/SelectDateModal';
 import SelectImageModal from '../component/StellarGlobe/SelectImageModal';
+import AutoSelectResultModal from '../component/StellarGlobe/AutoSelectResultModal';
 import StellarGlobeHelpModal from '../component/StellarGlobe/StellarGlobeHelpModal';
 import ColorLegend from '../component/StellarGlobe/ColorLegend';
 import { ModeStatusContext } from '../component/functional/context';
@@ -71,6 +72,8 @@ function DataSelector({ setFileNames }) {
   const [selectedTractId, setSelectedTractId] = useState(undefined);
   const [selectedPatchId, setSelectedPatchId] = useState(undefined);
   const [selectedDateId, setSelectedDateId] = useState(undefined);
+  const [autoSelectResult, setAutoSelectResult] = useState({});
+  const [showAutoSelectResult, setShowAutoSelectResult] = useState(false);
   const ringsTract = new RingsTract();
 
   // ---tract・patchの色関係の定義--------------------------------------------------
@@ -166,6 +169,7 @@ function DataSelector({ setFileNames }) {
   }, []);
   // ----------------------------------------------------------------------------
 
+  const REGION_NAMES = ['', '画像領域1', '画像領域2', '画像領域3'];
   // 文字を配置
   /** @type {import('../../component/StellarGlobe/layers').CelestialTextProps} */
   const textProp = useMemo(
@@ -178,19 +182,19 @@ function DataSelector({ setFileNames }) {
         },
         {
           position: SkyCoord.fromDeg(5, 10).xyz,
-          text: '画像領域1',
+          text: REGION_NAMES[1],
           color: 'magenta',
           font: '35px serif',
         },
         {
           position: SkyCoord.fromDeg(177, 10).xyz,
-          text: '画像領域2',
+          text: REGION_NAMES[2],
           color: 'magenta',
           font: '35px serif',
         },
         {
           position: SkyCoord.fromDeg(225, 48).xyz,
-          text: '画像領域3',
+          text: REGION_NAMES[3],
           color: 'magenta',
           font: '35px serif',
         },
@@ -205,6 +209,46 @@ function DataSelector({ setFileNames }) {
   // ----------------------------------------------------
 
   // ---コールバック関数------------------------------------
+  // 選択画像名一覧をプロジェクトディレクトリに書き出す
+  const putImageNamesToProjectDir = useCallback(
+    async (tmpSelectedImageNames) => {
+      // プロジェクト(カレント)ディレクトリを作るだけで画像のアップロードはしない
+      await axios.post(`${reactApiUri}uploadfiles`).catch(() => {});
+      // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
+      await axios
+        .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames)
+        .catch(() => {});
+    },
+    [],
+  );
+
+  // tractIdを受け取り, そのtract内のpatch一覧を取得しセットする
+  const getAndSetValidPatchIds = useCallback(async (tmpTractId) => {
+    const res = await axios
+      .get(`${reactApiUri}patch_list?tractId=${tmpTractId}`)
+      .catch(() => {
+        console.log('patch情報のロード時にエラーが発生しました');
+      });
+    if (res !== undefined) {
+      setValidPatchIds(
+        Object.keys(res.data.result).map((tractPatchStr) => {
+          const patchIdStr = tractPatchStr.split('-')[1];
+          const patchIdStrSplitted = patchIdStr.split(',');
+          const j = parseInt(patchIdStrSplitted[0], 10);
+          const i = parseInt(patchIdStrSplitted[1], 10);
+          return [j, i];
+        }),
+      );
+      setValidPatchProgresses(
+        Object.keys(res.data.result).map((tractPatchStr) => {
+          const patchIdStr = tractPatchStr.split('-')[1];
+          const { progress } = res.data.result[tractPatchStr];
+          return { patchIdStr, progress };
+        }),
+      );
+    }
+  }, []);
+
   // 画像領域1へカメラ移動
   const goRegion1 = useCallback(() => {
     globe().camera.jumpTo(
@@ -262,30 +306,7 @@ function DataSelector({ setFileNames }) {
         easingFunction: easing.fastStart4,
       },
     );
-
-    const res = await axios
-      .get(`${reactApiUri}patch_list?tractId=${tractIndex}`)
-      .catch(() => {
-        console.log('patch情報のロード時にエラーが発生しました');
-      });
-    if (res !== undefined) {
-      setValidPatchIds(
-        Object.keys(res.data.result).map((tractPatchStr) => {
-          const patchIdStr = tractPatchStr.split('-')[1];
-          const patchIdStrSplitted = patchIdStr.split(',');
-          const j = parseInt(patchIdStrSplitted[0], 10);
-          const i = parseInt(patchIdStrSplitted[1], 10);
-          return [j, i];
-        }),
-      );
-      setValidPatchProgresses(
-        Object.keys(res.data.result).map((tractPatchStr) => {
-          const patchIdStr = tractPatchStr.split('-')[1];
-          const { progress } = res.data.result[tractPatchStr];
-          return { patchIdStr, progress };
-        }),
-      );
-    }
+    getAndSetValidPatchIds(tractIndex);
   }, []);
 
   const patchOnClick = useCallback(
@@ -369,12 +390,54 @@ function DataSelector({ setFileNames }) {
       modeStatusCopy.ExplorePrepare = true;
       return modeStatusCopy;
     });
-    // プロジェクト(カレント)ディレクトリを作るだけで画像のアップロードはしない
-    await axios.post(`${reactApiUri}uploadfiles`).catch(() => {});
-    // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
-    await axios
-      .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames)
-      .catch(() => {});
+    putImageNamesToProjectDir(tmpSelectedImageNames);
+  }, []);
+
+  const autoSelect = useCallback(async () => {
+    const res = await axios.get(`${reactApiUri}suggested_images`).catch(() => {
+      console.log('自動画像選択情報のロード時にエラーが発生しました');
+    });
+
+    if (res !== undefined) {
+      const resResult = res.data.result;
+      let regionName;
+      if (resResult.dec > 30) {
+        [, , , regionName] = REGION_NAMES;
+      } else if (resResult.ra > 120 && resResult.ra < 240) {
+        [, , regionName] = REGION_NAMES;
+      } else {
+        [, regionName] = REGION_NAMES;
+      }
+      const tmpTractId = parseInt(resResult.tractPatch.split('-')[0], 10);
+      const tmpPatchId = resResult.tractPatch.split('-')[1];
+      setSelectedTractId(tmpTractId);
+      setSelectedPatchId(tmpPatchId);
+      const [a, d] = ringsTract.index2ad(tmpTractId);
+      globe().camera.jumpTo(
+        {
+          fovy: angle.deg2rad(1),
+        },
+        {
+          coord: SkyCoord.fromRad(a, d),
+          duration: 400,
+          easingFunction: easing.fastStart4,
+        },
+      );
+      getAndSetValidPatchIds(tmpTractId);
+
+      resResult.regionName = regionName;
+      setAutoSelectResult(resResult);
+      setShowAutoSelectResult(true);
+
+      setFileSelectState(`${resResult.fileNames.length}枚選択中`);
+      setFileNames(resResult.fileNames);
+      setModeStatus((prevModeStatus) => {
+        const modeStatusCopy = { ...prevModeStatus };
+        modeStatusCopy.ExplorePrepare = true;
+        return modeStatusCopy;
+      });
+      putImageNamesToProjectDir(resResult.fileNames);
+    }
   }, []);
 
   const clearImageSelect = () => {
@@ -426,6 +489,14 @@ function DataSelector({ setFileNames }) {
             disabled={fileSelectState === '未選択'}
           >
             画像選択クリア
+          </Button>
+        </Col>
+        <Col>
+          <Button
+            onClick={autoSelect}
+            className="btn-style box_blue justify-content-end"
+          >
+            自動選択
           </Button>
         </Col>
         <Col>
@@ -517,6 +588,14 @@ function DataSelector({ setFileNames }) {
         onClickOkButton={imageOnClick}
         images={images}
         setImages={setImages}
+      />
+
+      <AutoSelectResultModal
+        show={showAutoSelectResult}
+        onExit={() => {
+          setShowAutoSelectResult(false);
+        }}
+        autoSelectResult={autoSelectResult}
       />
 
       <StellarGlobeHelpModal
