@@ -33,6 +33,7 @@ import {
   StellarGlobe,
   Tract,
   TractSelector,
+  PrettyPictures,
 } from '../component/StellarGlobe';
 /* eslint-disable import/no-unresolved, import/extensions, no-unused-vars */
 import CONSTANT from '../utils/CONSTANTS';
@@ -523,6 +524,9 @@ function DataSelector({ setFileNames }) {
       <Row>
         {/* ビューワー関係はここから */}
         <StellarGlobe ref={globeRef}>
+          {/* M31などの綺麗な画像 */}
+          <PrettyPictures />
+
           {/* HSCの画像 */}
           <SspData baseUrl={sspDataUrl} outline={false} />
 
