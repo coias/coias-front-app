@@ -34,7 +34,7 @@ function Report() {
 
   const makeSendMpc = async () => {
     const header = [
-      'COD 568',
+      'COD T09',
       'CON S. Urakawa, Bisei Spaceguard Center, 1716-3, Okura, Bisei',
       'CON Ibara, 714-1411 Okayama, Japan [urakawa@spaceguard.or.jp]',
       `OBS H. Aihara, Y. AlSayyad, M. Ando, R. Armstrong, J. Bosch, E. Egami,`,
