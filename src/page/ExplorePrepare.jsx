@@ -153,8 +153,8 @@ function ExplorePrepare({
 
     const errorFileNames = [];
 
-    if (files.length < 3) {
-      errorFileNames.push('ファイルが足りません。3つ以上選択してください。');
+    if (files.length < 4) {
+      errorFileNames.push('ファイルが足りません。4つ以上選択してください。');
     }
 
     Object.values(files).forEach((file, i) => {
