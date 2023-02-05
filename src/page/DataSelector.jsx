@@ -14,6 +14,7 @@ import React, {
 } from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 import { BiHelpCircle } from 'react-icons/bi';
+import { AiFillSetting } from 'react-icons/ai';
 /* eslint-disable no-unused-vars */
 import { angle, easing, Globe, SkyCoord } from '@stellar-globe/stellar-globe';
 /* eslint-disable no-unused-vars */
@@ -38,6 +39,7 @@ import CONSTANT from '../utils/CONSTANTS';
 import SelectDateModal from '../component/StellarGlobe/SelectDateModal';
 import SelectImageModal from '../component/StellarGlobe/SelectImageModal';
 import AutoSelectResultModal from '../component/StellarGlobe/AutoSelectResultModal';
+import StellarGlobeSettingModal from '../component/StellarGlobe/StellarGlobeSettingModal';
 import StellarGlobeHelpModal from '../component/StellarGlobe/StellarGlobeHelpModal';
 import ColorLegend from '../component/StellarGlobe/ColorLegend';
 import { ModeStatusContext } from '../component/functional/context';
@@ -61,6 +63,9 @@ function DataSelector({ setFileNames }) {
   const globe = () => globeRef.current.globe();
 
   const [helpModalShow, setHelpModalShow] = useState(false);
+  const [settingModalShow, setSettingModalShow] = useState(false);
+  const [selectMultipleDates, setSelectMultipleDates] = useState(false);
+  const [selectImageMode, setSelectImageMode] = useState(false);
   const [selectDateModalShow, setSelectDateModalShow] = useState(false);
   const [selectImageModalShow, setSelectImageModalShow] = useState(false);
   const [fileSelectState, setFileSelectState] = useState('未選択');
@@ -71,7 +76,7 @@ function DataSelector({ setFileNames }) {
   const [observedDates, setObservedDates] = useState({});
   const [selectedTractId, setSelectedTractId] = useState(undefined);
   const [selectedPatchId, setSelectedPatchId] = useState(undefined);
-  const [selectedDateId, setSelectedDateId] = useState(undefined);
+  const [selectedDateIds, setSelectedDateIds] = useState(undefined);
   const [autoSelectResult, setAutoSelectResult] = useState({});
   const [showAutoSelectResult, setShowAutoSelectResult] = useState(false);
   const ringsTract = new RingsTract();
@@ -332,18 +337,23 @@ function DataSelector({ setFileNames }) {
           return 0;
         });
         const sortedDates = Object.fromEntries(pairs);
+        Object.keys(sortedDates).forEach((key) => {
+          sortedDates[key].isSelected = false;
+        });
 
         setObservedDates(sortedDates);
-        setSelectedDateId(undefined);
+        setSelectedDateIds(undefined);
         setSelectDateModalShow(true);
       }
     },
     [selectedTractId],
   );
 
-  const dateOnClick = useCallback(async (dateId) => {
+  const dateOnClick = useCallback(async (dateIds) => {
+    const dateIdsListStr = dateIds.map((dateId) => String(dateId));
+    const dateIdsStr = dateIdsListStr.join('-');
     const res = await axios
-      .get(`${reactApiUri}image_list?dirId=${dateId}`)
+      .get(`${reactApiUri}image_list?dirIdsStr=${dateIdsStr}`)
       .catch(() => {
         console.log('画像情報のロード時にエラーが発生しました');
       });
@@ -444,7 +454,7 @@ function DataSelector({ setFileNames }) {
     setFileSelectState('未選択');
     setSelectedTractId(undefined);
     setSelectedPatchId(undefined);
-    setSelectedDateId(undefined);
+    setSelectedDateIds(undefined);
     setFileNames([]);
     goRegion1();
     setModeStatus((prevModeStatus) => {
@@ -497,6 +507,11 @@ function DataSelector({ setFileNames }) {
             className="btn-style box_blue justify-content-end"
           >
             自動選択
+          </Button>
+        </Col>
+        <Col>
+          <Button variant="light" onClick={() => setSettingModalShow(true)}>
+            <AiFillSetting size={CONSTANT.iconSize} className="icon-color" />
           </Button>
         </Col>
         <Col>
@@ -576,8 +591,10 @@ function DataSelector({ setFileNames }) {
         }}
         onClickOkButton={dateOnClick}
         observedDates={observedDates}
-        selectedDateId={selectedDateId}
-        setSelectedDateId={setSelectedDateId}
+        setObservedDates={setObservedDates}
+        selectedDateIds={selectedDateIds}
+        setSelectedDateIds={setSelectedDateIds}
+        selectMultipleDates={selectMultipleDates}
       />
 
       <SelectImageModal
@@ -596,6 +613,18 @@ function DataSelector({ setFileNames }) {
           setShowAutoSelectResult(false);
         }}
         autoSelectResult={autoSelectResult}
+      />
+
+      <StellarGlobeSettingModal
+        show={settingModalShow}
+        onHide={() => {
+          setSettingModalShow(false);
+        }}
+        selectMultipleDates={selectMultipleDates}
+        setSelectMultipleDates={setSelectMultipleDates}
+        selectImageMode={selectImageMode}
+        setSelectImageMode={setSelectImageMode}
+        title="設定"
       />
 
       <StellarGlobeHelpModal

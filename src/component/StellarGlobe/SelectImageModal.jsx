@@ -38,7 +38,7 @@ function SelectImageModal({
           解析したい画像を選択(4枚以上選択)
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={{ overflowY: 'scroll' }}>
         <Table striped bordered>
           <tbody className="select-image-modal-table">
             <tr>
