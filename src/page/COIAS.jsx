@@ -185,7 +185,7 @@ function COIAS({
 
       const toObject = {};
 
-      const res1 = await `${reactApiUri}unknown_disp`.catch(() => {
+      const res1 = await axios.get(`${reactApiUri}unknown_disp`).catch(() => {
         setCOIASAlertModalshow(true);
         setAlertMessage('自動検出を行ってください');
         setAlertButtonMessage('探索準備に戻る');
