@@ -1,14 +1,23 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
+import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
-import GetProgress from '../component/general/GetProgress';
 import { ModeStatusContext } from '../component/functional/context';
+
+const userId = crypto.randomUUID();
 
 function Report() {
   const reactApiUri = process.env.REACT_APP_API_URI;
+  const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
+
+  const { lastJsonMessage } = useWebSocket(socketUrl, {
+    shouldReconnect: () => true,
+    reconnectAttempts: 3,
+    reconnectInterval: 3000,
+  });
 
   const [sendMpcMEA, setSendMpcMEA] = useState('');
   const [sendMpcBody, setSendMpcBody] = useState([]);
@@ -21,7 +30,6 @@ function Report() {
   const [errorReason, setErrorReason] = useState('');
 
   const [showProgress, setShowProgress] = useState(false);
-  const [progress, setProgress] = useState('');
   const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
 
   const makeSendMpc = async () => {
@@ -72,12 +80,6 @@ function Report() {
   const getMpc = async () => {
     setLoading(true);
     setShowProgress(true);
-    setProgress('0%');
-    const timerID = setInterval(
-      () => GetProgress(setProgress, 'AstsearchR_afterReCOIAS'),
-      250,
-    );
-
     await axios
       .put(
         modeStatus.FinalCheck
@@ -97,13 +99,12 @@ function Report() {
             return trimedStr;
           }),
         );
-        setLoading(false);
-        clearInterval(timerID);
         setModeStatus((prevModeStatus) => {
           const modeStatusCopy = { ...prevModeStatus };
           modeStatusCopy.FinalCheck = true;
           return modeStatusCopy;
         });
+        setLoading(false);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -113,7 +114,6 @@ function Report() {
           setShowProcessError(true);
         }
         setLoading(false);
-        clearInterval(timerID);
       });
   };
 
@@ -171,7 +171,7 @@ function Report() {
         <Col md={8}>
           <Form.Control
             style={{ textOverflow: 'ellipsis' }}
-            placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入してください. (例) Y. Endo, M. Konohata, A. Manaka"
+            placeholder="測定者(ご自身)のお名前を記入してください. 複数の場合はカンマ区切りで記入. (例) Y. Endo, M. Konohata, A. Manaka"
             onChange={(e) => {
               setSendMpcMEA(e.target.value);
             }}
@@ -212,20 +212,12 @@ function Report() {
                 variant="primary"
                 onClick={() => {
                   downloadFIle();
-                }}
-                className="btn-style box_blue"
-              >
-                send_mpc.txt
-              </Button>
-
-              <Button
-                variant="primary"
-                onClick={() => {
                   downloadFinalAllFIle();
                 }}
                 className="btn-style box_blue"
+                disabled={!modeStatus.FinalCheck}
               >
-                final_all.txt
+                send_mpc.txt and final_all.txt
               </Button>
             </div>
           </div>
@@ -235,7 +227,7 @@ function Report() {
         loading={loading}
         processName="レポートデータ取得中…"
         showProgress={showProgress}
-        progress={progress}
+        lastJsonMessage={lastJsonMessage}
       />
       <AlertModal
         alertModalShow={showError}
