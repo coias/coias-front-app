@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { angle, path, V3, V4 } from '@stellar-globe/stellar-globe'
+import { angle, overlayAlpha, path, V3, V4 } from '@stellar-globe/stellar-globe'
 import { vec3 } from 'gl-matrix'
 import React, { useMemo } from 'react'
 import { Path } from "./path"
@@ -35,7 +35,8 @@ export const Ecliptic = React.memo(({
       joint: path.JOINT.MITER,
     }
   ], [nSteps])
-  return <Path paths={paths} darkenNarrowLine />
+  return <Path paths={paths} darkenNarrowLine alphaFunc={overlayAlpha} />
 })
+
 
 Ecliptic.displayName = 'Ecliptic'

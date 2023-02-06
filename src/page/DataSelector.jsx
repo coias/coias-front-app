@@ -174,13 +174,6 @@ function DataSelector({ setFileNames }) {
     return patchStyle;
   }, [validPatchProgresses]);
 
-  // eslint-disable-next-line no-unused-vars
-  const sspDataUrl = useMemo(() => {
-    const ssl = window.location.protocol === 'https';
-    return `${
-      ssl ? 'https' : 'http'
-    }://hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide`;
-  }, []);
   // ----------------------------------------------------------------------------
 
   const REGION_NAMES = ['', '画像領域1', '画像領域2', '画像領域3'];
@@ -270,7 +263,7 @@ function DataSelector({ setFileNames }) {
       {
         name: '矮小銀河 KKR25',
         coord: '16:13:48 +54:22:16',
-        fovyDeg: 1,
+        fovyDeg: 0.03,
       },
       {
         name: '渦巻銀河 M101',
@@ -280,7 +273,7 @@ function DataSelector({ setFileNames }) {
       {
         name: 'おたまじゃくし銀河 (UGC 10214)',
         coord: '16:06:03.9 +55:25:32',
-        fovyDeg: 1,
+        fovyDeg: 0.04,
       },
       {
         name: '衝突銀河 UGC 12589 & 2MASX J23250382+0001068',
@@ -295,7 +288,7 @@ function DataSelector({ setFileNames }) {
       {
         name: '衝突銀河 LEDA 2535615 & LEDA 2535506',
         coord: '16:14:53.4 +56:24:08.8',
-        fovyDeg: 1,
+        fovyDeg: 0.02,
       },
       {
         name: '衝突銀河 NGC 7667',
@@ -755,7 +748,14 @@ function DataSelector({ setFileNames }) {
           <PrettyPictures />
 
           {/* HSCの画像 */}
-          <SspData baseUrl={sspDataUrl} outline={false} />
+          <SspData
+            baseUrl="//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide"
+            outline={false}
+          />
+          <SspData
+            baseUrl="//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_dud"
+            outline={false}
+          />
 
           {/* 背景の天の川 */}
           <EsoMilkyWay />
@@ -778,6 +778,10 @@ function DataSelector({ setFileNames }) {
               {/* HSCの画像データの枠 */}
               <SspOutline
                 url="//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide/area.json"
+                color={[0, 1, 1, 0.5]}
+              />
+              <SspOutline
+                url="//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_dud/area.json"
                 color={[0, 1, 1, 0.5]}
               />
 
