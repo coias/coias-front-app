@@ -59,7 +59,7 @@ function StellarGlobeSettingModal({
               label="画像選択モード"
               type="radio"
               onChange={() => setSelectImageMode(true)}
-              defaultChecked={!selectImageMode && 'true'}
+              defaultChecked={selectImageMode && 'true'}
             />
           </Col>
           <Col>
@@ -68,7 +68,7 @@ function StellarGlobeSettingModal({
               label="鑑賞モード"
               type="radio"
               onChange={() => setSelectImageMode(false)}
-              defaultChecked={selectImageMode && 'true'}
+              defaultChecked={!selectImageMode && 'true'}
             />
           </Col>
         </Row>

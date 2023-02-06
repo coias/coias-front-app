@@ -33,6 +33,8 @@ export { SspOutline } from './SspOutline';
 
 export { Ecliptic } from './Ecliptic';
 
+export { Equatorial } from './Equatorial';
+
 export { ClickablePolygon } from './ClickablePolygon';
 
 export { RingsTract } from './RingsTract';
