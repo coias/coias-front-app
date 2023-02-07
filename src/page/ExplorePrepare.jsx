@@ -522,7 +522,7 @@ function ExplorePrepare({
               className={isAuto ? '' : 'params-btn'}
               onClick={() => setParamsSettingModalShow(true)}
             >
-              <GoSettings size={CONSTANT.iconSize} />
+              <GoSettings size={CONSTANT.iconSize22px} />
             </Button>
           </Row>
           <Row>

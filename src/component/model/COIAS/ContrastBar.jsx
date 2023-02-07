@@ -13,7 +13,10 @@ function ContrastBar({ val, set }) {
           color: 'white',
         }}
       >
-        <ImContrast size={CONSTANT.iconSize} style={{ margin: 'auto 10px' }} />
+        <ImContrast
+          size={CONSTANT.iconSize22px}
+          style={{ margin: 'auto 10px' }}
+        />
       </IconContext.Provider>
       <input
         id="ex4"

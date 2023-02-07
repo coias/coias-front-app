@@ -276,7 +276,7 @@ function ManualStarModal({
         <Modal.Header closeButton>
           <Modal.Title
             id="contained-modal-title-vcenter"
-            style={{ color: '#5c636a', fontWeight: 'bold' }}
+            className="f-modal_title f-ja"
           >
             {`#H${'000000'.slice(
               (leadStarNumber + activeKey).toString().length - 6,
@@ -310,7 +310,7 @@ function ManualStarModal({
               drawImage();
               setCanvasManualRectanglCoordinates([]);
             }}
-            className="btn-style box_border_blue"
+            className="btn-style box_border_blue f-ja"
           >
             やり直す
           </Button>
@@ -326,7 +326,7 @@ function ManualStarModal({
               setCenterCoodinate(null);
               setCanvasManualRectanglCoordinates([]);
             }}
-            className="btn-style box_blue"
+            className="btn-style box_blue f-ja"
           >
             完了
           </Button>

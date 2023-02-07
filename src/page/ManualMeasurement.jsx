@@ -528,7 +528,7 @@ function ManualMeasurement({
                 onClick={() => {
                   removePositionListByCheckState();
                 }}
-                className="btn-style box_border_blue"
+                className="btn-style box_border_blue f-ja"
                 size="lg"
               >
                 削除
@@ -552,7 +552,7 @@ function ManualMeasurement({
                   }
                   setIsRedisp(!isRedisp);
                 }}
-                className="btn-style box_blue"
+                className="btn-style box_blue f-ja"
                 size="lg"
               >
                 {isRedisp ? 'やり直す' : '再描画'}
