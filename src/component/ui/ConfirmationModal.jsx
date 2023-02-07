@@ -36,7 +36,7 @@ function ConfirmationModal({
           確認
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ color: '#5c636a' }} className="f-ja">
+      <Modal.Body className="f-ja">
         {positionList[activeKey] ? (
           <p>{generateConfirmMessage()}</p>
         ) : (

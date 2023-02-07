@@ -1,10 +1,7 @@
 @charset "utf-8";
 @import './_breakpoint';
 @import './_mixin';
-
-// =======================
-// Layout
-// =======================
+@import './color';
 
 * {
   overscroll-behavior-x: none !important;
@@ -22,6 +19,15 @@ input {
   box-shadow: none !important;
 }
 
+h3,
+h4,
+p,
+.form-label,
+.form-check,
+.modal-body {
+  color: $color_gray;
+}
+
 // body {
 //   font-family: Avenir !important;
 // }
@@ -30,16 +36,16 @@ input {
 .color-nav {
   padding: 0;
   margin: 0;
-  background-color: #6b80b6;
+  background-color: $color_primary;
 
   .color-nav-title {
-    color: #fff;
+    color: $color_white;
   }
 
   // Humburger Menu
   .navbar-toggler {
     margin-right: 20px;
-    border: 1px solid #fff;
+    border: 1px solid $color_white;
 
     &:focus {
       box-shadow: none;
@@ -103,20 +109,21 @@ input {
 
   a {
     padding-bottom: 20px;
-    color: #fff;
+    color: $color_white;
     text-align: center;
     text-decoration: none;
 
     .nav-content {
       margin: 0;
       margin-top: 20px;
+      color: $color_white;
     }
   }
 
   .btn {
     padding: 7px 25px;
     margin-right: 30px;
-    color: #fff;
+    color: $color_white;
     background: none;
   }
 }
@@ -130,7 +137,7 @@ input {
   .offcanvas-header {
     .offcanvas-title {
       padding-left: 10px;
-      color: #6b80b6;
+      color: $color_primary;
     }
   }
 
@@ -141,14 +148,14 @@ input {
       }
 
       a {
-        color: #6b80b6;
+        color: $color_primary;
         text-decoration: none;
 
         h3 {
           font-size: 20px;
 
           &:hover {
-            text-decoration: underline #6b80b6;
+            text-decoration: underline $color_primary;
           }
         }
       }
@@ -157,13 +164,13 @@ input {
     .btn {
       margin-top: 20px;
       font-size: 20px;
-      color: #6b80b6;
-      background-color: #fff;
-      border: 3px solid #6b80b6;
+      color: $color_primary;
+      background-color: $color_white;
+      border: 3px solid $color_primary;
 
       &:hover {
-        color: #94a9e0;
-        border: 3px solid #94a9e0;
+        color: $color_secondary;
+        border: 3px solid $color_secondary;
       }
     }
   }
@@ -174,14 +181,10 @@ input {
   border-bottom: solid #707070 1px;
 
   .icon-color {
-    color: #5c636a;
+    color: $color_gray;
 
     &:hover {
-      color: #94a9e0;
-
-      // 水色 #94a9e0
-      // 薄い黄色 #f8e58c
-      // 初期黄色 #ffd759
+      color: $color_secondary;
     }
   }
 
@@ -189,7 +192,7 @@ input {
     color: #e5e5e5;
 
     &:hover {
-      color: #94a9e0;
+      color: $color_secondary;
     }
   }
 
@@ -198,7 +201,7 @@ input {
     margin: auto 0;
 
     &:hover {
-      border: 2px solid #94a9e0;
+      border: 2px solid $color_secondary;
     }
   }
 
@@ -206,24 +209,24 @@ input {
     .btn-primary {
       height: 35px;
       font-weight: bold;
-      color: #5c636a;
-      background-color: #fff;
-      border: 1px solid #5c636a;
+      color: $color_gray;
+      background-color: $color_white;
+      border: 1px solid $color_gray;
 
       &:hover {
-        color: #94a9e0;
-        border: 1px solid #94a9e0;
+        color: $color_secondary;
+        border: 1px solid $color_secondary;
       }
     }
 
     .btn-check:checked + .btn-primary {
-      color: #fff;
-      background-color: #5c636a;
-      border: 1px solid #5c636a;
+      color: $color_white;
+      background-color: $color_gray;
+      border: 1px solid $color_gray;
 
       &:hover {
-        background-color: #94a9e0;
-        border: 1px solid #94a9e0;
+        background-color: $color_secondary;
+        border: 1px solid $color_secondary;
       }
     }
   }
@@ -243,13 +246,9 @@ input {
 
 // Setting Modal
 .setting_modal {
-  h4 {
-    color: #5c636a;
-  }
-
   .setting_modal-content_wrap {
     padding: 10px 30px 40px;
-    color: #5c636a;
+    color: $color_gray;
 
     .content_wrap-table {
       margin-bottom: 20px;
@@ -269,7 +268,6 @@ input {
 
     h4 {
       margin: 0;
-      color: #5c636a;
       text-align: left;
       vertical-align: middle;
     }
@@ -282,7 +280,6 @@ input {
 
   h4 {
     margin: 0;
-    color: #5c636a;
   }
 
   .col {
@@ -317,7 +314,7 @@ input {
 
       span {
         margin-top: 10px;
-        color: #5c636a;
+        color: $color_gray;
       }
 
       :not(:last-child) {
@@ -399,7 +396,7 @@ canvas {
 }
 
 .active:hover {
-  color: white;
+  color: $color_white;
   cursor: pointer;
 }
 
@@ -411,17 +408,17 @@ canvas {
   width: 70%;
   height: 4px;
   content: '';
-  background-color: white;
+  background-color: $color_white;
   transform: translate(-50%);
 }
 
 .not-active:hover {
-  color: white;
+  color: $color_white;
   cursor: pointer;
 }
 
 .not-active-no-hover:hover {
-  color: gray;
+  color: $color_gray;
   cursor: default;
 }
 
@@ -444,7 +441,7 @@ footer {
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: gray;
+    background-color: $color_gray;
 
     --bg-opacity: 1;
   }
@@ -616,11 +613,11 @@ footer {
       padding: 0;
       margin: 0;
       overflow-y: scroll;
-      color: #5c636a;
+      color: $color_gray;
 
       .form-check-label {
         &:hover {
-          color: #94a9e0;
+          color: $color_secondary;
           cursor: pointer;
         }
       }
@@ -651,7 +648,7 @@ footer {
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: gray;
+    background-color: $color_gray;
 
     --bg-opacity: 1;
   }
@@ -662,11 +659,11 @@ footer {
 }
 
 .search_suggestions {
-  color: #5c636a;
+  color: $color_gray;
 
   .active,
   div:hover {
-    background-color: #94a9e0;
+    background-color: $color_secondary;
   }
 }
 
@@ -679,27 +676,27 @@ footer {
   cursor: pointer;
 
   &:checked {
-    background-color: #5c636a;
-    border: #5c636a;
+    background-color: $color_gray;
+    border: $color_gray;
 
     &:hover {
-      background-color: #94a9e0;
-      border: #94a9e0;
+      background-color: $color_secondary;
+      border: $color_secondary;
     }
 
     &:focus {
-      border: #5c636a;
+      border: $color_gray;
     }
   }
 
   &:hover,
   &:focus {
-    border: 1px solid #94a9e0;
+    border: 1px solid $color_secondary;
   }
 }
 
 .accordion-button {
-  color: #5c636a;
+  color: $color_gray;
 
   &:focus {
     box-shadow: none;
@@ -711,53 +708,53 @@ footer {
   }
 
   &:not(.collapsed) {
-    color: #5c636a;
+    color: $color_gray;
     background-color: #5c636a33;
   }
 }
 
 .form-control {
-  color: #5c636a;
+  color: $color_gray;
   border: 2px solid #e5e5e5;
 
   &:focus {
-    border: 2px solid #94a9e0;
+    border: 2px solid $color_secondary;
   }
 }
 
 // Button Style
 .btn-style {
   &.box_blue {
-    background-color: #6b80b6;
-    border: 3px solid #6b80b6;
+    background-color: $color_primary;
+    border: 3px solid $color_primary;
 
     &:hover {
-      background-color: #94a9e0;
-      border: 3px solid #94a9e0;
+      background-color: $color_secondary;
+      border: 3px solid $color_secondary;
     }
   }
 
   &.box_border_blue {
-    color: #6b80b6;
-    background-color: #fff;
-    border: 3px solid #6b80b6;
+    color: $color_primary;
+    background-color: $color_white;
+    border: 3px solid $color_primary;
 
     &:hover {
-      color: #94a9e0;
-      background-color: #fff;
-      border: 3px solid #94a9e0;
+      color: $color_secondary;
+      background-color: $color_white;
+      border: 3px solid $color_secondary;
     }
   }
 
   &.box_border_gray {
-    color: #5c636a;
-    background-color: #fff;
-    border: 3px solid #5c636a;
+    color: $color_gray;
+    background-color: $color_white;
+    border: 3px solid $color_gray;
 
     &:hover {
-      color: #94a9e0;
-      background-color: #fff;
-      border: 3px solid #94a9e0;
+      color: $color_secondary;
+      background-color: $color_white;
+      border: 3px solid $color_secondary;
     }
   }
 }

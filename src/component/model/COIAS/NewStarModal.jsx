@@ -54,9 +54,7 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
           }}
         >
           <Form.Group className="f-en">
-            <Form.Label style={{ color: '#5c636a' }}>
-              先頭の新天体番号を指定する(最大６桁)
-            </Form.Label>
+            <Form.Label>先頭の新天体番号を指定する(最大６桁)</Form.Label>
             <Form.Control
               placeholder="H000005の場合 '5' を入力"
               disabled={disable}
@@ -86,7 +84,6 @@ function NewStarModal({ show, onExit, onClickFinishButton }) {
                 setDisable(!disable);
                 setNewName('1');
               }}
-              style={{ color: '#5c636a' }}
               type="checkbox"
               label="変更する"
             />

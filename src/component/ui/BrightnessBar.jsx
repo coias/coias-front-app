@@ -14,7 +14,7 @@ function BrightnessBar({ val, set }) {
         }}
       >
         <ImBrightnessContrast
-          size={CONSTANT.iconSize}
+          size={CONSTANT.iconSize22px}
           style={{ margin: 'auto 10px' }}
         />
       </IconContext.Provider>

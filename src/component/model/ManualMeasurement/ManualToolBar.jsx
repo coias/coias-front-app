@@ -38,9 +38,7 @@ function ManualToolBar({
     <div>
       <Row className="m-3" style={{ height: '60px' }}>
         <Col className="manual-toolbar_wrap f-ja">
-          <p style={{ margin: 'auto 0', fontWeight: 'bold', color: '#5C636A' }}>
-            天体一覧
-          </p>
+          <p style={{ margin: 'auto 0', fontWeight: 'bold' }}>天体一覧</p>
           <Button
             onClick={() => {
               onClickAddButton();

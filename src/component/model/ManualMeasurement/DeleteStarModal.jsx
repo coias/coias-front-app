@@ -38,22 +38,16 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
             onExit();
           }}
         >
-          <Form.Label style={{ color: '#5c636a' }} className="f-ja">
+          <Form.Label className="f-ja">
             クリックした承認済み自動検出天体のうち削除したいものにチェックをつけてください。
             <br />
             (削除した天体は、チェックを外すことで再表示することができます。)
           </Form.Label>
           <Row>
-            <Col
-              style={{ textAlign: 'center', color: '#5c636a' }}
-              className="f-ja"
-            >
+            <Col style={{ textAlign: 'center' }} className="f-ja">
               天体名
             </Col>
-            <Col
-              style={{ textAlign: 'center', color: '#5c636a' }}
-              className="f-ja"
-            >
+            <Col style={{ textAlign: 'center' }} className="f-ja">
               削除する
             </Col>
           </Row>

@@ -224,9 +224,9 @@ function PlayMenu({
             }}
           >
             {play ? (
-              <FaStop size={CONSTANT.iconSize} className="icon-color" />
+              <FaStop size={CONSTANT.iconSize22px} className="icon-color" />
             ) : (
-              <FaPlay size={CONSTANT.iconSize} className="icon-color" />
+              <FaPlay size={CONSTANT.iconSize22px} className="icon-color" />
             )}
           </Button>
         </Nav.Item>
@@ -237,7 +237,10 @@ function PlayMenu({
               onClickBack();
             }}
           >
-            <FaStepBackward size={CONSTANT.iconSize} className="icon-color" />
+            <FaStepBackward
+              size={CONSTANT.iconSize22px}
+              className="icon-color"
+            />
           </Button>
         </Nav.Item>
         <Nav.Item className="text-center d-flex m-0">
@@ -248,7 +251,10 @@ function PlayMenu({
             }}
             style={{ marginLeft: '-10px' }}
           >
-            <FaStepForward size={CONSTANT.iconSize} className="icon-color" />
+            <FaStepForward
+              size={CONSTANT.iconSize22px}
+              className="icon-color"
+            />
           </Button>
         </Nav.Item>
         <Nav.Item className="d-flex">
@@ -281,7 +287,7 @@ function PlayMenu({
               onClickZoomIn();
             }}
           >
-            <BiZoomIn size={CONSTANT.iconSize} className="icon-color" />
+            <BiZoomIn size={CONSTANT.iconSize22px} className="icon-color" />
           </Button>
         </Nav.Item>
         <Nav.Item className="text-center d-flex m-0">
@@ -291,7 +297,7 @@ function PlayMenu({
               onClickZoomOut();
             }}
           >
-            <BiZoomOut size={CONSTANT.iconSize} className="icon-color" />
+            <BiZoomOut size={CONSTANT.iconSize22px} className="icon-color" />
           </Button>
         </Nav.Item>
         <Nav.Item className="text-center d-flex m-0">
@@ -303,9 +309,9 @@ function PlayMenu({
             }}
           >
             {isHide ? (
-              <BiHide size={CONSTANT.iconSize} className="icon-color_off" />
+              <BiHide size={CONSTANT.iconSize22px} className="icon-color_off" />
             ) : (
-              <BiHide size={CONSTANT.iconSize} className="icon-color" />
+              <BiHide size={CONSTANT.iconSize22px} className="icon-color" />
             )}
           </Button>
         </Nav.Item>
@@ -366,7 +372,7 @@ function PlayMenu({
       </ButtonGroup>
       <ButtonGroup style={{ marginRight: '10px' }}>
         <Button variant="light" onClick={() => setSettingModalShow(true)}>
-          <AiFillSetting size={CONSTANT.iconSize} className="icon-color" />
+          <AiFillSetting size={CONSTANT.iconSize22px} className="icon-color" />
         </Button>
         <SettingModal
           show={settingModalShow}
@@ -387,7 +393,7 @@ function PlayMenu({
           disableShowAutoSave={disableShowAutoSave}
         />
         <Button variant="light" onClick={() => setHelpModalShow(true)}>
-          <BiHelpCircle size={CONSTANT.iconSize} className="icon-color" />
+          <BiHelpCircle size={CONSTANT.iconSize22px} className="icon-color" />
         </Button>
         <HelpModal
           show={helpModalShow}

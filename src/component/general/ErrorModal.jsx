@@ -47,7 +47,7 @@ function ErrorModal({
           エラーが発生しました
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ color: '#5c636a' }} className="f-ja">
+      <Modal.Body className="f-ja">
         {errorPlace?.length === 0
           ? `${errorPlace}`
           : `${errorPlace}でエラーが発生しました。`}

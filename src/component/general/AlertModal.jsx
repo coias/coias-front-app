@@ -18,9 +18,7 @@ function AlertModal({
           エラー
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ color: '#5c636a' }} className="f-ja">
-        {alertMessage}
-      </Modal.Body>
+      <Modal.Body className="f-ja">{alertMessage}</Modal.Body>
       <Modal.Footer className="d-flex justify-content-end">
         <Button
           variant="success"

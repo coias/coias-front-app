@@ -7,6 +7,7 @@ import {
   StarPositionContext,
   PredictedStarPositionContext,
 } from '../../functional/context';
+import CONSTANT from '../../../utils/CONSTANTS';
 
 function RenameNewStarModal({
   show,
@@ -83,7 +84,7 @@ function RenameNewStarModal({
             }
           }}
         >
-          <Form.Label style={{ color: '#5c636a' }} className="f-ja">
+          <Form.Label className="f-ja">
             {`${oldStarName}の名前を変更します。変更後の名前を選んでください。`}
           </Form.Label>
           <Row style={{ marginBottom: '40px' }}>
@@ -91,18 +92,21 @@ function RenameNewStarModal({
               className="d-flex justify-content-center"
               style={{ alineItems: 'center' }}
             >
-              <h3
-                style={{ color: '#5c636a', marginBottom: 0 }}
-                className="f-en"
-              >
+              <h3 style={{ marginBottom: 0 }} className="f-en">
                 {oldStarName}
               </h3>
             </Col>
             <Col className="d-flex justify-content-center">
               {isAlreadyChanged ? (
-                <AiOutlineArrowLeft size={40} style={{ color: '#5c636a' }} />
+                <AiOutlineArrowLeft
+                  size={CONSTANT.iconSize40px}
+                  color={CONSTANT.btnColorGray}
+                />
               ) : (
-                <AiOutlineArrowRight size={40} style={{ color: '#5c636a' }} />
+                <AiOutlineArrowRight
+                  size={CONSTANT.iconSize40px}
+                  color={CONSTANT.btnColorGray}
+                />
               )}
             </Col>
             <Col>
@@ -130,7 +134,6 @@ function RenameNewStarModal({
                   disabled={isAlreadyChanged}
                   autoComplete="off"
                   size="lg"
-                  style={{ color: '#5c636a' }}
                 />
                 {errorMessage !== '' && (
                   <p style={{ color: 'red' }}>{errorMessage}</p>

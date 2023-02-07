@@ -28,7 +28,6 @@ function StarsList({ disable, writeMemo, setSelectedListState }) {
           style={{
             marginTop: '20px',
             fontWeight: 'bold',
-            color: '#5C636A',
             letterSpacing: '1px',
           }}
         >

@@ -12,6 +12,7 @@ import {
 import { AiFillSetting } from 'react-icons/ai';
 import { ImBrightnessContrast, ImContrast } from 'react-icons/im';
 import PropTypes from 'prop-types';
+import CONSTANT from '../../utils/CONSTANTS';
 
 function HelpModal({ show, onHide }) {
   return (
@@ -35,7 +36,10 @@ function HelpModal({ show, onHide }) {
           <tbody className="help-modal-table">
             <tr>
               <td>
-                <FaPlay size={28} color="#5c636a" />
+                <FaPlay
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
@@ -45,8 +49,14 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td style={{ whiteSpace: 'nowrap' }}>
-                <FaStepBackward size={28} color="#5c636a" />
-                <FaStepForward size={28} color="#5c636a" />
+                <FaStepBackward
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
+                <FaStepForward
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
@@ -69,8 +79,14 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td style={{ whiteSpace: 'nowrap' }}>
-                <BiZoomIn size={28} color="#5c636a" />
-                <BiZoomOut size={28} color="#5c636a" />
+                <BiZoomIn
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
+                <BiZoomOut
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
@@ -80,7 +96,10 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <BiHide size={28} color="#5c636a" />
+                <BiHide
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
@@ -103,7 +122,10 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <AiFillSetting size={28} color="#5c636a" />
+                <AiFillSetting
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
@@ -113,7 +135,10 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <ImBrightnessContrast size={28} color="#5c636a" />
+                <ImBrightnessContrast
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
@@ -123,7 +148,10 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <ImContrast size={28} color="#5c636a" />
+                <ImContrast
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
@@ -133,7 +161,10 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <BiTime size={28} color="#5c636a" />
+                <BiTime
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
@@ -143,7 +174,10 @@ function HelpModal({ show, onHide }) {
             </tr>
             <tr>
               <td>
-                <BiCurrentLocation size={28} color="#5c636a" />
+                <BiCurrentLocation
+                  size={CONSTANT.iconSize28px}
+                  color={CONSTANT.btnColorGray}
+                />
               </td>
               <td>
                 <h4 className="f-modal_title_sub f-ja">
