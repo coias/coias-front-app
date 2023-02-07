@@ -148,11 +148,11 @@ p,
       }
 
       a {
-        color: $color_primary;
         text-decoration: none;
 
         h3 {
           font-size: 20px;
+          color: $color_primary;
 
           &:hover {
             text-decoration: underline $color_primary;
