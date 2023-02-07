@@ -51,6 +51,8 @@ import AutoSelectResultModal from '../component/StellarGlobe/AutoSelectResultMod
 import StellarGlobeSettingModal from '../component/StellarGlobe/StellarGlobeSettingModal';
 import StellarGlobeHelpModal from '../component/StellarGlobe/StellarGlobeHelpModal';
 import ColorLegend from '../component/StellarGlobe/ColorLegend';
+import ErrorModal from '../component/general/ErrorModal';
+import AlertModal from '../component/general/AlertModal';
 import { ModeStatusContext } from '../component/functional/context';
 
 function DataSelector({ setFileNames }) {
@@ -79,6 +81,13 @@ function DataSelector({ setFileNames }) {
   const [selectedDateIds, setSelectedDateIds] = useState(undefined);
   const [autoSelectResult, setAutoSelectResult] = useState({});
   const [showAutoSelectResult, setShowAutoSelectResult] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorPlace, setErrorPlace] = useState('');
+  const [errorReason, setErrorReason] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [alertModalShow, setAlertModalShow] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const ringsTract = new RingsTract();
 
   // ---tract・patchの色関係の定義--------------------------------------------------
@@ -320,8 +329,13 @@ function DataSelector({ setFileNames }) {
       FinalCheck: false,
     });
 
-    const res = await axios.get(`${reactApiUri}tract_list`).catch(() => {
-      console.log('tract情報のロード時にエラーが発生しました');
+    const res = await axios.get(`${reactApiUri}tract_list`).catch((e) => {
+      const errorResponse = e.response?.data?.detail;
+      if (errorResponse.place) {
+        setErrorPlace(errorResponse.place);
+        setErrorReason(errorResponse.reason);
+        setShowErrorModal(true);
+      }
     });
     if (res !== undefined) {
       setTracts(
@@ -346,8 +360,13 @@ function DataSelector({ setFileNames }) {
   const getAndSetValidPatchIds = useCallback(async (tmpTractId) => {
     const res = await axios
       .get(`${reactApiUri}patch_list?tractId=${tmpTractId}`)
-      .catch(() => {
-        console.log('patch情報のロード時にエラーが発生しました');
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse.place) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowErrorModal(true);
+        }
       });
     if (res !== undefined) {
       setValidPatchIds(
@@ -461,8 +480,13 @@ function DataSelector({ setFileNames }) {
       const tractPatchStr = `${selectedTractId}-${patchId}`;
       const res = await axios
         .get(`${reactApiUri}observe_date_list?patchId=${tractPatchStr}`)
-        .catch(() => {
-          console.log('観測日情報のロード時にエラーが発生しました');
+        .catch((e) => {
+          const errorResponse = e.response?.data?.detail;
+          if (errorResponse.place) {
+            setErrorPlace(errorResponse.place);
+            setErrorReason(errorResponse.reason);
+            setShowErrorModal(true);
+          }
         });
       if (res !== undefined) {
         const pairs = Object.entries(res.data.result);
@@ -495,8 +519,13 @@ function DataSelector({ setFileNames }) {
     const dateIdsStr = dateIdsListStr.join('-');
     const res = await axios
       .get(`${reactApiUri}image_list?dirIdsStr=${dateIdsStr}`)
-      .catch(() => {
-        console.log('画像情報のロード時にエラーが発生しました');
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse.place) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowErrorModal(true);
+        }
       });
     if (res !== undefined) {
       const pairs = Object.entries(res.data.result);
@@ -544,12 +573,32 @@ function DataSelector({ setFileNames }) {
     // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
     await axios
       .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames)
-      .catch(() => {});
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse.place) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowErrorModal(true);
+        }
+      });
   }, []);
 
   const autoSelect = useCallback(async () => {
-    const res = await axios.get(`${reactApiUri}suggested_images`).catch(() => {
-      console.log('自動画像選択情報のロード時にエラーが発生しました');
+    const res = await axios.get(`${reactApiUri}suggested_images`).catch((e) => {
+      const errorResponse = e.response?.data?.detail;
+      const errorStatus = e.response?.status;
+      // エラーコードが404の時、お勧め画像がすでに存在しないことを意味するので、手動選択をするように促す
+      if (errorStatus === 404) {
+        setAlertModalShow(true);
+        setAlertMessage(
+          '自動選択できる画像がありません。手動選択を行ってください。',
+        );
+        setAlertButtonMessage('戻る');
+      } else if (errorResponse.place) {
+        setErrorPlace(errorResponse.place);
+        setErrorReason(errorResponse.reason);
+        setShowErrorModal(true);
+      }
     });
 
     if (res !== undefined) {
@@ -593,7 +642,14 @@ function DataSelector({ setFileNames }) {
       // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
       await axios
         .put(`${reactApiUri}put_image_list`, resResult.fileNames)
-        .catch(() => {});
+        .catch((e) => {
+          const errorResponse = e.response?.data?.detail;
+          if (errorResponse.place) {
+            setErrorPlace(errorResponse.place);
+            setErrorReason(errorResponse.reason);
+            setShowErrorModal(true);
+          }
+        });
     }
   }, []);
 
@@ -873,6 +929,23 @@ function DataSelector({ setFileNames }) {
           setHelpModalShow(false);
         }}
         title="ヘルプ"
+      />
+
+      <ErrorModal
+        show={showErrorModal}
+        setShow={setShowErrorModal}
+        errorPlace={errorPlace}
+        errorReason={errorReason}
+        setLoading={setLoading}
+      />
+
+      <AlertModal
+        alertModalShow={alertModalShow}
+        onClickOk={() => {
+          setAlertModalShow(false);
+        }}
+        alertMessage={alertMessage}
+        alertButtonMessage={alertButtonMessage}
       />
     </div>
   );
