@@ -57,15 +57,6 @@ function DataSelector({ setFileNames }) {
   // ---変数-----------------------------------------------
   const reactApiUri = process.env.REACT_APP_API_URI;
   const { setModeStatus } = useContext(ModeStatusContext);
-  useEffect(() => {
-    setModeStatus({
-      ExplorePrepare: false,
-      COIAS: false,
-      Manual: false,
-      Report: false,
-      FinalCheck: false,
-    });
-  }, []);
 
   const globeRef = useRef(null);
   /** @type { () => Globe } */
@@ -142,26 +133,6 @@ function DataSelector({ setFileNames }) {
     };
     return style;
   };
-
-  useEffect(async () => {
-    const res = await axios.get(`${reactApiUri}tract_list`).catch(() => {
-      console.log('tract情報のロード時にエラーが発生しました');
-    });
-    if (res !== undefined) {
-      setTracts(
-        Object.keys(res.data.result).map((key) => {
-          const tractId = parseInt(key, 10);
-          const { progress } = res.data.result[key];
-          /** @type {import('../../component/StellarGlobe/TractPatch').TractSelectorTract} */
-          const tractDef = {
-            id: tractId,
-            style: proggressDependentStyle(progress),
-          };
-          return tractDef;
-        }),
-      );
-    }
-  }, []);
 
   const progressColoredPatch = useMemo(() => {
     /** @type {import('../../component/StellarGlobe/TractPatch').PatchSelectorProps["patchStyle"]} */
@@ -339,18 +310,37 @@ function DataSelector({ setFileNames }) {
   // ----------------------------------------------------
 
   // ---コールバック関数------------------------------------
-  // 選択画像名一覧をプロジェクトディレクトリに書き出す
-  const putImageNamesToProjectDir = useCallback(
-    async (tmpSelectedImageNames) => {
-      // プロジェクト(カレント)ディレクトリを作るだけで画像のアップロードはしない
-      await axios.post(`${reactApiUri}uploadfiles`).catch(() => {});
-      // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
-      await axios
-        .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames)
-        .catch(() => {});
-    },
-    [],
-  );
+  // 初期化
+  useEffect(async () => {
+    setModeStatus({
+      ExplorePrepare: false,
+      COIAS: false,
+      Manual: false,
+      Report: false,
+      FinalCheck: false,
+    });
+
+    const res = await axios.get(`${reactApiUri}tract_list`).catch(() => {
+      console.log('tract情報のロード時にエラーが発生しました');
+    });
+    if (res !== undefined) {
+      setTracts(
+        Object.keys(res.data.result).map((key) => {
+          const tractId = parseInt(key, 10);
+          const { progress } = res.data.result[key];
+          /** @type {import('../../component/StellarGlobe/TractPatch').TractSelectorTract} */
+          const tractDef = {
+            id: tractId,
+            style: proggressDependentStyle(progress),
+          };
+          return tractDef;
+        }),
+      );
+    }
+
+    // プロジェクト(カレント)ディレクトリを作るだけで画像のアップロードはしない
+    await axios.post(`${reactApiUri}uploadfiles`).catch(() => {});
+  }, []);
 
   // tractIdを受け取り, そのtract内のpatch一覧を取得しセットする
   const getAndSetValidPatchIds = useCallback(async (tmpTractId) => {
@@ -551,7 +541,10 @@ function DataSelector({ setFileNames }) {
       modeStatusCopy.ExplorePrepare = true;
       return modeStatusCopy;
     });
-    putImageNamesToProjectDir(tmpSelectedImageNames);
+    // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
+    await axios
+      .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames)
+      .catch(() => {});
   }, []);
 
   const autoSelect = useCallback(async () => {
@@ -597,7 +590,10 @@ function DataSelector({ setFileNames }) {
         modeStatusCopy.ExplorePrepare = true;
         return modeStatusCopy;
       });
-      putImageNamesToProjectDir(resResult.fileNames);
+      // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
+      await axios
+        .put(`${reactApiUri}put_image_list`, resResult.fileNames)
+        .catch(() => {});
     }
   }, []);
 
