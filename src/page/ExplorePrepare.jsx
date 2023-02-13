@@ -153,7 +153,7 @@ function ExplorePrepare({
     setErrorFile([]);
 
     const pattern =
-      /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/;
+      /warp-HSC-.*-([0-9]{1,5})-([0-9]),([0-9])-([0-9]{1,6}).fits/;
     const firstFileAreaName = files[0].name
       .split('-')
       .filter((_, index) => index === 3 || index === 4)
