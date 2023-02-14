@@ -53,7 +53,7 @@ function Header({ setMenunames, setFileNames }) {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Nav className="nav-disappear">
         <NavLink to="/">
-          <h3 className="nav-content">データ選択</h3>
+          <h3 className="nav-content">画像選択</h3>
         </NavLink>
         <NavLink
           to="/ExplorePrepare"
