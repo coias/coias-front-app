@@ -375,7 +375,7 @@ function ExplorePrepare({
             <h4>探索準備</h4>
           </Row>
           <Row style={{ marginBottom: '40px' }}>
-            <h4>選択ファイル</h4>
+            <h4>選択画像</h4>
           </Row>
         </Col>
         <Col md={10}>
