@@ -13,6 +13,7 @@ import {
   DropdownButton,
   Form,
   Row,
+  Table,
 } from 'react-bootstrap';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
@@ -27,6 +28,7 @@ import ParamsSettingModal from '../component/model/ExplorePrepare/ParamsSettingM
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
   fileNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  fileObservedTimes: PropTypes.arrayOf(PropTypes.string).isRequired,
   menunames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setMenunames: PropTypes.func.isRequired,
   isAuto: PropTypes.bool.isRequired,
@@ -37,6 +39,7 @@ const userId = crypto.randomUUID();
 
 function ExplorePrepare({
   fileNames,
+  fileObservedTimes,
   menunames,
   setMenunames,
   isAuto,
@@ -536,7 +539,6 @@ function ExplorePrepare({
             <Col style={{ margin: 'auto 0' }}>
               <div
                 style={{
-                  backgroundColor: 'black',
                   width: '70vw',
                   height: '500px',
                   border: '3px solid #282A7F',
@@ -544,11 +546,20 @@ function ExplorePrepare({
                 }}
               >
                 {errorFiles.length === 0 ? (
-                  <ul style={{ listStyleType: 'none', color: 'white' }}>
-                    {fileNames.map((arr) => (
-                      <li key={arr}>{arr}</li>
-                    ))}
-                  </ul>
+                  <Table style={{ color: 'black' }} striped bordered>
+                    <tbody className="selected-files-table">
+                      <tr>
+                        <td>画像ファイル名</td>
+                        <td>観測時刻</td>
+                      </tr>
+                      {fileNames.map((fileName, index) => (
+                        <tr>
+                          <td>{fileName}</td>
+                          <td>{fileObservedTimes[index]}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
                 ) : (
                   <ul style={{ listStyleType: 'none', color: 'red' }}>
                     {errorFiles.map((arr) => (

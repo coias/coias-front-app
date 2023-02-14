@@ -24,7 +24,7 @@ function AutoSelectResultModal({ show, onExit, autoSelectResult }) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {`${autoSelectResult.regionName}から画像を${autoSelectResult.fileNames?.length}枚自動選択しました。`}
+        {`${autoSelectResult.regionName}から画像を${autoSelectResult.warpFiles?.length}枚自動選択しました。`}
         <br />
         {`画像の場所ID: ${autoSelectResult.tractPatch}`}
         <br />
@@ -34,8 +34,8 @@ function AutoSelectResultModal({ show, onExit, autoSelectResult }) {
         <br />
         <Table striped bordered>
           <tbody className="autoselect-result-modal-table">
-            {autoSelectResult.fileNames?.map((fileName) => (
-              <tr>{fileName}</tr>
+            {autoSelectResult.warpFiles?.map((warpFile) => (
+              <tr>{warpFile.fileName}</tr>
             ))}
           </tbody>
         </Table>

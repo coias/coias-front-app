@@ -55,7 +55,7 @@ import ErrorModal from '../component/general/ErrorModal';
 import AlertModal from '../component/general/AlertModal';
 import { ModeStatusContext } from '../component/functional/context';
 
-function DataSelector({ setFileNames }) {
+function DataSelector({ setFileNames, setFileObservedTimes }) {
   // ---変数-----------------------------------------------
   const reactApiUri = process.env.REACT_APP_API_URI;
   const { setModeStatus } = useContext(ModeStatusContext);
@@ -632,24 +632,31 @@ function DataSelector({ setFileNames }) {
       setAutoSelectResult(resResult);
       setShowAutoSelectResult(true);
 
-      setFileSelectState(`${resResult.fileNames.length}枚選択中`);
-      setFileNames(resResult.fileNames);
+      setFileSelectState(`${resResult.warpFiles.length}枚選択中`);
       setModeStatus((prevModeStatus) => {
         const modeStatusCopy = { ...prevModeStatus };
         modeStatusCopy.ExplorePrepare = true;
         return modeStatusCopy;
       });
+
+      const fileNames = [];
+      const fileObservedTimes = [];
+      resResult.warpFiles.forEach((warpFile) => {
+        fileNames.push(warpFile.fileName);
+        fileObservedTimes.push(warpFile.observedTime);
+      });
+      setFileNames(fileNames);
+      setFileObservedTimes(fileObservedTimes);
+
       // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
-      await axios
-        .put(`${reactApiUri}put_image_list`, resResult.fileNames)
-        .catch((e) => {
-          const errorResponse = e.response?.data?.detail;
-          if (errorResponse.place) {
-            setErrorPlace(errorResponse.place);
-            setErrorReason(errorResponse.reason);
-            setShowErrorModal(true);
-          }
-        });
+      await axios.put(`${reactApiUri}put_image_list`, fileNames).catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse.place) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowErrorModal(true);
+        }
+      });
     }
   }, []);
 
@@ -955,4 +962,5 @@ export default DataSelector;
 
 DataSelector.propTypes = {
   setFileNames: PropTypes.func.isRequired,
+  setFileObservedTimes: PropTypes.func.isRequired,
 };

@@ -28,6 +28,7 @@ import DataSelector from './page/DataSelector';
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
   const [fileNames, setFileNames] = useState(['ファイルを選択してください']);
+  const [fileObservedTimes, setFileObservedTimes] = useState([]);
   const intervalRef = useRef(null);
   const [isAuto, setIsAuto] = useState(true);
   const [menunames, setMenunames] = useState([
@@ -106,7 +107,11 @@ function App() {
   return (
     <BrowserRouter style={{ position: 'relative' }}>
       <ModeStatusContext.Provider value={modeStatusValue}>
-        <Header setMenunames={setMenunames} setFileNames={setFileNames} />
+        <Header
+          setMenunames={setMenunames}
+          setFileNames={setFileNames}
+          setFileObservedTimes={setFileObservedTimes}
+        />
         <main
           style={{
             position: 'absolute',
@@ -127,14 +132,19 @@ function App() {
                   <Routes>
                     <Route
                       path="/"
-                      element={<DataSelector setFileNames={setFileNames} />}
+                      element={
+                        <DataSelector
+                          setFileNames={setFileNames}
+                          setFileObservedTimes={setFileObservedTimes}
+                        />
+                      }
                     />
                     <Route
                       path="/ExplorePrepare"
                       element={
                         <ExplorePrepare
                           fileNames={fileNames}
-                          setFileNames={setFileNames}
+                          fileObservedTimes={fileObservedTimes}
                           menunames={menunames}
                           setMenunames={setMenunames}
                           isAuto={isAuto}
