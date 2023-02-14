@@ -54,7 +54,7 @@ function App() {
     { id: 6, name: '自動検出', query: 'astsearch_new', done: false },
     {
       id: 7,
-      name: '全自動処理 (2×2)',
+      name: '解析スタート',
       query: 'AstsearchR?binning=',
       done: false,
     },

@@ -385,7 +385,7 @@ function ExplorePrepare({
                 className="mt-3"
                 inline
                 type="radio"
-                label="全自動処理"
+                label="自動解析"
                 name="group1"
                 id="auto"
                 value="auto"
@@ -398,7 +398,7 @@ function ExplorePrepare({
                 className="mt-3"
                 inline
                 type="radio"
-                label="手動処理"
+                label="手動解析"
                 name="group1"
                 id="manual"
                 value="manual"
