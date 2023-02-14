@@ -4,13 +4,14 @@
  */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Button,
   ButtonGroup,
   Col,
   Dropdown,
   DropdownButton,
+  Form,
   Row,
 } from 'react-bootstrap';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
@@ -20,14 +21,12 @@ import { ModeStatusContext } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
-import FileUploadModal from '../component/model/ExplorePrepare/FileUploadModal';
 import CONSTANT from '../utils/CONSTANTS';
 import ParamsSettingModal from '../component/model/ExplorePrepare/ParamsSettingModal';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
   fileNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-  setFileNames: PropTypes.func.isRequired,
   menunames: PropTypes.arrayOf(PropTypes.object).isRequired,
   setMenunames: PropTypes.func.isRequired,
   isAuto: PropTypes.bool.isRequired,
@@ -38,7 +37,6 @@ const userId = crypto.randomUUID();
 
 function ExplorePrepare({
   fileNames,
-  setFileNames,
   menunames,
   setMenunames,
   isAuto,
@@ -47,17 +45,12 @@ function ExplorePrepare({
   const uri = process.env.REACT_APP_API_URI;
   const [loading, setLoading] = useState(false);
 
-  const fileInput = useRef();
-  const [show, setShow] = useState(false);
-  const [valid, setValid] = useState(true);
-  const [disabled, setDisabled] = useState(true);
   const [processName, setProcessName] = useState('');
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
   const [fileAlertModalshow, setFileAlertModalshow] = useState(false);
-  const [fileUploadProgress, setFileUploadProgress] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const [parameters, setParameters] = useState({
@@ -85,20 +78,24 @@ function ExplorePrepare({
 
   const handleSelect = (e) => setIsAuto(e.target.value === 'auto');
 
-  const handleClose = () => {
-    setMenunames(menunames);
-    setShow(false);
-  };
-  const handleShow = () => setShow(true);
-  const handleChange = (e) => {
-    // ファイル変更時
-    if (e.target.value !== '') {
-      setValid(false);
-      setDisabled(false);
-    } else {
-      setValid(true);
-      setDisabled(true);
-    }
+  const onClickStarUpdateButton = async () => {
+    setLoading(true);
+    setShowProgress(false);
+    await axios
+      .put(`${uri}getMPCORB_and_mpc2edb`)
+      .then(() => {
+        setProcessName('小惑星データ更新中...');
+        setLoading(false);
+      })
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse.place) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
+      });
+    setLoading(false);
   };
 
   const fileContentCheck = async () => {
@@ -133,8 +130,8 @@ function ExplorePrepare({
     );
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // 初回描画時に初期化や、念のため画像ファイル名の書式チェックをする
+  useEffect(() => {
     setMenunames((prevMenunames) =>
       prevMenunames.map((items) =>
         items.id === 6
@@ -147,93 +144,60 @@ function ExplorePrepare({
           : items,
       ),
     );
-    const { files } = fileInput.current;
-    const data = new FormData();
-    const filesForProps = [];
-    setErrorFile([]);
-
     const pattern =
       /warp-HSC-.*-([0-9]{1,5})-([0-9]),([0-9])-([0-9]{1,6}).fits/;
-    const firstFileAreaName = files[0].name
+    const firstFileAreaName = fileNames[0]
       .split('-')
       .filter((_, index) => index === 3 || index === 4)
       .join('');
-
+    setErrorFile([]);
     const errorFileNames = [];
 
-    if (files.length < 4) {
+    // 枚数チェック
+    if (fileNames.length < 4) {
       errorFileNames.push('ファイルが足りません。4つ以上選択してください。');
     }
 
-    Object.values(files).forEach((file, i) => {
-      const isMatch = pattern.test(file.name);
+    // 画像セットの観測領域が全て一緒であるかチェック
+    fileNames.forEach((fileName, i) => {
+      const isMatch = pattern.test(fileName);
       if (i > 0 && isMatch) {
         const isSameArea =
-          file.name
+          fileName
             .split('-')
             .filter((_, index) => index === 3 || index === 4)
             .join('')
             .indexOf(firstFileAreaName) > -1;
         if (!isSameArea) {
-          errorFileNames.push(`${file.name}は観測領域が異なります。`);
+          errorFileNames.push(`${fileName}は観測領域が異なります。`);
         }
       }
 
       if (!isMatch) {
-        errorFileNames.push(`${file.name}のファイル名の形式が違います。`);
+        errorFileNames.push(`${fileName}のファイル名の形式が違います。`);
       }
-
-      data.append('files', file, file.name);
-      filesForProps.push(file.name);
     });
 
     setErrorFile(errorFileNames);
 
-    const postFiles = async () => {
-      handleClose();
-      setProcessName('アップロード中...');
-
-      setLoading(true);
-      setShowProgress(true);
+    // png画像をtmp_imagesディレクトリから削除する
+    const deletePngImages = async () => {
       await axios
         .delete(`${uri}deletefiles`)
         .then(() => {})
         .catch(() => {
           setShowProcessError(true);
-          setErrorPlace('ファイルアップロード');
-          setErrorReason('ファイルアップロードに失敗しました。');
-          setLoading(false);
-        });
-      await axios
-        .post(`${uri}uploadfiles?doUploadFiles=True`, data, {
-          onUploadProgress: (progressEvent) => {
-            const { loaded, total } = progressEvent;
-            const percent = Math.floor((loaded * 100) / total);
-            if (percent < 100) {
-              setFileUploadProgress(`${percent}%`);
-            }
-          },
-        })
-        .then(() => {
-          setFileUploadProgress('100%');
-
-          updateMenunames();
-          setLoading(false);
-        })
-        .catch(() => {
-          setShowProcessError(true);
-          setErrorPlace('ファイルアップロード');
-          setErrorReason('ファイルアップロードに失敗しました');
-          setLoading(false);
+          setErrorPlace('png画像削除');
+          setErrorReason('png画像削除に失敗しました。');
         });
     };
+    deletePngImages();
 
-    if (errorFileNames.length === 0) {
-      setFileNames(filesForProps);
-      postFiles();
-    }
+    // 探索準備処理状況の初期化
+    updateMenunames();
+
     return null;
-  };
+  }, []);
 
   const onProcess = (query) => {
     setProcessName('処理中...');
@@ -395,7 +359,7 @@ function ExplorePrepare({
     >
       <Row>
         <Col md={2}>
-          <Row style={{ marginBottom: '40px' }}>
+          <Row style={{ marginBottom: '60px' }}>
             <h4>探索準備</h4>
           </Row>
           <Row style={{ marginBottom: '40px' }}>
@@ -403,18 +367,35 @@ function ExplorePrepare({
           </Row>
         </Col>
         <Col md={10}>
-          <Row xs="auto" style={{ marginBottom: '40px' }}>
+          <Row xs="auto" style={{ marginBottom: '20px' }}>
             <Col style={{ margin: 'auto 0' }}>
-              <Button
-                variant={menunames[0].done ? 'success' : 'secondary'}
-                style={{ whiteSpace: 'nowrap' }}
-                onClick={() => {
-                  handleShow();
-                }}
-              >
-                ファイル
-              </Button>
+              <Form.Check
+                className="mt-3"
+                inline
+                type="radio"
+                label="全自動処理"
+                name="group1"
+                id="auto"
+                value="auto"
+                onChange={handleSelect}
+                checked={isAuto}
+              />
             </Col>
+            <Col style={{ margin: 'auto 0' }}>
+              <Form.Check
+                className="mt-3"
+                inline
+                type="radio"
+                label="手動処理"
+                name="group1"
+                id="manual"
+                value="manual"
+                onChange={handleSelect}
+                checked={!isAuto}
+              />
+            </Col>
+          </Row>
+          <Row xs="auto" style={{ marginBottom: '20px' }}>
             {isAuto ? (
               <Col style={{ margin: 'auto 0' }}>
                 <Button
@@ -423,6 +404,7 @@ function ExplorePrepare({
                   id="dropdown-variants-Success"
                   variant={menunames[6].done ? 'success' : 'secondary'}
                   title={menunames[6].name}
+                  disabled={errorFiles.length !== 0}
                   onClick={() => onProcessAuto()}
                 >
                   {menunames[6].name}
@@ -434,6 +416,7 @@ function ExplorePrepare({
                   <Button
                     id={menunames[1].query}
                     style={{ whiteSpace: 'nowrap' }}
+                    disabled={errorFiles.length !== 0}
                     onClick={() => {
                       onProcess(menunames[1].query);
                     }}
@@ -449,6 +432,7 @@ function ExplorePrepare({
                   <DropdownButton
                     as={ButtonGroup}
                     variant={menunames[2].done ? 'success' : 'secondary'}
+                    disabled={errorFiles.length !== 0}
                     title={menunames[2].name}
                   >
                     <Dropdown.Item
@@ -476,6 +460,7 @@ function ExplorePrepare({
                   <Button
                     id={menunames[3].query}
                     style={{ whiteSpace: 'nowrap' }}
+                    disabled={errorFiles.length !== 0}
                     onClick={() => {
                       onProcess(menunames[3].query);
                     }}
@@ -491,6 +476,7 @@ function ExplorePrepare({
                   <Button
                     id={menunames[4].query}
                     style={{ whiteSpace: 'nowrap' }}
+                    disabled={errorFiles.length !== 0}
                     onClick={() => {
                       onProcess(menunames[4].query);
                     }}
@@ -506,6 +492,7 @@ function ExplorePrepare({
                   <Button
                     id={menunames[5].query}
                     style={{ whiteSpace: 'nowrap' }}
+                    disabled={errorFiles.length !== 0}
                     onClick={() => {
                       onProcess(
                         `${menunames[5].query}?nd=${parameters.nd}&ar=${parameters.ar}`,
@@ -525,6 +512,14 @@ function ExplorePrepare({
               <GoSettings size={CONSTANT.iconSize} />
             </Button>
           </Row>
+          <Row xs="auto" style={{ marginBottom: '20px' }}>
+            <Button
+              onClick={onClickStarUpdateButton}
+              className="btn-style box_blue"
+            >
+              小惑星データ更新 (オプション)
+            </Button>
+          </Row>
           <Row>
             <Col style={{ margin: 'auto 0' }}>
               <div
@@ -536,59 +531,33 @@ function ExplorePrepare({
                   borderRadius: '4px',
                 }}
               >
-                <ul style={{ listStyleType: 'none', color: 'white' }}>
-                  {fileNames.map((arr) => (
-                    <li key={arr}>{arr}</li>
-                  ))}
-                </ul>
+                {errorFiles.length === 0 ? (
+                  <ul style={{ listStyleType: 'none', color: 'white' }}>
+                    {fileNames.map((arr) => (
+                      <li key={arr}>{arr}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <ul style={{ listStyleType: 'none', color: 'red' }}>
+                    {errorFiles.map((arr) => (
+                      <li key={arr}>{arr}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </Col>
           </Row>
         </Col>
       </Row>
+
       <LoadingButton
         loading={loading}
         processName={processName}
         showProgress={showProgress}
         lastJsonMessage={lastJsonMessage}
-        fileUploadProgress={fileUploadProgress}
+        fileUploadProgress=""
       />
 
-      <FileUploadModal
-        show={show}
-        isAutoProcess={isAuto}
-        handleClose={handleClose}
-        handleSubmit={handleSubmit}
-        fileInput={fileInput}
-        handleChange={handleChange}
-        valid={valid}
-        errorFiles={errorFiles}
-        handleSelect={handleSelect}
-        disabled={disabled}
-        onClickStarUpdateButton={async () => {
-          handleClose();
-          setLoading(true);
-          setShowProgress(false);
-          await axios
-            .put(`${uri}getMPCORB_and_mpc2edb`)
-            .then(() => {
-              setProcessName('小惑星データ更新中...');
-              setLoading(false);
-            })
-            .catch((e) => {
-              const errorResponse = e.response?.data?.detail;
-              if (errorResponse.place) {
-                setErrorPlace(errorResponse.place);
-                setErrorReason(errorResponse.reason);
-                setShowProcessError(true);
-              }
-            });
-          setLoading(false);
-        }}
-        setParameters={setParameters}
-        parameters={parameters}
-        alertMessage={alertMessage}
-      />
       <ParamsSettingModal
         show={paramsSettingModalShow}
         handleClose={() => setParamsSettingModalShow(false)}
@@ -597,6 +566,7 @@ function ExplorePrepare({
         setMenunames={setMenunames}
         inputFileLength={fileNames.length}
       />
+
       <AlertModal
         alertModalShow={fileAlertModalshow}
         onClickOk={() => {
@@ -607,6 +577,7 @@ function ExplorePrepare({
         alertMessage={alertMessage}
         alertButtonMessage={alertButtonMessage}
       />
+
       <ErrorModal
         show={showProcessError}
         setShow={setShowProcessError}
