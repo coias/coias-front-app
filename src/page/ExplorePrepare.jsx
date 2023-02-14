@@ -58,17 +58,15 @@ function ExplorePrepare({
     ar: '6',
     sn: '500',
   });
+  const [MPCRefreshedTimeMessage, setMPCRefreshedTimeMessage] = useState('');
   const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
-
   const { lastJsonMessage } = useWebSocket(socketUrl, {
     shouldReconnect: () => true,
     reconnectAttempts: 3,
     reconnectInterval: 3000,
   });
   const [paramsSettingModalShow, setParamsSettingModalShow] = useState(false);
-
   const [showProgress, setShowProgress] = useState(false);
-
   const { setModeStatus } = useContext(ModeStatusContext);
 
   const checkIsAllProcessDone = (updatedMenunames) =>
@@ -77,6 +75,16 @@ function ExplorePrepare({
       .find((menu) => !menu.done);
 
   const handleSelect = (e) => setIsAuto(e.target.value === 'auto');
+
+  const getMPCRefreshedTime = async () => {
+    await axios
+      .get(`${uri}AstMPC_refreshed_time`)
+      .then((res) => {
+        const message = res.data.result;
+        setMPCRefreshedTimeMessage(message);
+      })
+      .catch(() => {});
+  };
 
   const onClickStarUpdateButton = async () => {
     setLoading(true);
@@ -95,6 +103,7 @@ function ExplorePrepare({
           setShowProcessError(true);
         }
       });
+    getMPCRefreshedTime();
     setLoading(false);
   };
 
@@ -195,6 +204,9 @@ function ExplorePrepare({
 
     // 探索準備処理状況の初期化
     updateMenunames();
+
+    // MPCORB.DATの最終更新時刻取得
+    getMPCRefreshedTime();
 
     return null;
   }, []);
@@ -517,7 +529,7 @@ function ExplorePrepare({
               onClick={onClickStarUpdateButton}
               className="btn-style box_blue"
             >
-              小惑星データ更新 (オプション)
+              {`小惑星データ更新 (オプション, ${MPCRefreshedTimeMessage})`}
             </Button>
           </Row>
           <Row>
