@@ -557,14 +557,17 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
   const imageOnClick = useCallback(async (callBackImages) => {
     let NSelectedImages = 0;
     const tmpSelectedImageNames = [];
+    const tmpSelectedImageTimes = [];
     Object.keys(callBackImages).forEach((key) => {
       if (callBackImages[key].isSelected) {
         NSelectedImages += 1;
         tmpSelectedImageNames.push(key);
+        tmpSelectedImageTimes.push(callBackImages[key].observedTime);
       }
     });
     setFileSelectState(`${NSelectedImages}枚選択中`);
     setFileNames(tmpSelectedImageNames);
+    setFileObservedTimes(tmpSelectedImageTimes);
     setModeStatus((prevModeStatus) => {
       const modeStatusCopy = { ...prevModeStatus };
       modeStatusCopy.ExplorePrepare = true;
