@@ -330,7 +330,7 @@ function DataSelector({ setFileNames }) {
     });
 
     // プロジェクト(カレント)ディレクトリを作るだけで画像のアップロードはしない
-    await axios.post(`${reactApiUri}uploadfiles`).catch(() => {});
+    await axios.put(`${reactApiUri}make_pj_directory`).catch(() => {});
 
     const res = await axios.get(`${reactApiUri}tract_list`).catch((e) => {
       const errorResponse = e.response?.data?.detail;
