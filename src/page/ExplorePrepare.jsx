@@ -243,6 +243,9 @@ function ExplorePrepare({
           setModeStatus((prevModeStatus) => {
             const modeStatusCopy = { ...prevModeStatus };
             modeStatusCopy.COIAS = checkIsAllProcessDone(updatedMenunames);
+            modeStatusCopy.Manual = false;
+            modeStatusCopy.Report = false;
+            modeStatusCopy.FinalCheck = false;
             return modeStatusCopy;
           });
           setMenunames(updatedMenunames);
@@ -294,6 +297,9 @@ function ExplorePrepare({
         setModeStatus((prevModeStatus) => {
           const modeStatusCopy = { ...prevModeStatus };
           modeStatusCopy.COIAS = checkIsAllProcessDone(updatedMenunames);
+          modeStatusCopy.Manual = false;
+          modeStatusCopy.Report = false;
+          modeStatusCopy.FinalCheck = false;
           return modeStatusCopy;
         });
       })
