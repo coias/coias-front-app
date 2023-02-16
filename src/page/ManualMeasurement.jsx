@@ -145,7 +145,6 @@ function ManualMeasurement({
   };
 
   // 画面表示時、１回だけ処理(copyの実行、各画像のURL取得)
-  // 画面表示時、１回だけ処理(redisp.txtの処理)
   useEffect(() => {
     const toObjectArray = [];
     clearInterval(intervalRef.current);
@@ -354,10 +353,9 @@ function ManualMeasurement({
     await axios
       .put(`${reactApiUri}AstsearchR_after_manual`)
       .then((res) => {
-        const rereDisp = res.data.reredisp.split('\n');
+        const rereDisp = res.data.result;
         // 選択を同期させるため、オブジェクトに変更
-        rereDisp.forEach((items) => {
-          const item = items.split(' ');
+        rereDisp.forEach((item) => {
           let star = toObject[item[0]];
           if (!star) {
             toObject[item[0]] = {
