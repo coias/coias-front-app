@@ -221,6 +221,43 @@ function Report() {
               </Button>
             </div>
           </div>
+          <div className="report-btn_wrap">
+            <Button
+              variant="primary"
+              onClick={async () => {
+                const pattern = /[A-Z]. [A-Z][a-z]*/;
+                const nameSplittedList = sendMpcMEA.split(',');
+                let wrongNamePattern = false;
+                nameSplittedList.forEach((name) => {
+                  if (!pattern.test(name)) wrongNamePattern = true;
+                });
+                if (sendMpcBody[0] === '') {
+                  setErrorMessage(
+                    '報告できる測定結果が無いためメール送信の必要がありません。\n探索・手動測定モードに戻って有効な新天体を見つけるか、「探索終了」ボタンを押して別の画像を測定してください。',
+                  );
+                  setShowError(true);
+                } else if (nameSplittedList[0] === '') {
+                  setErrorMessage(
+                    'MEA欄に1人以上の有効な名前を入力してください。\n(例) Y. Endo, M. Konohata, A. Manaka',
+                  );
+                  setShowError(true);
+                } else if (wrongNamePattern) {
+                  setErrorMessage(
+                    'MEA欄に有効な書式の名前を入力してください。\n有効な書式: [名前の頭文字大文字]. [苗字を頭文字だけ大文字]\n全て半角英字\n名前と名字の間にはピリオドと半角スペースを入力\n複数の場合はカンマで並べる\n(例) Y. Endo, M. Konohata, A. Manaka',
+                  );
+                  setShowError(true);
+                } else {
+                  await axios
+                    .put(`${reactApiUri}postprocess`, sendMpc)
+                    .catch(() => {});
+                }
+              }}
+              className="btn-style box_blue"
+              disabled={!modeStatus.FinalCheck}
+            >
+              確認完了・メール送信
+            </Button>
+          </div>
         </Col>
       </Row>
       <LoadingButton
@@ -235,7 +272,8 @@ function Report() {
           setShowError(false);
         }}
         alertMessage={errorMessage}
-        alertButtonMessage="はい"
+        alertButtonMessage="OK"
+        size="md"
       />
       <ErrorModal
         show={showProcessError}
