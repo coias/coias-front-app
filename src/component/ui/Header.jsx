@@ -1,3 +1,4 @@
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useState } from 'react';
 import { Button, Col, Nav, Navbar, Offcanvas, Row } from 'react-bootstrap';
@@ -16,6 +17,7 @@ function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
     () => !Object.keys(modeStatus).some((key) => modeStatus[key]),
     [modeStatus],
   );
+  const reactApiUri = process.env.REACT_APP_API_URI;
 
   return (
     <Navbar expand="lg" className="color-nav" style={{ margin: 0, padding: 0 }}>
@@ -218,7 +220,7 @@ function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
         onHide={() => {
           setShow(false);
         }}
-        onClickYes={() => {
+        onClickYes={async () => {
           setFileNames(['ファイルを選択してください']);
           setFileObservedTimes([]);
           setModeStatus({
@@ -237,6 +239,7 @@ function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
               return objCopy;
             }),
           );
+          await axios.put(`${reactApiUri}delete_large_files`).catch(() => {});
         }}
         confirmMessage="状態を全てクリアしますか？"
       />
