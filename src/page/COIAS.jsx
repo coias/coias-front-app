@@ -1,7 +1,7 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {
   ModeStatusContext,
@@ -12,7 +12,6 @@ import {
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
-import NewStarModal from '../component/model/COIAS/NewStarModal';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
 import StarsList from '../component/model/MeasurementCommon/StarsList';
@@ -66,8 +65,8 @@ function COIAS({
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
   const [loading, setLoading] = useState(false);
+  const [redispLoading, setRedispLoading] = useState(false);
   const [disable, setDisable] = useState(true);
-  const [starModalShow, setStarModalShow] = useState(false);
   const [fileNum, setFileNum] = useState(0);
   const [memoList, setMemoList] = useState([]);
   const [selectedListState, setSelectedListState] = useState([]);
@@ -336,7 +335,9 @@ function COIAS({
   }, [imageURLs, memoList]);
 
   // 探索終了ボタンが押された時の処理
-  const onClickFinishButton = async (num) => {
+  const onClickFinishButton = async () => {
+    setRedispLoading(true);
+
     // memo.txtへの出力
     const selectedStars = Object.keys(starPos)
       .map((key) => starPos[key])
@@ -345,7 +346,7 @@ function COIAS({
     await axios.put(`${reactApiUri}memo`, selectedStars);
 
     await axios
-      .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`)
+      .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS`)
       .then((response) => {
         const redisp = response.data;
         // 選択を同期させるため、オブジェクトに変更
@@ -378,6 +379,7 @@ function COIAS({
           modeStatusCopy.Report = true;
           return modeStatusCopy;
         });
+        setRedispLoading(false);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -385,13 +387,9 @@ function COIAS({
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
           setShowProcessError(true);
+          setRedispLoading(false);
         }
       });
-  };
-
-  const onStarModalExit = () => {
-    setDisable(false);
-    setStarModalShow(false);
   };
 
   const writeMemo = async (newStarPos) => {
@@ -430,10 +428,8 @@ function COIAS({
             setNext={setNext}
             back={back}
             setBack={setBack}
-            onClickFinishButton={onClickFinishButton}
             disable={disable}
             setDisable={setDisable}
-            setStarModalShow={setStarModalShow}
             originalStarPos={originalStarPos}
             setStarPos={setStarPos}
             fileNum={fileNum}
@@ -461,12 +457,10 @@ function COIAS({
                   imageURLs={imageURLs}
                   brightnessVal={brightnessVal}
                   contrastVal={contrastVal}
-                  onClickFinishButton={onClickFinishButton}
                   originalStarPos={originalStarPos}
                   starPos={starPos}
                   setStarPos={setStarPos}
                   isHide={isHide}
-                  setStarModalShow={starModalShow}
                   disable={disable}
                   setSelectedListState={setSelectedListState}
                   writeMemo={isAutoSave ? writeMemo : () => {}}
@@ -493,39 +487,36 @@ function COIAS({
             setSelectedListState={setSelectedListState}
           />
           <div className="coias-list_button">
-            <Button
-              onClick={() => {
-                if (disable) {
-                  setOriginalStarPos(starPos);
-                  setStarModalShow(true);
-                } else {
-                  setStarPos(originalStarPos);
-                  setModeStatus({
-                    ExplorePrepare: true,
-                    COIAS: true,
-                    Manual: false,
-                    Report: false,
-                    FinalCheck: false,
-                  });
-                }
-                setDisable(!disable);
-              }}
-              className="btn-style box_blue"
-              size="lg"
-            >
-              {disable ? '再描画' : 'やり直す'}
-            </Button>
+            {redispLoading ? (
+              <Spinner size="md" animation="border" />
+            ) : (
+              <Button
+                onClick={() => {
+                  if (disable) {
+                    setOriginalStarPos(starPos);
+                    onClickFinishButton();
+                  } else {
+                    setStarPos(originalStarPos);
+                    setModeStatus({
+                      ExplorePrepare: true,
+                      COIAS: true,
+                      Manual: false,
+                      Report: false,
+                      FinalCheck: false,
+                    });
+                  }
+                  setDisable(!disable);
+                }}
+                className="btn-style box_blue"
+                size="lg"
+              >
+                {disable ? '再描画' : 'やり直す'}
+              </Button>
+            )}
           </div>
         </div>
       </Row>
       <LoadingButton loading={loading} processName="探索データ取得中…" />
-      <NewStarModal
-        show={starModalShow}
-        onExit={() => {
-          onStarModalExit();
-        }}
-        onClickFinishButton={onClickFinishButton}
-      />
 
       <AlertModal
         alertModalShow={COIASAlertModalshow}
