@@ -2,14 +2,16 @@ import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
+import { useNavigate } from 'react-router-dom';
+import { ModeStatusContext } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
-import { ModeStatusContext } from '../component/functional/context';
+import ThankYouModal from '../component/model/Report/ThankYouModal';
 
 const userId = crypto.randomUUID();
 
-function Report() {
+function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
   const reactApiUri = process.env.REACT_APP_API_URI;
   const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
 
@@ -30,7 +32,12 @@ function Report() {
   const [errorReason, setErrorReason] = useState('');
 
   const [showProgress, setShowProgress] = useState(false);
+  const [showThankYouModal, setShowThankYouModal] = useState(false);
   const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate('/');
+  };
 
   const makeSendMpc = async () => {
     const header = [
@@ -247,9 +254,11 @@ function Report() {
                   );
                   setShowError(true);
                 } else {
+                  // K.S. ここでのエラーハンドリングはしない (エラーは意図的に握り潰しています)
                   await axios
                     .put(`${reactApiUri}postprocess`, sendMpc)
                     .catch(() => {});
+                  setShowThankYouModal(true);
                 }
               }}
               className="btn-style box_blue"
@@ -266,6 +275,31 @@ function Report() {
         showProgress={showProgress}
         lastJsonMessage={lastJsonMessage}
       />
+
+      <ThankYouModal
+        thankYouModalShow={showThankYouModal}
+        onClickOk={() => {
+          setFileNames(['ファイルを選択してください']);
+          setFileObservedTimes([]);
+          setModeStatus({
+            ExplorePrepare: false,
+            COIAS: false,
+            Manual: false,
+            Report: false,
+            FinalCheck: false,
+          });
+          handleNavigate();
+          setMenunames((prevMenunames) =>
+            prevMenunames.map((items) => {
+              const objCopy = { ...items };
+              objCopy.done = false;
+              return objCopy;
+            }),
+          );
+          setShowThankYouModal(false);
+        }}
+      />
+
       <AlertModal
         alertModalShow={showError}
         onClickOk={() => {
@@ -275,6 +309,7 @@ function Report() {
         alertButtonMessage="OK"
         size="md"
       />
+
       <ErrorModal
         show={showProcessError}
         setShow={setShowProcessError}

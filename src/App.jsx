@@ -204,7 +204,16 @@ function App() {
                         />
                       }
                     />
-                    <Route path="/Report" element={<Report />} />
+                    <Route
+                      path="/Report"
+                      element={
+                        <Report
+                          setMenunames={setMenunames}
+                          setFileNames={setFileNames}
+                          setFileObservedTimes={setFileObservedTimes}
+                        />
+                      }
+                    />
                     <Route
                       path="/FinalCheck"
                       element={
