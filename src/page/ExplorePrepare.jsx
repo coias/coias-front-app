@@ -556,7 +556,7 @@ function ExplorePrepare({
                     <tbody className="selected-files-table">
                       <tr>
                         <td>画像ファイル名</td>
-                        <td>観測時刻</td>
+                        <td>観測時刻 (世界時)</td>
                       </tr>
                       {fileNames.map((fileName, index) => (
                         <tr>
