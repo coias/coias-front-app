@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import { useNavigate } from 'react-router-dom';
 import { ModeStatusContext } from '../component/functional/context';
@@ -34,6 +35,8 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
   const [showProgress, setShowProgress] = useState(false);
   const [showThankYouModal, setShowThankYouModal] = useState(false);
   const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
+  const [thankYouMessageBig, setThankYouMessageBig] = useState('');
+  const [thankYouMessageSmall, setThankYouMessageSmall] = useState('');
   const navigate = useNavigate();
   const handleNavigate = () => {
     navigate('/');
@@ -258,6 +261,65 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
                   await axios
                     .put(`${reactApiUri}postprocess`, sendMpc)
                     .catch(() => {});
+
+                  const measuredNameList = [];
+                  sendMpcBody.forEach((line) => {
+                    const name = line.split(' ')[0].replace('*', '').trim();
+                    if (!measuredNameList.includes(name) && name.length !== 0)
+                      measuredNameList.push(name);
+                  });
+                  const res = await axios
+                    .get(`${reactApiUri}start_H_number`)
+                    .catch(() => {});
+                  let startHNumber;
+                  if (res !== undefined) {
+                    startHNumber = res.data.result;
+                  }
+                  let NOldUnknownObjects = 0;
+                  let NNewUnknownObjects = 0;
+                  let NKnownObjects = 0;
+                  measuredNameList.forEach((name) => {
+                    if (name.length === 7 && name.startsWith('H')) {
+                      if (startHNumber !== undefined) {
+                        const thisHNumber = parseInt(name.slice(1), 10);
+                        if (thisHNumber >= startHNumber) {
+                          NNewUnknownObjects += 1;
+                        } else {
+                          NOldUnknownObjects += 1;
+                        }
+                      } else {
+                        NNewUnknownObjects += 1;
+                      }
+                    } else {
+                      NKnownObjects += 1;
+                    }
+                  });
+                  let bigMessage = 'あなたは';
+                  if (NOldUnknownObjects + NNewUnknownObjects !== 0) {
+                    bigMessage = bigMessage.concat(
+                      `${NOldUnknownObjects + NNewUnknownObjects}個の新天体`,
+                    );
+                    if (NKnownObjects !== 0) {
+                      bigMessage = bigMessage.concat('と');
+                    }
+                  }
+                  if (NKnownObjects !== 0) {
+                    bigMessage = bigMessage.concat(
+                      `${NKnownObjects}個の既知天体`,
+                    );
+                  }
+                  bigMessage = bigMessage.concat('を発見しました!\n');
+                  let smallMessage = '';
+                  if (startHNumber !== undefined && NNewUnknownObjects !== 0) {
+                    smallMessage = `COIASで発見された新天体は${
+                      startHNumber - 1
+                    }個から${
+                      startHNumber + NNewUnknownObjects - 1
+                    }個になりました。\n`;
+                  }
+
+                  setThankYouMessageBig(bigMessage);
+                  setThankYouMessageSmall(smallMessage);
                   setShowThankYouModal(true);
                 }
               }}
@@ -298,6 +360,8 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
           );
           setShowThankYouModal(false);
         }}
+        thankYouMessageBig={thankYouMessageBig}
+        thankYouMessageSmall={thankYouMessageSmall}
       />
 
       <AlertModal
@@ -322,3 +386,9 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
 }
 
 export default Report;
+
+Report.propTypes = {
+  setMenunames: PropTypes.func.isRequired,
+  setFileNames: PropTypes.func.isRequired,
+  setFileObservedTimes: PropTypes.func.isRequired,
+};
