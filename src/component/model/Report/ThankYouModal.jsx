@@ -15,17 +15,26 @@ function ThankYouModal({
           id="contained-modal-title-vcenter"
           style={{ color: '#5c636a', fontWeight: 'bold' }}
         >
-          測定お疲れ様でした
+          測定完了です!
         </Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ color: '#5c636a', whiteSpace: 'pre-line' }}>
         <h3>
           <b>{thankYouMessageBig}</b>
         </h3>
-        <h4>{thankYouMessageSmall}</h4>
-        {
-          '画像の測定ありがとうございました。\n測定結果は小惑星センター(MPC)およびCOIAS開発チームにメール送信されました。\nまたの測定をお待ちしております。'
-        }
+        <h3>{thankYouMessageSmall}</h3>
+        <h4>{'次の測定へ進みましょう!\n'}</h4>
+        <aside>
+          報告いただいた情報は小惑星センター(MPC)にて保管され、追観測に成功したものが新天体と認められます。詳しく知りたい方は、
+          <a
+            href="https://web-coias.u-aizu.ac.jp/about_coias"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            「小惑星の発見と名前がつくまで」
+          </a>
+          をご覧ください。
+        </aside>
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-end">
         <Button

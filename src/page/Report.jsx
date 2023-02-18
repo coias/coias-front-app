@@ -165,18 +165,7 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
     <div className="report-wrap">
       <Row xs="auto" className="report-wrap_form">
         <Col>
-          <h4>OBS </h4>
-        </Col>
-        <Col md={8}>
-          <Form.Control
-            placeholder="観測者名: default = HSC observers (変更したい場合はsend_mpc.txtをダウンロードした後に直接編集してください)"
-            disabled
-          />
-        </Col>
-      </Row>
-      <Row xs="auto" className="report-wrap_form">
-        <Col>
-          <h4>MEA </h4>
+          <h4>測定者名 </h4>
         </Col>
         <Col md={8}>
           <Form.Control
@@ -297,7 +286,9 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
                   let bigMessage = 'あなたは';
                   if (NOldUnknownObjects + NNewUnknownObjects !== 0) {
                     bigMessage = bigMessage.concat(
-                      `${NOldUnknownObjects + NNewUnknownObjects}個の新天体`,
+                      `${
+                        NOldUnknownObjects + NNewUnknownObjects
+                      }個の新天体候補`,
                     );
                     if (NKnownObjects !== 0) {
                       bigMessage = bigMessage.concat('と');
@@ -308,10 +299,10 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
                       `${NKnownObjects}個の既知天体`,
                     );
                   }
-                  bigMessage = bigMessage.concat('を発見しました!\n');
+                  bigMessage = bigMessage.concat('をMPCに報告しました!\n');
                   let smallMessage = '';
                   if (startHNumber !== undefined && NNewUnknownObjects !== 0) {
-                    smallMessage = `COIASで発見された新天体は${
+                    smallMessage = `COIASで発見された新天体候補は${
                       startHNumber - 1
                     }個から${
                       startHNumber + NNewUnknownObjects - 1
