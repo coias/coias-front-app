@@ -43,11 +43,11 @@ function ErrorModal({
   return (
     <Modal show={show} onHide={handleClose} onExit={onExit} centered>
       <Modal.Header closeButton>
-        <Modal.Title style={{ color: '#5c636a', fontWeight: 'bold' }}>
+        <Modal.Title className="f-modal_title f-ja">
           エラーが発生しました
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ color: '#5c636a' }}>
+      <Modal.Body className="f-ja">
         {errorPlace?.length === 0
           ? `${errorPlace}`
           : `${errorPlace}でエラーが発生しました。`}
@@ -60,14 +60,17 @@ function ErrorModal({
       <Modal.Footer>
         <Button
           variant="primary"
-          className="btn-style box_blue"
+          className="btn-style box_blue f-ja"
           onClick={() => {
             downloadLogFIle();
           }}
         >
           ログをダウンロード
         </Button>
-        <Button className="btn-style box_border_blue" onClick={handleClose}>
+        <Button
+          className="btn-style box_border_blue f-ja"
+          onClick={handleClose}
+        >
           閉じる
         </Button>
       </Modal.Footer>

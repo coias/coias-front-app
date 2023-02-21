@@ -165,7 +165,7 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
     <div className="report-wrap">
       <Row xs="auto" className="report-wrap_form">
         <Col>
-          <h4>測定者名 </h4>
+          <h4 className="f-modal_title f-ja">測定者名 </h4>
         </Col>
         <Col md={8}>
           <Form.Control
@@ -179,7 +179,7 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
       </Row>
       <Row xs="auto">
         <Col>
-          <h4>レポート </h4>
+          <h4 className="f-modal_title f-ja">レポート </h4>
         </Col>
         <Col md={8}>
           <div
@@ -201,12 +201,12 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
               onClick={() => {
                 getMpc();
               }}
-              className="btn-style box_blue"
+              className="btn-style box_blue f-ja"
             >
               レポート作成をやり直す
             </Button>
             <div className="btn_wrap-content">
-              <span>ファイルをダウンロード</span>
+              <span className="f-ja">ファイルをダウンロード</span>
               <Button
                 variant="primary"
                 onClick={() => {

@@ -507,7 +507,7 @@ function COIAS({
                   }
                   setDisable(!disable);
                 }}
-                className="btn-style box_blue"
+                className="btn-style box_blue f-ja"
                 size="lg"
               >
                 {disable ? '再描画' : 'やり直す'}

@@ -1,6 +1,5 @@
-exports.defaultBtnColor = '#5C636A';
-// exports.defaultBtnColor = '#28297e';
-// exports.selectedBtnColor = '#0B5ED7';
-exports.selectedBtnColor = '#ffd759';
-exports.offBtnColor = '#5C636A';
-exports.iconSize = 22;
+exports.btnColorGray = '#5C636A';
+exports.btnColorYellow = '#ffd759';
+exports.iconSize22px = 22;
+exports.iconSize28px = 28;
+exports.iconSize40px = 40;

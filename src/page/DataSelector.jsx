@@ -731,7 +731,9 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
           <>
             {/* 鑑賞モード */}
             <Col>
-              <Button onClick={goAllSky}>全天に戻る</Button>
+              <Button onClick={goAllSky} className="btn-style box_blue">
+                全天に戻る
+              </Button>
             </Col>
             <Col>
               <DropdownButton as={ButtonGroup} title="銀河系内天体">
@@ -793,13 +795,24 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
           </>
         )}
         <Col>
-          <Button variant="light" onClick={() => setSettingModalShow(true)}>
-            <AiFillSetting size={CONSTANT.iconSize} className="icon-color" />
+          <Button
+            variant="light"
+            className="play-menu"
+            onClick={() => setSettingModalShow(true)}
+          >
+            <AiFillSetting
+              size={CONSTANT.iconSize22px}
+              className="icon-color"
+            />
           </Button>
         </Col>
         <Col>
-          <Button variant="light" onClick={() => setHelpModalShow(true)}>
-            <BiHelpCircle size={CONSTANT.iconSize} className="icon-color" />
+          <Button
+            variant="light"
+            className="play-menu"
+            onClick={() => setHelpModalShow(true)}
+          >
+            <BiHelpCircle size={CONSTANT.iconSize22px} className="icon-color" />
           </Button>
         </Col>
       </Row>
