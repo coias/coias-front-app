@@ -22,6 +22,7 @@ import {
 } from 'react-bootstrap';
 import { BiHelpCircle } from 'react-icons/bi';
 import { AiFillSetting } from 'react-icons/ai';
+import { BsFileEarmarkCheckFill, BsFileEarmarkXFill } from 'react-icons/bs';
 /* eslint-disable no-unused-vars */
 import { angle, easing, Globe, SkyCoord } from '@stellar-globe/stellar-globe';
 /* eslint-disable no-unused-vars */
@@ -70,7 +71,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
   const [selectImageMode, setSelectImageMode] = useState(true);
   const [selectDateModalShow, setSelectDateModalShow] = useState(false);
   const [selectImageModalShow, setSelectImageModalShow] = useState(false);
-  const [fileSelectState, setFileSelectState] = useState('未選択');
+  const [fileSelectState, setFileSelectState] = useState('');
   const [images, setImages] = useState([]);
   const [tracts, setTracts] = useState([]);
   const [validPatchIds, setValidPatchIds] = useState([]);
@@ -565,7 +566,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
         tmpSelectedImageTimes.push(callBackImages[key].observedTime);
       }
     });
-    setFileSelectState(`${NSelectedImages}枚選択中`);
+    setFileSelectState(`${NSelectedImages}枚`);
     setFileNames(tmpSelectedImageNames);
     setFileObservedTimes(tmpSelectedImageTimes);
     setModeStatus((prevModeStatus) => {
@@ -635,7 +636,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
       setAutoSelectResult(resResult);
       setShowAutoSelectResult(true);
 
-      setFileSelectState(`${resResult.warpFiles.length}枚選択中`);
+      setFileSelectState(`${resResult.warpFiles.length}枚`);
       setModeStatus((prevModeStatus) => {
         const modeStatusCopy = { ...prevModeStatus };
         modeStatusCopy.ExplorePrepare = true;
@@ -664,7 +665,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
   }, []);
 
   const clearImageSelect = () => {
-    setFileSelectState('未選択');
+    setFileSelectState('');
     setSelectedTractId(undefined);
     setSelectedPatchId(undefined);
     setSelectedDateIds(undefined);
@@ -703,19 +704,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
               </Button>
             </Col>
             <Col>
-              <h4>画像選択状況:</h4>
-            </Col>
-            <Col>
-              <h4>{fileSelectState}</h4>
-            </Col>
-            <Col>
-              <Button
-                onClick={clearImageSelect}
-                className="btn-style box_blue justify-content-end"
-                disabled={fileSelectState === '未選択'}
-              >
-                画像選択クリア
-              </Button>
+              <h4>選択・操作:</h4>
             </Col>
             <Col>
               <Button
@@ -723,6 +712,30 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
                 className="btn-style box_blue justify-content-end"
               >
                 自動選択
+              </Button>
+            </Col>
+            <Col>
+              <BsFileEarmarkCheckFill
+                size={CONSTANT.iconSize22px}
+                className={
+                  fileSelectState.length === 0
+                    ? 'file-unchecked'
+                    : 'file-checked'
+                }
+              />
+              <b>{fileSelectState}</b>
+            </Col>
+            <Col>
+              <Button
+                onClick={clearImageSelect}
+                variant="light"
+                className="play-menu"
+                disabled={fileSelectState.length === 0}
+              >
+                <BsFileEarmarkXFill
+                  size={CONSTANT.iconSize22px}
+                  className="icon-color_danger"
+                />
               </Button>
             </Col>
             {/* 画像選択モードここまで */}

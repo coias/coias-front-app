@@ -196,6 +196,15 @@ p,
     }
   }
 
+  // 画像選択モードの画像選択キャンセルボタンの色
+  .icon-color_danger {
+    color: $color_gray;
+
+    &:hover {
+      color: $color_red;
+    }
+  }
+
   .select-style {
     min-width: 60px;
     margin: auto 0;
@@ -230,6 +239,15 @@ p,
       }
     }
   }
+}
+
+// 画像選択モードの画像選択状況アイコンの色
+.file-checked {
+  color: $color_green;
+}
+
+.file-unchecked {
+  color: $color_gray;
 }
 
 .params-input-group {
