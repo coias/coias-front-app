@@ -300,13 +300,14 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
                     );
                   }
                   bigMessage = bigMessage.concat('をMPCに報告しました!\n');
+
+                  const res2 = await axios
+                    .get(`${reactApiUri}N_new_objects`)
+                    .catch(() => {});
                   let smallMessage = '';
-                  if (startHNumber !== undefined && NNewUnknownObjects !== 0) {
-                    smallMessage = `COIASで発見された新天体候補は${
-                      startHNumber - 1
-                    }個から${
-                      startHNumber + NNewUnknownObjects - 1
-                    }個になりました。\n`;
+                  if (res2 !== undefined && NNewUnknownObjects !== 0) {
+                    const NTotalNewObjects = res2.data.result;
+                    smallMessage = `COIASで発見された新天体候補は合計${NTotalNewObjects}個になりました。\n`;
                   }
 
                   setThankYouMessageBig(bigMessage);
