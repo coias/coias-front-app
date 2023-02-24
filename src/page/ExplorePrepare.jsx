@@ -416,11 +416,11 @@ function ExplorePrepare({
                       style={{ whiteSpace: 'nowrap' }}
                       key="Success"
                       id="dropdown-variants-Success"
-                      variant={menunames[6].done ? 'success' : 'secondary'}
                       title={menunames[6].name}
                       disabled={errorFiles.length !== 0}
                       onClick={() => onProcessAuto()}
-                      className="btn-style box_blue"
+                      variant="success"
+                      className={menunames[5].done ? '' : 'btn-style box_blue'}
                     >
                       {menunames[6].name}
                     </Button>
@@ -491,8 +491,10 @@ function ExplorePrepare({
                         onClick={() => {
                           onProcess(menunames[3].query);
                         }}
-                        variant={menunames[3].done ? 'success' : 'secondary'}
-                        className="btn-style box_blue"
+                        variant="success"
+                        className={
+                          menunames[3].done ? '' : 'btn-style box_blue'
+                        }
                       >
                         {menunames[3].name}
                       </Button>
@@ -508,8 +510,10 @@ function ExplorePrepare({
                         onClick={() => {
                           onProcess(menunames[4].query);
                         }}
-                        variant={menunames[4].done ? 'success' : 'secondary'}
-                        className="btn-style box_blue"
+                        variant="success"
+                        className={
+                          menunames[4].done ? '' : 'btn-style box_blue'
+                        }
                       >
                         {menunames[4].name}
                       </Button>
@@ -527,8 +531,10 @@ function ExplorePrepare({
                             `${menunames[5].query}?nd=${parameters.nd}&ar=${parameters.ar}`,
                           );
                         }}
-                        variant={menunames[5].done ? 'success' : 'secondary'}
-                        className="btn-style box_blue"
+                        variant="success"
+                        className={
+                          menunames[5].done ? '' : 'btn-style box_blue'
+                        }
                       >
                         {menunames[5].name}
                       </Button>
