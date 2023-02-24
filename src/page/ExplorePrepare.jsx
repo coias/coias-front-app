@@ -380,202 +380,227 @@ function ExplorePrepare({
     >
       <Row>
         <Col md={2}>
-          <Row style={{ marginBottom: '60px' }}>
-            <h4>探索準備</h4>
-          </Row>
-          <Row style={{ marginBottom: '40px' }}>
-            <h4>選択画像</h4>
+          <h4>探索準備</h4>
+        </Col>
+        <Col>
+          <Row xs="auto" style={{ marginBottom: '20px' }}>
+            <Col md={10}>
+              <Row xs="auto" style={{ marginBottom: '20px' }}>
+                <Col>
+                  <Form.Check
+                    inline
+                    type="radio"
+                    label="自動解析"
+                    name="group1"
+                    id="auto"
+                    value="auto"
+                    onChange={handleSelect}
+                    checked={isAuto}
+                  />
+                  <Form.Check
+                    inline
+                    type="radio"
+                    label="手動解析"
+                    name="group1"
+                    id="manual"
+                    value="manual"
+                    onChange={handleSelect}
+                    checked={!isAuto}
+                  />
+                </Col>
+              </Row>
+              <Row style={{ marginBottom: '20px' }}>
+                {isAuto ? (
+                  <Col style={{ margin: 'auto 0' }}>
+                    <Button
+                      style={{ whiteSpace: 'nowrap' }}
+                      key="Success"
+                      id="dropdown-variants-Success"
+                      variant={menunames[6].done ? 'success' : 'secondary'}
+                      title={menunames[6].name}
+                      disabled={errorFiles.length !== 0}
+                      onClick={() => onProcessAuto()}
+                      className="btn-style box_blue"
+                    >
+                      {menunames[6].name}
+                    </Button>
+
+                    <Button
+                      style={{ marginLeft: '30px' }}
+                      variant="secondary"
+                      className="params-btn"
+                      onClick={() => setParamsSettingModalShow(true)}
+                    >
+                      <GoSettings size={CONSTANT.iconSize22px} />
+                    </Button>
+                  </Col>
+                ) : (
+                  <>
+                    <Col style={{ paddingRight: 0 }}>
+                      <Button
+                        id={menunames[1].query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        disabled={errorFiles.length !== 0}
+                        onClick={() => {
+                          onProcess(menunames[1].query);
+                        }}
+                        className={
+                          menunames[1].done ? '' : 'btn-style box_blue'
+                        }
+                        variant="success"
+                      >
+                        {menunames[1].name}
+                      </Button>
+                    </Col>
+                    <Col style={{ margin: 'auto 0', padding: 0 }}>
+                      <HiOutlineArrowSmRight size={28} />
+                    </Col>
+                    <Col style={{ padding: 0 }}>
+                      <DropdownButton
+                        bsPrefix={
+                          menunames[2].done
+                            ? ''
+                            : 'btn-style box_blue dropdown_style_prepare'
+                        }
+                        as={ButtonGroup}
+                        variant="success"
+                        disabled={errorFiles.length !== 0}
+                        title={menunames[2].name}
+                      >
+                        <Dropdown.Item
+                          eventKey="1"
+                          onClick={() =>
+                            onProcess(
+                              `${menunames[2].query}2&sn=${parameters.sn}`,
+                            )
+                          }
+                        >
+                          2×2
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          eventKey="2"
+                          onClick={() =>
+                            onProcess(
+                              `${menunames[2].query}4&sn=${parameters.sn}`,
+                            )
+                          }
+                        >
+                          4×4
+                        </Dropdown.Item>
+                      </DropdownButton>
+                    </Col>
+                    <Col style={{ margin: 'auto 0', padding: 0 }}>
+                      <HiOutlineArrowSmRight size={28} />
+                    </Col>
+                    <Col style={{ padding: 0 }}>
+                      <Button
+                        id={menunames[3].query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        disabled={errorFiles.length !== 0}
+                        onClick={() => {
+                          onProcess(menunames[3].query);
+                        }}
+                        variant={menunames[3].done ? 'success' : 'secondary'}
+                        className="btn-style box_blue"
+                      >
+                        {menunames[3].name}
+                      </Button>
+                    </Col>
+                    <Col style={{ margin: 'auto 0', padding: 0 }}>
+                      <HiOutlineArrowSmRight size={28} />
+                    </Col>
+                    <Col style={{ padding: 0 }}>
+                      <Button
+                        id={menunames[4].query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        disabled={errorFiles.length !== 0}
+                        onClick={() => {
+                          onProcess(menunames[4].query);
+                        }}
+                        variant={menunames[4].done ? 'success' : 'secondary'}
+                        className="btn-style box_blue"
+                      >
+                        {menunames[4].name}
+                      </Button>
+                    </Col>
+                    <Col style={{ margin: 'auto 0', padding: 0 }}>
+                      <HiOutlineArrowSmRight size={28} />
+                    </Col>
+                    <Col style={{ padding: 0 }}>
+                      <Button
+                        id={menunames[5].query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        disabled={errorFiles.length !== 0}
+                        onClick={() => {
+                          onProcess(
+                            `${menunames[5].query}?nd=${parameters.nd}&ar=${parameters.ar}`,
+                          );
+                        }}
+                        variant={menunames[5].done ? 'success' : 'secondary'}
+                        className="btn-style box_blue"
+                      >
+                        {menunames[5].name}
+                      </Button>
+                    </Col>
+                    <Col>
+                      <Button
+                        variant="secondary"
+                        className="params-btn"
+                        onClick={() => setParamsSettingModalShow(true)}
+                      >
+                        <GoSettings size={CONSTANT.iconSize22px} />
+                      </Button>
+                    </Col>
+                  </>
+                )}
+              </Row>
+              <Row xs="auto" style={{ marginBottom: '20px' }}>
+                <Col>
+                  <Button onClick={onClickStarUpdateButton} variant="secondary">
+                    {`小惑星データ更新 (オプション, ${MPCRefreshedTimeMessage})`}
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
           </Row>
         </Col>
-        <Col md={10}>
-          <Row xs="auto" style={{ marginBottom: '20px' }}>
-            <Col style={{ margin: 'auto 0' }}>
-              <Form.Check
-                className="mt-3"
-                inline
-                type="radio"
-                label="自動解析"
-                name="group1"
-                id="auto"
-                value="auto"
-                onChange={handleSelect}
-                checked={isAuto}
-              />
-            </Col>
-            <Col style={{ margin: 'auto 0' }}>
-              <Form.Check
-                className="mt-3"
-                inline
-                type="radio"
-                label="手動解析"
-                name="group1"
-                id="manual"
-                value="manual"
-                onChange={handleSelect}
-                checked={!isAuto}
-              />
-            </Col>
-          </Row>
-          <Row xs="auto" style={{ marginBottom: '20px' }}>
-            {isAuto ? (
-              <Col style={{ margin: 'auto 0' }}>
-                <Button
-                  style={{ whiteSpace: 'nowrap' }}
-                  key="Success"
-                  id="dropdown-variants-Success"
-                  variant={menunames[6].done ? 'success' : 'secondary'}
-                  title={menunames[6].name}
-                  disabled={errorFiles.length !== 0}
-                  onClick={() => onProcessAuto()}
-                >
-                  {menunames[6].name}
-                </Button>
-              </Col>
+      </Row>
+      <Row>
+        <Col md={2}>
+          <h4>選択画像</h4>
+        </Col>
+        <Col style={{ margin: 'auto 0' }}>
+          <div
+            style={{
+              width: '70vw',
+              height: '500px',
+              border: '3px solid #282A7F',
+              borderRadius: '4px',
+            }}
+          >
+            {errorFiles.length === 0 ? (
+              <Table style={{ color: 'black' }} striped bordered>
+                <tbody className="selected-files-table">
+                  <tr>
+                    <td>画像ファイル名</td>
+                    <td>観測時刻 (世界時)</td>
+                  </tr>
+                  {fileNames.map((fileName, index) => (
+                    <tr>
+                      <td>{fileName}</td>
+                      <td>{fileObservedTimes[index]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
             ) : (
-              <>
-                <Col style={{ paddingRight: 0 }}>
-                  <Button
-                    id={menunames[1].query}
-                    style={{ whiteSpace: 'nowrap' }}
-                    disabled={errorFiles.length !== 0}
-                    onClick={() => {
-                      onProcess(menunames[1].query);
-                    }}
-                    variant={menunames[1].done ? 'success' : 'secondary'}
-                  >
-                    {menunames[1].name}
-                  </Button>
-                </Col>
-                <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <HiOutlineArrowSmRight size={28} />
-                </Col>
-                <Col style={{ padding: 0 }}>
-                  <DropdownButton
-                    as={ButtonGroup}
-                    variant={menunames[2].done ? 'success' : 'secondary'}
-                    disabled={errorFiles.length !== 0}
-                    title={menunames[2].name}
-                  >
-                    <Dropdown.Item
-                      eventKey="1"
-                      onClick={() =>
-                        onProcess(`${menunames[2].query}2&sn=${parameters.sn}`)
-                      }
-                    >
-                      2×2
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      eventKey="2"
-                      onClick={() =>
-                        onProcess(`${menunames[2].query}4&sn=${parameters.sn}`)
-                      }
-                    >
-                      4×4
-                    </Dropdown.Item>
-                  </DropdownButton>
-                </Col>
-                <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <HiOutlineArrowSmRight size={28} />
-                </Col>
-                <Col style={{ padding: 0 }}>
-                  <Button
-                    id={menunames[3].query}
-                    style={{ whiteSpace: 'nowrap' }}
-                    disabled={errorFiles.length !== 0}
-                    onClick={() => {
-                      onProcess(menunames[3].query);
-                    }}
-                    variant={menunames[3].done ? 'success' : 'secondary'}
-                  >
-                    {menunames[3].name}
-                  </Button>
-                </Col>
-                <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <HiOutlineArrowSmRight size={28} />
-                </Col>
-                <Col style={{ padding: 0 }}>
-                  <Button
-                    id={menunames[4].query}
-                    style={{ whiteSpace: 'nowrap' }}
-                    disabled={errorFiles.length !== 0}
-                    onClick={() => {
-                      onProcess(menunames[4].query);
-                    }}
-                    variant={menunames[4].done ? 'success' : 'secondary'}
-                  >
-                    {menunames[4].name}
-                  </Button>
-                </Col>
-                <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <HiOutlineArrowSmRight size={28} />
-                </Col>
-                <Col style={{ padding: 0 }}>
-                  <Button
-                    id={menunames[5].query}
-                    style={{ whiteSpace: 'nowrap' }}
-                    disabled={errorFiles.length !== 0}
-                    onClick={() => {
-                      onProcess(
-                        `${menunames[5].query}?nd=${parameters.nd}&ar=${parameters.ar}`,
-                      );
-                    }}
-                    variant={menunames[5].done ? 'success' : 'secondary'}
-                  >
-                    {menunames[5].name}
-                  </Button>
-                </Col>
-              </>
+              <ul style={{ listStyleType: 'none', color: 'red' }}>
+                {errorFiles.map((arr) => (
+                  <li key={arr}>{arr}</li>
+                ))}
+              </ul>
             )}
-            <Button
-              className={isAuto ? '' : 'params-btn'}
-              onClick={() => setParamsSettingModalShow(true)}
-            >
-              <GoSettings size={CONSTANT.iconSize22px} />
-            </Button>
-          </Row>
-          <Row xs="auto" style={{ marginBottom: '20px' }}>
-            <Button
-              onClick={onClickStarUpdateButton}
-              className="btn-style box_blue"
-            >
-              {`小惑星データ更新 (オプション, ${MPCRefreshedTimeMessage})`}
-            </Button>
-          </Row>
-          <Row>
-            <Col style={{ margin: 'auto 0' }}>
-              <div
-                style={{
-                  width: '70vw',
-                  height: '500px',
-                  border: '3px solid #282A7F',
-                  borderRadius: '4px',
-                }}
-              >
-                {errorFiles.length === 0 ? (
-                  <Table style={{ color: 'black' }} striped bordered>
-                    <tbody className="selected-files-table">
-                      <tr>
-                        <td>画像ファイル名</td>
-                        <td>観測時刻 (世界時)</td>
-                      </tr>
-                      {fileNames.map((fileName, index) => (
-                        <tr>
-                          <td>{fileName}</td>
-                          <td>{fileObservedTimes[index]}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                ) : (
-                  <ul style={{ listStyleType: 'none', color: 'red' }}>
-                    {errorFiles.map((arr) => (
-                      <li key={arr}>{arr}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </Col>
-          </Row>
+          </div>
         </Col>
       </Row>
 

@@ -684,7 +684,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
       <Row style={{ margin: '10px' }}>
         {selectImageMode ? (
           <>
-            <Col style={{ margin: 'auto 0' }} className="d-flex">
+            <Col style={{ margin: 'auto 0' }} className="d-flex" md={10}>
               <h4 style={{ margin: 'auto 0' }}>移動</h4>
               {/* 画像選択モード */}
               <ButtonGroup
@@ -713,23 +713,18 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
                   領域3
                 </Button>
               </ButtonGroup>
-            </Col>
 
-            <Col
-              style={{
-                margin: 'auto 0',
-                display: 'flex',
-                justifyContent: 'space-between',
-              }}
-            >
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  minWidth: '500px',
+                  width: '550px',
+                  maxWidth: '600px',
                 }}
               >
-                <h4 style={{ margin: 'auto 0' }}>解析する画像を選ぶ</h4>
+                <h4 style={{ margin: 'auto 0', marginLeft: '30px' }}>
+                  解析する画像を選ぶ
+                </h4>
 
                 <Button
                   onClick={autoSelect}
@@ -757,6 +752,8 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
                   <MdDeleteForever size={25} />
                 </Button>
               </div>
+            </Col>
+            <Col className="d-flex justify-content-end align-items-center">
               <div clasName="d-flex" style={{ minWidth: '100px' }}>
                 <Button
                   variant="light"
