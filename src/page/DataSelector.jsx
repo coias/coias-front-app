@@ -71,7 +71,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
   const [selectImageMode, setSelectImageMode] = useState(true);
   const [selectDateModalShow, setSelectDateModalShow] = useState(false);
   const [selectImageModalShow, setSelectImageModalShow] = useState(false);
-  const [fileSelectState, setFileSelectState] = useState('未選択');
+  const [fileSelectState, setFileSelectState] = useState('');
   const [images, setImages] = useState([]);
   const [tracts, setTracts] = useState([]);
   const [validPatchIds, setValidPatchIds] = useState([]);
@@ -665,7 +665,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
   }, []);
 
   const clearImageSelect = () => {
-    setFileSelectState('未選択');
+    setFileSelectState('');
     setSelectedTractId(undefined);
     setSelectedPatchId(undefined);
     setSelectedDateIds(undefined);

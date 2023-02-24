@@ -9,7 +9,13 @@ function ThankYouModal({
   thankYouMessageSmall,
 }) {
   return (
-    <Modal show={thankYouModalShow} size="lg" backdrop="static">
+    <Modal
+      show={thankYouModalShow}
+      size="lg"
+      backdrop="static"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
       <Modal.Header>
         <Modal.Title
           id="contained-modal-title-vcenter"
