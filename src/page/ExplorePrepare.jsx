@@ -574,17 +574,21 @@ function ExplorePrepare({
             style={{
               width: '70vw',
               height: '500px',
-              border: '3px solid #282A7F',
-              borderRadius: '4px',
             }}
           >
             {errorFiles.length === 0 ? (
-              <Table style={{ color: 'black' }} striped bordered>
-                <tbody className="selected-files-table">
+              <Table
+                style={{ color: 'black' }}
+                className="selected-files-table"
+                striped
+              >
+                <thead>
                   <tr>
-                    <td>画像ファイル名</td>
-                    <td>観測時刻 (世界時)</td>
+                    <th>画像ファイル名</th>
+                    <th>観測時刻 (世界時)</th>
                   </tr>
+                </thead>
+                <tbody>
                   {fileNames.map((fileName, index) => (
                     <tr>
                       <td>{fileName}</td>

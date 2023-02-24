@@ -789,3 +789,22 @@ footer {
   color: white;
   border-radius: 4px;
 }
+
+.selected-files-table {
+  color: $color_white;
+
+  thead {
+    color: $color_white;
+    background-color: #6c757d;
+  }
+
+  tbody {
+    color: $color_white;
+    background-color: $color_primary;
+  }
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td {
+  color: $color_white;
+  background-color: $color_secondary;
+}
