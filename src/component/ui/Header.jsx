@@ -47,7 +47,7 @@ function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Nav className="nav-disappear">
         <NavLink to="/">
-          <h3 className="nav-content">画像選択</h3>
+          <h3 className="nav-content f-ja">画像選択</h3>
         </NavLink>
         <NavLink
           to="/ExplorePrepare"
@@ -129,10 +129,19 @@ function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
         </Offcanvas.Header>
         <Offcanvas.Body id="basic-navbar-nav">
           <Nav>
+            <NavLink to="/">
+              <h3 className="nav-content f-ja">画像選択</h3>
+            </NavLink>
             <NavLink
-              to="/"
+              to="/ExplorePrepare"
               className={(navData) =>
                 navData.isActive ? 'active' : 'not-active'
+              }
+              style={{
+                opacity: modeStatus.ExplorePrepare ? 1 : 0.3,
+              }}
+              onClick={
+                modeStatus.ExplorePrepare ? () => {} : (e) => e.preventDefault()
               }
             >
               <h3 className="nav-content f-ja">探索準備</h3>
