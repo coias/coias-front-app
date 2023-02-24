@@ -41,7 +41,7 @@ function RenameNewStarModal({
       const exclusivePredictedStarPos = Object.keys(predictedStarPos)
         .map((key) => predictedStarPos[key])
         .filter((pos) => !Object.keys(starPos).includes(pos.name));
-      setRenameStarPos(Object.assign(starPos, exclusivePredictedStarPos));
+      setRenameStarPos({ ...starPos, ...exclusivePredictedStarPos });
     }
   }, [starPos]);
 
