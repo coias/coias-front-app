@@ -424,15 +424,6 @@ function ExplorePrepare({
                     >
                       {menunames[6].name}
                     </Button>
-
-                    <Button
-                      style={{ marginLeft: '30px' }}
-                      variant="secondary"
-                      className="params-btn"
-                      onClick={() => setParamsSettingModalShow(true)}
-                    >
-                      <GoSettings size={CONSTANT.iconSize22px} />
-                    </Button>
                   </Col>
                 ) : (
                   <>
@@ -542,15 +533,6 @@ function ExplorePrepare({
                         {menunames[5].name}
                       </Button>
                     </Col>
-                    <Col>
-                      <Button
-                        variant="secondary"
-                        className="params-btn"
-                        onClick={() => setParamsSettingModalShow(true)}
-                      >
-                        <GoSettings size={CONSTANT.iconSize22px} />
-                      </Button>
-                    </Col>
                   </>
                 )}
               </Row>
@@ -558,6 +540,15 @@ function ExplorePrepare({
                 <Col>
                   <Button onClick={onClickStarUpdateButton} variant="secondary">
                     {`小惑星データ更新 (オプション, ${MPCRefreshedTimeMessage})`}
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    variant="secondary"
+                    className="params-btn"
+                    onClick={() => setParamsSettingModalShow(true)}
+                  >
+                    <GoSettings size={CONSTANT.iconSize22px} />
                   </Button>
                 </Col>
               </Row>
