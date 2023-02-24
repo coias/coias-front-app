@@ -41,10 +41,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  ブリンクを開始/停止します。sキーでも同じことができます
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                ブリンクを開始/停止します。sキーでも同じことができます
               </td>
             </tr>
             <tr>
@@ -58,10 +59,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  ページを移動します。左右キーでも同じことができます
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                ページを移動します。左右キーでも同じことができます
               </td>
             </tr>
             <tr>
@@ -71,10 +73,11 @@ function HelpModal({ show, onHide }) {
               >
                 sec
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  ブリンク速度を調節できます。入力欄をクリックしてプルダウンリストから速度を選べます
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                ブリンク速度を調節できます。入力欄をクリックしてプルダウンリストから速度を選べます
               </td>
             </tr>
             <tr>
@@ -88,10 +91,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  画像の拡大縮小をします。上下キーでも同じことができます
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                画像の拡大縮小をします。上下キーでも同じことができます
               </td>
             </tr>
             <tr>
@@ -101,10 +105,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  天体の枠、天体番号を非表示にします
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                天体の枠、天体番号を非表示にします
               </td>
             </tr>
             <tr>
@@ -114,10 +119,11 @@ function HelpModal({ show, onHide }) {
               >
                 1
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  画像番号です。現在の画像の番号は灰色の背景になります。クリックすることでその画像に移動できます
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                画像番号です。現在の画像の番号は灰色の背景になります。クリックすることでその画像に移動できます
               </td>
             </tr>
             <tr>
@@ -127,10 +133,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  設定モーダルを開きます。画像の表示有無・画像のマスクの有無・手動測定モードでの拡大率・オートセーブの有無を選べます
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                設定モーダルを開きます。画像の表示有無・画像のマスクの有無・手動測定モードでの拡大率・オートセーブの有無を選べます
               </td>
             </tr>
             <tr>
@@ -140,10 +147,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  画像の輝度を調節できる調節バーです
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                画像の輝度を調節できる調節バーです
               </td>
             </tr>
             <tr>
@@ -153,10 +161,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  画像のコントラストを調節できる調節バーです
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                画像のコントラストを調節できる調節バーです
               </td>
             </tr>
             <tr>
@@ -166,10 +175,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  表示している画像の撮影時刻です
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                表示している画像の撮影時刻(世界時)です
               </td>
             </tr>
             <tr>
@@ -179,10 +189,11 @@ function HelpModal({ show, onHide }) {
                   color={CONSTANT.btnColorGray}
                 />
               </td>
-              <td>
-                <h4 className="f-modal_title_sub f-ja">
-                  マウスポインタの位置における画像のピクセル座標です
-                </h4>
+              <td
+                className="f-ja"
+                style={{ textAlign: 'left', fontSize: '130%' }}
+              >
+                マウスポインタの位置における画像のピクセル座標です
               </td>
             </tr>
           </tbody>
