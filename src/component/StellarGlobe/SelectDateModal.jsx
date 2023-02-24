@@ -45,13 +45,15 @@ function SelectDateModal({
         </Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ overflowY: 'scroll' }}>
-        <Table striped bordered>
-          <tbody className="select-date-modal-table">
+        <Table striped className="selected-files-table">
+          <thead>
             <tr>
               <td>観測日</td>
               <td>解析率</td>
               <td>選択</td>
             </tr>
+          </thead>
+          <tbody>
             {Object.keys(observedDates).map((key) => (
               <tr>
                 <td>{key}</td>

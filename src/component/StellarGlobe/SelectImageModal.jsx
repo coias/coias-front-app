@@ -39,14 +39,16 @@ function SelectImageModal({
         </Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ overflowY: 'scroll' }}>
-        <Table striped bordered>
-          <tbody className="select-image-modal-table">
+        <Table striped className="selected-files-table">
+          <thead>
             <tr>
               <td>画像名</td>
               <td>自動測定状況</td>
               <td>手動測定状況</td>
               <td>選択</td>
             </tr>
+          </thead>
+          <tbody>
             {Object.keys(images).map((key) => (
               <tr>
                 <td>{key}</td>
