@@ -786,8 +786,10 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
         ) : (
           <>
             {/* 鑑賞モード */}
-            <Col style={{ margin: 'auto 0' }} className="d-flex">
-              <h4 style={{ margin: 'auto 0' }}>移動</h4>
+            <Col
+              style={{ margin: 'auto 0' }}
+              className="d-flex justify-content-between"
+            >
               <div
                 style={{
                   minWidth: '700px',
@@ -795,6 +797,8 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
                   justifyContent: 'space-between',
                 }}
               >
+                <h4 style={{ margin: 'auto 0' }}>移動</h4>
+
                 <Button
                   style={{ margin: 'auto 0', marginLeft: '30px' }}
                   onClick={goAllSky}
@@ -866,6 +870,31 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
                     </Dropdown.Item>
                   ))}
                 </DropdownButton>
+              </div>
+              <div
+                clasName="d-flex justify-content-end"
+                style={{ minWidth: '100px' }}
+              >
+                <Button
+                  variant="light"
+                  className="play-menu"
+                  onClick={() => setSettingModalShow(true)}
+                >
+                  <AiFillSetting
+                    size={CONSTANT.iconSize22px}
+                    className="icon-color"
+                  />
+                </Button>
+                <Button
+                  variant="light"
+                  className="play-menu"
+                  onClick={() => setHelpModalShow(true)}
+                >
+                  <BiHelpCircle
+                    size={CONSTANT.iconSize22px}
+                    className="icon-color"
+                  />
+                </Button>
               </div>
             </Col>
             {/* 鑑賞モードここまで */}
