@@ -42,10 +42,10 @@ function SelectImageModal({
         <Table striped className="selected-files-table">
           <thead>
             <tr>
-              <td>画像名</td>
-              <td>自動測定状況</td>
-              <td>手動測定状況</td>
-              <td>選択</td>
+              <th>画像名</th>
+              <th>自動測定状況</th>
+              <th>手動測定状況</th>
+              <th>選択</th>
             </tr>
           </thead>
           <tbody>

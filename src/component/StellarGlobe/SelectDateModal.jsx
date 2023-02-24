@@ -48,9 +48,9 @@ function SelectDateModal({
         <Table striped className="selected-files-table">
           <thead>
             <tr>
-              <td>観測日</td>
-              <td>解析率</td>
-              <td>選択</td>
+              <th>観測日</th>
+              <th>解析率</th>
+              <th>選択</th>
             </tr>
           </thead>
           <tbody>
