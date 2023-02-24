@@ -21,7 +21,8 @@ import {
   Row,
 } from 'react-bootstrap';
 import { BiHelpCircle } from 'react-icons/bi';
-import { AiFillSetting } from 'react-icons/ai';
+import { AiFillFile, AiFillSetting } from 'react-icons/ai';
+import { MdDeleteForever } from 'react-icons/md';
 /* eslint-disable no-unused-vars */
 import { angle, easing, Globe, SkyCoord } from '@stellar-globe/stellar-globe';
 /* eslint-disable no-unused-vars */
@@ -565,7 +566,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
         tmpSelectedImageTimes.push(callBackImages[key].observedTime);
       }
     });
-    setFileSelectState(`${NSelectedImages}枚選択中`);
+    setFileSelectState(`${NSelectedImages}枚`);
     setFileNames(tmpSelectedImageNames);
     setFileObservedTimes(tmpSelectedImageTimes);
     setModeStatus((prevModeStatus) => {
@@ -635,7 +636,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
       setAutoSelectResult(resResult);
       setShowAutoSelectResult(true);
 
-      setFileSelectState(`${resResult.warpFiles.length}枚選択中`);
+      setFileSelectState(`${resResult.warpFiles.length}枚`);
       setModeStatus((prevModeStatus) => {
         const modeStatusCopy = { ...prevModeStatus };
         modeStatusCopy.ExplorePrepare = true;
@@ -681,140 +682,195 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
   return (
     <div style={{ flexGrow: 1 }}>
       <Row style={{ margin: '10px' }}>
-        <Col>
-          <h4>移動:</h4>
-        </Col>
         {selectImageMode ? (
           <>
-            {/* 画像選択モード */}
-            <Col>
-              <Button onClick={goRegion1} className="btn-style box_blue">
-                領域1
-              </Button>
-            </Col>
-            <Col>
-              <Button onClick={goRegion2} className="btn-style box_blue">
-                領域2
-              </Button>
-            </Col>
-            <Col>
-              <Button onClick={goRegion3} className="btn-style box_blue">
-                領域3
-              </Button>
-            </Col>
-            <Col>
-              <h4>画像選択状況:</h4>
-            </Col>
-            <Col>
-              <h4>{fileSelectState}</h4>
-            </Col>
-            <Col>
-              <Button
-                onClick={clearImageSelect}
-                className="btn-style box_blue justify-content-end"
-                disabled={fileSelectState === '未選択'}
+            <Col style={{ margin: 'auto 0' }} className="d-flex">
+              <h4 style={{ margin: 'auto 0' }}>移動</h4>
+              {/* 画像選択モード */}
+              <ButtonGroup
+                aria-label="Basic example"
+                style={{ margin: 'auto 0', marginLeft: '30px' }}
               >
-                画像選択クリア
-              </Button>
+                <Button onClick={goRegion1} className="btn-style box_blue">
+                  領域1
+                </Button>
+                <Button
+                  onClick={goRegion2}
+                  style={{
+                    borderLeft: 'solid 1px #FFF',
+                  }}
+                  className="btn-style box_blue"
+                >
+                  領域2
+                </Button>
+                <Button
+                  style={{
+                    borderLeft: 'solid 1px #FFF',
+                  }}
+                  onClick={goRegion3}
+                  className="btn-style box_blue"
+                >
+                  領域3
+                </Button>
+              </ButtonGroup>
             </Col>
-            <Col>
-              <Button
-                onClick={autoSelect}
-                className="btn-style box_blue justify-content-end"
+
+            <Col
+              style={{
+                margin: 'auto 0',
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  minWidth: '500px',
+                }}
               >
-                自動選択
-              </Button>
+                <h4 style={{ margin: 'auto 0' }}>解析する画像を選ぶ</h4>
+
+                <Button
+                  onClick={autoSelect}
+                  style={{ height: '40px', margin: 'auto 0' }}
+                  className="btn-style box_blue"
+                >
+                  自動選択
+                </Button>
+
+                <div className="d-flex">
+                  <AiFillFile size={25} style={{ margin: 'auto 0' }} />
+                  <h4 style={{ margin: 'auto 0' }}>{fileSelectState}</h4>
+                </div>
+                <Button
+                  onClick={clearImageSelect}
+                  className="btn-style box_blue justify-content-end"
+                  disabled={fileSelectState === '未選択'}
+                  style={{
+                    height: '40px',
+                    margin: 'auto 0',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <MdDeleteForever size={25} />
+                </Button>
+              </div>
+              <div clasName="d-flex" style={{ minWidth: '100px' }}>
+                <Button
+                  variant="light"
+                  className="play-menu"
+                  onClick={() => setSettingModalShow(true)}
+                >
+                  <AiFillSetting
+                    size={CONSTANT.iconSize22px}
+                    className="icon-color"
+                  />
+                </Button>
+                <Button
+                  variant="light"
+                  className="play-menu"
+                  onClick={() => setHelpModalShow(true)}
+                >
+                  <BiHelpCircle
+                    size={CONSTANT.iconSize22px}
+                    className="icon-color"
+                  />
+                </Button>
+              </div>
             </Col>
+
             {/* 画像選択モードここまで */}
           </>
         ) : (
           <>
             {/* 鑑賞モード */}
-            <Col>
-              <Button onClick={goAllSky} className="btn-style box_blue">
-                全天に戻る
-              </Button>
-            </Col>
-            <Col>
-              <DropdownButton as={ButtonGroup} title="銀河系内天体">
-                {BEAUTIFUL_OBJECTS.objectsInOurGalaxy.map((item, index) => (
-                  <Dropdown.Item
-                    eventKey={index}
-                    onClick={() => {
-                      goThisObject(item);
-                    }}
-                  >
-                    {item.name}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
-            </Col>
-            <Col>
-              <DropdownButton as={ButtonGroup} title="銀河">
-                {BEAUTIFUL_OBJECTS.galaxies.map((item, index) => (
-                  <Dropdown.Item
-                    eventKey={index}
-                    onClick={() => {
-                      goThisObject(item);
-                    }}
-                  >
-                    {item.name}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
-            </Col>
-            <Col>
-              <DropdownButton as={ButtonGroup} title="重力レンズ天体">
-                {BEAUTIFUL_OBJECTS.gravityLens.map((item, index) => (
-                  <Dropdown.Item
-                    eventKey={index}
-                    onClick={() => {
-                      goThisObject(item);
-                    }}
-                  >
-                    {item.name}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
-            </Col>
-            <Col>
-              <DropdownButton as={ButtonGroup} title="銀河団">
-                {BEAUTIFUL_OBJECTS.galaxyCluster.map((item, index) => (
-                  <Dropdown.Item
-                    eventKey={index}
-                    onClick={() => {
-                      goThisObject(item);
-                    }}
-                  >
-                    {item.name}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
+            <Col style={{ margin: 'auto 0' }} className="d-flex">
+              <h4 style={{ margin: 'auto 0' }}>移動</h4>
+              <div
+                style={{
+                  minWidth: '700px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Button
+                  style={{ margin: 'auto 0', marginLeft: '30px' }}
+                  onClick={goAllSky}
+                  className="btn-style box_blue"
+                >
+                  全天に戻る
+                </Button>
+                <DropdownButton
+                  bsPrefix="btn-style box_blue dropdown_style"
+                  as={ButtonGroup}
+                  title="銀河系内天体"
+                >
+                  {BEAUTIFUL_OBJECTS.objectsInOurGalaxy.map((item, index) => (
+                    <Dropdown.Item
+                      eventKey={index}
+                      onClick={() => {
+                        goThisObject(item);
+                      }}
+                    >
+                      {item.name}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+                <DropdownButton
+                  bsPrefix="btn-style box_blue dropdown_style"
+                  as={ButtonGroup}
+                  title="銀河"
+                >
+                  {BEAUTIFUL_OBJECTS.galaxies.map((item, index) => (
+                    <Dropdown.Item
+                      eventKey={index}
+                      onClick={() => {
+                        goThisObject(item);
+                      }}
+                    >
+                      {item.name}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+                <DropdownButton
+                  bsPrefix="btn-style box_blue dropdown_style"
+                  as={ButtonGroup}
+                  title="重力レンズ天体"
+                >
+                  {BEAUTIFUL_OBJECTS.gravityLens.map((item, index) => (
+                    <Dropdown.Item
+                      eventKey={index}
+                      onClick={() => {
+                        goThisObject(item);
+                      }}
+                    >
+                      {item.name}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+                <DropdownButton
+                  bsPrefix="btn-style box_blue dropdown_style"
+                  as={ButtonGroup}
+                  title="銀河団"
+                >
+                  {BEAUTIFUL_OBJECTS.galaxyCluster.map((item, index) => (
+                    <Dropdown.Item
+                      eventKey={index}
+                      onClick={() => {
+                        goThisObject(item);
+                      }}
+                    >
+                      {item.name}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+              </div>
             </Col>
             {/* 鑑賞モードここまで */}
           </>
         )}
-        <Col>
-          <Button
-            variant="light"
-            className="play-menu"
-            onClick={() => setSettingModalShow(true)}
-          >
-            <AiFillSetting
-              size={CONSTANT.iconSize22px}
-              className="icon-color"
-            />
-          </Button>
-        </Col>
-        <Col>
-          <Button
-            variant="light"
-            className="play-menu"
-            onClick={() => setHelpModalShow(true)}
-          >
-            <BiHelpCircle size={CONSTANT.iconSize22px} className="icon-color" />
-          </Button>
-        </Col>
       </Row>
       <Row>
         {/* ビューワー関係はここから */}
