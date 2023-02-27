@@ -3,6 +3,8 @@ import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
+const userId = sessionStorage.getItem('user_id');
+
 function ErrorModal({
   show,
   setShow,
@@ -15,7 +17,7 @@ function ErrorModal({
 
   const downloadLogFIle = () => {
     axios
-      .get(`${reactApiUri}log`)
+      .get(`${reactApiUri}log?user_id=${userId}`)
       .then((response) => response.data.result)
       .then((log) => {
         const file = new Blob(

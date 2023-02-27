@@ -35,7 +35,7 @@ ExplorePrepare.propTypes = {
   setIsAuto: PropTypes.func.isRequired,
 };
 
-const userId = crypto.randomUUID();
+const userId = sessionStorage.getItem('user_id');
 
 function ExplorePrepare({
   fileNames,
@@ -111,7 +111,9 @@ function ExplorePrepare({
   };
 
   const fileContentCheck = async () => {
-    const response = await axios.put(`${uri}copy`);
+    const response = await axios.put(`${uri}copy`, null, {
+      params: { user_id: userId },
+    });
     const dataList = response.data.result.sort();
     if (fileNames.length !== dataList.length / 2) {
       setAlertMessage('ファイルの中身が異なる可能性があります。');
@@ -195,7 +197,7 @@ function ExplorePrepare({
     // png画像をtmp_imagesディレクトリから削除する
     const deletePngImages = async () => {
       await axios
-        .delete(`${uri}deletefiles`)
+        .delete(`${uri}deletefiles`, null, { params: { user_id: userId } })
         .then(() => {})
         .catch(() => {
           setShowProcessError(true);
@@ -221,7 +223,7 @@ function ExplorePrepare({
       setShowProgress(true);
 
       await axios
-        .put(uri + query)
+        .put(uri + query, null, { params: { user_id: userId } })
         .then(() => {
           setLoading(false);
           const updatedMenunames = menunames.map((item) => {
@@ -275,7 +277,7 @@ function ExplorePrepare({
     const uriQuery = url.split('/')[3];
     setProcessName(`${query}...`);
     await axios
-      .put(url)
+      .put(url, null, { params: { user_id: userId } })
       .then(() => {
         const updatedMenunames = menunames.map((item) => {
           if (

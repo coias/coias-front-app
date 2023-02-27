@@ -10,7 +10,7 @@ import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import ThankYouModal from '../component/model/Report/ThankYouModal';
 
-const userId = crypto.randomUUID();
+const userId = sessionStorage.getItem('user_id');
 
 function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
   const reactApiUri = process.env.REACT_APP_API_URI;
@@ -95,6 +95,10 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
         modeStatus.FinalCheck
           ? `${reactApiUri}get_mpc`
           : `${reactApiUri}AstsearchR_afterReCOIAS`,
+        null,
+        {
+          params: { user_id: userId },
+        },
       )
       .then((response) => {
         const mpctext = response.data.send_mpc;
@@ -129,7 +133,7 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
 
   const downloadFinalAllFIle = async () => {
     await axios
-      .get(`${reactApiUri}final_all`)
+      .get(`${reactApiUri}final_all?user_id=${userId}`)
       .then((response) => response.data.finalall)
       .then((finalall) => {
         const finalAllArray = finalall.split('\n');
@@ -248,7 +252,9 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
                 } else {
                   // K.S. ここでのエラーハンドリングはしない (エラーは意図的に握り潰しています)
                   await axios
-                    .put(`${reactApiUri}postprocess`, sendMpc)
+                    .put(`${reactApiUri}postprocess`, sendMpc, {
+                      params: { user_id: userId },
+                    })
                     .catch(() => {});
 
                   const measuredNameList = [];
@@ -258,7 +264,7 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
                       measuredNameList.push(name);
                   });
                   const res = await axios
-                    .get(`${reactApiUri}start_H_number`)
+                    .get(`${reactApiUri}start_H_number?user_id=${userId}`)
                     .catch(() => {});
                   let startHNumber;
                   if (res !== undefined) {

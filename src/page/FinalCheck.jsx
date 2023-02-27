@@ -34,6 +34,8 @@ FinalCheck.propTypes = {
   setZoomOut: PropTypes.func.isRequired,
 };
 
+const userId = sessionStorage.getItem('user_id');
+
 function FinalCheck({
   imageURLs,
   setImageURLs,
@@ -100,7 +102,9 @@ function FinalCheck({
     // nginxにある画像を全て取得
     const getImages = async () => {
       setLoading(true);
-      const response = await axios.put(`${reactApiUri}copy`);
+      const response = await axios.put(`${reactApiUri}copy`, null, {
+        params: { user_id: userId },
+      });
       const dataList = await response.data.result.sort();
       if (dataList.length === 0) {
         setCOIASAlertModalshow(true);
@@ -132,7 +136,7 @@ function FinalCheck({
       setLoading(false);
 
       await axios
-        .get(`${reactApiUri}time_list`)
+        .get(`${reactApiUri}time_list?user_id=${userId}`)
         .then((res) => res.data.result)
         .then((tmpTimeList) => {
           if (tmpTimeList.length === fileNumbers) {
@@ -153,12 +157,14 @@ function FinalCheck({
 
       const toObject = {};
 
-      const res1 = await axios.get(`${reactApiUri}final_disp`).catch(() => {
-        setCOIASAlertModalshow(true);
-        setAlertMessage('レポート作成処理を行ってください');
-        setAlertButtonMessage('レポートモードに戻る');
-        setNavigateDest('/Report');
-      });
+      const res1 = await axios
+        .get(`${reactApiUri}final_disp?user_id=${userId}`)
+        .catch(() => {
+          setCOIASAlertModalshow(true);
+          setAlertMessage('レポート作成処理を行ってください');
+          setAlertButtonMessage('レポートモードに戻る');
+          setNavigateDest('/Report');
+        });
 
       if (res1 !== undefined) {
         const finalDisp = await res1.data.result;

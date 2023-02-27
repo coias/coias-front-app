@@ -27,6 +27,8 @@ import StarsList from '../component/model/MeasurementCommon/StarsList';
 import ConfirmationModal from '../component/ui/ConfirmationModal';
 import useEventListener from '../hooks/useEventListener';
 
+const userId = sessionStorage.getItem('user_id');
+
 function ManualMeasurement({
   imageURLs,
   setImageURLs,
@@ -107,7 +109,9 @@ function ManualMeasurement({
 
   const onClickFinishButton = async (filteredList = []) => {
     const targetList = filteredList.length === 0 ? positionList : filteredList;
-    await axios.put(`${reactApiUri}memo_manual`, targetList);
+    await axios.put(`${reactApiUri}memo_manual`, targetList, {
+      params: { user_id: userId },
+    });
   };
 
   const writeManualDeleteList = async () => {
@@ -122,7 +126,9 @@ function ManualMeasurement({
         }
       });
     });
-    await axios.put(`${reactApiUri}manual_delete_list`, deleteStrLinesList);
+    await axios.put(`${reactApiUri}manual_delete_list`, deleteStrLinesList, {
+      params: { user_id: userId },
+    });
   };
 
   const removePositionListByCheckState = () => {
@@ -152,7 +158,9 @@ function ManualMeasurement({
     intervalRef.current = null;
     // nginxにある画像を全て取得
     const getImages = async () => {
-      const response = await axios.put(`${reactApiUri}copy`);
+      const response = await axios.put(`${reactApiUri}copy`, null, {
+        params: { user_id: userId },
+      });
       const dataList = await response.data.result.sort();
 
       const fileNumbers = dataList.length / 2;
@@ -177,7 +185,7 @@ function ManualMeasurement({
       setImageURLs(toObjectArray);
 
       await axios
-        .get(`${reactApiUri}time_list`)
+        .get(`${reactApiUri}time_list?user_id=${userId}`)
         .then((res) => res.data.result)
         .then((tmpTimeList) => {
           if (tmpTimeList.length === fileNumbers) {
@@ -205,7 +213,9 @@ function ManualMeasurement({
 
       const toObject = {};
       await axios
-        .put(`${reactApiUri}redisp`)
+        .put(`${reactApiUri}redisp`, null, {
+          params: { user_id: userId },
+        })
         .then((res) => {
           const reDisp = res.data.result;
 
@@ -235,7 +245,7 @@ function ManualMeasurement({
         });
 
       await axios
-        .get(`${reactApiUri}manual_delete_list`)
+        .get(`${reactApiUri}manual_delete_list?user_id=${userId}`)
         .then((res) => res.data.result)
         .then((deleteStarList) =>
           deleteStarList.forEach((deleteStar) => {
@@ -248,7 +258,9 @@ function ManualMeasurement({
       if (toObject['awk:']) {
         setAlertModalShow(true);
       } else {
-        const res1 = await axios.get(`${reactApiUri}unknown_disp`);
+        const res1 = await axios.get(
+          `${reactApiUri}unknown_disp?user_id=${userId}`,
+        );
         const unknownDisp = await res1.data.result;
         let leadNum;
 
@@ -267,7 +279,7 @@ function ManualMeasurement({
 
     const getMemoManual = async () => {
       await axios
-        .get(`${reactApiUri}memo_manual`)
+        .get(`${reactApiUri}memo_manual?user_id=${userId}`)
         .then((response) => response.data.memo_manual)
         .then((starsList) => {
           const toPositionList = [];
@@ -351,7 +363,9 @@ function ManualMeasurement({
     const toObject = {};
 
     await axios
-      .put(`${reactApiUri}AstsearchR_after_manual`)
+      .put(`${reactApiUri}AstsearchR_after_manual`, null, {
+        params: { user_id: userId },
+      })
       .then((res) => {
         const rereDisp = res.data.result;
         // 選択を同期させるため、オブジェクトに変更
@@ -643,7 +657,9 @@ function ManualMeasurement({
           Object.values(objectCopy).forEach((value) =>
             strArray.push([value.name, value.newName]),
           );
-          await axios.put(`${reactApiUri}manual_name_modify_list`, strArray);
+          await axios.put(`${reactApiUri}manual_name_modify_list`, strArray, {
+            params: { user_id: userId },
+          });
           setStarPos(objectCopy);
         }}
         oldStarName={oldStarName}
