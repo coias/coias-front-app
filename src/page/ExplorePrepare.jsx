@@ -94,7 +94,7 @@ function ExplorePrepare({
     setProcessName('小惑星データ更新中...');
     setShowProgress(false);
     await axios
-      .put(`${uri}getMPCORB_and_mpc2edb`)
+      .put(`${uri}getMPCORB_and_mpc2edb?user_id=${userId}`)
       .then(() => {
         setLoading(false);
       })
