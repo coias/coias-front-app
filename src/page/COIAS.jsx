@@ -407,11 +407,9 @@ function COIAS({
     const selectedStars = Object.values(newStarPos)
       .filter((p) => p.isSelected)
       .map((e) => e.name.replace('H', ''));
-    await axios.put(
-      `${reactApiUri}memo`,
-      { params: { user_id: userId } },
-      selectedStars,
-    );
+    await axios.put(`${reactApiUri}memo`, selectedStars, {
+      params: { user_id: userId },
+    });
   };
 
   useEventListener('keydown', (e) => {
