@@ -18,7 +18,10 @@ import {
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
 import { GoSettings } from 'react-icons/go';
-import { ModeStatusContext } from '../component/functional/context';
+import {
+  ModeStatusContext,
+  UserIDContext,
+} from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
@@ -35,8 +38,6 @@ ExplorePrepare.propTypes = {
   setIsAuto: PropTypes.func.isRequired,
 };
 
-const userId = sessionStorage.getItem('user_id');
-
 function ExplorePrepare({
   fileNames,
   fileObservedTimes,
@@ -45,6 +46,8 @@ function ExplorePrepare({
   isAuto,
   setIsAuto,
 }) {
+  const { userId } = useContext(UserIDContext);
+
   const uri = process.env.REACT_APP_API_URI;
   const [loading, setLoading] = useState(false);
 

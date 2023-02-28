@@ -4,15 +4,18 @@ import { Button, Col, Form, Row } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import { useNavigate } from 'react-router-dom';
-import { ModeStatusContext } from '../component/functional/context';
+import {
+  ModeStatusContext,
+  UserIDContext,
+} from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import ThankYouModal from '../component/model/Report/ThankYouModal';
 
-const userId = sessionStorage.getItem('user_id');
-
 function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
+  const { userId } = useContext(UserIDContext);
+
   const reactApiUri = process.env.REACT_APP_API_URI;
   const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
 

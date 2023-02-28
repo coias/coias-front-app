@@ -14,6 +14,7 @@ import {
   ModeStatusContext,
   PageContext,
   StarPositionContext,
+  UserIDContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
@@ -26,8 +27,6 @@ import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
 import StarsList from '../component/model/MeasurementCommon/StarsList';
 import ConfirmationModal from '../component/ui/ConfirmationModal';
 import useEventListener from '../hooks/useEventListener';
-
-const userId = sessionStorage.getItem('user_id');
 
 function ManualMeasurement({
   imageURLs,
@@ -98,6 +97,7 @@ function ManualMeasurement({
   const { starPos, setStarPos } = useContext(StarPositionContext);
   const { currentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
+  const { userId } = useContext(UserIDContext);
 
   const reactApiUri = process.env.REACT_APP_API_URI;
   const nginxApiUri = process.env.REACT_APP_NGINX_API_URI;

@@ -54,18 +54,16 @@ import StellarGlobeHelpModal from '../component/StellarGlobe/StellarGlobeHelpMod
 import ColorLegend from '../component/StellarGlobe/ColorLegend';
 import ErrorModal from '../component/general/ErrorModal';
 import AlertModal from '../component/general/AlertModal';
-import { ModeStatusContext } from '../component/functional/context';
-
-// TODO : これをkeycloakログイン後とってくる
-// userIdとして管理する。他ユーザになるためにはuserIdを直接編集
-// 実際は、keycloakログイン後にuserIdをとってくる
-const userId = '1';
-sessionStorage.setItem('user_id', userId);
+import {
+  ModeStatusContext,
+  UserIDContext,
+} from '../component/functional/context';
 
 function DataSelector({ setFileNames, setFileObservedTimes }) {
   // ---変数-----------------------------------------------
   const reactApiUri = process.env.REACT_APP_API_URI;
   const { setModeStatus } = useContext(ModeStatusContext);
+  const { userId } = useContext(UserIDContext);
 
   const globeRef = useRef(null);
   /** @type { () => Globe } */

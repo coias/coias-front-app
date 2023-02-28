@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   PageContext,
   StarPositionContext,
+  UserIDContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
@@ -33,8 +34,6 @@ FinalCheck.propTypes = {
   zoomOut: PropTypes.bool.isRequired,
   setZoomOut: PropTypes.func.isRequired,
 };
-
-const userId = sessionStorage.getItem('user_id');
 
 function FinalCheck({
   imageURLs,
@@ -74,6 +73,7 @@ function FinalCheck({
 
   const { setStarPos } = useContext(StarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
+  const { userId } = useContext(UserIDContext);
 
   // ズーム時に使用する状態管理配列
   const [scaleArray, setScaleArray] = useState(

@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useState } from 'react';
 import { Button, Col, Nav, Navbar, Offcanvas, Row } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { ModeStatusContext } from '../functional/context';
+import { ModeStatusContext, UserIDContext } from '../functional/context';
 import ConfirmationModal from './ConfirmationModal';
-
-const userId = sessionStorage.getItem('user_id');
 
 function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
   const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
+  const { userId } = useContext(UserIDContext);
   const navigate = useNavigate();
   const handleNavigate = () => {
     navigate('/');
@@ -235,7 +234,9 @@ function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
               return objCopy;
             }),
           );
-          await axios.put(`${reactApiUri}delete_large_files?user_id=${userId}`).catch(() => {});
+          await axios
+            .put(`${reactApiUri}delete_large_files?user_id=${userId}`)
+            .catch(() => {});
         }}
         confirmMessage="状態を全てクリアしますか？"
       />

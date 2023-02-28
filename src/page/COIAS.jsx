@@ -8,6 +8,7 @@ import {
   PageContext,
   StarPositionContext,
   PredictedStarPositionContext,
+  UserIDContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
@@ -39,8 +40,6 @@ COIAS.propTypes = {
   zoomOut: PropTypes.bool.isRequired,
   setZoomOut: PropTypes.func.isRequired,
 };
-
-const userId = sessionStorage.getItem('user_id');
 
 function COIAS({
   imageURLs,
@@ -88,6 +87,7 @@ function COIAS({
   const { setPredictedStarPos } = useContext(PredictedStarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
+  const { userId } = useContext(UserIDContext);
 
   // ズーム時に使用する状態管理配列
   const [scaleArray, setScaleArray] = useState(
