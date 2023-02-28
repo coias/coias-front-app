@@ -235,7 +235,9 @@ function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
             }),
           );
           await axios
-            .put(`${reactApiUri}delete_large_files?user_id=${userId}`)
+            .put(`${reactApiUri}delete_large_files`, null, {
+              params: { user_id: userId },
+            })
             .catch(() => {});
         }}
         confirmMessage="状態を全てクリアしますか？"
