@@ -4,15 +4,18 @@ import { Button, Col, Form, Row } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import { useNavigate } from 'react-router-dom';
-import { ModeStatusContext } from '../component/functional/context';
+import {
+  ModeStatusContext,
+  UserIDContext,
+} from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
 import ThankYouModal from '../component/model/Report/ThankYouModal';
 
-const userId = crypto.randomUUID();
-
 function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
+  const { userId } = useContext(UserIDContext);
+
   const reactApiUri = process.env.REACT_APP_API_URI;
   const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
 
@@ -95,6 +98,10 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
         modeStatus.FinalCheck
           ? `${reactApiUri}get_mpc`
           : `${reactApiUri}AstsearchR_afterReCOIAS`,
+        null,
+        {
+          params: { user_id: userId },
+        },
       )
       .then((response) => {
         const mpctext = response.data.send_mpc;
@@ -129,7 +136,7 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
 
   const downloadFinalAllFIle = async () => {
     await axios
-      .get(`${reactApiUri}final_all`)
+      .get(`${reactApiUri}final_all?user_id=${userId}`)
       .then((response) => response.data.finalall)
       .then((finalall) => {
         const finalAllArray = finalall.split('\n');
@@ -248,7 +255,9 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
                 } else {
                   // K.S. ここでのエラーハンドリングはしない (エラーは意図的に握り潰しています)
                   await axios
-                    .put(`${reactApiUri}postprocess`, sendMpc)
+                    .put(`${reactApiUri}postprocess`, sendMpc, {
+                      params: { user_id: userId },
+                    })
                     .catch(() => {});
 
                   const measuredNameList = [];
@@ -258,7 +267,7 @@ function Report({ setMenunames, setFileNames, setFileObservedTimes }) {
                       measuredNameList.push(name);
                   });
                   const res = await axios
-                    .get(`${reactApiUri}start_H_number`)
+                    .get(`${reactApiUri}start_H_number?user_id=${userId}`)
                     .catch(() => {});
                   let startHNumber;
                   if (res !== undefined) {

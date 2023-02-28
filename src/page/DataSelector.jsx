@@ -54,12 +54,16 @@ import StellarGlobeHelpModal from '../component/StellarGlobe/StellarGlobeHelpMod
 import ColorLegend from '../component/StellarGlobe/ColorLegend';
 import ErrorModal from '../component/general/ErrorModal';
 import AlertModal from '../component/general/AlertModal';
-import { ModeStatusContext } from '../component/functional/context';
+import {
+  ModeStatusContext,
+  UserIDContext,
+} from '../component/functional/context';
 
 function DataSelector({ setFileNames, setFileObservedTimes }) {
   // ---変数-----------------------------------------------
   const reactApiUri = process.env.REACT_APP_API_URI;
   const { setModeStatus } = useContext(ModeStatusContext);
+  const { userId } = useContext(UserIDContext);
 
   const globeRef = useRef(null);
   /** @type { () => Globe } */
@@ -331,16 +335,24 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
     });
 
     // プロジェクト(カレント)ディレクトリを作るだけで画像のアップロードはしない
-    await axios.put(`${reactApiUri}make_pj_directory`).catch(() => {});
+    await axios
+      .put(`${reactApiUri}make_pj_directory`, null, {
+        params: {
+          user_id: userId,
+        },
+      })
+      .catch(() => {});
 
-    const res = await axios.get(`${reactApiUri}tract_list`).catch((e) => {
-      const errorResponse = e.response?.data?.detail;
-      if (errorResponse.place) {
-        setErrorPlace(errorResponse.place);
-        setErrorReason(errorResponse.reason);
-        setShowErrorModal(true);
-      }
-    });
+    const res = await axios
+      .get(`${reactApiUri}tract_list?user_id=${userId}`)
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse.place) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowErrorModal(true);
+        }
+      });
     if (res !== undefined) {
       setTracts(
         Object.keys(res.data.result).map((key) => {
@@ -360,7 +372,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
   // tractIdを受け取り, そのtract内のpatch一覧を取得しセットする
   const getAndSetValidPatchIds = useCallback(async (tmpTractId) => {
     const res = await axios
-      .get(`${reactApiUri}patch_list?tractId=${tmpTractId}`)
+      .get(`${reactApiUri}patch_list?tractId=${tmpTractId}&user_id=${userId}`)
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
         if (errorResponse.place) {
@@ -480,7 +492,9 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
       setSelectedPatchId(patchId);
       const tractPatchStr = `${selectedTractId}-${patchId}`;
       const res = await axios
-        .get(`${reactApiUri}observe_date_list?patchId=${tractPatchStr}`)
+        .get(
+          `${reactApiUri}observe_date_list?patchId=${tractPatchStr}&user_id=${userId}`,
+        )
         .catch((e) => {
           const errorResponse = e.response?.data?.detail;
           if (errorResponse.place) {
@@ -519,7 +533,7 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
     const dateIdsListStr = dateIds.map((dateId) => String(dateId));
     const dateIdsStr = dateIdsListStr.join('-');
     const res = await axios
-      .get(`${reactApiUri}image_list?dirIdsStr=${dateIdsStr}`)
+      .get(`${reactApiUri}image_list?dirIdsStr=${dateIdsStr}&user_id=${userId}`)
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
         if (errorResponse.place) {
@@ -576,7 +590,11 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
     });
     // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
     await axios
-      .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames)
+      .put(`${reactApiUri}put_image_list`, tmpSelectedImageNames, {
+        params: {
+          user_id: userId,
+        },
+      })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
         if (errorResponse.place) {
@@ -588,22 +606,24 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
   }, []);
 
   const autoSelect = useCallback(async () => {
-    const res = await axios.get(`${reactApiUri}suggested_images`).catch((e) => {
-      const errorResponse = e.response?.data?.detail;
-      const errorStatus = e.response?.status;
-      // エラーコードが404の時、お勧め画像がすでに存在しないことを意味するので、手動選択をするように促す
-      if (errorStatus === 404) {
-        setAlertModalShow(true);
-        setAlertMessage(
-          '自動選択できる画像がありません。手動選択を行ってください。',
-        );
-        setAlertButtonMessage('戻る');
-      } else if (errorResponse.place) {
-        setErrorPlace(errorResponse.place);
-        setErrorReason(errorResponse.reason);
-        setShowErrorModal(true);
-      }
-    });
+    const res = await axios
+      .get(`${reactApiUri}suggested_images?user_id=${userId}`)
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        const errorStatus = e.response?.status;
+        // エラーコードが404の時、お勧め画像がすでに存在しないことを意味するので、手動選択をするように促す
+        if (errorStatus === 404) {
+          setAlertModalShow(true);
+          setAlertMessage(
+            '自動選択できる画像がありません。手動選択を行ってください。',
+          );
+          setAlertButtonMessage('戻る');
+        } else if (errorResponse.place) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowErrorModal(true);
+        }
+      });
 
     if (res !== undefined) {
       const resResult = res.data.result;
@@ -653,14 +673,20 @@ function DataSelector({ setFileNames, setFileObservedTimes }) {
       setFileObservedTimes(fileObservedTimes);
 
       // プロジェクト(カレント)ディレクトリに解析画像一覧を記したテキストファイルを生成する
-      await axios.put(`${reactApiUri}put_image_list`, fileNames).catch((e) => {
-        const errorResponse = e.response?.data?.detail;
-        if (errorResponse.place) {
-          setErrorPlace(errorResponse.place);
-          setErrorReason(errorResponse.reason);
-          setShowErrorModal(true);
-        }
-      });
+      await axios
+        .put(`${reactApiUri}put_image_list`, fileNames, {
+          params: {
+            user_id: userId,
+          },
+        })
+        .catch((e) => {
+          const errorResponse = e.response?.data?.detail;
+          if (errorResponse.place) {
+            setErrorPlace(errorResponse.place);
+            setErrorReason(errorResponse.reason);
+            setShowErrorModal(true);
+          }
+        });
     }
   }, []);
 

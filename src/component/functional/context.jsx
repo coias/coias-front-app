@@ -30,3 +30,8 @@ export const ModeStatusContext = createContext({
   },
   setModeStatus: () => {},
 });
+
+export const UserIDContext = createContext({
+  userId: 0,
+  setUserId: () => {},
+});

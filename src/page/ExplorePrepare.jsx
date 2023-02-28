@@ -18,7 +18,10 @@ import {
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
 import { GoSettings } from 'react-icons/go';
-import { ModeStatusContext } from '../component/functional/context';
+import {
+  ModeStatusContext,
+  UserIDContext,
+} from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
@@ -35,8 +38,6 @@ ExplorePrepare.propTypes = {
   setIsAuto: PropTypes.func.isRequired,
 };
 
-const userId = crypto.randomUUID();
-
 function ExplorePrepare({
   fileNames,
   fileObservedTimes,
@@ -45,6 +46,8 @@ function ExplorePrepare({
   isAuto,
   setIsAuto,
 }) {
+  const { userId } = useContext(UserIDContext);
+
   const uri = process.env.REACT_APP_API_URI;
   const [loading, setLoading] = useState(false);
 
@@ -94,7 +97,9 @@ function ExplorePrepare({
     setProcessName('小惑星データ更新中...');
     setShowProgress(false);
     await axios
-      .put(`${uri}getMPCORB_and_mpc2edb`)
+      .put(`${uri}getMPCORB_and_mpc2edb`, null, {
+        params: { user_id: userId },
+      })
       .then(() => {
         setLoading(false);
       })
@@ -111,7 +116,9 @@ function ExplorePrepare({
   };
 
   const fileContentCheck = async () => {
-    const response = await axios.put(`${uri}copy`);
+    const response = await axios.put(`${uri}copy`, null, {
+      params: { user_id: userId },
+    });
     const dataList = response.data.result.sort();
     if (fileNames.length !== dataList.length / 2) {
       setAlertMessage('ファイルの中身が異なる可能性があります。');
@@ -195,7 +202,7 @@ function ExplorePrepare({
     // png画像をtmp_imagesディレクトリから削除する
     const deletePngImages = async () => {
       await axios
-        .delete(`${uri}deletefiles`)
+        .delete(`${uri}deletefiles?user_id=${userId}`)
         .then(() => {})
         .catch(() => {
           setShowProcessError(true);
@@ -221,7 +228,7 @@ function ExplorePrepare({
       setShowProgress(true);
 
       await axios
-        .put(uri + query)
+        .put(uri + query, null, { params: { user_id: userId } })
         .then(() => {
           setLoading(false);
           const updatedMenunames = menunames.map((item) => {
@@ -275,7 +282,7 @@ function ExplorePrepare({
     const uriQuery = url.split('/')[3];
     setProcessName(`${query}...`);
     await axios
-      .put(url)
+      .put(url, null, { params: { user_id: userId } })
       .then(() => {
         const updatedMenunames = menunames.map((item) => {
           if (

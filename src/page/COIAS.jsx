@@ -8,6 +8,7 @@ import {
   PageContext,
   StarPositionContext,
   PredictedStarPositionContext,
+  UserIDContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
@@ -86,6 +87,7 @@ function COIAS({
   const { setPredictedStarPos } = useContext(PredictedStarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
+  const { userId } = useContext(UserIDContext);
 
   // ズーム時に使用する状態管理配列
   const [scaleArray, setScaleArray] = useState(
@@ -115,7 +117,9 @@ function COIAS({
     // nginxにある画像を全て取得
     const getImages = async () => {
       setLoading(true);
-      const response = await axios.put(`${reactApiUri}copy`);
+      const response = await axios.put(`${reactApiUri}copy`, null, {
+        params: { user_id: userId },
+      });
       const dataList = await response.data.result.sort();
       if (dataList.length === 0) {
         setCOIASAlertModalshow(true);
@@ -147,7 +151,7 @@ function COIAS({
       setLoading(false);
 
       await axios
-        .get(`${reactApiUri}time_list`)
+        .get(`${reactApiUri}time_list?user_id=${userId}`)
         .then((res) => res.data.result)
         .then((tmpTimeList) => {
           if (tmpTimeList.length === fileNumbers) {
@@ -158,7 +162,7 @@ function COIAS({
     };
     const getMemo = async () => {
       await axios
-        .get(`${reactApiUri}memo`)
+        .get(`${reactApiUri}memo?user_id=${userId}`)
         .then((res) => setMemoList(res.data.memo))
         .catch((e) => {
           console.error(e);
@@ -184,11 +188,13 @@ function COIAS({
 
       const toObject = {};
 
-      const res1 = await axios.get(`${reactApiUri}unknown_disp`).catch(() => {
-        setCOIASAlertModalshow(true);
-        setAlertMessage('自動検出を行ってください');
-        setAlertButtonMessage('探索準備に戻る');
-      });
+      const res1 = await axios
+        .get(`${reactApiUri}unknown_disp?user_id=${userId}`)
+        .catch(() => {
+          setCOIASAlertModalshow(true);
+          setAlertMessage('自動検出を行ってください');
+          setAlertButtonMessage('探索準備に戻る');
+        });
       if (res1 !== undefined) {
         const knownDisp = await res1.data.result;
         knownDisp.forEach((item) => {
@@ -213,10 +219,10 @@ function COIAS({
       }
 
       const res2 = await axios
-        .get(`${reactApiUri}karifugo_disp`)
+        .get(`${reactApiUri}karifugo_disp?user_id=${userId}`)
         .catch(() => {});
       const res3 = await axios
-        .get(`${reactApiUri}numbered_disp`)
+        .get(`${reactApiUri}numbered_disp?user_id=${userId}`)
         .catch(() => {});
       if (res2 !== undefined) {
         const knownDisp = await res2.data.result;
@@ -262,7 +268,7 @@ function COIAS({
       const toPredictedObject = {};
 
       const res4 = await axios
-        .get(`${reactApiUri}predicted_disp`)
+        .get(`${reactApiUri}predicted_disp?user_id=${userId}`)
         .catch(() => {});
       if (res4 !== undefined) {
         const predictedDisp = await res4.data.result;
@@ -343,10 +349,14 @@ function COIAS({
       .map((key) => starPos[key])
       .filter((item) => item.isSelected)
       .map((item) => item.name.substring(1));
-    await axios.put(`${reactApiUri}memo`, selectedStars);
+    await axios.put(`${reactApiUri}memo`, selectedStars, {
+      params: { user_id: userId },
+    });
 
     await axios
-      .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS`)
+      .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS`, null, {
+        params: { user_id: userId },
+      })
       .then((response) => {
         const redisp = response.data;
         // 選択を同期させるため、オブジェクトに変更
@@ -397,7 +407,9 @@ function COIAS({
     const selectedStars = Object.values(newStarPos)
       .filter((p) => p.isSelected)
       .map((e) => e.name.replace('H', ''));
-    await axios.put(`${reactApiUri}memo`, selectedStars);
+    await axios.put(`${reactApiUri}memo`, selectedStars, {
+      params: { user_id: userId },
+    });
   };
 
   useEventListener('keydown', (e) => {
