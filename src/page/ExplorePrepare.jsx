@@ -197,7 +197,7 @@ function ExplorePrepare({
     // png画像をtmp_imagesディレクトリから削除する
     const deletePngImages = async () => {
       await axios
-        .delete(`${uri}deletefiles`, null, { params: { user_id: userId } })
+        .delete(`${uri}deletefiles?user_id=${userId}`)
         .then(() => {})
         .catch(() => {
           setShowProcessError(true);
