@@ -59,7 +59,7 @@ import { ModeStatusContext } from '../component/functional/context';
 // TODO : これをkeycloakログイン後とってくる
 // userIdとして管理する。他ユーザになるためにはuserIdを直接編集
 // 実際は、keycloakログイン後にuserIdをとってくる
-const userId = 'userID_1';
+const userId = '1';
 sessionStorage.setItem('user_id', userId);
 
 function DataSelector({ setFileNames, setFileObservedTimes }) {
