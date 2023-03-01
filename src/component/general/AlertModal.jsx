@@ -7,22 +7,23 @@ function AlertModal({
   onClickOk,
   alertMessage,
   alertButtonMessage,
+  size,
 }) {
   return (
-    <Modal show={alertModalShow} size="sm" backdrop="static">
+    <Modal show={alertModalShow} size={size} backdrop="static">
       <Modal.Header>
         <Modal.Title
           id="contained-modal-title-vcenter"
-          style={{ color: '#5c636a', fontWeight: 'bold' }}
+          className="f-modal_title f-ja"
         >
           エラー
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ color: '#5c636a' }}>{alertMessage}</Modal.Body>
+      <Modal.Body className="f-ja" style={{ whiteSpace: 'pre-line' }}>{alertMessage}</Modal.Body>
       <Modal.Footer className="d-flex justify-content-end">
         <Button
           variant="success"
-          className="btn-style box_blue"
+          className="btn-style box_blue f-ja"
           onClick={() => onClickOk()}
         >
           {alertButtonMessage}
@@ -39,4 +40,9 @@ AlertModal.propTypes = {
   onClickOk: PropTypes.func.isRequired,
   alertMessage: PropTypes.string.isRequired,
   alertButtonMessage: PropTypes.string.isRequired,
+  size: PropTypes.string,
+};
+
+AlertModal.defaultProps = {
+  size: 'sm',
 };

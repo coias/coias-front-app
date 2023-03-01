@@ -1,13 +1,15 @@
 import { useKeycloak } from '@react-keycloak/web';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useCallback, useContext, useState } from 'react';
 import { Button, Col, Nav, Navbar, Offcanvas, Row } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { ModeStatusContext } from '../functional/context';
+import { ModeStatusContext, UserIDContext } from '../functional/context';
 import ConfirmationModal from './ConfirmationModal';
 
-function Header({ setMenunames, setFileNames }) {
+function Header({ setMenunames, setFileNames, setFileObservedTimes }) {
   const { modeStatus, setModeStatus } = useContext(ModeStatusContext);
+  const { userId } = useContext(UserIDContext);
   const navigate = useNavigate();
   const handleNavigate = () => {
     navigate('/');
@@ -17,6 +19,7 @@ function Header({ setMenunames, setFileNames }) {
     () => !Object.keys(modeStatus).some((key) => modeStatus[key]),
     [modeStatus],
   );
+  const reactApiUri = process.env.REACT_APP_API_URI;
 
   const { keycloak } = useKeycloak();
 
@@ -33,33 +36,34 @@ function Header({ setMenunames, setFileNames }) {
               className="d-inline-block align-top"
             />
           </Col>
-          <Col className="color-nav-title">
+          <Col className="color-nav-title f-en">
             <Row>
-              <div
-                className="p-0 m-0"
-                style={{ color: '#28297E', fontSize: '15px' }}
-              >
-                Come On! Impacting ASteroid
+              <div className="p-0 m-0 f-title_sub">
+                Come On! Impacting ASteroids
               </div>
             </Row>
             <Row>
-              <div
-                className="p-0 m-0"
-                style={{ color: '#28297E', fontSize: '25px' }}
-              >
-                COIAS
-              </div>
+              <div className="p-0 m-0 f-title_main">COIAS</div>
             </Row>
           </Col>
         </Row>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Nav className="nav-disappear">
+        <NavLink to="/">
+          <h3 className="nav-content f-ja">画像選択</h3>
+        </NavLink>
         <NavLink
-          to="/"
+          to="/ExplorePrepare"
           className={(navData) => (navData.isActive ? 'active' : 'not-active')}
+          style={{
+            opacity: modeStatus.ExplorePrepare ? 1 : 0.3,
+          }}
+          onClick={
+            modeStatus.ExplorePrepare ? () => {} : (e) => e.preventDefault()
+          }
         >
-          <h3 className="nav-content">探索準備</h3>
+          <h3 className="nav-content f-ja">探索準備</h3>
         </NavLink>
         <NavLink
           to="/COIAS"
@@ -69,7 +73,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.COIAS ? () => {} : (e) => e.preventDefault()}
         >
-          <h3 className="nav-content">探索/再描画</h3>
+          <h3 className="nav-content f-ja">探索/再描画</h3>
         </NavLink>
         <NavLink
           to="/ManualMeasurement"
@@ -79,7 +83,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
         >
-          <h3 className="nav-content">手動測定/名前修正</h3>
+          <h3 className="nav-content f-ja">手動測定/名前修正</h3>
         </NavLink>
         <NavLink
           to="/Report"
@@ -89,7 +93,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.Report ? () => {} : (e) => e.preventDefault()}
         >
-          <h3 className="nav-content">レポート</h3>
+          <h3 className="nav-content f-ja">レポート</h3>
         </NavLink>
         <NavLink
           to="/FinalCheck"
@@ -99,7 +103,7 @@ function Header({ setMenunames, setFileNames }) {
           }}
           onClick={modeStatus.FinalCheck ? () => {} : (e) => e.preventDefault()}
         >
-          <h3 className="nav-content">最終確認</h3>
+          <h3 className="nav-content f-ja">最終確認</h3>
         </NavLink>
       </Nav>
       <Button
@@ -108,42 +112,43 @@ function Header({ setMenunames, setFileNames }) {
         }}
         variant="light"
         disabled={checkIsStatusUpdated()}
-        className="nav-disappear"
+        className="nav-disappear f-ja"
       >
         探索終了
       </Button>
       <Offcanvas placement="end">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>
-            <Row>
+            <Row className="f-en">
               <Row>
-                <div
-                  className="p-0 m-0"
-                  style={{ color: '#28297E', fontSize: '15px' }}
-                >
-                  Come On! Impacting ASteroid
+                <div className="p-0 m-0 f-title_sub">
+                  Come On! Impacting ASteroids
                 </div>
               </Row>
               <Row>
-                <div
-                  className="p-0 m-0"
-                  style={{ color: '#28297E', fontSize: '25px' }}
-                >
-                  COIAS
-                </div>
+                <div className="p-0 m-0 f-title_main">COIAS</div>
               </Row>
             </Row>
           </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body id="basic-navbar-nav">
           <Nav>
+            <NavLink to="/">
+              <h3 className="nav-content f-ja">画像選択</h3>
+            </NavLink>
             <NavLink
-              to="/"
+              to="/ExplorePrepare"
               className={(navData) =>
                 navData.isActive ? 'active' : 'not-active'
               }
+              style={{
+                opacity: modeStatus.ExplorePrepare ? 1 : 0.3,
+              }}
+              onClick={
+                modeStatus.ExplorePrepare ? () => {} : (e) => e.preventDefault()
+              }
             >
-              <h3 className="nav-content">探索準備</h3>
+              <h3 className="nav-content f-ja">探索準備</h3>
             </NavLink>
             <NavLink
               to="/COIAS"
@@ -155,7 +160,7 @@ function Header({ setMenunames, setFileNames }) {
               }}
               onClick={modeStatus.COIAS ? () => {} : (e) => e.preventDefault()}
             >
-              <h3 className="nav-content">探索/再描画</h3>
+              <h3 className="nav-content f-ja">探索/再描画</h3>
             </NavLink>
             <NavLink
               to="/ManualMeasurement"
@@ -167,7 +172,7 @@ function Header({ setMenunames, setFileNames }) {
               }}
               onClick={modeStatus.Manual ? () => {} : (e) => e.preventDefault()}
             >
-              <h3 className="nav-content">手動測定/名前修正</h3>
+              <h3 className="nav-content f-ja">手動測定/名前修正</h3>
             </NavLink>
             <NavLink
               to="/Report"
@@ -179,7 +184,7 @@ function Header({ setMenunames, setFileNames }) {
               }}
               onClick={modeStatus.Report ? () => {} : (e) => e.preventDefault()}
             >
-              <h3 className="nav-content">レポート</h3>
+              <h3 className="nav-content f-ja">レポート</h3>
             </NavLink>
             <NavLink
               to="/FinalCheck"
@@ -193,7 +198,7 @@ function Header({ setMenunames, setFileNames }) {
                 modeStatus.FinalCheck ? () => {} : (e) => e.preventDefault()
               }
             >
-              <h3 className="nav-content">最終確認</h3>
+              <h3 className="nav-content f-ja">最終確認</h3>
             </NavLink>
           </Nav>
           <Button
@@ -202,6 +207,7 @@ function Header({ setMenunames, setFileNames }) {
             }}
             variant="light"
             disabled={checkIsStatusUpdated()}
+            className="f-ja"
           >
             探索終了
           </Button>
@@ -212,9 +218,11 @@ function Header({ setMenunames, setFileNames }) {
         onHide={() => {
           setShow(false);
         }}
-        onClickYes={() => {
+        onClickYes={async () => {
           setFileNames(['ファイルを選択してください']);
+          setFileObservedTimes([]);
           setModeStatus({
+            ExplorePrepare: false,
             COIAS: false,
             Manual: false,
             Report: false,
@@ -229,6 +237,11 @@ function Header({ setMenunames, setFileNames }) {
               return objCopy;
             }),
           );
+          await axios
+            .put(`${reactApiUri}delete_large_files`, null, {
+              params: { user_id: userId },
+            })
+            .catch(() => {});
         }}
         confirmMessage="状態を全てクリアしますか？"
       />
@@ -241,4 +254,5 @@ export default Header;
 Header.propTypes = {
   setMenunames: PropTypes.func.isRequired,
   setFileNames: PropTypes.func.isRequired,
+  setFileObservedTimes: PropTypes.func.isRequired,
 };

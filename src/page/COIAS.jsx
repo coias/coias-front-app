@@ -1,18 +1,18 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {
   ModeStatusContext,
   PageContext,
   StarPositionContext,
   PredictedStarPositionContext,
+  UserIDContext,
 } from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
-import NewStarModal from '../component/model/COIAS/NewStarModal';
 import PanZoom from '../component/model/MeasurementCommon/PanZoom';
 import PlayMenu from '../component/model/MeasurementCommon/PlayMenu';
 import StarsList from '../component/model/MeasurementCommon/StarsList';
@@ -66,8 +66,8 @@ function COIAS({
   const [brightnessVal, setBrightnessVal] = useState(150);
   const [contrastVal, setContrastVal] = useState(150);
   const [loading, setLoading] = useState(false);
+  const [redispLoading, setRedispLoading] = useState(false);
   const [disable, setDisable] = useState(true);
-  const [starModalShow, setStarModalShow] = useState(false);
   const [fileNum, setFileNum] = useState(0);
   const [memoList, setMemoList] = useState([]);
   const [selectedListState, setSelectedListState] = useState([]);
@@ -87,6 +87,7 @@ function COIAS({
   const { setPredictedStarPos } = useContext(PredictedStarPositionContext);
   const { setCurrentPage } = useContext(PageContext);
   const { setModeStatus } = useContext(ModeStatusContext);
+  const { userId } = useContext(UserIDContext);
 
   // ズーム時に使用する状態管理配列
   const [scaleArray, setScaleArray] = useState(
@@ -116,7 +117,9 @@ function COIAS({
     // nginxにある画像を全て取得
     const getImages = async () => {
       setLoading(true);
-      const response = await axios.put(`${reactApiUri}copy`);
+      const response = await axios.put(`${reactApiUri}copy`, null, {
+        params: { user_id: userId },
+      });
       const dataList = await response.data.result.sort();
       if (dataList.length === 0) {
         setCOIASAlertModalshow(true);
@@ -148,7 +151,7 @@ function COIAS({
       setLoading(false);
 
       await axios
-        .get(`${reactApiUri}time_list`)
+        .get(`${reactApiUri}time_list?user_id=${userId}`)
         .then((res) => res.data.result)
         .then((tmpTimeList) => {
           if (tmpTimeList.length === fileNumbers) {
@@ -159,7 +162,7 @@ function COIAS({
     };
     const getMemo = async () => {
       await axios
-        .get(`${reactApiUri}memo`)
+        .get(`${reactApiUri}memo?user_id=${userId}`)
         .then((res) => setMemoList(res.data.memo))
         .catch((e) => {
           console.error(e);
@@ -169,6 +172,7 @@ function COIAS({
     getImages();
     getMemo();
     setModeStatus({
+      ExplorePrepare: true,
       COIAS: true,
       Manual: false,
       Report: false,
@@ -184,11 +188,13 @@ function COIAS({
 
       const toObject = {};
 
-      const res1 = await axios.get(`${reactApiUri}unknown_disp`).catch(() => {
-        setCOIASAlertModalshow(true);
-        setAlertMessage('自動検出を行ってください');
-        setAlertButtonMessage('探索準備に戻る');
-      });
+      const res1 = await axios
+        .get(`${reactApiUri}unknown_disp?user_id=${userId}`)
+        .catch(() => {
+          setCOIASAlertModalshow(true);
+          setAlertMessage('自動検出を行ってください');
+          setAlertButtonMessage('探索準備に戻る');
+        });
       if (res1 !== undefined) {
         const knownDisp = await res1.data.result;
         knownDisp.forEach((item) => {
@@ -213,10 +219,10 @@ function COIAS({
       }
 
       const res2 = await axios
-        .get(`${reactApiUri}karifugo_disp`)
+        .get(`${reactApiUri}karifugo_disp?user_id=${userId}`)
         .catch(() => {});
       const res3 = await axios
-        .get(`${reactApiUri}numbered_disp`)
+        .get(`${reactApiUri}numbered_disp?user_id=${userId}`)
         .catch(() => {});
       if (res2 !== undefined) {
         const knownDisp = await res2.data.result;
@@ -262,7 +268,7 @@ function COIAS({
       const toPredictedObject = {};
 
       const res4 = await axios
-        .get(`${reactApiUri}predicted_disp`)
+        .get(`${reactApiUri}predicted_disp?user_id=${userId}`)
         .catch(() => {});
       if (res4 !== undefined) {
         const predictedDisp = await res4.data.result;
@@ -335,16 +341,22 @@ function COIAS({
   }, [imageURLs, memoList]);
 
   // 探索終了ボタンが押された時の処理
-  const onClickFinishButton = async (num) => {
+  const onClickFinishButton = async () => {
+    setRedispLoading(true);
+
     // memo.txtへの出力
     const selectedStars = Object.keys(starPos)
       .map((key) => starPos[key])
       .filter((item) => item.isSelected)
       .map((item) => item.name.substring(1));
-    await axios.put(`${reactApiUri}memo`, selectedStars);
+    await axios.put(`${reactApiUri}memo`, selectedStars, {
+      params: { user_id: userId },
+    });
 
     await axios
-      .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS?num=${num}`)
+      .put(`${reactApiUri}AstsearchR_between_COIAS_and_ReCOIAS`, null, {
+        params: { user_id: userId },
+      })
       .then((response) => {
         const redisp = response.data;
         // 選択を同期させるため、オブジェクトに変更
@@ -377,6 +389,7 @@ function COIAS({
           modeStatusCopy.Report = true;
           return modeStatusCopy;
         });
+        setRedispLoading(false);
       })
       .catch((e) => {
         const errorResponse = e.response?.data?.detail;
@@ -384,13 +397,9 @@ function COIAS({
           setErrorPlace(errorResponse.place);
           setErrorReason(errorResponse.reason);
           setShowProcessError(true);
+          setRedispLoading(false);
         }
       });
-  };
-
-  const onStarModalExit = () => {
-    setDisable(false);
-    setStarModalShow(false);
   };
 
   const writeMemo = async (newStarPos) => {
@@ -398,7 +407,9 @@ function COIAS({
     const selectedStars = Object.values(newStarPos)
       .filter((p) => p.isSelected)
       .map((e) => e.name.replace('H', ''));
-    await axios.put(`${reactApiUri}memo`, selectedStars);
+    await axios.put(`${reactApiUri}memo`, selectedStars, {
+      params: { user_id: userId },
+    });
   };
 
   useEventListener('keydown', (e) => {
@@ -429,10 +440,8 @@ function COIAS({
             setNext={setNext}
             back={back}
             setBack={setBack}
-            onClickFinishButton={onClickFinishButton}
             disable={disable}
             setDisable={setDisable}
-            setStarModalShow={setStarModalShow}
             originalStarPos={originalStarPos}
             setStarPos={setStarPos}
             fileNum={fileNum}
@@ -460,12 +469,10 @@ function COIAS({
                   imageURLs={imageURLs}
                   brightnessVal={brightnessVal}
                   contrastVal={contrastVal}
-                  onClickFinishButton={onClickFinishButton}
                   originalStarPos={originalStarPos}
                   starPos={starPos}
                   setStarPos={setStarPos}
                   isHide={isHide}
-                  setStarModalShow={starModalShow}
                   disable={disable}
                   setSelectedListState={setSelectedListState}
                   writeMemo={isAutoSave ? writeMemo : () => {}}
@@ -492,38 +499,36 @@ function COIAS({
             setSelectedListState={setSelectedListState}
           />
           <div className="coias-list_button">
-            <Button
-              onClick={() => {
-                if (disable) {
-                  setOriginalStarPos(starPos);
-                  setStarModalShow(true);
-                } else {
-                  setStarPos(originalStarPos);
-                  setModeStatus({
-                    COIAS: true,
-                    Manual: false,
-                    Report: false,
-                    FinalCheck: false,
-                  });
-                }
-                setDisable(!disable);
-              }}
-              className="btn-style box_blue"
-              size="lg"
-            >
-              {disable ? '再描画' : 'やり直す'}
-            </Button>
+            {redispLoading ? (
+              <Spinner size="md" animation="border" />
+            ) : (
+              <Button
+                onClick={() => {
+                  if (disable) {
+                    setOriginalStarPos(starPos);
+                    onClickFinishButton();
+                  } else {
+                    setStarPos(originalStarPos);
+                    setModeStatus({
+                      ExplorePrepare: true,
+                      COIAS: true,
+                      Manual: false,
+                      Report: false,
+                      FinalCheck: false,
+                    });
+                  }
+                  setDisable(!disable);
+                }}
+                className="btn-style box_blue f-ja"
+                size="lg"
+              >
+                {disable ? '再描画' : 'やり直す'}
+              </Button>
+            )}
           </div>
         </div>
       </Row>
       <LoadingButton loading={loading} processName="探索データ取得中…" />
-      <NewStarModal
-        show={starModalShow}
-        onExit={() => {
-          onStarModalExit();
-        }}
-        onClickFinishButton={onClickFinishButton}
-      />
 
       <AlertModal
         alertModalShow={COIASAlertModalshow}

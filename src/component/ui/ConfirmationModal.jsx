@@ -31,12 +31,12 @@ function ConfirmationModal({
       <Modal.Header closeButton>
         <Modal.Title
           id="contained-modal-title-vcenter"
-          style={{ color: '#5c636a', fontWeight: 'bold' }}
+          className="f-modal_title f-ja"
         >
           確認
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ color: '#5c636a' }}>
+      <Modal.Body className="f-ja">
         {positionList[activeKey] ? (
           <p>{generateConfirmMessage()}</p>
         ) : (
@@ -44,10 +44,10 @@ function ConfirmationModal({
         )}
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between btn-style_hover">
-        <Button onClick={onHide} className="btn-style box_border_blue">
+        <Button onClick={onHide} className="btn-style box_border_blue f-ja">
           いいえ
         </Button>
-        <Button onClick={onClickYes} className="btn-style box_blue">
+        <Button onClick={onClickYes} className="btn-style box_blue f-ja">
           はい
         </Button>
       </Modal.Footer>

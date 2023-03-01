@@ -17,7 +17,7 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
       onExited={() => {
         onExited();
       }}
-      size="md"
+      size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
       backdrop="static"
@@ -25,7 +25,7 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
       <Modal.Header>
         <Modal.Title
           id="contained-modal-title-vcenter"
-          style={{ color: '#5c636a', fontWeight: 'bold' }}
+          className="f-modal_title f-ja"
         >
           {`承認済み自動検出天体の削除 (${currentPage + 1}枚目)`}
         </Modal.Title>
@@ -38,14 +38,16 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
             onExit();
           }}
         >
-          <Form.Label style={{ color: '#5c636a' }}>
+          <Form.Label className="f-ja">
             クリックした承認済み自動検出天体のうち削除したいものにチェックをつけてください。
             <br />
             (削除した天体は、チェックを外すことで再表示することができます。)
           </Form.Label>
           <Row>
-            <Col style={{ textAlign: 'center', color: '#5c636a' }}>天体名</Col>
-            <Col style={{ textAlign: 'center', color: '#5c636a' }}>
+            <Col style={{ textAlign: 'center' }} className="f-ja">
+              天体名
+            </Col>
+            <Col style={{ textAlign: 'center' }} className="f-ja">
               削除する
             </Col>
           </Row>
@@ -56,7 +58,7 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
               const name = item;
               const { isDeleted } = starPos[item].page[currentPage];
               return (
-                <Row key={name} className="mb-2">
+                <Row key={name} className="mb-2 f-en">
                   <Col style={{ textAlign: 'center' }}>{name}</Col>
                   <Col className="text-center">
                     <Form.Check
@@ -81,7 +83,7 @@ function DeleteStarModal({ show, onExit, onExited, deleteNameList }) {
             <Button
               variant="danger"
               type="submit"
-              className="btn-style box_blue"
+              className="btn-style box_blue f-ja"
             >
               終了
             </Button>

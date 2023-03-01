@@ -1,4 +1,5 @@
 /**
+ * DataSelector: 画像選択モード
  * ExparePrepare : 探索準備モード
  * COIAS : 探索/再描画
  * ManualMeasurement : 再測定モード
@@ -15,6 +16,8 @@ import {
   MousePositionContext,
   PageContext,
   StarPositionContext,
+  PredictedStarPositionContext,
+  UserIDContext,
 } from './component/functional/context';
 import Header from './component/ui/Header';
 import COIAS from './page/COIAS';
@@ -26,10 +29,12 @@ import Login from './page/Login';
 
 import './style/style.scss';
 import PrivateRoutes from './utils/PrivateRoutes';
+import DataSelector from './page/DataSelector';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
   const [fileNames, setFileNames] = useState(['ファイルを選択してください']);
+  const [fileObservedTimes, setFileObservedTimes] = useState([]);
   const intervalRef = useRef(null);
   const [isAuto, setIsAuto] = useState(true);
   const [menunames, setMenunames] = useState([
@@ -56,7 +61,7 @@ function App() {
     { id: 6, name: '自動検出', query: 'astsearch_new', done: false },
     {
       id: 7,
-      name: '全自動処理 (2×2)',
+      name: '解析スタート',
       query: 'AstsearchR?binning=',
       done: false,
     },
@@ -81,6 +86,7 @@ function App() {
   const starValue = useMemo(() => ({ starPos, setStarPos }), [starPos]);
 
   const [modeStatus, setModeStatus] = useState({
+    ExplorePrepare: false,
     COIAS: false,
     Manual: false,
     Report: false,
@@ -91,6 +97,15 @@ function App() {
     [modeStatus],
   );
 
+  const [predictedStarPos, setPredictedStarPos] = useState({});
+  const predictedStarValue = useMemo(
+    () => ({ predictedStarPos, setPredictedStarPos }),
+    [predictedStarPos],
+  );
+
+  const [userId, setUserId] = useState(0);
+  const userIdValue = useMemo(() => ({ userId, setUserId }), [userId]);
+
   const [start, setStart] = useState(false);
   const [next, setNext] = useState(false);
   const [back, setBack] = useState(true);
@@ -100,135 +115,152 @@ function App() {
 
   return (
     <ReactKeycloakProvider authClient={keycloak}>
-      <BrowserRouter
-        style={keycloak.authenticated ? { position: 'relative' } : {}}
-      >
-        <ModeStatusContext.Provider value={modeStatusValue}>
-          <Header setMenunames={setMenunames} setFileNames={setFileNames} />
-          <main
-            style={
-              keycloak?.authenticated
-                ? {
-                    position: 'absolute',
-                    top: 80,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    overflow: 'hidden',
-                    backgroundColor: '#F8F9FA',
-                  }
-                : {
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }
-            }
-          >
-            <PageContext.Provider value={pageValue}>
-              <MousePositionContext.Provider value={mouseValue}>
-                <StarPositionContext.Provider value={starValue}>
-                  <Routes>
-                    <Route element={<PrivateRoutes />}>
-                      <Route
-                        path="/"
-                        element={
-                          <ExplorePrepare
-                            fileNames={fileNames}
-                            setFileNames={setFileNames}
-                            menunames={menunames}
-                            setMenunames={setMenunames}
-                            isAuto={isAuto}
-                            setIsAuto={setIsAuto}
+      <BrowserRouter style={{ position: 'relative' }}>
+        <UserIDContext.Provider value={userIdValue}>
+          <ModeStatusContext.Provider value={modeStatusValue}>
+            <Header
+              setMenunames={setMenunames}
+              setFileNames={setFileNames}
+              setFileObservedTimes={setFileObservedTimes}
+            />
+            <main
+              style={
+                keycloak?.authenticated
+                  ? {
+                      position: 'absolute',
+                      top: 80,
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      overflow: 'auto',
+                      backgroundColor: '#F8F9FA',
+                    }
+                  : {
+                      height: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }
+              }
+            >
+              <PageContext.Provider value={pageValue}>
+                <MousePositionContext.Provider value={mouseValue}>
+                  <StarPositionContext.Provider value={starValue}>
+                    <PredictedStarPositionContext.Provider
+                      value={predictedStarValue}
+                    >
+                      <Routes>
+                        <Route element={<PrivateRoutes />}>
+                          <Route
+                            path="/"
+                            element={
+                              <DataSelector
+                                setFileNames={setFileNames}
+                                setFileObservedTimes={setFileObservedTimes}
+                              />
+                            }
                           />
-                        }
-                      />
-                      <Route
-                        path="/COIAS"
-                        element={
-                          <COIAS
-                            intervalRef={intervalRef}
-                            imageURLs={imageURLs}
-                            setImageURLs={setImageURLs}
-                            subImageURLs={subImageURLs}
-                            setSubImageURLs={setSubImageURLs}
-                            originalStarPos={originalStarPos}
-                            setOriginalStarPos={setOriginalStarPos}
-                            start={start}
-                            setStart={setStart}
-                            next={next}
-                            setNext={setNext}
-                            back={back}
-                            setBack={setBack}
-                            setting={setting}
-                            setSetting={setSetting}
-                            zoomIn={zoomIn}
-                            setZoomIn={setZoomIn}
-                            zoomOut={zoomOut}
-                            setZoomOut={setZoomOut}
+                          <Route
+                            path="/ExplorePrepare"
+                            element={
+                              <ExplorePrepare
+                                fileNames={fileNames}
+                                fileObservedTimes={fileObservedTimes}
+                                menunames={menunames}
+                                setMenunames={setMenunames}
+                                isAuto={isAuto}
+                                setIsAuto={setIsAuto}
+                              />
+                            }
                           />
-                        }
-                      />
-                      <Route
-                        path="/ManualMeasurement"
-                        element={
-                          <ManualMeasurement
-                            intervalRef={intervalRef}
-                            imageURLs={imageURLs}
-                            setImageURLs={setImageURLs}
-                            originalStarPos={originalStarPos}
-                            setOriginalStarPos={setOriginalStarPos}
-                            start={start}
-                            setStart={setStart}
-                            next={next}
-                            setNext={setNext}
-                            back={back}
-                            setBack={setBack}
-                            leadStarNumber={leadStarNumber}
-                            setLeadStarNumber={setLeadStarNumber}
-                            setting={setting}
-                            setSetting={setSetting}
-                            zoomIn={zoomIn}
-                            setZoomIn={setZoomIn}
-                            zoomOut={zoomOut}
-                            setZoomOut={setZoomOut}
+                          <Route
+                            path="/COIAS"
+                            element={
+                              <COIAS
+                                intervalRef={intervalRef}
+                                imageURLs={imageURLs}
+                                setImageURLs={setImageURLs}
+                                subImageURLs={subImageURLs}
+                                setSubImageURLs={setSubImageURLs}
+                                originalStarPos={originalStarPos}
+                                setOriginalStarPos={setOriginalStarPos}
+                                start={start}
+                                setStart={setStart}
+                                next={next}
+                                setNext={setNext}
+                                back={back}
+                                setBack={setBack}
+                                setting={setting}
+                                setSetting={setSetting}
+                                zoomIn={zoomIn}
+                                setZoomIn={setZoomIn}
+                                zoomOut={zoomOut}
+                                setZoomOut={setZoomOut}
+                              />
+                            }
                           />
-                        }
-                      />
-                      <Route path="/Report" element={<Report />} />
-                      <Route
-                        path="/FinalCheck"
-                        element={
-                          <FinalCheck
-                            intervalRef={intervalRef}
-                            imageURLs={imageURLs}
-                            setImageURLs={setImageURLs}
-                            start={start}
-                            setStart={setStart}
-                            next={next}
-                            setNext={setNext}
-                            back={back}
-                            setBack={setBack}
-                            setting={setting}
-                            setSetting={setSetting}
-                            zoomIn={zoomIn}
-                            setZoomIn={setZoomIn}
-                            zoomOut={zoomOut}
-                            setZoomOut={setZoomOut}
+                          <Route
+                            path="/ManualMeasurement"
+                            element={
+                              <ManualMeasurement
+                                intervalRef={intervalRef}
+                                imageURLs={imageURLs}
+                                setImageURLs={setImageURLs}
+                                originalStarPos={originalStarPos}
+                                setOriginalStarPos={setOriginalStarPos}
+                                start={start}
+                                setStart={setStart}
+                                next={next}
+                                setNext={setNext}
+                                back={back}
+                                setBack={setBack}
+                                leadStarNumber={leadStarNumber}
+                                setLeadStarNumber={setLeadStarNumber}
+                                setting={setting}
+                                setSetting={setSetting}
+                                zoomIn={zoomIn}
+                                setZoomIn={setZoomIn}
+                                zoomOut={zoomOut}
+                                setZoomOut={setZoomOut}
+                              />
+                            }
                           />
-                        }
-                      />
-                    </Route>
-                    <Route path="/Login" element={<Login />} />
-                  </Routes>
-                </StarPositionContext.Provider>
-              </MousePositionContext.Provider>
-            </PageContext.Provider>
-          </main>
-          <footer>
-            <div style={{ display: 'none' }}>footer</div>
-          </footer>
-        </ModeStatusContext.Provider>
+                          <Route path="/Report" element={<Report />} />
+                          <Route
+                            path="/FinalCheck"
+                            element={
+                              <FinalCheck
+                                intervalRef={intervalRef}
+                                imageURLs={imageURLs}
+                                setImageURLs={setImageURLs}
+                                start={start}
+                                setStart={setStart}
+                                next={next}
+                                setNext={setNext}
+                                back={back}
+                                setBack={setBack}
+                                setting={setting}
+                                setSetting={setSetting}
+                                zoomIn={zoomIn}
+                                setZoomIn={setZoomIn}
+                                zoomOut={zoomOut}
+                                setZoomOut={setZoomOut}
+                              />
+                            }
+                          />
+                        </Route>
+                        <Route path="/Login" element={<Login />} />
+                      </Routes>
+                    </PredictedStarPositionContext.Provider>
+                  </StarPositionContext.Provider>
+                </MousePositionContext.Provider>
+              </PageContext.Provider>
+            </main>
+            <footer>
+              <div style={{ display: 'none' }}>footer</div>
+            </footer>
+          </ModeStatusContext.Provider>
+        </UserIDContext.Provider>
       </BrowserRouter>
     </ReactKeycloakProvider>
   );

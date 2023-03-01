@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
     'airbnb',
     'prettier'
   ],
@@ -17,6 +18,6 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'react/pros-types': 'off',
+    'react/prop-types': 'warn',
   },
-};
+}

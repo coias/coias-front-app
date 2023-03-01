@@ -22,10 +22,16 @@ export const PredictedStarPositionContext = createContext({
 
 export const ModeStatusContext = createContext({
   modeStatus: {
+    ExplorePrepare: false,
     COIAS: false,
     Manual: false,
     Report: false,
     FinalCheck: false,
   },
   setModeStatus: () => {},
+});
+
+export const UserIDContext = createContext({
+  userId: 0,
+  setUserId: () => {},
 });

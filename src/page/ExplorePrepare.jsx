@@ -4,60 +4,59 @@
  */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Button,
   ButtonGroup,
   Col,
   Dropdown,
   DropdownButton,
+  Form,
   Row,
+  Table,
 } from 'react-bootstrap';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import { HiOutlineArrowSmRight } from 'react-icons/hi';
 import { GoSettings } from 'react-icons/go';
-import { ModeStatusContext } from '../component/functional/context';
+import {
+  ModeStatusContext,
+  UserIDContext,
+} from '../component/functional/context';
 import AlertModal from '../component/general/AlertModal';
 import ErrorModal from '../component/general/ErrorModal';
 import LoadingButton from '../component/general/LoadingButton';
-import FileUploadModal from '../component/model/ExplorePrepare/FileUploadModal';
 import CONSTANT from '../utils/CONSTANTS';
 import ParamsSettingModal from '../component/model/ExplorePrepare/ParamsSettingModal';
 
 // eslint-disable-next-line no-use-before-define
 ExplorePrepare.propTypes = {
   fileNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-  setFileNames: PropTypes.func.isRequired,
-  menunames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  fileObservedTimes: PropTypes.arrayOf(PropTypes.string).isRequired,
+  menunames: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
   setMenunames: PropTypes.func.isRequired,
   isAuto: PropTypes.bool.isRequired,
   setIsAuto: PropTypes.func.isRequired,
 };
 
-const userId = crypto.randomUUID();
-
 function ExplorePrepare({
   fileNames,
-  setFileNames,
+  fileObservedTimes,
   menunames,
   setMenunames,
   isAuto,
   setIsAuto,
 }) {
+  const { userId } = useContext(UserIDContext);
+
   const uri = process.env.REACT_APP_API_URI;
   const [loading, setLoading] = useState(false);
 
-  const fileInput = useRef();
-  const [show, setShow] = useState(false);
-  const [valid, setValid] = useState(true);
-  const [disabled, setDisabled] = useState(true);
   const [processName, setProcessName] = useState('');
   const [showProcessError, setShowProcessError] = useState(false);
   const [errorPlace, setErrorPlace] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [errorFiles, setErrorFile] = useState([]);
   const [fileAlertModalshow, setFileAlertModalshow] = useState(false);
-  const [fileUploadProgress, setFileUploadProgress] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertButtonMessage, setAlertButtonMessage] = useState('');
   const [parameters, setParameters] = useState({
@@ -65,17 +64,15 @@ function ExplorePrepare({
     ar: '6',
     sn: '500',
   });
+  const [MPCRefreshedTimeMessage, setMPCRefreshedTimeMessage] = useState('');
   const socketUrl = `${process.env.REACT_APP_WEB_SOCKET_URI}ws/${userId}`;
-
   const { lastJsonMessage } = useWebSocket(socketUrl, {
     shouldReconnect: () => true,
     reconnectAttempts: 3,
     reconnectInterval: 3000,
   });
   const [paramsSettingModalShow, setParamsSettingModalShow] = useState(false);
-
   const [showProgress, setShowProgress] = useState(false);
-
   const { setModeStatus } = useContext(ModeStatusContext);
 
   const checkIsAllProcessDone = (updatedMenunames) =>
@@ -85,24 +82,43 @@ function ExplorePrepare({
 
   const handleSelect = (e) => setIsAuto(e.target.value === 'auto');
 
-  const handleClose = () => {
-    setMenunames(menunames);
-    setShow(false);
+  const getMPCRefreshedTime = async () => {
+    await axios
+      .get(`${uri}AstMPC_refreshed_time`)
+      .then((res) => {
+        const message = res.data.result;
+        setMPCRefreshedTimeMessage(message);
+      })
+      .catch(() => {});
   };
-  const handleShow = () => setShow(true);
-  const handleChange = (e) => {
-    // ファイル変更時
-    if (e.target.value !== '') {
-      setValid(false);
-      setDisabled(false);
-    } else {
-      setValid(true);
-      setDisabled(true);
-    }
+
+  const onClickStarUpdateButton = async () => {
+    setLoading(true);
+    setProcessName('小惑星データ更新中...');
+    setShowProgress(false);
+    await axios
+      .put(`${uri}getMPCORB_and_mpc2edb`, null, {
+        params: { user_id: userId },
+      })
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((e) => {
+        const errorResponse = e.response?.data?.detail;
+        if (errorResponse.place) {
+          setErrorPlace(errorResponse.place);
+          setErrorReason(errorResponse.reason);
+          setShowProcessError(true);
+        }
+      });
+    getMPCRefreshedTime();
+    setLoading(false);
   };
 
   const fileContentCheck = async () => {
-    const response = await axios.put(`${uri}copy`);
+    const response = await axios.put(`${uri}copy`, null, {
+      params: { user_id: userId },
+    });
     const dataList = response.data.result.sort();
     if (fileNames.length !== dataList.length / 2) {
       setAlertMessage('ファイルの中身が異なる可能性があります。');
@@ -133,8 +149,8 @@ function ExplorePrepare({
     );
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // 初回描画時に初期化や、念のため画像ファイル名の書式チェックをする
+  useEffect(() => {
     setMenunames((prevMenunames) =>
       prevMenunames.map((items) =>
         items.id === 6
@@ -147,93 +163,63 @@ function ExplorePrepare({
           : items,
       ),
     );
-    const { files } = fileInput.current;
-    const data = new FormData();
-    const filesForProps = [];
-    setErrorFile([]);
-
     const pattern =
-      /warp-HSC-.*-([0-9]{1,4})-([0-9]),([0-9])-([0-9]{1,6}).fits/;
-    const firstFileAreaName = files[0].name
+      /warp-HSC-.*-([0-9]{1,5})-([0-9]),([0-9])-([0-9]{1,6}).fits/;
+    const firstFileAreaName = fileNames[0]
       .split('-')
       .filter((_, index) => index === 3 || index === 4)
       .join('');
-
+    setErrorFile([]);
     const errorFileNames = [];
 
-    if (files.length < 4) {
+    // 枚数チェック
+    if (fileNames.length < 4) {
       errorFileNames.push('ファイルが足りません。4つ以上選択してください。');
     }
 
-    Object.values(files).forEach((file, i) => {
-      const isMatch = pattern.test(file.name);
+    // 画像セットの観測領域が全て一緒であるかチェック
+    fileNames.forEach((fileName, i) => {
+      const isMatch = pattern.test(fileName);
       if (i > 0 && isMatch) {
         const isSameArea =
-          file.name
+          fileName
             .split('-')
             .filter((_, index) => index === 3 || index === 4)
             .join('')
             .indexOf(firstFileAreaName) > -1;
         if (!isSameArea) {
-          errorFileNames.push(`${file.name}は観測領域が異なります。`);
+          errorFileNames.push(`${fileName}は観測領域が異なります。`);
         }
       }
 
       if (!isMatch) {
-        errorFileNames.push(`${file.name}のファイル名の形式が違います。`);
+        errorFileNames.push(`${fileName}のファイル名の形式が違います。`);
       }
-
-      data.append('files', file, file.name);
-      filesForProps.push(file.name);
     });
 
     setErrorFile(errorFileNames);
 
-    const postFiles = async () => {
-      handleClose();
-      setProcessName('アップロード中...');
-
-      setLoading(true);
-      setShowProgress(true);
+    // png画像をtmp_imagesディレクトリから削除する
+    const deletePngImages = async () => {
       await axios
-        .delete(`${uri}deletefiles`)
+        .delete(`${uri}deletefiles?user_id=${userId}`)
         .then(() => {})
         .catch(() => {
           setShowProcessError(true);
-          setErrorPlace('ファイルアップロード');
-          setErrorReason('ファイルアップロードに失敗しました。');
-          setLoading(false);
-        });
-      await axios
-        .post(`${uri}uploadfiles`, data, {
-          onUploadProgress: (progressEvent) => {
-            const { loaded, total } = progressEvent;
-            const percent = Math.floor((loaded * 100) / total);
-            if (percent < 100) {
-              setFileUploadProgress(`${percent}%`);
-            }
-          },
-        })
-        .then(() => {
-          setFileUploadProgress('100%');
-
-          updateMenunames();
-          setLoading(false);
-        })
-        .catch(() => {
-          setShowProcessError(true);
-          setErrorPlace('ファイルアップロード');
-          setErrorReason('ファイルアップロードに失敗しました');
-          setLoading(false);
+          setErrorPlace('png画像削除');
+          setErrorReason('png画像削除に失敗しました。');
         });
     };
+    deletePngImages();
 
-    if (errorFileNames.length === 0) {
-      setFileNames(filesForProps);
-      postFiles();
-    }
+    // 探索準備処理状況の初期化
+    updateMenunames();
+
+    // MPCORB.DATの最終更新時刻取得
+    getMPCRefreshedTime();
+
     return null;
-  };
+  }, []);
 
   const onProcess = (query) => {
     setProcessName('処理中...');
@@ -242,7 +228,7 @@ function ExplorePrepare({
       setShowProgress(true);
 
       await axios
-        .put(uri + query)
+        .put(uri + query, null, { params: { user_id: userId } })
         .then(() => {
           setLoading(false);
           const updatedMenunames = menunames.map((item) => {
@@ -264,6 +250,9 @@ function ExplorePrepare({
           setModeStatus((prevModeStatus) => {
             const modeStatusCopy = { ...prevModeStatus };
             modeStatusCopy.COIAS = checkIsAllProcessDone(updatedMenunames);
+            modeStatusCopy.Manual = false;
+            modeStatusCopy.Report = false;
+            modeStatusCopy.FinalCheck = false;
             return modeStatusCopy;
           });
           setMenunames(updatedMenunames);
@@ -293,7 +282,7 @@ function ExplorePrepare({
     const uriQuery = url.split('/')[3];
     setProcessName(`${query}...`);
     await axios
-      .put(url)
+      .put(url, null, { params: { user_id: userId } })
       .then(() => {
         const updatedMenunames = menunames.map((item) => {
           if (
@@ -315,6 +304,9 @@ function ExplorePrepare({
         setModeStatus((prevModeStatus) => {
           const modeStatusCopy = { ...prevModeStatus };
           modeStatusCopy.COIAS = checkIsAllProcessDone(updatedMenunames);
+          modeStatusCopy.Manual = false;
+          modeStatusCopy.Report = false;
+          modeStatusCopy.FinalCheck = false;
           return modeStatusCopy;
         });
       })
@@ -395,200 +387,239 @@ function ExplorePrepare({
     >
       <Row>
         <Col md={2}>
-          <Row style={{ marginBottom: '40px' }}>
-            <h4>探索準備</h4>
-          </Row>
-          <Row style={{ marginBottom: '40px' }}>
-            <h4>選択ファイル</h4>
-          </Row>
+          <h4>探索準備</h4>
         </Col>
-        <Col md={10}>
-          <Row xs="auto" style={{ marginBottom: '40px' }}>
-            <Col style={{ margin: 'auto 0' }}>
-              <Button
-                variant={menunames[0].done ? 'success' : 'secondary'}
-                style={{ whiteSpace: 'nowrap' }}
-                onClick={() => {
-                  handleShow();
-                }}
-              >
-                ファイル
-              </Button>
-            </Col>
-            {isAuto ? (
-              <Col style={{ margin: 'auto 0' }}>
-                <Button
-                  style={{ whiteSpace: 'nowrap' }}
-                  key="Success"
-                  id="dropdown-variants-Success"
-                  variant={menunames[6].done ? 'success' : 'secondary'}
-                  title={menunames[6].name}
-                  onClick={() => onProcessAuto()}
-                >
-                  {menunames[6].name}
-                </Button>
-              </Col>
-            ) : (
-              <>
-                <Col style={{ paddingRight: 0 }}>
-                  <Button
-                    id={menunames[1].query}
-                    style={{ whiteSpace: 'nowrap' }}
-                    onClick={() => {
-                      onProcess(menunames[1].query);
-                    }}
-                    variant={menunames[1].done ? 'success' : 'secondary'}
-                  >
-                    {menunames[1].name}
-                  </Button>
+        <Col>
+          <Row xs="auto" style={{ marginBottom: '20px' }}>
+            <Col md={10}>
+              <Row xs="auto" style={{ marginBottom: '20px' }}>
+                <Col>
+                  <Form.Check
+                    inline
+                    type="radio"
+                    label="自動解析"
+                    name="group1"
+                    id="auto"
+                    value="auto"
+                    onChange={handleSelect}
+                    checked={isAuto}
+                  />
+                  <Form.Check
+                    inline
+                    type="radio"
+                    label="手動解析"
+                    name="group1"
+                    id="manual"
+                    value="manual"
+                    onChange={handleSelect}
+                    checked={!isAuto}
+                  />
                 </Col>
-                <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <HiOutlineArrowSmRight size={28} />
-                </Col>
-                <Col style={{ padding: 0 }}>
-                  <DropdownButton
-                    as={ButtonGroup}
-                    variant={menunames[2].done ? 'success' : 'secondary'}
-                    title={menunames[2].name}
-                  >
-                    <Dropdown.Item
-                      eventKey="1"
-                      onClick={() =>
-                        onProcess(`${menunames[2].query}2&sn=${parameters.sn}`)
-                      }
+              </Row>
+              <Row style={{ marginBottom: '20px' }}>
+                {isAuto ? (
+                  <Col style={{ margin: 'auto 0' }}>
+                    <Button
+                      style={{ whiteSpace: 'nowrap' }}
+                      key="Success"
+                      id="dropdown-variants-Success"
+                      title={menunames[6].name}
+                      disabled={errorFiles.length !== 0}
+                      onClick={() => onProcessAuto()}
+                      variant="success"
+                      className={menunames[5].done ? '' : 'btn-style box_blue'}
                     >
-                      2×2
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      eventKey="2"
-                      onClick={() =>
-                        onProcess(`${menunames[2].query}4&sn=${parameters.sn}`)
-                      }
-                    >
-                      4×4
-                    </Dropdown.Item>
-                  </DropdownButton>
-                </Col>
-                <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <HiOutlineArrowSmRight size={28} />
-                </Col>
-                <Col style={{ padding: 0 }}>
-                  <Button
-                    id={menunames[3].query}
-                    style={{ whiteSpace: 'nowrap' }}
-                    onClick={() => {
-                      onProcess(menunames[3].query);
-                    }}
-                    variant={menunames[3].done ? 'success' : 'secondary'}
-                  >
-                    {menunames[3].name}
+                      {menunames[6].name}
+                    </Button>
+                  </Col>
+                ) : (
+                  <>
+                    <Col style={{ paddingRight: 0 }}>
+                      <Button
+                        id={menunames[1].query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        disabled={errorFiles.length !== 0}
+                        onClick={() => {
+                          onProcess(menunames[1].query);
+                        }}
+                        className={
+                          menunames[1].done ? '' : 'btn-style box_blue'
+                        }
+                        variant="success"
+                      >
+                        {menunames[1].name}
+                      </Button>
+                    </Col>
+                    <Col style={{ margin: 'auto 0', padding: 0 }}>
+                      <HiOutlineArrowSmRight size={28} />
+                    </Col>
+                    <Col style={{ padding: 0 }}>
+                      <DropdownButton
+                        bsPrefix={
+                          menunames[2].done
+                            ? ''
+                            : 'btn-style box_blue dropdown_style_prepare'
+                        }
+                        as={ButtonGroup}
+                        variant="success"
+                        disabled={errorFiles.length !== 0}
+                        title={menunames[2].name}
+                      >
+                        <Dropdown.Item
+                          eventKey="1"
+                          onClick={() =>
+                            onProcess(
+                              `${menunames[2].query}2&sn=${parameters.sn}`,
+                            )
+                          }
+                        >
+                          2×2
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          eventKey="2"
+                          onClick={() =>
+                            onProcess(
+                              `${menunames[2].query}4&sn=${parameters.sn}`,
+                            )
+                          }
+                        >
+                          4×4
+                        </Dropdown.Item>
+                      </DropdownButton>
+                    </Col>
+                    <Col style={{ margin: 'auto 0', padding: 0 }}>
+                      <HiOutlineArrowSmRight size={28} />
+                    </Col>
+                    <Col style={{ padding: 0 }}>
+                      <Button
+                        id={menunames[3].query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        disabled={errorFiles.length !== 0}
+                        onClick={() => {
+                          onProcess(menunames[3].query);
+                        }}
+                        variant="success"
+                        className={
+                          menunames[3].done ? '' : 'btn-style box_blue'
+                        }
+                      >
+                        {menunames[3].name}
+                      </Button>
+                    </Col>
+                    <Col style={{ margin: 'auto 0', padding: 0 }}>
+                      <HiOutlineArrowSmRight size={28} />
+                    </Col>
+                    <Col style={{ padding: 0 }}>
+                      <Button
+                        id={menunames[4].query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        disabled={errorFiles.length !== 0}
+                        onClick={() => {
+                          onProcess(menunames[4].query);
+                        }}
+                        variant="success"
+                        className={
+                          menunames[4].done ? '' : 'btn-style box_blue'
+                        }
+                      >
+                        {menunames[4].name}
+                      </Button>
+                    </Col>
+                    <Col style={{ margin: 'auto 0', padding: 0 }}>
+                      <HiOutlineArrowSmRight size={28} />
+                    </Col>
+                    <Col style={{ padding: 0 }}>
+                      <Button
+                        id={menunames[5].query}
+                        style={{ whiteSpace: 'nowrap' }}
+                        disabled={errorFiles.length !== 0}
+                        onClick={() => {
+                          onProcess(
+                            `${menunames[5].query}?nd=${parameters.nd}&ar=${parameters.ar}`,
+                          );
+                        }}
+                        variant="success"
+                        className={
+                          menunames[5].done ? '' : 'btn-style box_blue'
+                        }
+                      >
+                        {menunames[5].name}
+                      </Button>
+                    </Col>
+                  </>
+                )}
+              </Row>
+              <Row xs="auto" style={{ marginBottom: '20px' }}>
+                <Col>
+                  <Button onClick={onClickStarUpdateButton} variant="secondary">
+                    {`小惑星データ更新 (オプション, ${MPCRefreshedTimeMessage})`}
                   </Button>
                 </Col>
-                <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <HiOutlineArrowSmRight size={28} />
-                </Col>
-                <Col style={{ padding: 0 }}>
+                <Col>
                   <Button
-                    id={menunames[4].query}
-                    style={{ whiteSpace: 'nowrap' }}
-                    onClick={() => {
-                      onProcess(menunames[4].query);
-                    }}
-                    variant={menunames[4].done ? 'success' : 'secondary'}
+                    variant="secondary"
+                    className="params-btn"
+                    onClick={() => setParamsSettingModalShow(true)}
                   >
-                    {menunames[4].name}
+                    <GoSettings size={CONSTANT.iconSize22px} />
                   </Button>
                 </Col>
-                <Col style={{ margin: 'auto 0', padding: 0 }}>
-                  <HiOutlineArrowSmRight size={28} />
-                </Col>
-                <Col style={{ padding: 0 }}>
-                  <Button
-                    id={menunames[5].query}
-                    style={{ whiteSpace: 'nowrap' }}
-                    onClick={() => {
-                      onProcess(
-                        `${menunames[5].query}?nd=${parameters.nd}&ar=${parameters.ar}`,
-                      );
-                    }}
-                    variant={menunames[5].done ? 'success' : 'secondary'}
-                  >
-                    {menunames[5].name}
-                  </Button>
-                </Col>
-              </>
-            )}
-            <Button
-              className={isAuto ? '' : 'params-btn'}
-              onClick={() => setParamsSettingModalShow(true)}
-            >
-              <GoSettings size={CONSTANT.iconSize} />
-            </Button>
-          </Row>
-          <Row>
-            <Col style={{ margin: 'auto 0' }}>
-              <div
-                style={{
-                  backgroundColor: 'black',
-                  width: '70vw',
-                  height: '500px',
-                  border: '3px solid #282A7F',
-                  borderRadius: '4px',
-                }}
-              >
-                <ul style={{ listStyleType: 'none', color: 'white' }}>
-                  {fileNames.map((arr) => (
-                    <li key={arr}>{arr}</li>
-                  ))}
-                </ul>
-              </div>
+              </Row>
             </Col>
           </Row>
         </Col>
       </Row>
+      <Row>
+        <Col md={2}>
+          <h4>選択画像</h4>
+        </Col>
+        <Col style={{ margin: 'auto 0' }}>
+          <div
+            style={{
+              width: '70vw',
+              height: '500px',
+            }}
+          >
+            {errorFiles.length === 0 ? (
+              <Table
+                style={{ color: 'black' }}
+                className="selected-files-table"
+                striped
+              >
+                <thead>
+                  <tr>
+                    <th>画像ファイル名</th>
+                    <th>観測時刻 (世界時)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fileNames.map((fileName, index) => (
+                    <tr>
+                      <td>{fileName}</td>
+                      <td>{fileObservedTimes[index]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            ) : (
+              <ul style={{ listStyleType: 'none', color: 'red' }}>
+                {errorFiles.map((arr) => (
+                  <li key={arr}>{arr}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </Col>
+      </Row>
+
       <LoadingButton
         loading={loading}
         processName={processName}
         showProgress={showProgress}
         lastJsonMessage={lastJsonMessage}
-        fileUploadProgress={fileUploadProgress}
+        fileUploadProgress=""
       />
 
-      <FileUploadModal
-        show={show}
-        isAutoProcess={isAuto}
-        handleClose={handleClose}
-        handleSubmit={handleSubmit}
-        fileInput={fileInput}
-        handleChange={handleChange}
-        valid={valid}
-        errorFiles={errorFiles}
-        handleSelect={handleSelect}
-        disabled={disabled}
-        onClickStarUpdateButton={async () => {
-          handleClose();
-          setLoading(true);
-          setShowProgress(false);
-          await axios
-            .put(`${uri}getMPCORB_and_mpc2edb`)
-            .then(() => {
-              setProcessName('小惑星データ更新中...');
-              setLoading(false);
-            })
-            .catch((e) => {
-              const errorResponse = e.response?.data?.detail;
-              if (errorResponse.place) {
-                setErrorPlace(errorResponse.place);
-                setErrorReason(errorResponse.reason);
-                setShowProcessError(true);
-              }
-            });
-          setLoading(false);
-        }}
-        setParameters={setParameters}
-        parameters={parameters}
-        alertMessage={alertMessage}
-      />
       <ParamsSettingModal
         show={paramsSettingModalShow}
         handleClose={() => setParamsSettingModalShow(false)}
@@ -597,6 +628,7 @@ function ExplorePrepare({
         setMenunames={setMenunames}
         inputFileLength={fileNames.length}
       />
+
       <AlertModal
         alertModalShow={fileAlertModalshow}
         onClickOk={() => {
@@ -607,6 +639,7 @@ function ExplorePrepare({
         alertMessage={alertMessage}
         alertButtonMessage={alertButtonMessage}
       />
+
       <ErrorModal
         show={showProcessError}
         setShow={setShowProcessError}

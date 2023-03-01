@@ -10,7 +10,7 @@ function ImageTimes({ timeList }) {
     <div
       style={{
         opacity: 0.5,
-        width: '190px',
+        width: '210px',
         height: '35px',
         color: 'white',
         backgroundColor: 'black',

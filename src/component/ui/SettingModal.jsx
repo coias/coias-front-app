@@ -24,15 +24,15 @@ function SettingModal({
       <Modal.Header closeButton>
         <Modal.Title
           id="contained-modal-title-vcenter"
-          style={{ color: '#5c636a', fontWeight: 'bold' }}
+          className="f-modal_title f-ja"
         >
           表示設定
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h4>表示する画像の設定</h4>
+        <h4 className="f-ja f-modal_title_sub">表示する画像の設定</h4>
         <Row className="setting_modal-content_wrap">
-          <Row>
+          <Row className="f-ja">
             <Col sm={8}>画像</Col>
             <Col style={{ textAlign: 'center' }}>画像表示</Col>
             <Col style={{ textAlign: 'center' }}>マスクなし</Col>
@@ -40,7 +40,9 @@ function SettingModal({
           <hr />
           {imageURLs.map((img) => (
             <Row key={img.name} className="content_wrap-table">
-              <Col sm={8}>{img.name}</Col>
+              <Col sm={8} className="f-en">
+                {img.name}
+              </Col>
               <Col className="text-center">
                 <Form.Check
                   type="checkbox"
@@ -66,8 +68,10 @@ function SettingModal({
         </Row>
         {defaultZoomRate !== 0 && (
           <>
-            <h4>手動測定時の拡大モーダルの拡大率を選択</h4>
-            <Form className="setting_modal-content_wrap">
+            <h4 className="f-ja f-modal_title_sub">
+              手動測定時の拡大モーダルの拡大率を選択
+            </h4>
+            <Form className="setting_modal-content_wrap f-ja">
               <Row>
                 <Col>
                   <Form.Check
@@ -111,7 +115,9 @@ function SettingModal({
         )}
         {!disableShowAutoSave && (
           <>
-            <h4>オートセーブ ON/OFF 切り替え</h4>
+            <h4 className="f-ja f-modal_title_sub">
+              オートセーブ ON/OFF 切り替え
+            </h4>
             <Row className="setting_modal-content_wrap">
               <Col>
                 <Form.Check
@@ -120,6 +126,8 @@ function SettingModal({
                   type="radio"
                   onChange={() => setIsAutoSave(true)}
                   defaultChecked={isAutoSave && 'true'}
+                  className="f-en"
+                  style={{ fontWeight: 600 }}
                 />
               </Col>
               <Col>
@@ -129,6 +137,8 @@ function SettingModal({
                   type="radio"
                   onChange={() => setIsAutoSave(false)}
                   defaultChecked={!isAutoSave && 'true'}
+                  className="f-en"
+                  style={{ fontWeight: 600 }}
                 />
               </Col>
             </Row>
@@ -136,7 +146,7 @@ function SettingModal({
         )}
       </Modal.Body>
       <Modal.Footer style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button onClick={onHide} className="btn-style box_border_gray">
+        <Button onClick={onHide} className="btn-style box_border_gray f-ja">
           閉じる
         </Button>
       </Modal.Footer>
